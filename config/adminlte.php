@@ -321,77 +321,58 @@ return [
             'can' => 'manage-blog',
         ],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
+            'text' => 'Dashboard',
+            'url' => '/home',
+            'icon' => 'nav-icon fas fa-tachometer-alt',
             'label' => 4,
-            'label_color' => 'success',
+            'label_color' => 'warning',
         ],
-        ['header' => 'account_settings'],
+
+        [],//'header' => 'account_settings'],
+
         [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
+            'text' => 'Ventas',
             'icon' => 'fas fa-fw fa-share',
             'submenu' => [
                 [
-                    'text' => 'level_one',
+                    'text' => 'Vender Producto',
                     'url' => '#',
+                    'icon' => 'fas fa-fw fa-user',
                 ],
+               
                 [
-                    'text' => 'level_one',
+                    'text' => 'Consultar Ventas',
                     'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'text' => 'level_one',
-                    'url' => '#',
+                    'icon' => 'fas fa-fw fa-user',
                 ],
             ],
         ],
-        ['header' => 'labels'],
+
         [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
+            'text' => 'Categorias',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-user',
         ],
+
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
+            'text' => 'Productos',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-user',
         ],
+
         [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
+            'text' => 'Clientes',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-lock',
         ],
+
+        [
+            'text' => 'Usuarios',
+            'url' => 'admin/settings',
+            'icon' => 'fas fa-fw fa-lock',
+        ],
+       
+        
     ],
 
     /*
