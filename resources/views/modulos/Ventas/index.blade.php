@@ -7,7 +7,7 @@
 @stop
 
 @section('content')
-    <p>Crear Nueva Venta.</p>
+    <p>Lista de Ventas.</p>
 @stop
 
 @section('css')

@@ -1,6 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DetalleVentasController;
+use App\Http\Controllers\VentaController;
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\UsuarioController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -8,14 +16,44 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 
-//////////////
-Route::get('/detalle-ventas', [App\Http\Controllers\DetalleVentasController::class, 'index'])->name('detalleventas.index');
+//////////////RUTA DETALLE VENTAS
+Route::prefix('detalles')->group(function(){
+    Route::get('/detalle-ventas', [DetalleVentasController::class, 'index'])->name('detalleventas.index');
+
+});
+
+///////////////////RUTA CREAR VENTA
+Route::prefix('ventas')->group(function(){
+    Route::get('/crear-venta', [VentaController::class, 'index'])->name('venta.create');
+});
 
 
+///////////////////RUTA CATEGORIAS
+Route::prefix('categorias')->group(function(){
+    Route::get('/', [CategoriaController::class, 'index'])->name('categoria.index');
 
-///////////////////
-Route::get('/crear-venta', [App\Http\Controllers\VentaController::class, 'index'])->name('nuevaventa.index');
+});
+
+///////////////////RUTA PRODUCTOS
+Route::prefix('productos')->group(function(){
+    Route::get('/', [ProductoController::class, 'index'])->name('producto.index');
+
+});
+
+///////////////////RUTA CLIENTES
+Route::prefix('clientes')->group(function(){
+    Route::get('/', [ClienteController::class, 'index'])->name('cliente.index');
+
+});
+
+///////////////////RUTA USUARIOS
+Route::prefix('usuarios')->group(function(){
+    Route::get('/', [UsuarioController::class, 'index'])->name('usuario.index');
+
+});
+
+
 

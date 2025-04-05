@@ -336,13 +336,13 @@ return [
             'submenu' => [
                 [
                     'text' => 'Vender Producto',
-                    'url' => '#',
+                    'url' => 'ventas/crear-venta',
                     'icon' => 'fas fa-fw fa-user',
                 ],
-               
+
                 [
                     'text' => 'Consultar Ventas',
-                    'url' => '#',
+                    'url' => 'detalles/detalle-ventas',
                     'icon' => 'fas fa-fw fa-user',
                 ],
             ],
@@ -350,29 +350,29 @@ return [
 
         [
             'text' => 'Categorias',
-            'url' => 'admin/settings',
+            'url' => 'categorias/',
             'icon' => 'fas fa-fw fa-user',
         ],
 
         [
             'text' => 'Productos',
-            'url' => 'admin/settings',
+            'url' => 'productos/',
             'icon' => 'fas fa-fw fa-user',
         ],
 
         [
             'text' => 'Clientes',
-            'url' => 'admin/settings',
+            'url' => 'clientes/',
             'icon' => 'fas fa-fw fa-lock',
         ],
 
         [
             'text' => 'Usuarios',
-            'url' => 'admin/settings',
+            'url' => 'usuarios/',
             'icon' => 'fas fa-fw fa-lock',
         ],
-       
-        
+
+
     ],
 
     /*
