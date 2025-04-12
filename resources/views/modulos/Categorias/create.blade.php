@@ -26,52 +26,43 @@
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">Lista de Categorias</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Usuario</th>
-                      <th>Nombre</th>
-                      <th>Fecha</th>
-                      <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+            <div class="col-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Agregar Nueva Categoria</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <!-- Horizontal Form -->
+                        <div class="card card-info">
 
-                    @forelse($categorias as $categoria)
-                        <tr>
-                            <td>{{$categoria->id}}</td>
-                            <td>{{$categoria->user_id}}</td>
-                            <td>{{$categoria->nombre}}</td>
-                            <td>{{$categoria->created_at}}</td>
-                            <td>
-                                <a href="">Editar</a>
-                                <a href="">Eliminar</a>
-                            </td>
-                        </tr>
-                    @empty
+                            <!-- form start -->
+                            <form class="form-horizontal" action="{{route('categoria.store')}}" method="POST">
+                                @csrf
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                    <label for="nombre" class="col-sm-2 col-form-label">Nombre de Categoria</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Nombre">
+                                    </div>
+                                    </div>
 
-                        <span>NO HAY CATEGORIAS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                                </div>
+                                <!-- /.card-body -->
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-info">Guardar</button>
+                                    <button type="button" class="btn btn-secondary float-right">Cancelar</button>
+                                </div>
+                                <!-- /.card-footer -->
+                            </form>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+               <!-- /.card -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.col -->
         </div>
         <!-- /.row -->
       </div>
