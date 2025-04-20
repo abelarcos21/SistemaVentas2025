@@ -29,7 +29,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Lista de Categorias</h3>
+                <h3 class="card-title">Mostrar Categorias</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -45,7 +45,7 @@
                     </thead>
                     <tbody>
 
-                    @forelse($categorias as $categoria)
+
                         <tr>
                             <td>{{$categoria->id}}</td>
                             <td>{{$categoria->user_id}}</td>
@@ -54,10 +54,7 @@
                             <td>
                                 <div class="d-flex gap-3">
 
-                                    <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-success btn-sm d-inline-flex align-items-center">
-                                        <i class="bi bi-eye fs-5"></i>
-                                        Ver
-                                    </a>
+
                                     <a class="btn btn-primary btn-sm d-inline-flex align-items-center" href="{{route('categoria.edit', $categoria)}}">
                                         <i class="bi bi-pencil-square fs-5"></i>
                                         Editar
@@ -72,13 +69,6 @@
                                 </div>
                             </td>
                         </tr>
-                    @empty
-
-                        <span>NO HAY CATEGORIAS</span>
-
-
-                    @endforelse
-
 
                     </tfoot>
                   </table>

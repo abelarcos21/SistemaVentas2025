@@ -37,6 +37,7 @@ Route::prefix('categorias')->group(function(){
     Route::get('create', [CategoriaController::class, 'create'])->name('categoria.create');
     Route::post('store', [CategoriaController::class, 'store'])->name('categoria.store');
     Route::get('{categoria}/edit', [CategoriaController::class, 'edit'])->name('categoria.edit');
+    Route::get('{categoria}/show', [CategoriaController::class, 'show'])->name('categoria.show');
     Route::put('{categoria}', [CategoriaController::class, 'update'])->name('categoria.update');
     Route::delete('{categoria}', [CategoriaController::class, 'destroy'])->name('categoria.destroy');
 
@@ -57,6 +58,12 @@ Route::prefix('clientes')->group(function(){
 ///////////////////RUTA USUARIOS
 Route::prefix('usuarios')->group(function(){
     Route::get('/', [UsuarioController::class, 'index'])->name('usuario.index');
+    Route::get('create', [UsuarioController::class, 'create'])->name('usuario.create');
+    Route::post('store', [UsuarioController::class, 'store'])->name('usuario.store');
+    Route::get('{user}/edit', [UsuarioController::class, 'edit'])->name('usuario.edit');
+    Route::get('{user}/show', [UsuarioController::class, 'show'])->name('usuario.show');
+    Route::put('{user}', [UsuarioController::class, 'update'])->name('usuario.update');
+    Route::delete('{user}', [UsuarioController::class, 'destroy'])->name('usuario.destroy');
 
 });
 
