@@ -2,6 +2,7 @@
 
 @section('title', 'Dashboard')
 
+
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -57,6 +58,11 @@
                             <td>{{$usuario->email}}</td>
                             <td>{{$usuario->name}}</td>
                             <td>{{$usuario->rol}}</td>
+                            <td>
+                                <a href="" class="btn btn-success">
+                                    <i class="fas fa-fw fa-user"></i>
+                                </a>
+                            </td>
                             <td>{{$usuario->activo}}</td>
                             <td>
                                 <div class="d-flex gap-3">
@@ -66,7 +72,7 @@
                                         Ver
                                     </a>
                                     <a class="btn btn-primary btn-sm d-inline-flex align-items-center" href="#">
-                                        <i class="bi bi-pencil-square fs-5"></i>
+                                        <i class="fas fa-fw fa-user-pen"></i>
                                         Editar
                                     </a>
                                     <form action="#" method="POST">
@@ -114,45 +120,22 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('vendor/fontawesome-free/css/all.min.css')}}">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="../../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="../../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
-    <link rel="stylesheet" href="../../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+
 
 
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
-
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>
-
-    <!-- jQuery -->
-    <script src="../../plugins/jquery/jquery.min.js"></script>
-    <!-- Bootstrap 4 -->
-    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- DataTables  & Plugins -->
-    <script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="../../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="../../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="../../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="../../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="../../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="../../plugins/jszip/jszip.min.js"></script>
-    <script src="../../plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="../../plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="../../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="../../plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="../../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="../../dist/js/adminlte.min.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="../../dist/js/demo.js"></script>
-    <!-- Page specific script -->
+    {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>--}}
     <script>
+        Swal.fire({
+            title: "Good job!",
+            text: "You clicked the button!",
+            icon: "success"
+        });
+    </script>
+
+<script>
     $(function () {
         $("#example1").DataTable({
         "responsive": true, "lengthChange": false, "autoWidth": false,
