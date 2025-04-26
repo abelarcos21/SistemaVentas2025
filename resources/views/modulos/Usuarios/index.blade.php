@@ -29,7 +29,7 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header">
+              <div class="card-header bg-secondary">
                 <h3 class="card-title">Lista de Usuarios</h3>
               </div>
               <!-- /.card-header -->
@@ -47,7 +47,7 @@
                       <th>Rol</th>
                       <th>Cambio Password</th>
                       <th>Activo</th>
-                      <th>Acciones</th>
+                      <th>Editar</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,31 +64,31 @@
                                 </a>
                             </td>
                             <td>
-                                @if($usuario->activo)
-                                    <span class="badge bg-success">Activo</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">Inactivo</span>
-                                @endif
+
+                                <div class="form-check form-switch">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        role="switch"
+                                        disabled
+                                        {{ $usuario->activo ? 'checked' : '' }}
+                                    >
+                                </div>
+
                             </td>
 
                             <td>
                                 <div class="d-flex gap-3">
 
-                                    <a href=" #" class="btn btn-success btn-sm d-inline-flex align-items-center">
+                                    <a href=" #" class="btn btn-info btn-sm d-inline-flex align-items-center">
                                         <i class="bi bi-eye fs-5"></i>
                                         Ver
                                     </a>
-                                    <a class="btn btn-primary btn-sm d-inline-flex align-items-center" href="#">
+                                    <a class="btn btn-warning btn-sm d-inline-flex align-items-center" href="{{route('usuario.edit', $usuario)}}">
                                         <i class="fas fa-fw fa-user-pen"></i>
                                         Editar
                                     </a>
-                                    <form action="#" method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <div class="btn-group">
-                                            <button onclick="return confirm('¿estas seguro de elimnar el Entrenador?')" class="btn btn-danger btn-sm d-inline-flex align-items-center" type="submit" ><i class="bi bi-trash fs-5"></i>Eliminar</button>
-                                        </div>
-                                    </form>
+
                                 </div>
                             </td>
                         </tr>

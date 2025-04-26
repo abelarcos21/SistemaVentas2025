@@ -62,6 +62,24 @@
                                     </div>
 
                                     <div class="form-group row">
+
+                                        <div class="form-check form-switch mb-3">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                role="switch"
+                                                id="activo"
+                                                name="activo"
+                                                value="1"
+                                                {{ old('activo') ? 'checked' : '' }}
+                                            >
+                                            <label class="form-check-label" for="activo">Activo</label>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="form-group row">
                                         <label for="rol" class="col-sm-2 col-form-label">Rol de Usuario</label>
                                         <div class="col-sm-10">
                                             <select name="rol" id="rol"  class="form-select" aria-label="Default select example">

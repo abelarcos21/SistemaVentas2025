@@ -28,11 +28,12 @@ class UsuarioController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required',
                 'password' => 'required',
+                'activo' => 'nullable|boolean',
                 'rol' => 'required',
 
             ]);
 
-            $validated['activo'] = true;
+            $validated['activo'] = $request->has('activo'); // El switch solo envía el valor si está activado
 
             User::create($validated);
 
@@ -58,30 +59,43 @@ class UsuarioController extends Controller
     }
 
     public function show(User $user){
-        return view('modulos.categorias.show', compact('user'));
+        return view('modulos.usuarios.show', compact('user'));
     }
 
     public function edit(User $user){
-        return view('modulos.categorias.edit', compact('user'));
+        return view('modulos.usuarios.edit', compact('user'));
 
     }
 
 
     public function update(Request $request, User $user){
 
+
         $validated = $request->validate([
 
-            'nombre' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required',
+            'activo' => 'nullable|boolean',
+            'rol' => 'required',
 
         ]);
 
+        $validated['activo'] = $request->has('activo');// El switch solo envía el valor si está activado
 
+        $user->fill($validated); // metodo fill es igual que el método save() pero sin crear un nuevo registro
 
-        $categoria->fill($validated); // metodo fill es igual que el método save() pero sin crear un nuevo registro
+        $user->save();
 
-        $categoria->save();
+        session()->flash('swal', [
 
-        return redirect()->route('categoria.index')->with('success', 'Categoria Actualizada Correctamente');
+            'icon' => 'success',
+            'title' => 'Usuario Actualizado correctamente',
+            'text' => 'Bien Hecho!',
+            'draggable' => 'true',
+
+        ]);
+
+        return redirect()->route('usuario.index');
 
     }
 
