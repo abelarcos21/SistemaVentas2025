@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Hash;
 
 class UsuarioController extends Controller
 {
@@ -14,23 +15,36 @@ class UsuarioController extends Controller
     }
 
     public function create(){
-        return view('modulos.categorias.create');
+        return view('modulos.usuarios.create');
 
     }
     public function store(Request $request){
 
-        $validated = $request->validate([
 
-            'nombre' => 'required|string|max:255',
+        try {
 
-        ]);
+            $validated = $request->validate([
 
-        $validated['user_id'] = Auth::user()->id;
+                'name' => 'required|string|max:255',
+                'email' => 'required',
+                'password' => 'required',
+                'rol' => 'required',
 
-        Categoria::create($validated);
+            ]);
+
+            $validated['activo'] = true;
+
+            User::create($validated);
+
+            //return to_route('usuario.index')->with('success', 'Usuario guardado con exito!');
+            return redirect()->route('usuario.index')->with('alert', ['type' => 'success','title' => 'Éxito!','text' => 'Usuario creado correctamente']);
 
 
-        return redirect()->route('categoria.index')->with('success', 'Categoria Creada Correctamente');
+        } catch (Exception $e) {
+            return to_route('usuario.create')->with('error', 'Error al guardar usuario!' . $e->getMessage());
+        }
+
+
 
     }
 

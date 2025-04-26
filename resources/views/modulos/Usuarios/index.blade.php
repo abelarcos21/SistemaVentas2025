@@ -34,7 +34,7 @@
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                <a href="#" class="btn btn-primary btn-sm d-inline-flex align-items-center">
+                <a href="{{route('usuario.create')}}" class="mb-3 btn btn-primary btn-sm d-inline-flex align-items-center">
                     <i class="fas fa-user-plus"></i>
                     Agregar Nuevo
                 </a>
@@ -63,7 +63,14 @@
                                     <i class="fas fa-fw fa-user"></i>
                                 </a>
                             </td>
-                            <td>{{$usuario->activo}}</td>
+                            <td>
+                                @if($usuario->activo)
+                                    <span class="badge bg-success">Activo</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Inactivo</span>
+                                @endif
+                            </td>
+
                             <td>
                                 <div class="d-flex gap-3">
 
@@ -121,6 +128,16 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('vendor/fontawesome-free/css/all.min.css')}}">
 
+    <style>
+        .dataTables_filter input {
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .dataTables_length select {
+            border-radius: 5px;
+        }
+    </style>
+
 
 
 @stop
@@ -128,29 +145,41 @@
 @section('js')
     {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>--}}
     <script>
-        Swal.fire({
-            title: "Good job!",
-            text: "You clicked the button!",
-            icon: "success"
-        });
+        //Swal.fire({
+            //title: "Good job!",
+            //text: "You clicked the button!",
+            //icon: "success"
+        //});
     </script>
 
-<script>
-    $(function () {
-        $("#example1").DataTable({
-            "responsive": true, "lengthChange": false, "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    <script>
+        $(document).ready(function() {
             $('#example1').DataTable({
-            "paging": true,
-            "lengthChange": false,
-            "searching": false,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
+                "responsive": true,
+                "autoWidth": false,
+
+                "language": {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+
+                // Opcional: Personalizaciones
+                "pageLength": 10,
+                "lengthMenu": [5, 10, 25, 50],
+                "order": [[2, 'desc']], // Ordenar por fecha descendente
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+
+
+                //"dom": 'Bfrtip',
+                //"buttons": [
+                   // 'copy', 'excel', 'pdf'
+                //],
+            });
         });
-    });
     </script>
 @stop
 
