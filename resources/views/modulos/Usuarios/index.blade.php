@@ -128,29 +128,18 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{asset('vendor/fontawesome-free/css/all.min.css')}}">
 
-    <style>
-        .dataTables_filter input {
-            border-radius: 5px;
-            padding: 5px;
-        }
-        .dataTables_length select {
-            border-radius: 5px;
-        }
-    </style>
-
 
 
 @stop
 
 @section('js')
     {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>--}}
-    <script>
-        //Swal.fire({
-            //title: "Good job!",
-            //text: "You clicked the button!",
-            //icon: "success"
-        //});
-    </script>
+
+    @if(session('swal'))
+        <script>
+            Swal.fire(@json(session('swal')));
+        </script>
+    @endif
 
     <script>
         $(document).ready(function() {

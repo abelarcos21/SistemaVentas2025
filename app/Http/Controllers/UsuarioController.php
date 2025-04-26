@@ -36,8 +36,17 @@ class UsuarioController extends Controller
 
             User::create($validated);
 
+            session()->flash('swal', [
+
+                'icon' => 'success',
+                'title' => 'Usuario creado correctamente',
+                'text' => 'Bien Hecho!',
+                'draggable' => 'true',
+
+            ]);
+
             //return to_route('usuario.index')->with('success', 'Usuario guardado con exito!');
-            return redirect()->route('usuario.index')->with('alert', ['type' => 'success','title' => 'Éxito!','text' => 'Usuario creado correctamente']);
+            return redirect()->route('usuario.index');
 
 
         } catch (Exception $e) {
