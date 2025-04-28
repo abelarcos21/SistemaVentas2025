@@ -58,6 +58,27 @@ class UsuarioController extends Controller
 
     }
 
+    //CAMBIAR ESTADO DE ACTIVO
+    public function cambiarEstado(Request $request, $id){
+        $usuario = User::findOrFail($id);
+        $usuario->activo = $request->activo;
+        $usuario->save();
+        return response()->json(['message' => 'Estado Actualizado Correctamente']);
+    }
+
+    //CAMBIAR, ACTUALIZAR CONTRASEÑA
+    public function cambiarPassword(Request $request){
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $usuario = User::findOrFail($request->user_id);
+        $usuario->password = bcrypt($request->password);
+        $usuario->save();
+        return response()->json(['success' => true]);
+    }
+
     public function show(User $user){
         return view('modulos.usuarios.show', compact('user'));
     }

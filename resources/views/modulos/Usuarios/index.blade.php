@@ -45,7 +45,7 @@
                       <th>Email</th>
                       <th>Nombre</th>
                       <th>Rol</th>
-                      <th>Cambio Password</th>
+                      <th>Cambio Contraseña</th>
                       <th>Activo</th>
                       <th>Editar</th>
                     </tr>
@@ -59,34 +59,24 @@
                             <td>{{$usuario->name}}</td>
                             <td>{{$usuario->rol}}</td>
                             <td>
-                                <a href="" class="btn btn-success">
-                                    <i class="fas fa-fw fa-user"></i>
+                                <a  class="btn btn-secondary btnCambioPassword" data-id="{{ $usuario->id }}">
+                                    <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
                                 </a>
                             </td>
                             <td>
-
-                                <div class="form-check form-switch">
-                                    <input
-                                        class="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        disabled
-                                        {{ $usuario->activo ? 'checked' : '' }}
-                                    >
+                                <div class="custom-control custom-switch toggle-estado">
+                                    <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $usuario->id }}" {{ $usuario->activo ? 'checked' : '' }} data-id="{{ $usuario->id }}">
+                                    <label class="custom-control-label" for="activoSwitch{{ $usuario->id }}"></label>
                                 </div>
-
                             </td>
 
-                            <td>
-                                <div class="d-flex gap-3">
-
-                                    <a href=" #" class="btn btn-info btn-sm d-inline-flex align-items-center">
-                                        <i class="bi bi-eye fs-5"></i>
-                                        Ver
+                            <td class="text-center">
+                                <div class="d-inline-flex justify-content-center">
+                                    <a href="{{ route('usuario.show', $usuario) }}" class="btn btn-info btn-sm mr-1">
+                                        <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a class="btn btn-warning btn-sm d-inline-flex align-items-center" href="{{route('usuario.edit', $usuario)}}">
-                                        <i class="fas fa-fw fa-user-pen"></i>
-                                        Editar
+                                    <a href="{{ route('usuario.edit', $usuario) }}" class="btn btn-warning btn-sm mr-1">
+                                        <i class="fas fa-user"></i> <i class="fas fa-pen"></i>
                                     </a>
 
                                 </div>
@@ -115,7 +105,32 @@
     </section>
     <!-- /.content -->
 
-
+    <!-- Modal de Cambio de Contraseña -->
+    <div class="modal fade" id="modalCambioPassword" tabindex="-1" role="dialog" aria-labelledby="modalCambioPasswordLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <form id="formCambioPassword">
+            <div class="modal-content">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title" id="modalCambioPasswordLabel">Cambiar Contraseña</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="userIdCambio" name="user_id">
+                <div class="form-group">
+                <label for="nuevoPassword">Nueva Contraseña</label>
+                <input placeholder="Escribe la nueva contraseña" type="password" class="form-control" id="nuevoPassword" name="password" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+            </div>
+            </div>
+        </form>
+        </div>
+    </div>
 
 @stop
 
@@ -140,6 +155,96 @@
             Swal.fire(@json(session('swal')));
         </script>
     @endif
+
+    <script>
+        $(document).ready(function(){
+
+            // Al hacer click en el icono de cambio de contraseña
+            $('.btnCambioPassword').click(function() {
+                var userId = $(this).data('id'); // Obtener el ID del usuario
+                $('#userIdCambio').val(userId);  // Ponerlo en el input hidden
+                $('#formCambioPassword')[0].reset(); // Limpiar el input de password
+                $('#modalCambioPassword').modal('show'); // Mostrar el modal
+            });
+
+            //Cuando se envia el formulario
+            $('#formCambioPassword').submit(function(e){
+                e.preventDefault();
+
+                let formData = $(this).serialize();
+
+                $.ajax({
+                    url: '{{ route("usuarios.cambiarPassword")}}', //nombreruta del backend
+                    method: 'POST',
+                    data: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    success: function(response){
+                        $('#modalCambioPassword').modal('hide');//ocultar, cerrar el modal
+                        $('#formCambioPassword')[0].reset();//limpiar el input
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Contraseña cambiada!',
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function(xhr){
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            text: xhr.responseText || 'Ocurrió un problema al cambiar la Contarseña.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+
+                });
+
+            });
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $('.custom-control-input').change(function(){
+
+                let activo = $(this).prop('checked') ? 1 : 0;
+                let usuarioId = $(this).data('id');
+
+                $.ajax({
+                    url: '/usuarios/cambiar-estado/' + usuarioId,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: usuarioId,
+                        activo: activo
+
+                    },
+                    success: function(response){
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function(xhr){
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+
+            });
+        });
+    </script>
 
     <script>
         $(document).ready(function() {

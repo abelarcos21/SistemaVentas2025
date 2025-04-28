@@ -55,6 +55,12 @@ Route::prefix('clientes')->group(function(){
 
 });
 
+//RUTA PARA CAMBIAR DE ESTADO ACTIVO
+Route::post('/usuarios/cambiar-estado/{id}', [UsuarioController::class, 'cambiarEstado']);
+
+//RUTA PARA CAMBIAR LA CONTRASEÑA
+Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
+
 ///////////////////RUTA USUARIOS
 Route::prefix('usuarios')->group(function(){
     Route::get('/', [UsuarioController::class, 'index'])->name('usuario.index');
@@ -64,6 +70,8 @@ Route::prefix('usuarios')->group(function(){
     Route::get('{user}/show', [UsuarioController::class, 'show'])->name('usuario.show');
     Route::put('{user}', [UsuarioController::class, 'update'])->name('usuario.update');
     Route::delete('{user}', [UsuarioController::class, 'destroy'])->name('usuario.destroy');
+
+
 
 });
 
