@@ -339,18 +339,18 @@ return [
 
         [
             'text' => 'Ventas',
-            'icon' => 'fas fa-fw fa-share',
+            'icon' => 'fas fa-shopping-cart',
             'submenu' => [
                 [
                     'text' => 'Vender Producto',
                     'url' => 'ventas/crear-venta',
-                    'icon' => 'fas fa-fw fa-user',
+                    'icon' => 'fas fa-cash-register',
                 ],
 
                 [
                     'text' => 'Consultar Ventas',
                     'url' => 'detalles/detalle-ventas',
-                    'icon' => 'fas fa-fw fa-user',
+                    'icon' => 'fas fa-search-dollar',
                 ],
             ],
         ],
@@ -358,25 +358,31 @@ return [
         [
             'text' => 'Categorias',
             'url' => 'categorias/',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-tags ',
         ],
 
         [
             'text' => 'Productos',
             'url' => 'productos/',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fas fa-boxes',
+        ],
+
+        [
+            'text' => 'Proveedores',
+            'url' => 'proveedores/',
+            'icon' => 'fas fa-truck ',
         ],
 
         [
             'text' => 'Clientes',
             'url' => 'clientes/',
-            'icon' => 'fas fa-fw fa-lock',
+            'icon' => 'fas fa-users ',
         ],
 
         [
             'text' => 'Usuarios',
             'url' => 'usuarios/',
-            'icon' => 'fas fa-fw fa-lock',
+            'icon' => 'fas fa-user-shield ',
         ],
 
 

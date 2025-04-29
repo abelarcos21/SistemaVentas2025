@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Listado de Categorias</h1>
+              <h1>Listado de Proveedores</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -28,43 +28,49 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header bg-secondary">
-                <h3 class="card-title">Categorias registradas</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-                <a href="{{route('categoria.create')}}" class="mb-3 btn btn-primary btn-sm d-inline-flex align-items-center">
+              <div class="card-header bg-secondary text-right">
+                <h3 class="card-title">Proveedores registrados</h3><a href="{{route('categoria.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                     <i class="fas fa-user-plus"></i>
                     Agregar Nuevo
                 </a>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body bg-secondary">
+
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
-                      <th>#</th>
-                      <th>Usuario</th>
+                      <th>Nro#</th>
                       <th>Nombre</th>
-                      <th>Fecha</th>
+                      <th>Telefono</th>
+                      <th>Email</th>
+                      <th>Codigo_Postal</th>
+                      <th>Sitio_Web</th>
+                      <th>Notas</th>
                       <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    @forelse($categorias as $categoria)
+                    @forelse($proveedores as $proveedor)
                         <tr>
-                            <td>{{$categoria->id}}</td>
-                            <td>{{$categoria->user_id}}</td>
-                            <td>{{$categoria->nombre}}</td>
-                            <td>{{$categoria->created_at}}</td>
+                            <td>{{$proveedor->id}}</td>
+                            <td>{{$proveedor->nombre}}</td>
+                            <td>{{$proveedor->telefono}}</td>
+                            <td>{{$proveedor->email}}</td>
+                            <td>{{$proveedor->codigo_postal}}</td>
+                            <td>{{$proveedor->sitio_web}}</td>
+                            <td>{{$proveedor->notas}}</td>
                             <td>
 
                                 <div class="d-flex">
-                                    <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-info btn-sm mr-1">
+                                    <a href="{{ route('categoria.show', $proveedor) }}" class="btn btn-info btn-sm mr-1">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">
+                                    <a href="{{ route('categoria.edit', $proveedor) }}" class="btn btn-warning btn-sm mr-1">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <form action="{{ route('categoria.destroy', $categoria) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                    <form action="{{ route('categoria.destroy', $proveedor) }}" method="POST" class="formulario-eliminar" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">
@@ -76,7 +82,7 @@
                         </tr>
                     @empty
 
-                        <span>NO HAY CATEGORIAS</span>
+                        <span>NO HAY PROVEEDORES</span>
 
 
                     @endforelse
@@ -112,6 +118,13 @@
 
 @section('js')
     {{--<script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>--}}
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
     <script>
         @if(session('success'))
@@ -162,6 +175,34 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copy',
+                        text: '<i class="fas fa-copy"></i> COPIAR',
+                        className: 'btn btn-primary btn-sm'
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i> EXCEL',
+                        className: 'btn btn-success btn-sm'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        className: 'btn btn-danger btn-sm'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> IMPRIMIR',
+                        className: 'btn btn-warning btn-sm'
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i class="fas fa-upload"></i> CSV',
+                        className: 'btn btn-info btn-sm'
+                    }
+                ],
                 "responsive": true,
                 "autoWidth": false,
 
@@ -180,10 +221,6 @@
                 "info": true,
                 "autoWidth": false,
 
-                //"dom": 'Bfrtip',
-                //"buttons": [
-                // 'copy', 'excel', 'pdf'
-                //],
             });
         });
     </script>

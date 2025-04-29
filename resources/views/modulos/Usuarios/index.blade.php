@@ -9,7 +9,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Usuarios</h1>
+              <h1>Lista de Usuarios</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -30,10 +30,10 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header bg-secondary">
-                <h3 class="card-title">Lista de Usuarios</h3>
+                <h3 class="card-title">Usuarios registrados</h3>
               </div>
               <!-- /.card-header -->
-              <div class="card-body">
+              <div class="card-body bg-secondary">
                 <a href="{{route('usuario.create')}}" class="mb-3 btn btn-primary btn-sm d-inline-flex align-items-center">
                     <i class="fas fa-user-plus"></i>
                     Agregar Nuevo

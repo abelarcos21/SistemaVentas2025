@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ProveedorController;
 
 
 Route::get('/', function () {
@@ -46,6 +47,19 @@ Route::prefix('categorias')->group(function(){
 ///////////////////RUTA PRODUCTOS
 Route::prefix('productos')->group(function(){
     Route::get('/', [ProductoController::class, 'index'])->name('producto.index');
+
+
+});
+
+///////////////////RUTA PROVEEDORES
+Route::prefix('proveedores')->group(function(){
+    Route::get('/', [ProveedorController::class, 'index'])->name('proveedor.index');
+    Route::get('create', [ProveedorController::class, 'create'])->name('proveedor.create');
+    Route::post('store', [ProveedorController::class, 'store'])->name('proveedor.store');
+    Route::get('{proveedor}/edit', [ProveedorController::class, 'edit'])->name('proveedor.edit');
+    Route::get('{proveedor}/show', [ProveedorController::class, 'show'])->name('proveedor.show');
+    Route::put('{proveedor}', [ProveedorController::class, 'update'])->name('proveedor.update');
+    Route::delete('{proveedor}', [ProveedorController::class, 'destroy'])->name('proveedor.destroy');
 
 });
 
