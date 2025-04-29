@@ -24,18 +24,27 @@ class CategoriaController extends Controller
     }
     public function store(Request $request){
 
-        $validated = $request->validate([
+        try{
 
-            'nombre' => 'required|string|max:255',
+            $validated = $request->validate([
 
-        ]);
+                'nombre' => 'required|string|max:255',
 
-        $validated['user_id'] = Auth::user()->id;
+            ]);
 
-        Categoria::create($validated);
+            $validated['user_id'] = Auth::user()->id;
+
+            Categoria::create($validated);
 
 
-        return redirect()->route('categoria.index')->with('success', 'Categoria Creada Correctamente');
+            return redirect()->route('categoria.index')->with('success', 'Categoria Creada Correctamente');
+
+        }catch(Exception $e){
+
+            return redirect()->route('categoria.index')->with('error', 'Error al Guardar!' . $e->getMessage());
+        }
+
+
 
     }
 
@@ -70,7 +79,7 @@ class CategoriaController extends Controller
     public function destroy(Categoria $categoria){
         $nombreCategoria = $categoria->nombre;
         $categoria->delete();
-        return redirect()->route('categoria.index')->with('success','La Categoria' .$nombreCategoria.'se Elimino Correctamente');
+        return redirect()->route('categoria.index')->with('success','La Categoria  '.$nombreCategoria.'  se Elimino');
 
     }
 

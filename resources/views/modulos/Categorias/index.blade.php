@@ -28,11 +28,15 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header">
+              <div class="card-header bg-secondary">
                 <h3 class="card-title">Lista de Categorias</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body">
+                <a href="{{route('categoria.create')}}" class="mb-3 btn btn-primary btn-sm d-inline-flex align-items-center">
+                    <i class="fas fa-user-plus"></i>
+                    Agregar Nuevo
+                </a>
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
@@ -52,22 +56,20 @@
                             <td>{{$categoria->nombre}}</td>
                             <td>{{$categoria->created_at}}</td>
                             <td>
-                                <div class="d-flex gap-3">
 
-                                    <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-success btn-sm d-inline-flex align-items-center">
-                                        <i class="bi bi-eye fs-5"></i>
-                                        Ver
+                                <div class="d-flex">
+                                    <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-info btn-sm mr-1">
+                                        <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a class="btn btn-primary btn-sm d-inline-flex align-items-center" href="{{route('categoria.edit', $categoria)}}">
-                                        <i class="bi bi-pencil-square fs-5"></i>
-                                        Editar
+                                    <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">
+                                        <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <form action="{{ route('categoria.destroy', $categoria)}}" method="POST">
+                                    <form action="{{ route('categoria.destroy', $categoria) }}" method="POST" class="formulario-eliminar" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <div class="btn-group">
-                                            <button onclick="return confirm('¿estas seguro de elimnar el Entrenador?')" class="btn btn-danger btn-sm d-inline-flex align-items-center" type="submit" ><i class="bi bi-trash fs-5"></i>Eliminar</button>
-                                        </div>
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -115,29 +117,75 @@
         @if(session('success'))
             Swal.fire({
                 title: "Exito!",
-                text: "Categoria Agregada Correctamente",
+                text: "{{ session('success')}}",
                 icon: "success",
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                title: "Exito!",
+                text: "{{ session('success')}}",
+                icon: "error",
                 confirmButtonText: 'Aceptar'
             });
         @endif
     </script>
 
     <script>
-    $(function () {
-        $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        $('#example2').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
+
+       $(document).ready(function() {
+            $(document).on('submit', '.formulario-eliminar', function(e) {
+                e.preventDefault(); // Detenemos el submit normal
+                var form = this;
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡Esta acción no se puede deshacer!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Aquí vuelve a enviar
+                    }
+                });
+            });
         });
-    });
+    </script>
+
+
+    <script>
+        $(document).ready(function() {
+            $('#example1').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+
+                "language": {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+
+                // Opcional: Personalizaciones
+                "pageLength": 10,
+                "lengthMenu": [5, 10, 25, 50],
+                "order": [[2, 'desc']], // Ordenar por fecha descendente
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+
+                //"dom": 'Bfrtip',
+                //"buttons": [
+                // 'copy', 'excel', 'pdf'
+                //],
+            });
+        });
     </script>
 @stop
 
