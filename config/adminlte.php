@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3',
+    'title' => 'SISVentas 1.0',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
+    'logo' => '<b>SISVentas 1.0</b> Web',
     'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -157,7 +157,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_dark_mode' => null,//modo oscuro elbody contenido
 
     /*
     |--------------------------------------------------------------------------
@@ -198,7 +198,7 @@ return [
     'classes_content' => '',
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'navbar-secondary navbar-light', //navbar color
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
 
@@ -318,20 +318,12 @@ return [
         ],
 
         // Sidebar items:
+
         [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
-        ],
-        [
-            'text' => 'Dashboard',
+            'text' => 'Modulos Del Sistema',
             'url' => '/home',
             'icon' => 'nav-icon fas fa-tachometer-alt',
-            'label' => 4,
+            'label' => 8,
             'label_color' => 'warning',
         ],
 
@@ -381,6 +373,16 @@ return [
 
         [
             'text' => 'Usuarios',
+            'url' => 'usuarios/',
+            'icon' => 'fas fa-user-shield ',
+        ],
+        [
+            'text' => 'Configuracion',
+            'url' => 'usuarios/',
+            'icon' => 'fas fa-user-shield ',
+        ],
+        [
+            'text' => 'Facturas',
             'url' => 'usuarios/',
             'icon' => 'fas fa-user-shield ',
         ],

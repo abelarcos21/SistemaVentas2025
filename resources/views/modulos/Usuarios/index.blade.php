@@ -29,15 +29,15 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header bg-secondary">
-                <h3 class="card-title">Usuarios registrados</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-                <a href="{{route('usuario.create')}}" class="mb-3 btn btn-primary btn-sm d-inline-flex align-items-center">
+              <div class="card-header bg-secondary text-right">
+                <h3 class="card-title">Usuarios registrados</h3><a href="{{route('usuario.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                     <i class="fas fa-user-plus"></i>
                     Agregar Nuevo
                 </a>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body bg-secondary">
+
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                     <tr>
@@ -140,15 +140,21 @@
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{asset('vendor/fontawesome-free/css/all.min.css')}}">
+
 
 
 
 @stop
 
 @section('js')
-    {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>--}}
+    {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
     @if(session('swal'))
         <script>
@@ -249,6 +255,34 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copy',
+                        text: '<i class="fas fa-copy"></i> COPIAR',
+                        className: 'btn btn-primary btn-sm'
+                    },
+                    {
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i> EXCEL',
+                        className: 'btn btn-success btn-sm'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        className: 'btn btn-danger btn-sm'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> IMPRIMIR',
+                        className: 'btn btn-warning btn-sm'
+                    },
+                    {
+                        extend: 'csv',
+                        text: '<i class="fas fa-upload"></i> CSV',
+                        className: 'btn btn-info btn-sm'
+                    }
+                ],
                 "responsive": true,
                 "autoWidth": false,
 
