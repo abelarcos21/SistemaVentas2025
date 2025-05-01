@@ -44,16 +44,32 @@
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
                                         <div class="col-sm-10">
-                                            <input type="text" name="name" class="form-control bg-secondary" id="nombre" placeholder="Nombre" value="{{$user->name}}">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-user"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="name" class="form-control bg-secondary" value="{{ $user->name }}">
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <label for="email" class="col-sm-2 col-form-label">Correo</label>
                                         <div class="col-sm-10">
-                                            <input type="text" name="email" class="form-control bg-secondary" id="nombre" placeholder="Correo Electronico" value="{{$user->email}}">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="email" name="email" class="form-control bg-secondary" value="{{ $user->email }}">
+                                            </div>
                                         </div>
                                     </div>
+
+
 
                                     <div class="form-group row">
 
@@ -69,16 +85,24 @@
                                     <div class="form-group row">
                                         <label for="rol" class="col-sm-2 col-form-label">Rol de Usuario</label>
                                         <div class="col-sm-10">
-                                            <select name="rol" id="rol"  class="form-control bg-secondary" aria-label="Default select example">
-                                                <option selected>Selecciona el Rol</option>
-                                                @if($user->rol == 'admin')
-                                                    <option value="admin" selected>Admin</option>
-                                                    <option value="cajero">Cajero</option>
-                                                @else
-                                                    <option value="admin">Admin</option>
-                                                    <option value="cajero" selected>Cajero</option>
-                                                @endif
-                                            </select>
+
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    </span>
+                                                </div>
+                                                <select name="rol" id="rol"  class="form-control bg-secondary" aria-label="Default select example">
+                                                    <option selected>Selecciona el Rol</option>
+                                                    @if($user->rol == 'admin')
+                                                        <option value="admin" selected>Admin</option>
+                                                        <option value="cajero">Cajero</option>
+                                                    @else
+                                                        <option value="admin">Admin</option>
+                                                        <option value="cajero" selected>Cajero</option>
+                                                    @endif
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
 
