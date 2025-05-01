@@ -27,9 +27,9 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <div class="card">
+            <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Proveedores registrados</h3><a href="{{route('categoria.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                <h3 class="card-title">Proveedores registrados</h3><a href="{{route('proveedor.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                     <i class="fas fa-user-plus"></i>
                     Agregar Nuevo
                 </a>
@@ -64,13 +64,13 @@
                             <td>
 
                                 <div class="d-flex">
-                                    <a href="{{ route('categoria.show', $proveedor) }}" class="btn btn-info btn-sm mr-1">
+                                    <a href="{{ route('proveedor.show', $proveedor) }}" class="btn btn-info btn-sm mr-1">
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
-                                    <a href="{{ route('categoria.edit', $proveedor) }}" class="btn btn-warning btn-sm mr-1">
+                                    <a href="{{ route('proveedor.edit', $proveedor) }}" class="btn btn-warning btn-sm mr-1">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <form action="{{ route('categoria.destroy', $proveedor) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                    <form action="{{ route('proveedor.destroy', $proveedor) }}" method="POST" class="formulario-eliminar" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm">
@@ -138,12 +138,37 @@
 
         @if(session('error'))
             Swal.fire({
-                title: "Exito!",
+                title: "Error!",
                 text: "{{ session('success')}}",
                 icon: "error",
                 confirmButtonText: 'Aceptar'
             });
         @endif
+    </script>
+
+    <script>
+
+        $(document).ready(function() {
+            $(document).on('submit', '.formulario-eliminar', function(e) {
+                e.preventDefault(); // Detenemos el submit normal
+                var form = this;
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "¡Esta acción no se puede deshacer!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); // Aquí vuelve a enviar
+                    }
+                });
+            });
+        });
     </script>
 
     <script>

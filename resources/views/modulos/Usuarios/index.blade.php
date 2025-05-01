@@ -9,7 +9,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Lista de Usuarios</h1>
+              <h1><i class="fas fa-user-shield"></i> Lista de Usuarios</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -28,7 +28,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <div class="card">
+            <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
                 <h3 class="card-title">Usuarios registrados</h3><a href="{{route('usuario.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                     <i class="fas fa-user-plus"></i>
@@ -76,7 +76,7 @@
                                         <i class="fas fa-eye"></i> Ver
                                     </a>
                                     <a href="{{ route('usuario.edit', $usuario) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-user"></i> <i class="fas fa-pen"></i>
+                                        <i class="fas fa-user"></i> <i class="fas fa-pen"></i> Editar
                                     </a>
 
                                 </div>

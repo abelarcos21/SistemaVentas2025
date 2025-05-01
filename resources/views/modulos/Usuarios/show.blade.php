@@ -28,7 +28,7 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <div class="card">
+            <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
                 <h3 class="card-title">Detalles Del Usuario</h3><a href="{{route('usuario.index')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                     <i class="fas fa-arrow-left"></i>
