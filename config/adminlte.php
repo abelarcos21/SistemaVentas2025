@@ -379,12 +379,12 @@ return [
         [
             'text' => 'Configuracion',
             'url' => 'usuarios/',
-            'icon' => 'fas fa-user-shield ',
+            'icon' => 'fas fa-cogs ',
         ],
         [
             'text' => 'Facturas',
             'url' => 'usuarios/',
-            'icon' => 'fas fa-user-shield ',
+            'icon' => 'fas fa-fw fa-receipt  ',
         ],
 
 
