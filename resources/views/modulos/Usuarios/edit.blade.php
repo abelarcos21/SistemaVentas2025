@@ -70,14 +70,11 @@
                                     </div>
 
 
-
                                     <div class="form-group row">
 
-                                        <label class="form-check-label" for="flexSwitchCheckDefault">¿Activo?</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="activo" {{ old('activo', $user->activo) ? 'checked' : '' }}>
-                                            </div>
+                                        <div class="custom-control custom-switch toggle-estado">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $user->id }}"  name="activo" {{ $user->activo ? 'checked' : '' }} data-id="{{ $user->id }}">
+                                            <label class="custom-control-label" for="activoSwitch{{ $user->id }}">¿Activo?</label>
                                         </div>
 
                                     </div>

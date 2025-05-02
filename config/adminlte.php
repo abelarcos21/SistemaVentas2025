@@ -384,7 +384,7 @@ return [
         [
             'text' => 'Facturas',
             'url' => 'usuarios/',
-            'icon' => 'fas fa-fw fa-receipt ',
+            'icon' => 'fas fa-fw fa-receipt',
         ],
 
 
