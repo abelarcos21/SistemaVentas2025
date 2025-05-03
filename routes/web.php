@@ -47,12 +47,12 @@ Route::prefix('categorias')->group(function(){
 ///////////////////RUTA PRODUCTOS
 Route::prefix('productos')->group(function(){
     Route::get('/', [ProductoController::class, 'index'])->name('producto.index');
-    Route::get('create', [CategoriaController::class, 'create'])->name('producto.create');
-    Route::post('store', [CategoriaController::class, 'store'])->name('producto.store');
-    Route::get('{producto}/edit', [CategoriaController::class, 'edit'])->name('producto.edit');
-    Route::get('{producto}/show', [CategoriaController::class, 'show'])->name('producto.show');
-    Route::put('{producto}', [CategoriaController::class, 'update'])->name('producto.update');
-    Route::delete('{producto}', [CategoriaController::class, 'destroy'])->name('producto.destroy');
+    Route::get('create', [ProductoController::class, 'create'])->name('producto.create');
+    Route::post('store', [ProductoController::class, 'store'])->name('producto.store');
+    Route::get('{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
+    Route::get('{producto}/show', [ProductoController::class, 'show'])->name('producto.show');
+    Route::put('{producto}', [ProductoController::class, 'update'])->name('producto.update');
+    Route::delete('{producto}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
 
 });

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use App\Models\Proveedor;
+use App\Models\Categoria;
+
 
 class ProductoController extends Controller
 {
@@ -26,8 +29,10 @@ class ProductoController extends Controller
     }
 
     public function create(){
+        $categorias = Categoria::all();
+        $proveedores = Proveedor::all();
 
-        return view('modulos.productos.create');
+        return view('modulos.productos.create', compact('categorias', 'proveedores'));
 
     }
 
@@ -47,15 +52,15 @@ class ProductoController extends Controller
 
             $validated = $request->validate([
 
+                'categoria_id' => 'required',
+                'proveedor_id' => 'required',
                 'nombre' => 'required|string|max:255',
-                'telefono' => 'required|string|max:255',
-                'email' => 'required|string|max:255',
-                'codigo_postal' => 'required|string|max:255',
-                'sitio_web' => 'required|string|max:255',
-                'notas' => 'required|string|max:255',
+                'descripcion' => 'required|string|max:255',
+
 
             ]);
 
+            $validated['user_id'] = Auth::user()->id;
 
             Producto::create($validated);
 
