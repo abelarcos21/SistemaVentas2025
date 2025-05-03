@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1> <i class="fas fa-boxes "></i> Administrar Productos y Stock</h1>
+              <h1> <i class="fas fa-boxes "></i> Eliminar Producto Del Stock</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -29,17 +29,7 @@
           <div class="col-12">
             <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Productos registrados</h3>
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-plus"></i>
-                    Agregar Nuevo
-                </a>
-
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Productos con Stock Minimo
-                </a>
-
+                <h3 class="card-title">Eliminar Producto</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
@@ -50,22 +40,19 @@
                       <th>Nro#</th>
                       <th>Categoria</th>
                       <th>Proveedor</th>
-                      <th>Codigo</th>
                       <th>Nombre</th>
-                      <th>Descripcion</th>
                       <th>Imagen</th>
+                      <th>Descripcion</th>
                       <th>Cantidad</th>
                       <th>Venta</th>
                       <th>Compra</th>
                       <th>Activo</th>
-                      <th>Comprar</th>
-                      <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
 
                         <tr>
-
+                            <td>{{$producto->id}}</td>
                             <td>{{$producto->nombre_categoria}}</td>
                             <td>{{$producto->nombre_proveedor}}</td>
                             <td>{{$producto->nombre}}</td>

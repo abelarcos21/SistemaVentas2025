@@ -52,7 +52,7 @@ class ProductoController extends Controller
         )
         ->join('categorias', 'productos.categoria_id', '=' , 'categorias.id')
         ->join('proveedores', 'productos.proveedor_id', '=' , 'proveedores.id')
-        ->where('productos.id', $producto)
+        ->where('productos.id', $producto->id)
         ->first();
         return view('modulos.productos.show', compact('producto'));
 
