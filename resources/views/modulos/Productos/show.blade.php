@@ -44,7 +44,7 @@
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
 
-                <table id="example1" class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped">
                     <thead>
                     <tr>
                       <th>Nro#</th>
@@ -64,61 +64,38 @@
                     </thead>
                     <tbody>
 
-                    @forelse($productos as $producto)
                         <tr>
-                            <td>{{$producto->id}}</td>
+
                             <td>{{$producto->nombre_categoria}}</td>
                             <td>{{$producto->nombre_proveedor}}</td>
-                            <td>{{$producto->codigo}}</td>
                             <td>{{$producto->nombre}}</td>
+                            <td></td>
                             <td>{{$producto->descripcion}}</td>
-                            <td>
-                                @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
-                                @else
-                                    <span>Sin imagen</span>
-                                @endif
-                            </td>
                             <td>{{$producto->cantidad}}</td>
-                            <td>{{$producto->precio_venta}}</td>
                             <td>{{$producto->precio_compra}}</td>
+                            <td>{{$producto->precio_venta}}</td>
+
                             <td>
                                 <div class="custom-control custom-switch toggle-estado">
                                     <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
                                     <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
                                 </div>
                             </td>
-                            <td>
-                                <a href="{{-- route('compras.create', $producto->id) --}}" class="btn btn-info">Comprar</a>
-                            </td>
-
-                            <td>
-
-                                <div class="d-flex">
-                                    <a href="{{ route('producto.show', $producto) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
-                                    <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-
-                                    <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
-
-                                </div>
-                            </td>
                         </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
-
-
-                    @endforelse
-
 
                     </tfoot>
-                  </table>
+                </table>
+
+                <!-- End Table with stripped rows -->
+                <hr>
+                <form action="{{ route('producto.destroy', $producto) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-danger">Eliminar producto</button>
+                    <a href="{{ route('producto.index') }}" class="btn btn-info">Cancelar</a>
+                </form>
+
+
               </div>
               <!-- /.card-body -->
             </div>
@@ -146,14 +123,7 @@
 @stop
 
 @section('js')
-    {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+
 
     <script>
         @if(session('success'))
@@ -177,7 +147,7 @@
 
     <script>
 
-        $(document).ready(function() {
+       $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
                 var form = this;
@@ -201,57 +171,6 @@
     </script>
 
 
-    <script>
-        $(document).ready(function() {
-            $('#example1').DataTable({
-                dom: 'Bfrtip',
-                buttons: [
-                    {
-                        extend: 'copy',
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        className: 'btn btn-primary btn-sm'
-                    },
-                    {
-                        extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
-                        className: 'btn btn-success btn-sm'
-                    },
-                    {
-                        extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        className: 'btn btn-danger btn-sm'
-                    },
-                    {
-                        extend: 'print',
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        className: 'btn btn-warning btn-sm'
-                    },
-                    {
-                        extend: 'csv',
-                        text: '<i class="fas fa-upload"></i> CSV',
-                        className: 'btn btn-info btn-sm'
-                    }
-                ],
-                "responsive": true,
-                "autoWidth": false,
 
-                "language": {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-
-                // Opcional: Personalizaciones
-                "pageLength": 10,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[2, 'desc']], // Ordenar por fecha descendente
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-
-            });
-        });
-    </script>
 @stop
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('codigo');
             $table->string('nombre', 50);
             $table->string('descripcion', 500);
-            $table->integer('cantidad');
+            $table->integer('cantidad')->default(0);
             $table->float('precio_compra')->default(0);
             $table->float('precio_venta')->default(0);
             $table->boolean('activo')->default(true);

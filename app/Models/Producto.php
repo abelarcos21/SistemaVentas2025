@@ -12,11 +12,18 @@ class Producto extends Model
 
 
     protected $fillable = [
+        'user_id',
+        'categoria_id',
+        'proveedor_id',
+        'codigo',
         'nombre',
-        'telefono',
-        'email',
-        'codigo_postal',
-        'sitio_web',
-        'notas',
+        'descripcion',
+        'precio_venta'
+
     ];
+
+    //RELACION PARA ACCEDER ALA IMAGEN
+    public function imagen(){
+        return $this->hasOne(Imagen::class);
+    }
 }

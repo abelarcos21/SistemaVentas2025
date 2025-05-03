@@ -355,8 +355,20 @@ return [
 
         [
             'text' => 'Productos',
-            'url' => 'productos/',
             'icon' => 'fas fa-boxes',
+            'submenu' => [
+                [
+                    'text' => 'Administrar Productos',
+                    'url' => 'productos/',
+                    'icon' => 'fas fa-cash-register',
+                ],
+
+                [
+                    'text' => 'Reportes de Productos',
+                    'url' => 'productos/',
+                    'icon' => 'fas fa-search-dollar',
+                ],
+            ],
         ],
 
         [

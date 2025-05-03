@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1> <i class="fas fa-boxes "></i> Productos | Crear un nuevo producto</h1>
+              <h1> <i class="fas fa-edit"></i> Productos | Modificar Datos Del Producto</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -37,8 +37,9 @@
                         <div class="card card-secondary">
 
                             <!-- form start -->
-                            <form class="form-horizontal" action="{{route('producto.store')}}" method="POST" enctype="multipart/form-data">
+                            <form class="form-horizontal" action="{{route('producto.update', $producto)}}" method="POST" enctype="multipart/form-data">
                                 @csrf
+                                @method('PUT')
                                 <div class="card-body bg-secondary">
 
                                     <div class="form-group row">
@@ -53,9 +54,10 @@
                                                 </div>
 
                                                 <select name="categoria_id" id="categoria_id" class=" form-control bg-secondary" aria-label="Default select example" required>
-                                                    <option value="">Selecciona una categoria</option>
-                                                    @foreach ($categorias as $item)
-                                                        <option value="{{ $item->id }}"> {{ $item->nombre }} </option>
+                                                    @foreach($categorias as $categoria)
+                                                        <option value="{{ $categoria->id }}" {{ old('categoria_id', $producto->categoria_id ?? '') == $categoria->id ? 'selected' : '' }}>
+                                                            {{ $categoria->nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -74,9 +76,10 @@
                                                 </div>
 
                                                 <select name="proveedor_id" id="proveedor_id" class="form-control bg-secondary" aria-label="Default select example" required>
-                                                    <option value="">Selecciona un proveedor</option>
-                                                    @foreach ($proveedores as $item)
-                                                    <option value="{{ $item->id }}"> {{ $item->nombre }} </option>
+                                                    @foreach($proveedores as $proveedor)
+                                                        <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->proveedor_id ?? '') == $proveedor->id ? 'selected' : '' }}>
+                                                            {{ $proveedor->nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -92,7 +95,7 @@
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="codigo" placeholder="ingrese el nombre" class="form-control bg-secondary">
+                                                <input type="text" name="codigo" class="form-control bg-secondary" value="{{ old('codigo', $producto->codigo ?? '') }}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -106,7 +109,7 @@
                                                         <i class="fas fa-phone"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" class="form-control bg-secondary">
+                                                <input type="text" name="nombre" class="form-control bg-secondary" value="{{ old('nombre', $producto->nombre ?? '') }}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -115,13 +118,30 @@
                                         <label for="nombre" class="col-sm-2 col-form-label">Descripcion</label>
                                         <div class="col-sm-10">
                                             <div class="form-group">
-                                                <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" required>{{ old('descripcion', $producto->descripcion ?? '') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="nombre" class="col-sm-2 col-form-label">Precio de Venta</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-phone"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="precio_venta" class="form-control bg-secondary" value="{{ old('precio_venta', $producto->precio_venta ?? '') }}" required>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Imagen</label>
+                                        @if(isset($producto) && $producto->imagen)
+                                            <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="100">
+                                        @endif
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -130,6 +150,7 @@
                                                     </span>
                                                 </div>
                                                 <input type="file" id="imagen" name="imagen" class="form-control bg-secondary">
+
                                             </div>
                                         </div>
                                     </div>
@@ -159,7 +180,6 @@
     <!-- /.content -->
 
 
-
 @stop
 
 @section('css')
@@ -177,4 +197,3 @@
 
 
 @stop
-
