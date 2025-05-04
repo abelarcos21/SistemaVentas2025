@@ -32,6 +32,10 @@ class ProductoController extends Controller
         ->get();
 
         return view('modulos.productos.index', compact('productos'));
+
+        /* $productos = Producto::with(['imagen', 'categoria', 'proveedor'])->get();
+
+        return view('producto.index', compact('productos')); */
     }
 
     public function create(){
@@ -55,6 +59,12 @@ class ProductoController extends Controller
         ->where('productos.id', $producto->id)
         ->first();
         return view('modulos.productos.show', compact('producto'));
+
+        /* $producto->load(['categoria', 'proveedor']);//cargar relacion eloquent
+
+        //y en la vista aceder asi con eloquent
+        {{ $producto->categoria->nombre }}
+        {{ $producto->proveedor->nombre }} */
 
     }
 

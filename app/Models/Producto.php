@@ -26,4 +26,14 @@ class Producto extends Model
     public function imagen(){
         return $this->hasOne(Imagen::class);
     }
+
+   /*  public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class);
+    } */
 }
