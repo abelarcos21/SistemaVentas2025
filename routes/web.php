@@ -102,5 +102,19 @@ Route::prefix('usuarios')->group(function(){
 
 });
 
+//////////////////RUTA Compras
+Route::prefix('usuarios')->group(function(){
+    Route::get('/', [ComprasController::class, 'index'])->name('compra.index');
+    Route::get('create', [ComprasController::class, 'create'])->name('compra.create');
+    Route::post('store', [ComprasController::class, 'store'])->name('compra.store');
+    Route::get('{compra}/edit', [ComprasController::class, 'edit'])->name('compra.edit');
+    Route::get('{compra}/show', [ComprasController::class, 'show'])->name('compra.show');
+    Route::put('{compra}', [ComprasController::class, 'update'])->name('compra.update');
+    Route::delete('{compra}', [ComprasController::class, 'destroy'])->name('compra.destroy');
+
+
+
+});
+
 
 

@@ -348,6 +348,12 @@ return [
         ],
 
         [
+            'text' => 'Compras',
+            'url' => 'compras/',
+            'icon' => 'fas fa-tags ',
+        ],
+
+        [
             'text' => 'Categorias',
             'url' => 'categorias/',
             'icon' => 'fas fa-tags ',
