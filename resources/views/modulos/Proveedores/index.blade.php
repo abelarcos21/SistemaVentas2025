@@ -139,36 +139,11 @@
         @if(session('error'))
             Swal.fire({
                 title: "Error!",
-                text: "{{ session('success')}}",
+                text: "{{ session('error')}}",
                 icon: "error",
                 confirmButtonText: 'Aceptar'
             });
         @endif
-    </script>
-
-    <script>
-
-        $(document).ready(function() {
-            $(document).on('submit', '.formulario-eliminar', function(e) {
-                e.preventDefault(); // Detenemos el submit normal
-                var form = this;
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡Esta acción no se puede deshacer!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // Aquí vuelve a enviar
-                    }
-                });
-            });
-        });
     </script>
 
     <script>

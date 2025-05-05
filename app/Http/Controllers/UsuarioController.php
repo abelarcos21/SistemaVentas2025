@@ -107,16 +107,7 @@ class UsuarioController extends Controller
 
         $user->save();
 
-        session()->flash('swal', [
-
-            'icon' => 'success',
-            'title' => 'Usuario Actualizado correctamente',
-            'text' => 'Bien Hecho!',
-            'draggable' => 'true',
-
-        ]);
-
-        return redirect()->route('usuario.index');
+        return redirect()->route('usuario.index')->with('success', 'Usuario Actualizado correctamente');
 
     }
 

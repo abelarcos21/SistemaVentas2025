@@ -206,11 +206,30 @@ class ProductoController extends Controller
 
     }
 
-    public function destroy(Proveedor $proveedor){
+    public function destroy(Producto $producto){
 
-        $nombreProveedor = $proveedor->nombre;
-        $proveedor->delete();
-        return redirect()->route('proveedor.index')->with('success','El Proveedor  '.$nombreProveedor.'  se Elimino');
+        DB::beginTransaction();
 
+        try{
+
+            //eliminar la imagen si existe
+            $imagen = $producto->imagen;
+
+            if($imagen){
+                Storage::disk('public')->delete($imagen->ruta);//elimina del disco
+                $imagen->delete();//eliminar de la BD
+            }
+
+            $nombreProducto = $producto->nombre;//nombre del producto
+            $producto->delete();//elimina el producto
+
+            DB::commit();
+            return redirect()->route('producto.index')->with('success','Producto  '.$nombreProducto.' Eliminado Correctamente');
+        }catch(Exception $e){
+            DB::rollBack();
+            Log::error('Error al eliminar producto: ' . $e->getMessage());
+            return redirect()->route('producto.index')->with('error', 'Ocurrió un error al eliminar el producto.');
+
+        }
     }
 }

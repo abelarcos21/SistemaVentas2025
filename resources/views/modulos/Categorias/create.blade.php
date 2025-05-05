@@ -50,8 +50,12 @@
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-info">Guardar</button>
-                                    <button type="button" class="btn btn-secondary float-right">Cancelar</button>
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button type="button" class="btn btn-secondary float-right">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </button>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>

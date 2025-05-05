@@ -156,11 +156,26 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
-    @if(session('swal'))
-        <script>
-            Swal.fire(@json(session('swal')));
-        </script>
-    @endif
+   {{--  manejo de errores --}}
+    <script>
+        @if(session('success'))
+            Swal.fire({
+                title: "Exito!",
+                text: "{{ session('success')}}",
+                icon: "success",
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                title: "Error!",
+                text: "{{ session('error')}}",
+                icon: "error",
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+    </script>
 
     <script>
         $(document).ready(function(){

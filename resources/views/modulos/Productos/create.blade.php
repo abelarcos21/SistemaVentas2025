@@ -138,8 +138,12 @@
                                 <!-- /.card-body -->
 
                                 <div class="card-footer bg-secondary">
-                                    <button type="submit" class="btn btn-info">Guardar</button>
-                                    <a href="{{ route('producto.index')}}" class="btn btn-secondary float-right">Cancelar</a>
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <a href="{{ route('producto.index')}}" class="btn btn-secondary float-right">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>

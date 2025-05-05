@@ -29,7 +29,7 @@
           <div class="col-12">
             <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Eliminar Producto</h3>
+                <h3 class="card-title">Cuando el producto sea eliminado, no podra ser recuperado!!!!</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
@@ -56,7 +56,13 @@
                             <td>{{$producto->nombre_categoria}}</td>
                             <td>{{$producto->nombre_proveedor}}</td>
                             <td>{{$producto->nombre}}</td>
-                            <td></td>
+                            <td>
+                                @if($producto->imagen)
+                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
+                                @else
+                                    <span>Sin imagen</span>
+                                @endif
+                            </td>
                             <td>{{$producto->descripcion}}</td>
                             <td>{{$producto->cantidad}}</td>
                             <td>{{$producto->precio_compra}}</td>
@@ -75,11 +81,15 @@
 
                 <!-- End Table with stripped rows -->
                 <hr>
-                <form action="{{ route('producto.destroy', $producto) }}" method="POST">
+                <form action="{{ route('producto.destroy', $producto) }}" method="POST" class="formulario-eliminar">
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-danger">Eliminar producto</button>
-                    <a href="{{ route('producto.index') }}" class="btn btn-info">Cancelar</a>
+                    <button class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash-alt"></i> Eliminar producto
+                    </button>
+                    <a href="{{ route('producto.index') }}" class="btn btn-info btn-sm">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
                 </form>
 
 
@@ -125,7 +135,7 @@
         @if(session('error'))
             Swal.fire({
                 title: "Error!",
-                text: "{{ session('success')}}",
+                text: "{{ session('error')}}",
                 icon: "error",
                 confirmButtonText: 'Aceptar'
             });
