@@ -37,7 +37,7 @@
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
 
-                <table id="example1" class="table table-bordered table-striped">
+                <table id="example1" class="table table-bordered table-striped bg-secondary">
                     <thead>
                     <tr>
                       <th>Nro#</th>
@@ -175,7 +175,7 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
-                dom: 'Bfrtip',
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom ip"><"clear">',
                 buttons: [
                     {
                         extend: 'copy',
@@ -203,8 +203,6 @@
                         className: 'btn btn-info btn-sm'
                     }
                 ],
-                "responsive": true,
-                "autoWidth": false,
 
                 "language": {
                     url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
@@ -219,7 +217,10 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
+                "responsive": false,
                 "autoWidth": false,
+                "scrollX": true,
+
 
             });
         });
