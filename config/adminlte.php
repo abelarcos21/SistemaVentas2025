@@ -365,7 +365,7 @@ return [
 
                 [
                     'text' => 'Reportes de Productos',
-                    'url' => 'productos/',
+                    'url' => 'reporte-productos/',
                     'icon' => 'fas fa-search-dollar',
                 ],
             ],

@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\Reporte_productosController;
 
 
 Route::get('/', function () {
@@ -83,6 +84,9 @@ Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambi
 
 //RUTA PARA CAMBIAR LA CONTRASEÑA
 Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
+
+//REPORTE DE PRODUCTOS
+Route::get('reporte-productos', [Reporte_productosController::class, 'index']);
 
 ///////////////////RUTA USUARIOS
 Route::prefix('usuarios')->group(function(){
