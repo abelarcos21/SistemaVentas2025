@@ -396,12 +396,12 @@ return [
         ],
         [
             'text' => 'Configuracion',
-            'url' => 'usuarios/',
+            'url' => 'configuracion/',
             'icon' => 'fas fa-cogs ',
         ],
         [
             'text' => 'Facturas',
-            'url' => 'usuarios/',
+            'url' => 'facturas/',
             'icon' => 'fas fa-fw fa-receipt',
         ],
 
