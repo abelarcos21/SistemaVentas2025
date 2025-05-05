@@ -84,7 +84,7 @@
                             <td>{{$producto->precio_compra}}</td>
                             <td>
                                 <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
+                                    <input  role="switch" type="checkbox"  class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
                                     <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
                                 </div>
                             </td>
@@ -175,6 +175,44 @@
         @endif
     </script>
 
+    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
+    <script>
+        $(document).ready(function () {
+            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
+            $(document).on('change', '.custom-control-input', function () {
+                let activo = $(this).prop('checked') ? 1 : 0;
+                let productoId = $(this).data('id');
+
+                $.ajax({
+                    url: '/productos/cambiar-estado/' + productoId,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: productoId,
+                        activo: activo
+                    },
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    },
+                    error: function (xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '¡Error!',
+                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
     <script>
 
         $(document).ready(function() {
@@ -204,7 +242,7 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
-                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom ip"><"clear">',
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
                     {
                         extend: 'copy',

@@ -75,8 +75,11 @@ Route::prefix('clientes')->group(function(){
 
 });
 
-//RUTA PARA CAMBIAR DE ESTADO ACTIVO
+//RUTA PARA CAMBIAR DE ESTADO ACTIVO AL USUARIO
 Route::post('/usuarios/cambiar-estado/{id}', [UsuarioController::class, 'cambiarEstado']);
+
+//RUTA PARA CAMBIAR DE ESTADO ACTIVO AL PRODUCTO
+Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambiarEstado']);
 
 //RUTA PARA CAMBIAR LA CONTRASEÑA
 Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');

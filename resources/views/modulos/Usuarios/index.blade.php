@@ -228,10 +228,11 @@
         });
     </script>
 
+    {{--  CAMBIAR ESTADO ACTIVO E INACTIVO DEL USUARIO --}}
     <script>
-        $(document).ready(function(){
-            $('.custom-control-input').change(function(){
-
+        $(document).ready(function () {
+            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
+            $(document).on('change', '.custom-control-input', function () {
                 let activo = $(this).prop('checked') ? 1 : 0;
                 let usuarioId = $(this).data('id');
 
@@ -242,9 +243,8 @@
                         _token: '{{ csrf_token() }}',
                         id: usuarioId,
                         activo: activo
-
                     },
-                    success: function(response){
+                    success: function (response) {
                         Swal.fire({
                             icon: 'success',
                             title: '¡Éxito!',
@@ -253,7 +253,7 @@
                             showConfirmButton: false
                         });
                     },
-                    error: function(xhr){
+                    error: function (xhr) {
                         Swal.fire({
                             icon: 'error',
                             title: '¡Error!',
@@ -262,7 +262,6 @@
                         });
                     }
                 });
-
             });
         });
     </script>
@@ -270,7 +269,7 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
-                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom ip"><"clear">',
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
                     {
                         extend: 'copy',

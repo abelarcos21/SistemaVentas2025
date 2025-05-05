@@ -175,7 +175,7 @@
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
-                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom ip"><"clear">',
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
                     {
                         extend: 'copy',

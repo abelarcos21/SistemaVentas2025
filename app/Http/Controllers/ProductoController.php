@@ -75,6 +75,14 @@ class ProductoController extends Controller
 
     }
 
+    //CAMBIAR ESTADO DE PRODUCTO DE ACTIVO
+    public function cambiarEstado(Request $request, $id){
+        $producto = Producto::findOrFail($id);
+        $producto->activo = $request->activo;
+        $producto->save();
+        return response()->json(['message' => 'Estado Actualizado Correctamente']);
+    }
+
     public function store(Request $request){
 
         $validated = $request->validate([
