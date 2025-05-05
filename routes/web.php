@@ -103,7 +103,7 @@ Route::prefix('usuarios')->group(function(){
 });
 
 //////////////////RUTA Compras
-Route::prefix('usuarios')->group(function(){
+Route::prefix('compras')->group(function(){
     Route::get('/', [ComprasController::class, 'index'])->name('compra.index');
     Route::get('create', [ComprasController::class, 'create'])->name('compra.create');
     Route::post('store', [ComprasController::class, 'store'])->name('compra.store');
