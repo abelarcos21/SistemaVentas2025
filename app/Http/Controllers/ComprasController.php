@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Compra;
 use App\Models\Producto;
+use Auth;
 
 class ComprasController extends Controller
 {
@@ -30,4 +31,36 @@ class ComprasController extends Controller
         $producto = Producto::findOrFail($id);
         return view('modulos.compras.create', compact('producto'));
     }
+
+    public function store(Request $request, Producto $producto){
+
+        $request->validate([
+            'id' => 'required|exists:productos,id',
+            'cantidad' => 'required|integer|min:1',
+            'precio_compra' => 'required|numeric|min:0'
+        ]);
+
+        try {
+
+            $producto = Producto::findOrFail($request->id);
+            
+            $compra = new Compra();
+            $compra->user_id = Auth::user()->id;
+            $compra->producto_id = $producto->id;
+            $compra->cantidad = $request->cantidad;
+            $compra->precio_compra = $request->precio_compra;
+            if ($compra->save()) {
+                //Actualizar stock del producto
+                $producto->cantidad += $request->cantidad;
+                $producto->precio_compra = $request->precio_compra;
+                $producto->save();
+            }
+            return to_route('producto.index')->with('success', 'Compra exitosa!');
+        } catch (\Throwable $th) {
+            return to_route('producto.index')->with('error', 'No pudo comprar!' . $th->getMessage());
+        }
+
+
+    }
+
 }

@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Hacer Nueva Compra</h1>
+              <h1> <i class="fas fa-shopping-cart"></i> Productos | Hacer Una Compra</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -27,35 +27,59 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-info">
-                    <div class="card-header">
+                <div class="card card-outline card-info">
+                    <div class="card-header bg-secondary">
                         <h3 class="card-title">Compra nueva de : {{ $producto->nombre }}</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div class="card-body bg-secondary">
                         <!-- Horizontal Form -->
-                        <div class="card card-info">
+                        <div class="card card-secondary">
 
                             <!-- form start -->
-                            <form class="form-horizontal" action="{{route('categoria.store')}}" method="POST">
+                            <form class="form-horizontal" action="{{route('compra.store')}}" method="POST">
                                 @csrf
-                                <div class="card-body">
+                                <input type="hidden" name="id" value="{{ $producto->id }}">
+                                <div class="card-body bg-secondary">
                                     <div class="form-group row">
-                                    <label for="nombre" class="col-sm-2 col-form-label">Nombre de Categoria</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Nombre">
+                                        <label for="nombre" class="col-sm-2 col-form-label">Cantidad Del Producto</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-boxes"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="number" name="cantidad" placeholder="ingrese cantidad" class="form-control bg-secondary">
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <div class="form-group row">
+                                        <label for="nombre" class="col-sm-2 col-form-label">Precio De Compra</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-dollar-sign"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="precio_compra" placeholderr="ingrese precio" class="form-control bg-secondary">
+                                            </div>
+                                        </div>
                                     </div>
+                                    
 
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer">
+
+                                <div class="card-footer bg-secondary">
                                     <button type="submit" class="btn btn-info">
-                                        <i class="fas fa-save"></i> Guardar
+                                        <i class="fas fa-shopping-cart"></i> Comprar
                                     </button>
-                                    <button type="button" class="btn btn-secondary float-right">
+                                    <a href="{{ route('producto.index')}}" class="btn btn-secondary float-right">
                                         <i class="fas fa-times"></i> Cancelar
-                                    </button>
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>
@@ -83,6 +107,7 @@
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
 
+
 @stop
 
 @section('js')
@@ -90,5 +115,8 @@
 
 
 
+
 @stop
+
+
 
