@@ -32,7 +32,7 @@ class ComprasController extends Controller
         return view('modulos.compras.create', compact('producto'));
     }
 
-    public function store(Request $request, Producto $producto){
+    public function store(Request $request){
 
         $request->validate([
             'id' => 'required|exists:productos,id',
@@ -41,26 +41,25 @@ class ComprasController extends Controller
         ]);
 
         try {
-
-            $producto = Producto::findOrFail($request->id);
             
+            $producto = Producto::findOrFail($request->id);
+
             $compra = new Compra();
-            $compra->user_id = Auth::user()->id;
+            $compra->user_id = Auth::id();
             $compra->producto_id = $producto->id;
             $compra->cantidad = $request->cantidad;
             $compra->precio_compra = $request->precio_compra;
+
             if ($compra->save()) {
-                //Actualizar stock del producto
+                // Actualizar stock del producto
                 $producto->cantidad += $request->cantidad;
                 $producto->precio_compra = $request->precio_compra;
                 $producto->save();
             }
+
             return to_route('producto.index')->with('success', 'Compra exitosa!');
         } catch (\Throwable $th) {
-            return to_route('producto.index')->with('error', 'No pudo comprar!' . $th->getMessage());
+            return to_route('producto.index')->with('error', 'No pudo comprar! ' . $th->getMessage());
         }
-
-
     }
-
 }
