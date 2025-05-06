@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1> <i class="fas fa-chart-line"></i> Reporte De Productos</h1>
+              <h1> <i class="fas fa-shopping-cart"></i> Compra De Productos.</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -29,14 +29,10 @@
           <div class="col-12">
             <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Productos registrados</h3>
-
-
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Productos con Stock Minimo
+                <h3 class="card-title">Compras registradas</h3><a href="{{--route('compra.create')--}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                    <i class="fas fa-user-plus"></i>
+                    Agregar Nuevo
                 </a>
-
               </div>
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
@@ -45,55 +41,48 @@
                     <thead>
                     <tr>
                       <th>Nro#</th>
-                      <th>Categoria</th>
-                      <th>Proveedor</th>
-                      <th>Codigo</th>
-                      <th>Nombre</th>
-                      <th>Descripcion</th>
-                      <th>Imagen</th>
+                      <th>Usuario</th>
+                      <th>Producto</th>
                       <th>Cantidad</th>
-                      <th>Venta</th>
-                      <th>Compra</th>
-                      <th>Activo</th>
-                      <th>Comprar</th>
-
+                      <th>Precio De Compra</th>
+                      <th>Total Compra</th>
+                      <th>Fecha</th>
+                      <th>Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
 
-                    @forelse($productos as $producto)
+                    @forelse($compras as $compra)
                         <tr>
-                            <td>{{$producto->id}}</td>
-                            <td>{{$producto->nombre_categoria}}</td>
-                            <td>{{$producto->nombre_proveedor}}</td>
-                            <td>{{$producto->codigo}}</td>
-                            <td>{{$producto->nombre}}</td>
-                            <td>{{$producto->descripcion}}</td>
+                            <td>{{$compra->id}}</td>
+                            <td>{{$compra->nombre_usuario}}</td>
+                            <td>{{$compra->nombre_producto}}</td>
+                            <td>{{$compra->cantidad}}</td>
+                            <td>${{$compra->precio_compra}}</td>
+                            <td>${{$compra->precio_compra * $compra->cantidad}}</td>
+                            <td>{{$compra->created_at}}</td>
                             <td>
-                                @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
-                                @else
-                                    <span>Sin imagen</span>
-                                @endif
-                            </td>
-                            <td>{{$producto->cantidad}}</td>
-                            <td>{{$producto->precio_venta}}</td>
-                            <td>{{$producto->precio_compra}}</td>
-                            <td>
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox"  class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
-                                    <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
+
+                                <div class="d-flex">
+                                    <a href="{{ route('compra.show', $compra) }}" class="btn btn-info btn-sm mr-1">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </a>
+                                    <a href="{{ route('compra.edit', $compra) }}" class="btn btn-warning btn-sm mr-1">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+                                    <form action="{{ route('compra.destroy', $compra) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
-                            <td>
-                                <a href="{{-- route('compras.create', $producto->id) --}}" class="btn btn-info">Comprar</a>
-                            </td>
-
-
                         </tr>
                     @empty
 
-                        <span>NO HAY PRODUCTOS</span>
+                        <span>NO HAY COMPRAS</span>
 
 
                     @endforelse
@@ -157,47 +146,9 @@
         @endif
     </script>
 
-    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
-    <script>
-        $(document).ready(function () {
-            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
-            $(document).on('change', '.custom-control-input', function () {
-                let activo = $(this).prop('checked') ? 1 : 0;
-                let productoId = $(this).data('id');
-
-                $.ajax({
-                    url: '/productos/cambiar-estado/' + productoId,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: productoId,
-                        activo: activo
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error!',
-                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-
     <script>
 
-        $(document).ready(function() {
+       $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
                 var form = this;

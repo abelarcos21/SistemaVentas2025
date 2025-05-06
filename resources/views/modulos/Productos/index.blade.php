@@ -89,7 +89,7 @@
                                 </div>
                             </td>
                             <td>
-                                <a href="{{-- route('compras.create', $producto->id) --}}" class="btn btn-info">Comprar</a>
+                                <a href="{{ route('compra.create', $producto) }}" class="btn btn-info">Comprar</a>
                             </td>
 
                             <td>

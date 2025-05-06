@@ -350,7 +350,7 @@ return [
         [
             'text' => 'Compras',
             'url' => 'compras/',
-            'icon' => 'fas fa-tags ',
+            'icon' => 'fas fa-shopping-cart ',
         ],
 
         [
@@ -372,7 +372,7 @@ return [
                 [
                     'text' => 'Reportes de Productos',
                     'url' => 'reporte-productos/',
-                    'icon' => 'fas fa-search-dollar',
+                    'icon' => 'fas fa-chart-line',
                 ],
             ],
         ],

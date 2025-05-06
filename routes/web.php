@@ -10,6 +10,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\Reporte_productosController;
+use App\Http\Controllers\ComprasController;
 
 
 Route::get('/', function () {
@@ -105,7 +106,7 @@ Route::prefix('usuarios')->group(function(){
 //////////////////RUTA Compras
 Route::prefix('compras')->group(function(){
     Route::get('/', [ComprasController::class, 'index'])->name('compra.index');
-    Route::get('create', [ComprasController::class, 'create'])->name('compra.create');
+    Route::get('create/{producto}', [ComprasController::class, 'create'])->name('compra.create');
     Route::post('store', [ComprasController::class, 'store'])->name('compra.store');
     Route::get('{compra}/edit', [ComprasController::class, 'edit'])->name('compra.edit');
     Route::get('{compra}/show', [ComprasController::class, 'show'])->name('compra.show');
