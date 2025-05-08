@@ -32,6 +32,23 @@ class ComprasController extends Controller
         return view('modulos.compras.create', compact('producto'));
     }
 
+    public function show(Compra $compra){
+       
+        $compra = Compra::select(
+            'compras.*',
+            'users.name as nombre_usuario',
+            'productos.nombre as nombre_producto'
+        )
+        ->join('users', 'compras.user_id', '=', 'users.id')
+        ->join('productos', 'compras.producto_id', '=' , 'productos.id')
+        ->where('compras.id', $compra->id)
+        ->first();
+        return view('modulos.compras.show', compact('compra'));
+
+    }
+
+
+
     public function store(Request $request){
 
         $request->validate([
@@ -41,7 +58,7 @@ class ComprasController extends Controller
         ]);
 
         try {
-            
+
             $producto = Producto::findOrFail($request->id);
 
             $compra = new Compra();
