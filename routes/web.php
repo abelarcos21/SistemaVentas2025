@@ -87,7 +87,10 @@ Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambi
 Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
 
 //REPORTE DE PRODUCTOS
-Route::get('reporte-productos', [Reporte_productosController::class, 'index']);
+Route::prefix('reporte-productos')->middleware('auth')->group(function(){
+    Route::get('/', [Reporte_productosController::class, 'index'])->name('reporte.index');
+    Route::get('/falta-stock', [Reporte_productosController::class, 'falta_stock'])->name('reporte.falta_stock');
+});
 
 ///////////////////RUTA USUARIOS
 Route::prefix('usuarios')->group(function(){

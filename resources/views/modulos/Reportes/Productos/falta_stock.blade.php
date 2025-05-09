@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1> <i class="fas fa-boxes "></i> Administrar Productos y Stock</h1>
+              <h1> <i class="fas fa-chart-line"></i> Reporte | Productos con Stock Minimo</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -29,15 +29,12 @@
           <div class="col-12">
             <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Productos registrados</h3>
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-plus"></i>
-                    Agregar Nuevo
-                </a>
+                <h3 class="card-title">Reportes de productos con cantida 1 y 0</h3>
 
-                <a href="{{route('reporte.falta_stock')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Productos con Stock Minimo
+
+                <a href="{{route('reporte.index')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver
                 </a>
 
               </div>
@@ -57,9 +54,7 @@
                       <th>Cantidad</th>
                       <th>Venta</th>
                       <th>Compra</th>
-                      <th>Activo</th>
-                      <th>Comprar</th>
-                      <th>Acciones</th>
+
                     </tr>
                     </thead>
                     <tbody>
@@ -74,7 +69,7 @@
                             <td>{{$producto->descripcion}}</td>
                             <td>
                                 @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="70" height="70" style="object-fit: cover;">
+                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
                                 @else
                                     <span>Sin imagen</span>
                                 @endif
@@ -82,32 +77,7 @@
                             <td>{{$producto->cantidad}}</td>
                             <td>{{$producto->precio_venta}}</td>
                             <td>{{$producto->precio_compra}}</td>
-                            <td>
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox"  class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
-                                    <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
-                                </div>
-                            </td>
-                            <td>
-                                <a href="{{ route('compra.create', $producto) }}" class="btn btn-info">Comprar</a>
-                            </td>
 
-                            <td>
-
-                                <div class="d-flex">
-                                    <a href="{{ route('producto.show', $producto) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
-                                    <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-
-                                    <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
-
-                                </div>
-                            </td>
                         </tr>
                     @empty
 

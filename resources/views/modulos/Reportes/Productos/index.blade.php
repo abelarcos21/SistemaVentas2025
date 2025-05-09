@@ -32,7 +32,7 @@
                 <h3 class="card-title">Productos registrados</h3>
 
 
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                <a href="{{route('reporte.falta_stock')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                     <i class="fas fa-boxes"></i>
                     Productos con Stock Minimo
                 </a>
@@ -54,8 +54,6 @@
                       <th>Cantidad</th>
                       <th>Venta</th>
                       <th>Compra</th>
-                      <th>Activo</th>
-                      <th>Comprar</th>
 
                     </tr>
                     </thead>
@@ -79,16 +77,6 @@
                             <td>{{$producto->cantidad}}</td>
                             <td>{{$producto->precio_venta}}</td>
                             <td>{{$producto->precio_compra}}</td>
-                            <td>
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox"  class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
-                                    <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
-                                </div>
-                            </td>
-                            <td>
-                                <a href="{{-- route('compras.create', $producto->id) --}}" class="btn btn-info">Comprar</a>
-                            </td>
-
 
                         </tr>
                     @empty
