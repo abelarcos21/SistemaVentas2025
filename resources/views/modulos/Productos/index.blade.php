@@ -74,7 +74,7 @@
                             <td>{{$producto->descripcion}}</td>
                             <td>
                                 @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
+                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="70" height="70" style="object-fit: cover;">
                                 @else
                                     <span>Sin imagen</span>
                                 @endif

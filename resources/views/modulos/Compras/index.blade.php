@@ -29,10 +29,7 @@
           <div class="col-12">
             <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Compras registradas</h3><a href="{{--route('compra.create')--}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-user-plus"></i>
-                    Agregar Nuevo
-                </a>
+                <h3 class="card-title">Compras registradas</h3>
               </div>
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
@@ -64,19 +61,13 @@
                             <td>
 
                                 <div class="d-flex">
-                                    <a href="{{ route('compra.show', $compra) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
-                                    <a href="{{ route('compra.edit', $compra) }}" class="btn btn-warning btn-sm mr-1">
+
+                                     <a href="{{ route('compra.edit', $compra) }}" class="btn btn-warning btn-sm mr-1">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <form action="{{ route('compra.destroy', $compra) }}" method="POST" class="formulario-eliminar" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                        </button>
-                                    </form>
+                                    <a href="{{ route('compra.show', $compra) }}" class="btn btn-danger btn-sm mr-1">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </a>
                                 </div>
                             </td>
                         </tr>

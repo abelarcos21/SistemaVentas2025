@@ -60,19 +60,15 @@
                             <td>
 
                                 <div class="d-flex">
-                                    <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
+
                                     <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
-                                    <form action="{{ route('categoria.destroy', $categoria) }}" method="POST" class="formulario-eliminar" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                        </button>
-                                    </form>
+
+                                     <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-danger btn-sm mr-1">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </a>
+
                                 </div>
                             </td>
                         </tr>

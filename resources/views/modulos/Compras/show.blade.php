@@ -44,7 +44,7 @@
                       <th>Precio de Compra</th>
                       <th>Total Compra</th>
                       <th>Fecha</th>
-                     
+
                     </tr>
                     </thead>
                     <tbody>
@@ -67,6 +67,7 @@
                 <form action="{{ route('compra.destroy', $compra) }}" method="POST" class="formulario-eliminar">
                     @csrf
                     @method('DELETE')
+                    <input type="hidden" name="producto_id" value="{{ $compra->producto_id }}">
                     <button class="btn btn-danger btn-sm">
                         <i class="fas fa-trash-alt"></i> Eliminar Compra
                     </button>
