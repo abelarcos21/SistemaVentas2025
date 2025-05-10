@@ -50,10 +50,9 @@
                       <th>Nro#</th>
                       <th>Codigo</th>
                       <th>Nombre</th>
-                      <th>Imagen</th>
                       <th>Cantidad</th>
                       <th>Precio Venta</th>
-                      <th>Acciones</th>
+                      <th>Accion</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -63,18 +62,10 @@
                             <td>{{$producto->id}}</td>
                             <td>{{$producto->codigo}}</td>
                             <td>{{$producto->nombre}}</td>
-
-                            <td>
-                                @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="70" height="70" style="object-fit: cover;">
-                                @else
-                                    <span>Sin imagen</span>
-                                @endif
-                            </td>
                             <td>{{$producto->cantidad}}</td>
                             <td>{{$producto->precio_venta}}</td>
                             <td>
-                                <a href="{{ route('compra.create', $producto) }}" class="btn btn-success">Agregar</a>
+                                <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">Agregar</a>
                             </td>
 
                         </tr>
@@ -88,6 +79,91 @@
 
                     </tfoot>
                   </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-outline card-info">
+              <div class="card-header bg-secondary text-right">
+                <h3 class="card-title">  Carrito de Compras</h3>
+
+                <a href="{{route('ventas.borrar.carrito')}}" class="mb-2 pt-2 pb-2 btn btn-warning btn-sm">
+                    <i class="fas fa-boxes"></i>
+                    Vaciar Carrito
+                </a>
+
+                <form action="{{ route('ventas.vender') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button class=" mb-2 pt-2 pb-2 btn btn btn-info btn-sm">
+                        <i class="fas fa-boxes"></i>
+                        Realizar Venta
+                    </button>
+                </form>
+
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body bg-secondary">
+                @if (session('items_carrito'))
+                    <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
+                        <thead>
+                        <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Precio Venta</th>
+                        <th>Accion</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @php
+                            $totalGeneral = 0;
+                        @endphp
+
+                        @foreach (session('items_carrito') as $item)
+                            @php
+                                $totalProducto = $item['cantidad'] * $item['precio'];
+                                $totalGeneral += $totalProducto;
+                            @endphp
+
+                            <tr>
+                            <td class="text-center">{{ $item['codigo'] }}</td>
+                            <td class="text-center">{{ $item['nombre'] }}</td>
+                            <td class="text-center">{{ $item['cantidad'] }}</td>
+                            <td class="text-center">${{ $item['precio'] }}</td>
+                            <td class="text-center">
+                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">Quitar</a>
+                            </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="text-center"><strong>Total General</strong></td>
+                                <td class="text-center"><strong>${{ number_format($totalGeneral, 2)}}</strong></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+                        </tfoot>
+                    </table>
+                @else
+                   <p>No tengo contenido</p>
+                @endif
               </div>
               <!-- /.card-body -->
             </div>
@@ -260,6 +336,34 @@
 
             });
         });
+    </script>
+
+    <script>
+      $(document).ready(function(){
+        $('#productos_carrito').DataTable({
+          "pageLength" : 2,
+          language: {
+            "decimal": "",
+            "emptyTable": "No hay información",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ Entradas",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": "Sin resultados encontrados",
+            "paginate": {
+                "first": "Primero",
+                "last": "Ultimo",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+          }
+        });
+      })
     </script>
 @stop
 

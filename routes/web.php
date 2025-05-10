@@ -11,6 +11,8 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\Reporte_productosController;
 use App\Http\Controllers\ComprasController;
+use App\Http\Controllers\CarritoController;
+
 
 
 Route::get('/', function () {
@@ -20,6 +22,12 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+//RUTAS CARRITO
+Route::get('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+Route::get('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->name('ventas.borrar.carrito');
+Route::get('/quitar-carrito/{producto}', [CarritoController::class, 'quitar_carrito'])->name('ventas.quitar.carrito');
+Route::post('/vender', [CarritoController::class, 'vender'])->name('ventas.vender');
 
 
 //////////////RUTA DETALLE VENTAS
