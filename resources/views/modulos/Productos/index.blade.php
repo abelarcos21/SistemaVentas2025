@@ -95,9 +95,7 @@
                             <td>
 
                                 <div class="d-flex">
-                                    <a href="{{ route('producto.show', $producto) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
+
                                     <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>

@@ -30,7 +30,7 @@ Route::prefix('detalles')->group(function(){
 
 ///////////////////RUTA CREAR VENTA
 Route::prefix('ventas')->group(function(){
-    Route::get('/crear-venta', [VentaController::class, 'index'])->name('venta.create');
+    Route::get('/crear-venta', [VentaController::class, 'index'])->name('venta.index');
 });
 
 
