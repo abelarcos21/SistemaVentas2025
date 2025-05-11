@@ -58,8 +58,8 @@
                       <th>Venta</th>
                       <th>Compra</th>
                       <th>Activo</th>
-                      <th>Comprar</th>
-                      <th>Acciones</th>
+                      <th class="no-exportar">Comprar</th>
+                      <th class="no-exportar">Acciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -89,7 +89,7 @@
                                 </div>
                             </td>
                             <td>
-                                <a href="{{ route('compra.create', $producto) }}" class="btn btn-info">Comprar</a>
+                                <a href="{{ route('compra.create', $producto) }}" class="btn btn-info btn-sm"><i class="fas fa-shopping-cart"></i> Comprar</a>
                             </td>
 
                             <td>
@@ -253,12 +253,67 @@
                         className: 'btn btn-success btn-sm'
                     },
                     {
-                        extend: 'pdf',
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)' // también en PDF
+                        },
+                        customize: function (doc) {
+
+                            // Establecer fuentes más pequeñas
+                            doc.defaultStyle.fontSize = 9;
+                            doc.styles.tableHeader.fontSize = 10;
+                            doc.styles.tableHeader.fillColor = '#f2f2f2'; // color del encabezado
+                            doc.styles.tableHeader.color = '#000'; // texto del encabezado
+
+
+                            // Añadir logo + título Encabezado del documento
+                            doc.content.splice(0, 0, {
+                                columns: [
+                                    {
+                                        //image: 'https://picsum.photos/300/300', // Pega aquí tu base64
+                                        //width: 100
+                                    },
+                                    {
+                                        text: 'Mi Reporte de Datos',
+                                        alignment: 'center',
+                                        fontSize: 14,
+                                        margin: [0, 20, 0, 0],
+                                        bold: true
+                                    }
+                                ]
+                            });
+
+                            // Pie de página
+                            doc.footer = function (currentPage, pageCount) {
+                                return {
+                                    text: 'Página ' + currentPage + ' de ' + pageCount,
+                                    alignment: 'center',
+                                    fontSize: 8,
+                                    margin: [0, 10, 0, 0]
+                                };
+                            };
+
+                            // Ajustar anchos automáticamente
+                            var tableBodyIndex = 1; // después del encabezado
+                            if (!doc.content[tableBodyIndex].table) tableBodyIndex = 2; // por si hay logo o más encabezado
+
+                            var table = doc.content[tableBodyIndex].table;
+                            var columnCount = table.body[0].length;
+                            table.widths = Array(columnCount).fill('*');
+
+                        },
+                        orientation: 'landscape', // opcional para mejor ancho
+                        pageSize: 'A4',
                         text: '<i class="fas fa-file-pdf"></i> PDF',
                         className: 'btn btn-danger btn-sm'
                     },
                     {
                         extend: 'print',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)' // excluye columnas con esa clase
+                        },
+                        orientation: 'landscape', // opcional para mejor ancho
+                        pageSize: 'A4',
                         text: '<i class="fas fa-print"></i> IMPRIMIR',
                         className: 'btn btn-warning btn-sm'
                     },
@@ -283,7 +338,7 @@
                 "ordering": true,
                 "info": true,
                 "responsive": false,
-                "autoWidth": false,
+                "autoWidth": true,
                 "scrollX": true,
 
 

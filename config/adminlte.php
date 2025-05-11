@@ -399,11 +399,6 @@ return [
             'url' => 'configuracion/',
             'icon' => 'fas fa-cogs ',
         ],
-        [
-            'text' => 'Facturas',
-            'url' => 'facturas/',
-            'icon' => 'fas fa-fw fa-receipt',
-        ],
 
 
     ],
