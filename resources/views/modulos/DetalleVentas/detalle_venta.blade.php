@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1> <i class="fas fa-search-dollar"></i> Consulta De Ventas Realizadas</h1>
+              <h1> <i class="fas fa-search-dollar"></i> Detalle De La Venta</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -29,65 +29,51 @@
           <div class="col-12">
             <div class="card card-outline card-info">
               <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Revisar Ventas existentes</h3>
+                <h3 class="card-title">Detalle de la Venta</h3>
+                <a href="{{route('detalleventas.index')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver
+                </a>
 
               </div>
               <!-- /.card-header -->
               <div class="card-body bg-secondary">
 
+                <p><strong>Usuario que hizo la venta: </strong> {{ $venta->nombre_usuario }} </p>
+                <p><strong>Total de venta</strong> ${{ $venta->total_venta }}</p>
+                <p><strong>Fecha</strong> {{ $venta->created_at }}</p>
+                <hr>
                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                     <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Total Vendido</th>
-                      <th>Fecha Venta</th>
-                      <th>Usuario</th>
-                      <th>Ver Detalle</th>
-                      <th>Imprimir Ticket</th>
-                      <th>Cancelar Venta</th>
-
-                    </tr>
+                        <tr>
+                            <th>Nro#</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>SubTotal</th>
+                        </tr>
                     </thead>
                     <tbody>
 
-                    @forelse($ventas as $venta)
-                        <tr>
-                            <td>{{$venta->id}}</td>
-                            <td>${{$venta->total_venta}}</td>
-                            <td>{{$venta->created_at}}</td>
-                            <td>{{$venta->nombre_usuario}}</td>
-                            <td class="text-center">
-                                <a href="{{ route('detalleventas.detalle_venta', $venta->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Detalle
-                                </a>
-                            </td>
-                            <td>
-                                <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success btn-sm">
-                                    <i class="fas fa-print"></i> Imprimir Ticket
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST"
-                                onsubmit="return confirm('¿¿Esta seguro de eliminar la venta??')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </button>
-                                </form>
-                            </td>
+                        @forelse($detalles as $detalle)
+                            <tr>
+                                <td>{{$detalle->id}}</td>
+                                <td>{{$detalle->nombre_producto}}</td>
+                                <td>{{$detalle->cantidad}}</td>
+                                <td>${{$detalle->precio_unitario}}</td>
+                                <td>${{$detalle->sub_total}}</td>
+                            </tr>
+                        @empty
 
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
+                            <span>NO HAY Ventas</span>
 
 
-                    @endforelse
+                        @endforelse
 
 
-                    </tfoot>
-                  </table>
+                    </tbody>
+                </table>
+
               </div>
               <!-- /.card-body -->
             </div>

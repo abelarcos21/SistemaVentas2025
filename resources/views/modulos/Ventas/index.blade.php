@@ -65,7 +65,9 @@
                             <td>{{$producto->cantidad}}</td>
                             <td>{{$producto->precio_venta}}</td>
                             <td>
-                                <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">Agregar</a>
+                                <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">
+                                    <i class="fas fa-shopping-cart"></i> Agregar al Carrito
+                                </a>
                             </td>
 
                         </tr>
@@ -145,7 +147,9 @@
                             <td class="text-center">{{ $item['cantidad'] }}</td>
                             <td class="text-center">${{ $item['precio'] }}</td>
                             <td class="text-center">
-                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">Quitar</a>
+                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Quitar
+                                </a>
                             </td>
                             </tr>
                         @endforeach

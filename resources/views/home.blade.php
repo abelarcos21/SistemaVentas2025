@@ -76,11 +76,37 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-fw fa-receipt"></i></span>
+                    <span class="info-box-icon bg-secondary"><i class="fas fa-shopping-cart "></i></span>
 
                     <div class="info-box-content">
-                      <span class="info-box-text">Total facturado</span>
+                      <span class="info-box-text">Total Ventas</span>
                       <span class="info-box-number">$4,500.00</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-secondary"><i class="fas fa-shopping-cart "></i></span>
+
+                    <div class="info-box-content">
+                      <span class="info-box-text">Cantidad Ventas</span>
+                      <span class="info-box-number">45</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                  </div>
+                  <!-- /.info-box -->
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-secondary"><i class="fas fa-boxes"></i></span>
+
+                    <div class="info-box-content">
+                      <span class="info-box-text">Productos con Stock Minimo</span>
+                      <span class="info-box-number">45</span>
                     </div>
                     <!-- /.info-box-content -->
                   </div>
