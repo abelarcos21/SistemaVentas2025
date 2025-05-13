@@ -116,6 +116,7 @@
 @stop
 
 @section('js')
+
     {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
@@ -125,6 +126,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -145,8 +147,8 @@
         @endif
     </script>
 
+    {{--ALERTA PARA ELIMINAR UN CLIENTE--}}
     <script>
-
        $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
@@ -171,7 +173,7 @@
     </script>
 
 
-
+ {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -225,7 +227,6 @@
             });
         });
     </script>
-
 
 @stop
 
