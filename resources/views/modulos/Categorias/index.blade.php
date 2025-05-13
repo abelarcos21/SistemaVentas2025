@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Categorias')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -24,77 +24,72 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Categorias registradas</h3><a href="{{route('categoria.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-user-plus"></i>
-                    Agregar Nuevo
-                </a>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Categorías registradas</h3>
+                            <a href="{{ route('categoria.create') }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-user-plus"></i> Agregar Nuevo
+                            </a>
+                        </div>
+                        <!-- /.card-header -->
 
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Usuario</th>
-                      <th>Nombre</th>
-                      <th>Fecha Registro</th>
-                      <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($categorias as $categoria)
-                        <tr>
-                            <td>{{$categoria->id}}</td>
-                            <td>{{$categoria->user_id}}</td>
-                            <td>{{$categoria->nombre}}</td>
-                            <td>{{$categoria->created_at}}</td>
-
-                            <td>
-
-                                <div class="d-flex">
-
-                                    <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-
-                                     <a href="{{ route('categoria.show', $categoria) }}" class="btn btn-danger btn-sm mr-1">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
-
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-
-                        <span>NO HAY CATEGORIAS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Usuario</th>
+                                            <th>Nombre</th>
+                                            <th>Fecha Registro</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($categorias as $categoria)
+                                            <tr>
+                                                <td>{{ $categoria->id }}</td>
+                                                <td>{{ $categoria->user_id }}</td>
+                                                <td>{{ $categoria->nombre }}</td>
+                                                <td>{{ $categoria->created_at }}</td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">
+                                                            <i class="fas fa-edit"></i> Editar
+                                                        </a>
+                                                        <form action="{{ route('categoria.destroy', $categoria) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash-alt"></i> Eliminar
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center">NO HAY CATEGORÍAS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
 
 @stop
 
@@ -118,6 +113,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -138,8 +134,8 @@
         @endif
     </script>
 
+    {{--ALERTA PARA ELIMINAR UNA CATEGORIA--}}
     <script>
-
        $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
@@ -163,7 +159,7 @@
         });
     </script>
 
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -209,9 +205,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
 
 
             });

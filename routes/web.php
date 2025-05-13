@@ -74,6 +74,18 @@ Route::prefix('productos')->group(function(){
 
 ///////////////////RUTA PROVEEDORES
 Route::prefix('proveedores')->group(function(){
+    Route::get('/', [ProveedorController::class, 'index'])->name('proveedor.index');
+    Route::get('create', [ProveedorController::class, 'create'])->name('proveedor.create');
+    Route::post('store', [ProveedorController::class, 'store'])->name('proveedor.store');
+    Route::get('{proveedor}/edit', [ProveedorController::class, 'edit'])->name('proveedor.edit');
+    Route::get('{proveedor}/show', [ProveedorController::class, 'show'])->name('proveedor.show');
+    Route::put('{proveedor}', [ProveedorController::class, 'update'])->name('proveedor.update');
+    Route::delete('{proveedor}', [ProveedorController::class, 'destroy'])->name('proveedor.destroy');
+
+});
+
+///////////////////RUTA CLIENTES
+Route::prefix('clientes')->group(function(){
     Route::get('/', [ClienteController::class, 'index'])->name('cliente.index');
     Route::get('create', [ClienteController::class, 'create'])->name('cliente.create');
     Route::post('store', [ClienteController::class, 'store'])->name('cliente.store');
@@ -81,18 +93,6 @@ Route::prefix('proveedores')->group(function(){
     Route::get('{cliente}/show', [ClienteController::class, 'show'])->name('cliente.show');
     Route::put('{cliente}', [ClienteController::class, 'update'])->name('cliente.update');
     Route::delete('{cliente}', [ClienteController::class, 'destroy'])->name('cliente.destroy');
-
-});
-
-///////////////////RUTA CLIENTES
-Route::prefix('clientes')->group(function(){
-    Route::get('/', [ClienteController::class, 'index'])->name('cliente.index');
-    Route::get('create', [ProveedorController::class, 'create'])->name('proveedor.create');
-    Route::post('store', [ProveedorController::class, 'store'])->name('proveedor.store');
-    Route::get('{proveedor}/edit', [ProveedorController::class, 'edit'])->name('proveedor.edit');
-    Route::get('{proveedor}/show', [ProveedorController::class, 'show'])->name('proveedor.show');
-    Route::put('{proveedor}', [ProveedorController::class, 'update'])->name('proveedor.update');
-    Route::delete('{proveedor}', [ProveedorController::class, 'destroy'])->name('proveedor.destroy');
 
 });
 

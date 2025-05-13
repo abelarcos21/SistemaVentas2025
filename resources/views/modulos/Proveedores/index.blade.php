@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Proveedores')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -24,86 +24,81 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Proveedores registrados</h3><a href="{{route('proveedor.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-user-plus"></i>
-                    Agregar Nuevo
-                </a>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Proveedores registrados</h3>
+                            <a href="{{ route('proveedor.create') }}" class="btn btn-info btn-sm">
+                                <i class="fas fa-user-plus"></i> Agregar Nuevo
+                            </a>
+                        </div>
+                        <!-- /.card-header -->
 
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Nombre</th>
-                      <th>Telefono</th>
-                      <th>Email</th>
-                      <th>Codigo_Postal</th>
-                      <th>Sitio_Web</th>
-                      <th>Notas</th>
-                      <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($proveedores as $proveedor)
-                        <tr>
-                            <td>{{$proveedor->id}}</td>
-                            <td>{{$proveedor->nombre}}</td>
-                            <td>{{$proveedor->telefono}}</td>
-                            <td>{{$proveedor->email}}</td>
-                            <td>{{$proveedor->codigo_postal}}</td>
-                            <td>{{$proveedor->sitio_web}}</td>
-                            <td>{{$proveedor->notas}}</td>
-                            <td>
-
-                                <div class="d-flex">
-                                    <a href="{{ route('proveedor.show', $proveedor) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
-                                    <a href="{{ route('proveedor.edit', $proveedor) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-                                    <form action="{{ route('proveedor.destroy', $proveedor) }}" method="POST" class="formulario-eliminar" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PROVEEDORES</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Nombre</th>
+                                            <th>Telefono</th>
+                                            <th>Email</th>
+                                            <th>Codigo Postal</th>
+                                            <th>Sitio Web</th>
+                                            <th>Notas</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($proveedores as $proveedor)
+                                            <tr>
+                                                <td>{{ $proveedor->id }}</td>
+                                                <td>{{ $proveedor->nombre }}</td>
+                                                <td>{{ $proveedor->telefono }}</td>
+                                                <td>{{ $proveedor->email }}</td>
+                                                <td>{{ $proveedor->codigo_postal }}</td>
+                                                <td>{{ $proveedor->sitio_web }}</td>
+                                                <td>{{ $proveedor->notas }}</td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="{{ route('proveedor.show', $proveedor) }}" class="btn btn-info btn-sm mr-1">
+                                                            <i class="fas fa-eye"></i> Ver
+                                                        </a>
+                                                        <a href="{{ route('proveedor.edit', $proveedor) }}" class="btn btn-warning btn-sm mr-1">
+                                                            <i class="fas fa-edit"></i> Editar
+                                                        </a>
+                                                        <form action="{{ route('proveedor.destroy', $proveedor) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash-alt"></i> Eliminar
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="text-center">NO HAY PROVEEDORES</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
 
 @stop
 
@@ -126,6 +121,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -146,8 +142,8 @@
         @endif
     </script>
 
+    {{--ALERTA PARA ELIMINAR UN Proveedor--}}
     <script>
-
        $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
@@ -171,7 +167,7 @@
         });
     </script>
 
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -217,9 +213,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
 
 
             });

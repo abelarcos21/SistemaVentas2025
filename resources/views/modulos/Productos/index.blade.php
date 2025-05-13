@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Productos')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -24,113 +24,111 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Productos registrados</h3>
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-plus"></i>
-                    Agregar Nuevo
-                </a>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Productos registrados</h3>
+                            <div>
+                                <a href="{{ route('producto.create') }}" class="btn btn-info btn-sm mr-2">
+                                    <i class="fas fa-plus"></i> Agregar Nuevo
+                                </a>
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-boxes"></i> Productos con Stock Mínimo
+                                </a>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
 
-                <a href="{{route('reporte.falta_stock')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Productos con Stock Minimo
-                </a>
-
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Categoria</th>
-                      <th>Proveedor</th>
-                      <th>Codigo</th>
-                      <th>Nombre</th>
-                      <th>Descripcion</th>
-                      <th>Imagen</th>
-                      <th>Cantidad</th>
-                      <th>Venta</th>
-                      <th>Compra</th>
-                      <th>Activo</th>
-                      <th class="no-exportar">Comprar</th>
-                      <th class="no-exportar">Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($productos as $producto)
-                        <tr>
-                            <td>{{$producto->id}}</td>
-                            <td>{{$producto->nombre_categoria}}</td>
-                            <td>{{$producto->nombre_proveedor}}</td>
-                            <td>{{$producto->codigo}}</td>
-                            <td>{{$producto->nombre}}</td>
-                            <td>{{$producto->descripcion}}</td>
-                            <td>
-                                @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="70" height="70" style="object-fit: cover;">
-                                @else
-                                    <span>Sin imagen</span>
-                                @endif
-                            </td>
-                            <td>{{$producto->cantidad}}</td>
-                            <td>${{$producto->precio_venta}}</td>
-                            <td>${{$producto->precio_compra}}</td>
-                            <td>
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox"  class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
-                                    <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
-                                </div>
-                            </td>
-                            <td>
-                                <a href="{{ route('compra.create', $producto) }}" class="btn btn-info btn-sm"><i class="fas fa-shopping-cart"></i> Comprar</a>
-                            </td>
-
-                            <td>
-
-                                <div class="d-flex">
-
-                                    <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-
-                                    <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
-
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Categoría</th>
+                                            <th>Proveedor</th>
+                                            <th>Código</th>
+                                            <th>Nombre</th>
+                                            <th>Descripción</th>
+                                            <th>Imagen</th>
+                                            <th>Cantidad</th>
+                                            <th>Venta</th>
+                                            <th>Compra</th>
+                                            <th>Activo</th>
+                                            <th class="no-exportar">Comprar</th>
+                                            <th class="no-exportar">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($productos as $producto)
+                                            <tr>
+                                                <td>{{ $producto->id }}</td>
+                                                <td>{{ $producto->nombre_categoria }}</td>
+                                                <td>{{ $producto->nombre_proveedor }}</td>
+                                                <td>{{ $producto->codigo }}</td>
+                                                <td>{{ $producto->nombre }}</td>
+                                                <td>{{ $producto->descripcion }}</td>
+                                                <td>
+                                                    @if($producto->imagen)
+                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="70" height="70" style="object-fit: cover;">
+                                                    @else
+                                                        <span>Sin imagen</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $producto->cantidad }}</td>
+                                                <td>${{ $producto->precio_venta }}</td>
+                                                <td>${{ $producto->precio_compra }}</td>
+                                                <td>
+                                                    <div class="custom-control custom-switch toggle-estado">
+                                                        <input type="checkbox" role="switch" class="custom-control-input"
+                                                            id="activoSwitch{{ $producto->id }}"
+                                                            {{ $producto->activo ? 'checked' : '' }}
+                                                            data-id="{{ $producto->id }}">
+                                                        <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-info btn-sm">
+                                                        <i class="fas fa-shopping-cart"></i> Comprar
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
+                                                            <i class="fas fa-edit"></i> Editar
+                                                        </a>
+                                                        <form action="{{ route('producto.destroy', $producto) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                                <i class="fas fa-trash-alt"></i> Eliminar
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="13" class="text-center">NO HAY PRODUCTOS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
 
 @stop
 
@@ -153,6 +151,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -211,8 +210,8 @@
         });
     </script>
 
+     {{--ALERTA PARA ELIMINAR UN PRODUCTO--}}
     <script>
-
         $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
@@ -236,7 +235,7 @@
         });
     </script>
 
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -337,9 +336,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
 
 
             });
