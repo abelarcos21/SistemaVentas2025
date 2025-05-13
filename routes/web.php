@@ -29,6 +29,8 @@ Route::get('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->nam
 Route::get('/quitar-carrito/{producto}', [CarritoController::class, 'quitar_carrito'])->name('ventas.quitar.carrito');
 Route::post('/vender', [CarritoController::class, 'vender'])->name('ventas.vender');
 
+Route::put('/venta/actualizar/{id}', [CarritoController::class, 'update'])->name('venta.actualizar');
+
 
 //////////////RUTA DETALLE VENTAS
 Route::prefix('detalles')->group(function(){

@@ -146,4 +146,35 @@ class CarritoController extends Controller
         }
     }
 
+    public function update(Request $request, $id){//$id_producto
+
+        $nuevaCantidad = max(1, (int)$request->input('cantidad'));
+
+        return DB::transaction(function () use ($id, $nuevaCantidad) {
+
+            $producto = Producto::findOrFail($id);
+
+            if ($producto->cantidad < $nuevaCantidad) {
+                return redirect()->route('venta.index')
+                    ->with('error', 'No hay stock suficiente para esa cantidad.');
+            }
+
+            $items_carrito = Session::get('items_carrito', []);
+
+            foreach ($items_carrito as $index => $item) {
+                if ($item['id'] == $id) {
+                    $items_carrito[$index]['cantidad'] = $nuevaCantidad;
+                    Session::put('items_carrito', $items_carrito);
+
+                    return redirect()->route('venta.index')
+                        ->with('success', 'Cantidad actualizada correctamente.');
+                }
+            }
+
+            // Si el producto no está en el carrito, opcionalmente podrías agregarlo
+            return redirect()->route('venta.index')
+                ->with('error', 'El producto no se encuentra en el carrito.');
+        });
+    }
+
 }

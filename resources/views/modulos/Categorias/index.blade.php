@@ -43,8 +43,7 @@
                       <th>#</th>
                       <th>Usuario</th>
                       <th>Nombre</th>
-                      <th>Fecha Creacion</th>
-                      <th>Fecha Actualizacion</th>
+                      <th>Fecha Registro</th>
                       <th>Acciones</th>
                     </tr>
                     </thead>
@@ -56,7 +55,7 @@
                             <td>{{$categoria->user_id}}</td>
                             <td>{{$categoria->nombre}}</td>
                             <td>{{$categoria->created_at}}</td>
-                            <td>{{$categoria->updated_at}}</td>
+
                             <td>
 
                                 <div class="d-flex">

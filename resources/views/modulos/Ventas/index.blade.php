@@ -98,88 +98,114 @@
     <section class="content">
       <div class="container-fluid">
         <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">  Carrito de Compras</h3>
+          <div class="col-8">
+                <div class="card card-outline card-info">
+                <div class="card-header bg-secondary text-right">
+                        <h3 class="card-title">  Carrito de Compras</h3>
 
-                <a href="{{route('ventas.borrar.carrito')}}" class="mb-2 pt-2 pb-2 btn btn-warning btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Vaciar Carrito
-                </a>
+                        <a href="{{route('ventas.borrar.carrito')}}" class="mb-2 pt-2 pb-2 btn btn-warning btn-sm">
+                            <i class="fas fa-boxes"></i>
+                            Vaciar Carrito
+                        </a>
 
-                <form action="{{ route('ventas.vender') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <button class=" mb-2 pt-2 pb-2 btn btn btn-info btn-sm">
-                        <i class="fas fa-boxes"></i>
-                        Realizar Venta
-                    </button>
-                </form>
+                        <form action="{{ route('ventas.vender') }}" method="POST" style="display:inline;">
+                            @csrf
+                            <button class=" mb-2 pt-2 pb-2 btn btn btn-info btn-sm">
+                                <i class="fas fa-boxes"></i>
+                                Realizar Venta
+                            </button>
+                        </form>
 
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-                @if (session('items_carrito'))
-                    <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
-                        <thead>
-                        <tr>
-                        <th>Codigo</th>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Precio Venta</th>
-                        <th>Accion</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @php
-                            $totalGeneral = 0;
-                        @endphp
-
-                        @foreach (session('items_carrito') as $item)
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body bg-secondary">
+                    @if (session('items_carrito'))
+                        <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
+                            <thead>
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Nombre</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Venta</th>
+                                    <th>Total</th>
+                                    <th>Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             @php
-                                $totalProducto = $item['cantidad'] * $item['precio'];
-                                $totalGeneral += $totalProducto;
+                                $totalGeneral = 0;
+
                             @endphp
 
-                            <tr>
-                            <td class="text-center">{{ $item['codigo'] }}</td>
-                            <td class="text-center">{{ $item['nombre'] }}</td>
-                            <td class="text-center">{{ $item['cantidad'] }}</td>
-                            <td class="text-center">${{ $item['precio'] }}</td>
-                            <td class="text-center">
-                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash-alt"></i> Quitar
-                                </a>
-                            </td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td class="text-center"><strong>Total General</strong></td>
-                                <td class="text-center"><strong>${{ number_format($totalGeneral, 2)}}</strong></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                            @foreach (session('items_carrito') as $item)
+                                @php
+                                    $totalProducto = $item['cantidad'] * $item['precio'];
+                                    $totalGeneral += $totalProducto;
 
-                            </tr>
-                        </tfoot>
-                    </table>
-                @else
-                   <p>No tengo contenido</p>
-                @endif
-              </div>
-              <!-- /.card-body -->
+                                @endphp
+
+                                <tr>
+                                <td class="text-center">{{ $item['codigo'] }}</td>
+                                <td class="text-center">{{ $item['nombre'] }}</td>
+                                <td class="text-center">
+                                    {{-- $item['cantidad'] --}}
+                                    <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
+                                        @csrf
+                                        @method('PUT')
+
+                                        <button type="button" class="btn btn-sm btn-outline-warning cantidad-menos">−</button>
+
+                                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="10"
+                                            class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
+
+                                        <button type="button" class="btn btn-sm btn-outline-warning cantidad-mas">+</button>
+                                    </form>
+                                </td>
+                                <td class="text-center">${{ $item['precio'] }}</td>
+                                <td class="text-center">${{ $totalProducto }}</td>
+                                <td class="text-center">
+                                    <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Quitar
+                                    </a>
+                                </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                    <p>No tengo contenido</p>
+                    @endif
+                </div>
+                <!-- /.card-body -->
+                </div>
+               <!-- /.card -->
+               </div>
+
+                <div class="col-4">
+                    @if (session('items_carrito'))
+                        <div class="card card-outline card-info">
+                            <div class="card-header bg-secondary text-center">
+                                <h3> <i class="fas fa-shopping-cart"></i> Total General </h3>
+
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body bg-secondary">
+                                <h3><strong>${{ number_format($totalGeneral, 2) }}</strong></h3>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    @endif
+                        <!-- /.card -->
+                </div>
+
+            <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
-        </div>
-        <!-- /.row -->
-      </div>
+            <!-- /.row -->
+       </div>
       <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
+
 
 
 
@@ -222,6 +248,34 @@
                 confirmButtonText: 'Aceptar'
             });
         @endif
+    </script>
+    {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente--}}
+    <script>
+        document.querySelectorAll('.cantidad-mas').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const form = this.closest('form');
+                const input = form.querySelector('.cantidad-input');
+                const max = parseInt(input.getAttribute('max'));
+
+                if (parseInt(input.value) < max) {
+                    input.value = parseInt(input.value) + 1;
+                    form.submit();
+                }
+            });
+        });
+
+        document.querySelectorAll('.cantidad-menos').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const form = this.closest('form');
+                const input = form.querySelector('.cantidad-input');
+                const min = parseInt(input.getAttribute('min'));
+
+                if (parseInt(input.value) > min) {
+                    input.value = parseInt(input.value) - 1;
+                    form.submit();
+                }
+            });
+        });
     </script>
 
     {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
@@ -325,7 +379,7 @@
                 },
 
                 // Opcional: Personalizaciones
-                "pageLength": 10,
+                "pageLength": 5,
                 "lengthMenu": [5, 10, 25, 50],
                 "order": [[2, 'desc']], // Ordenar por fecha descendente
                 "paging": true,
@@ -343,6 +397,32 @@
     </script>
 
     <script>
+        $(document).ready(function() {
+            $('#productos_carrito').DataTable({
+
+                "language": {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+
+                // Opcional: Personalizaciones
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "order": [[2, 'desc']], // Ordenar por fecha descendente
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "responsive": false,
+                "autoWidth": false,
+                "scrollX": true,
+
+
+            });
+        });
+    </script>
+
+    {{-- <script>
       $(document).ready(function(){
         $('#productos_carrito').DataTable({
           "pageLength" : 2,
@@ -368,6 +448,6 @@
           }
         });
       })
-    </script>
+    </script> --}}
 @stop
 
