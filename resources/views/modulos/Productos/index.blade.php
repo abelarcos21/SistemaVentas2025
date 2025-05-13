@@ -80,8 +80,8 @@
                                 @endif
                             </td>
                             <td>{{$producto->cantidad}}</td>
-                            <td>{{$producto->precio_venta}}</td>
-                            <td>{{$producto->precio_compra}}</td>
+                            <td>${{$producto->precio_venta}}</td>
+                            <td>${{$producto->precio_compra}}</td>
                             <td>
                                 <div class="custom-control custom-switch toggle-estado">
                                     <input  role="switch" type="checkbox"  class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
@@ -338,7 +338,7 @@
                 "ordering": true,
                 "info": true,
                 "responsive": false,
-                "autoWidth": true,
+                "autoWidth": false,
                 "scrollX": true,
 
 
