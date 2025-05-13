@@ -350,7 +350,7 @@ return [
         [
             'text' => 'Compras',
             'url' => 'compras/',
-            'icon' => 'fas fa-shopping-cart ',
+            'icon' => 'fas fa-store',
         ],
 
         [
