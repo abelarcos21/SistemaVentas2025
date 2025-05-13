@@ -99,13 +99,10 @@
                                                         <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
                                                             <i class="fas fa-edit"></i> Editar
                                                         </a>
-                                                        <form action="{{ route('producto.destroy', $producto) }}" method="POST" class="formulario-eliminar" style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                                <i class="fas fa-trash-alt"></i> Eliminar
-                                                            </button>
-                                                        </form>
+
+                                                        <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
+                                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                                        </a>
                                                     </div>
                                                 </td>
                                             </tr>
