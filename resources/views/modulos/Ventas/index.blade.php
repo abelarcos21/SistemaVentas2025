@@ -1,213 +1,198 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Nueva Venta')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1> <i class="fas fa-cart-plus"></i> Ventas | Crear Una Nueva Venta</h1>
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1> <i class="fas fa-cart-plus"></i> Ventas | Crear Una Nueva Venta</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">DataTables</li>
+                    </ol>
+                </div>
           </div>
         </div><!-- /.container-fluid -->
     </section>
 @stop
 
 @section('content')
+
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">  Crear ventas de los productos existentes</h3>
-                <a href="{{route('producto.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-plus"></i>
-                    Agregar Nuevo
-                </a>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Crear ventas de los productos existentes</h3>
 
-                <a href="{{route('reporte.falta_stock')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Productos con Stock Minimo
-                </a>
+                            <a href="{{ route('producto.create') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                                <i class="fas fa-plus"></i> Agregar Nuevo
+                            </a>
 
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+                            <a href="{{ route('reporte.falta_stock') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                                <i class="fas fa-boxes"></i> Productos con Stock Mínimo
+                            </a>
+                        </div>
+                        <!-- /.card-header -->
 
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Codigo</th>
-                      <th>Nombre</th>
-                      <th>Cantidad</th>
-                      <th>Precio Venta</th>
-                      <th>Accion</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($productos as $producto)
-                        <tr>
-                            <td>{{$producto->id}}</td>
-                            <td>{{$producto->codigo}}</td>
-                            <td>{{$producto->nombre}}</td>
-                            <td>{{$producto->cantidad}}</td>
-                            <td>${{$producto->precio_venta}}</td>
-                            <td>
-                                <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">
-                                    <i class="fas fa-shopping-cart"></i> Agregar al Carrito
-                                </a>
-                            </td>
-
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Código</th>
+                                            <th>Nombre</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Venta</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($productos as $producto)
+                                            <tr>
+                                                <td>{{ $producto->id }}</td>
+                                                <td>{{ $producto->codigo }}</td>
+                                                <td>{{ $producto->nombre }}</td>
+                                                <td>{{ $producto->cantidad }}</td>
+                                                <td>${{ $producto->precio_venta }}</td>
+                                                <td>
+                                                    <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-shopping-cart"></i> Agregar al Carrito
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">NO HAY PRODUCTOS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 
-    <!-- Main content -->
+
+    <!-- Main content  -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-8">
-                <div class="card card-outline card-info">
-                <div class="card-header bg-secondary text-right">
-                        <h3 class="card-title">  Carrito de Compras</h3>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Carrito de Compras -->
+                <div class="col-8">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Carrito de Compras</h3>
 
-                        <a href="{{route('ventas.borrar.carrito')}}" class="mb-2 pt-2 pb-2 btn btn-warning btn-sm">
-                            <i class="fas fa-boxes"></i>
-                            Vaciar Carrito
-                        </a>
+                            <a href="{{ route('ventas.borrar.carrito') }}" class="mb-2 pt-2 pb-2 btn btn-warning btn-sm">
+                                <i class="fas fa-boxes"></i> Vaciar Carrito
+                            </a>
 
-                        <form action="{{ route('ventas.vender') }}" method="POST" style="display:inline;">
-                            @csrf
-                            <button class=" mb-2 pt-2 pb-2 btn btn btn-info btn-sm">
-                                <i class="fas fa-boxes"></i>
-                                Realizar Venta
-                            </button>
-                        </form>
+                            <form action="{{ route('ventas.vender') }}" method="POST" style="display:inline;">
+                                @csrf
+                                <button class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                                    <i class="fas fa-boxes"></i> Realizar Venta
+                                </button>
+                            </form>
+                        </div>
+                        <!-- /.card-header -->
 
+                        <div class="card-body bg-secondary">
+                            @if (session('items_carrito'))
+                                <div class="table-responsive">
+                                    <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
+                                        <thead>
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Nombre</th>
+                                                <th>Cantidad</th>
+                                                <th>Precio Venta</th>
+                                                <th>Total</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @php $totalGeneral = 0; @endphp
+
+                                            @foreach (session('items_carrito') as $item)
+                                                @php
+                                                    $totalProducto = $item['cantidad'] * $item['precio'];
+                                                    $totalGeneral += $totalProducto;
+                                                @endphp
+                                                <tr>
+                                                    <td class="text-center">{{ $item['codigo'] }}</td>
+                                                    <td class="text-center">{{ $item['nombre'] }}</td>
+                                                    <td class="text-center">
+                                                        <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="button" class="btn btn-sm btn-outline-warning cantidad-menos">−</button>
+                                                            <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="10" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
+                                                            <button type="button" class="btn btn-sm btn-outline-warning cantidad-mas">+</button>
+                                                        </form>
+                                                    </td>
+                                                    <td class="text-center">${{ $item['precio'] }}</td>
+                                                    <td class="text-center">${{ $totalProducto }}</td>
+                                                    <td class="text-center">
+                                                        <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-trash-alt"></i> Quitar
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <p>No tengo contenido</p>
+                            @endif
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
                 </div>
-                <!-- /.card-header -->
-                <div class="card-body bg-secondary">
-                    @if (session('items_carrito'))
-                        <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
-                            <thead>
-                                <tr>
-                                    <th>Codigo</th>
-                                    <th>Nombre</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio Venta</th>
-                                    <th>Total</th>
-                                    <th>Accion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            @php
-                                $totalGeneral = 0;
 
-                            @endphp
-
-                            @foreach (session('items_carrito') as $item)
-                                @php
-                                    $totalProducto = $item['cantidad'] * $item['precio'];
-                                    $totalGeneral += $totalProducto;
-
-                                @endphp
-
-                                <tr>
-                                <td class="text-center">{{ $item['codigo'] }}</td>
-                                <td class="text-center">{{ $item['nombre'] }}</td>
-                                <td class="text-center">
-                                    {{-- $item['cantidad'] --}}
-                                    <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
-                                        @csrf
-                                        @method('PUT')
-
-                                        <button type="button" class="btn btn-sm btn-outline-warning cantidad-menos">−</button>
-
-                                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="10"
-                                            class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
-
-                                        <button type="button" class="btn btn-sm btn-outline-warning cantidad-mas">+</button>
-                                    </form>
-                                </td>
-                                <td class="text-center">${{ $item['precio'] }}</td>
-                                <td class="text-center">${{ $totalProducto }}</td>
-                                <td class="text-center">
-                                    <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Quitar
-                                    </a>
-                                </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                    <p>No tengo contenido</p>
-                    @endif
-                </div>
-                <!-- /.card-body -->
-                </div>
-               <!-- /.card -->
-               </div>
-
+                <!-- Total General -->
                 <div class="col-4">
                     @if (session('items_carrito'))
                         <div class="card card-outline card-info">
                             <div class="card-header bg-secondary text-center">
-                                <h3> <i class="fas fa-shopping-cart"></i> Total General </h3>
-
+                                <h3><i class="fas fa-shopping-cart"></i> Total General</h3>
                             </div>
                             <!-- /.card-header -->
+
                             <div class="card-body bg-secondary">
                                 <h3><strong>${{ number_format($totalGeneral, 2) }}</strong></h3>
                             </div>
                             <!-- /.card-body -->
                         </div>
-                    @endif
                         <!-- /.card -->
+                    @endif
                 </div>
-
-            <!-- /.col -->
+                <!-- /.col -->
             </div>
             <!-- /.row -->
-       </div>
-      <!-- /.container-fluid -->
+        </div>
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
-
 
 @stop
 
@@ -230,6 +215,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -249,6 +235,7 @@
             });
         @endif
     </script>
+
     {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente--}}
     <script>
         document.querySelectorAll('.cantidad-mas').forEach(btn => {
@@ -278,70 +265,7 @@
         });
     </script>
 
-    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
-    <script>
-        $(document).ready(function () {
-            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
-            $(document).on('change', '.custom-control-input', function () {
-                let activo = $(this).prop('checked') ? 1 : 0;
-                let productoId = $(this).data('id');
-
-                $.ajax({
-                    url: '/productos/cambiar-estado/' + productoId,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: productoId,
-                        activo: activo
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error!',
-                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-
-    <script>
-
-        $(document).ready(function() {
-            $(document).on('submit', '.formulario-eliminar', function(e) {
-                e.preventDefault(); // Detenemos el submit normal
-                var form = this;
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡Esta acción no se puede deshacer!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // Aquí vuelve a enviar
-                    }
-                });
-            });
-        });
-    </script>
-
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -387,15 +311,16 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
 
 
             });
         });
     </script>
 
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DEl CARRITO--}}
     <script>
         $(document).ready(function() {
             $('#productos_carrito').DataTable({
@@ -413,16 +338,16 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
 
 
             });
         });
     </script>
 
-    {{-- <script>
+    {{--español datatables traducir <script>
       $(document).ready(function(){
         $('#productos_carrito').DataTable({
           "pageLength" : 2,

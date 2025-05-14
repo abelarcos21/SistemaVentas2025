@@ -1,22 +1,22 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Reporte Productos')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1> <i class="fas fa-chart-line"></i> Reporte De Productos</h1>
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1> <i class="fas fa-chart-line"></i> Reporte De Productos</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">DataTables</li>
+                    </ol>
+                </div>
             </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
-          </div>
         </div><!-- /.container-fluid -->
     </section>
 @stop
@@ -44,11 +44,11 @@
                                     <thead>
                                         <tr>
                                             <th>Nro#</th>
-                                            <th>Categoria</th>
+                                            <th>Categoría</th>
                                             <th>Proveedor</th>
-                                            <th>Codigo</th>
+                                            <th>Código</th>
                                             <th>Nombre</th>
-                                            <th>Descripcion</th>
+                                            <th>Descripción</th>
                                             <th>Imagen</th>
                                             <th>Cantidad</th>
                                             <th>Venta</th>
@@ -95,9 +95,6 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
-
 
 @stop
 

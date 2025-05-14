@@ -1,22 +1,22 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Producto Stock Minimo')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1> <i class="fas fa-chart-line"></i> Reporte | Productos con Stock Minimo</h1>
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1> <i class="fas fa-chart-line"></i> Reporte | Productos con Stock Minimo</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Productos Stock Minimo</li>
+                    </ol>
+                </div>
             </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
-          </div>
         </div><!-- /.container-fluid -->
     </section>
 @stop
@@ -24,85 +24,79 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Reportes de productos con cantidad 1 y 0</h3>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Reportes de productos con cantidad 1 y 0</h3>
+
+                            <a href="{{ route('reporte.index') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                                <i class="fas fa-arrow-left"></i>
+                                Volver
+                            </a>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Categoria</th>
+                                            <th>Proveedor</th>
+                                            <th>Codigo</th>
+                                            <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Imagen</th>
+                                            <th>Cantidad</th>
+                                            <th>Venta</th>
+                                            <th>Compra</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($productos as $producto)
+                                            <tr>
+                                                <td>{{$producto->id}}</td>
+                                                <td>{{$producto->nombre_categoria}}</td>
+                                                <td>{{$producto->nombre_proveedor}}</td>
+                                                <td>{{$producto->codigo}}</td>
+                                                <td>{{$producto->nombre}}</td>
+                                                <td>{{$producto->descripcion}}</td>
+                                                <td>
+                                                    @if($producto->imagen)
+                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
+                                                    @else
+                                                        <span>Sin imagen</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{$producto->cantidad}}</td>
+                                                <td>${{$producto->precio_venta}}</td>
+                                                <td>${{$producto->precio_compra}}</td>
+
+                                            </tr>
+                                        @empty
+
+                                            <span>NO HAY PRODUCTOS</span>
 
 
-                <a href="{{route('reporte.index')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-arrow-left"></i>
-                    Volver
-                </a>
-
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Categoria</th>
-                      <th>Proveedor</th>
-                      <th>Codigo</th>
-                      <th>Nombre</th>
-                      <th>Descripcion</th>
-                      <th>Imagen</th>
-                      <th>Cantidad</th>
-                      <th>Venta</th>
-                      <th>Compra</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($productos as $producto)
-                        <tr>
-                            <td>{{$producto->id}}</td>
-                            <td>{{$producto->nombre_categoria}}</td>
-                            <td>{{$producto->nombre_proveedor}}</td>
-                            <td>{{$producto->codigo}}</td>
-                            <td>{{$producto->nombre}}</td>
-                            <td>{{$producto->descripcion}}</td>
-                            <td>
-                                @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
-                                @else
-                                    <span>Sin imagen</span>
-                                @endif
-                            </td>
-                            <td>{{$producto->cantidad}}</td>
-                            <td>${{$producto->precio_venta}}</td>
-                            <td>${{$producto->precio_compra}}</td>
-
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
 
 @stop
 
@@ -125,6 +119,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -145,70 +140,7 @@
         @endif
     </script>
 
-    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
-    <script>
-        $(document).ready(function () {
-            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
-            $(document).on('change', '.custom-control-input', function () {
-                let activo = $(this).prop('checked') ? 1 : 0;
-                let productoId = $(this).data('id');
-
-                $.ajax({
-                    url: '/productos/cambiar-estado/' + productoId,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: productoId,
-                        activo: activo
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error!',
-                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-
-    <script>
-
-        $(document).ready(function() {
-            $(document).on('submit', '.formulario-eliminar', function(e) {
-                e.preventDefault(); // Detenemos el submit normal
-                var form = this;
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡Esta acción no se puede deshacer!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // Aquí vuelve a enviar
-                    }
-                });
-            });
-        });
-    </script>
-
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -254,11 +186,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
-                "autoWidth": true,
-                "scrollX": true,
-
-
+                "responsive": true,
+                "autoWidth": false,
+                "scrollX": false,
             });
         });
     </script>
