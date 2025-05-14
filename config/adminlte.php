@@ -508,6 +508,7 @@ return [
                 ],
             ],
         ],
+        
     ],
 
     /*
@@ -556,4 +557,5 @@ return [
     */
 
     'livewire' => false,
+
 ];

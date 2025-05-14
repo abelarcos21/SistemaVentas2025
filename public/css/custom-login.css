@@ -1,0 +1,35 @@
+/* poner imagen de fondo para el login body.login-page, body.register-page {
+    background: url('/images/fondo-login.png') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.login-box, .register-box {
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+} */
+
+/* aplicar estilo a texto color blanco y ponerle la clase al texto .auth-footer-link {
+    color: #ffffff !important;
+} */
+
+
+
+/* custom-login.css */
+.login-page {
+    background-color: #1e1e2f !important;
+}
+
+.login-box {
+    border: 1px solid #1e1e2f;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #2a2a40;
+    color: white;
+}
+
+.login-logo a {
+    color: #ffffff !important;
+}

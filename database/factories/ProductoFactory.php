@@ -29,7 +29,7 @@ class ProductoFactory extends Factory
             'proveedor_id' => Proveedor::factory(),
             'codigo' => $this->faker->unique()->ean13(),
             'nombre' => $this->faker->words(3, true),
-            'descripcion' => $this->faker->sentence(10),
+            'descripcion' => $this->faker->sentence(5),
             'cantidad' => $this->faker->numberBetween(0, 100),
             'precio_compra' => $this->faker->randomFloat(2, 10, 1000),
             'precio_venta' => $this->faker->randomFloat(2, 20, 2000),
