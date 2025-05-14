@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Ventas Realizadas')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -24,80 +24,75 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Revisar Ventas existentes</h3>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Revisar Ventas existentes</h3>
+                        </div>
+                        <!-- /.card-header -->
 
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Total Vendido</th>
-                      <th>Fecha Venta</th>
-                      <th>Usuario</th>
-                      <th>Ver Detalle</th>
-                      <th>Imprimir Ticket</th>
-                      <th>Cancelar Venta</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($ventas as $venta)
-                        <tr>
-                            <td>{{$venta->id}}</td>
-                            <td>${{$venta->total_venta}}</td>
-                            <td>{{$venta->created_at}}</td>
-                            <td>{{$venta->nombre_usuario}}</td>
-                            <td class="text-center">
-                                <a href="{{ route('detalleventas.detalle_venta', $venta->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> Detalle
-                                </a>
-                            </td>
-                            <td>
-                                <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success btn-sm">
-                                    <i class="fas fa-print"></i> Imprimir Ticket
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST"
-                                onsubmit="return confirm('¿¿Esta seguro de eliminar la venta??')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </button>
-                                </form>
-                            </td>
-
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Total Vendido</th>
+                                            <th>Fecha Venta</th>
+                                            <th>Usuario</th>
+                                            <th>Ver Detalle</th>
+                                            <th>Imprimir Ticket</th>
+                                            <th>Cancelar Venta</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($ventas as $venta)
+                                            <tr>
+                                                <td>{{ $venta->id }}</td>
+                                                <td>${{ $venta->total_venta }}</td>
+                                                <td>{{ $venta->created_at }}</td>
+                                                <td>{{ $venta->nombre_usuario }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ route('detalleventas.detalle_venta', $venta->id) }}" class="btn btn-info btn-sm">
+                                                        <i class="fas fa-eye"></i> Detalle
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-print"></i> Imprimir Ticket
+                                                    </a>
+                                                </td>
+                                                <td class="text-center">
+                                                    <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST"
+                                                        onsubmit="return confirm('¿¿Esta seguro de eliminar la venta??')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm">
+                                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">NO HAY PRODUCTOS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 
@@ -124,6 +119,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -144,46 +140,9 @@
         @endif
     </script>
 
-    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
+
+    {{--ALERTA PARA ELIMINAR(CANCELAR) UNA VENTA--}}
     <script>
-        $(document).ready(function () {
-            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
-            $(document).on('change', '.custom-control-input', function () {
-                let activo = $(this).prop('checked') ? 1 : 0;
-                let productoId = $(this).data('id');
-
-                $.ajax({
-                    url: '/productos/cambiar-estado/' + productoId,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: productoId,
-                        activo: activo
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error!',
-                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                });
-            });
-        });
-    </script>
-
-    <script>
-
         $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
@@ -207,7 +166,7 @@
         });
     </script>
 
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -253,13 +212,10 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
-
-
+                "scrollX": false,
             });
         });
     </script>
 @stop
-

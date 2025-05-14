@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Compras')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -24,78 +24,73 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Compras registradas</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Compras registradas</h3>
+                        </div>
+                        <!-- /.card-header -->
 
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Usuario</th>
-                      <th>Producto</th>
-                      <th>Cantidad</th>
-                      <th>Precio De Compra</th>
-                      <th>Total Compra</th>
-                      <th>Fecha</th>
-                      <th>Acciones</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Usuario</th>
+                                            <th>Producto</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio de Compra</th>
+                                            <th>Total Compra</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($compras as $compra)
+                                            <tr>
+                                                <td>{{ $compra->id }}</td>
+                                                <td>{{ $compra->nombre_usuario }}</td>
+                                                <td>{{ $compra->nombre_producto }}</td>
+                                                <td>{{ $compra->cantidad }}</td>
+                                                <td>${{ $compra->precio_compra }}</td>
+                                                <td>${{ $compra->precio_compra * $compra->cantidad }}</td>
+                                                <td>{{ $compra->created_at }}</td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="{{ route('compra.edit', $compra) }}" class="btn btn-warning btn-sm mr-1">
+                                                            <i class="fas fa-edit"></i> Editar
+                                                        </a>
 
-                    @forelse($compras as $compra)
-                        <tr>
-                            <td>{{$compra->id}}</td>
-                            <td>{{$compra->nombre_usuario}}</td>
-                            <td>{{$compra->nombre_producto}}</td>
-                            <td>{{$compra->cantidad}}</td>
-                            <td>${{$compra->precio_compra}}</td>
-                            <td>${{$compra->precio_compra * $compra->cantidad}}</td>
-                            <td>{{$compra->created_at}}</td>
-                            <td>
+                                                        <a href="{{ route('compra.show', $compra) }}" class="btn btn-danger btn-sm mr-1">
+                                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                                        </a>
 
-                                <div class="d-flex">
-
-                                     <a href="{{ route('compra.edit', $compra) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-edit"></i> Editar
-                                    </a>
-                                    <a href="{{ route('compra.show', $compra) }}" class="btn btn-danger btn-sm mr-1">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-
-                        <span>NO HAY COMPRAS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="text-center">NO HAY COMPRAS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
-
 @stop
 
 @section('css')
@@ -117,6 +112,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -137,8 +133,8 @@
         @endif
     </script>
 
+    {{--ALERTA PARA ELIMINAR UNA COMPRA--}}
     <script>
-
        $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
                 e.preventDefault(); // Detenemos el submit normal
@@ -162,7 +158,7 @@
         });
     </script>
 
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -208,11 +204,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
-
-
+                "scrollX": false,
             });
         });
     </script>

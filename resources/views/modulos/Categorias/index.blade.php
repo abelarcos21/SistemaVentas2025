@@ -30,7 +30,7 @@
                     <div class="card">
                         <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0">Categorías registradas</h3>
-                            <a href="{{ route('categoria.create') }}" class="btn btn-info btn-sm">
+                            <a href="{{ route('categoria.create') }}" class="btn btn-info btn-sm ">
                                 <i class="fas fa-user-plus"></i> Agregar Nuevo
                             </a>
                         </div>
@@ -41,7 +41,7 @@
                                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>Nro#</th>
                                             <th>Usuario</th>
                                             <th>Nombre</th>
                                             <th>Fecha Registro</th>

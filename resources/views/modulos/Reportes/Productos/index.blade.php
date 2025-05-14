@@ -24,83 +24,78 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Productos registrados</h3>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Productos registrados</h3>
 
+                            <a href="{{ route('reporte.falta_stock') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                                <i class="fas fa-boxes"></i>
+                                Productos con Cantidad 1 y 0
+                            </a>
+                        </div>
+                        <!-- /.card-header -->
 
-                <a href="{{route('reporte.falta_stock')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-boxes"></i>
-                    Productos con Cantidad 1 y 0
-                </a>
-
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
-
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Categoria</th>
-                      <th>Proveedor</th>
-                      <th>Codigo</th>
-                      <th>Nombre</th>
-                      <th>Descripcion</th>
-                      <th>Imagen</th>
-                      <th>Cantidad</th>
-                      <th>Venta</th>
-                      <th>Compra</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($productos as $producto)
-                        <tr>
-                            <td>{{$producto->id}}</td>
-                            <td>{{$producto->nombre_categoria}}</td>
-                            <td>{{$producto->nombre_proveedor}}</td>
-                            <td>{{$producto->codigo}}</td>
-                            <td>{{$producto->nombre}}</td>
-                            <td>{{$producto->descripcion}}</td>
-                            <td>
-                                @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
-                                @else
-                                    <span>Sin imagen</span>
-                                @endif
-                            </td>
-                            <td>{{$producto->cantidad}}</td>
-                            <td>${{$producto->precio_venta}}</td>
-                            <td>${{$producto->precio_compra}}</td>
-
-                        </tr>
-                    @empty
-
-                        <span>NO HAY PRODUCTOS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>Nro#</th>
+                                            <th>Categoria</th>
+                                            <th>Proveedor</th>
+                                            <th>Codigo</th>
+                                            <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Imagen</th>
+                                            <th>Cantidad</th>
+                                            <th>Venta</th>
+                                            <th>Compra</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($productos as $producto)
+                                            <tr>
+                                                <td>{{ $producto->id }}</td>
+                                                <td>{{ $producto->nombre_categoria }}</td>
+                                                <td>{{ $producto->nombre_proveedor }}</td>
+                                                <td>{{ $producto->codigo }}</td>
+                                                <td>{{ $producto->nombre }}</td>
+                                                <td>{{ $producto->descripcion }}</td>
+                                                <td>
+                                                    @if($producto->imagen)
+                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
+                                                    @else
+                                                        <span>Sin imagen</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $producto->cantidad }}</td>
+                                                <td>${{ $producto->precio_venta }}</td>
+                                                <td>${{ $producto->precio_compra }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="10" class="text-center">NO HAY PRODUCTOS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
+
 
 
 
@@ -125,6 +120,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -183,32 +179,7 @@
         });
     </script>
 
-    <script>
-
-        $(document).ready(function() {
-            $(document).on('submit', '.formulario-eliminar', function(e) {
-                e.preventDefault(); // Detenemos el submit normal
-                var form = this;
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡Esta acción no se puede deshacer!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // Aquí vuelve a enviar
-                    }
-                });
-            });
-        });
-    </script>
-
-
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -254,9 +225,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
-                "autoWidth": true,
-                "scrollX": true,
+                "responsive": true,
+                "autoWidth": false,
+                "scrollX": false,
 
 
             });

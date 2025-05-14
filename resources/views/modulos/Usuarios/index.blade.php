@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Usuarios')
 
 
 @section('content_header')
@@ -25,110 +25,107 @@
 @section('content')
     <!-- Main content -->
     <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Usuarios registrados</h3><a href="{{route('usuario.create')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                    <i class="fas fa-user-plus"></i>
-                    Agregar Nuevo
-                </a>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-outline card-info">
+                        <div class="card-header bg-secondary text-right">
+                            <h3 class="card-title">Usuarios registrados</h3>
+                            <a href="{{ route('usuario.create') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                                <i class="fas fa-user-plus"></i>
+                                Agregar Nuevo
+                            </a>
+                        </div>
+                        <!-- /.card-header -->
 
-                <table id="example1" class="table table-bordered table-striped bg-secondary">
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Email</th>
-                      <th>Nombre</th>
-                      <th>Rol</th>
-                      <th>Cambio Contraseña</th>
-                      <th>Activo</th>
-                      <th>Editar</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    @forelse($usuarios as $usuario)
-                        <tr>
-                            <td>{{$usuario->id}}</td>
-                            <td>{{$usuario->email}}</td>
-                            <td>{{$usuario->name}}</td>
-                            <td>{{$usuario->rol}}</td>
-                            <td>
-                                <a  class="btn btn-secondary btnCambioPassword" data-id="{{ $usuario->id }}">
-                                    <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
-                                </a>
-                            </td>
-                            <td>
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $usuario->id }}" {{ $usuario->activo ? 'checked' : '' }} data-id="{{ $usuario->id }}">
-                                    <label class="custom-control-label" for="activoSwitch{{ $usuario->id }}"></label>
-                                </div>
-                            </td>
-
-                            <td class="text-center">
-                                <div class="d-inline-flex justify-content-center">
-                                    <a href="{{ route('usuario.show', $usuario) }}" class="btn btn-info btn-sm mr-1">
-                                        <i class="fas fa-eye"></i> Ver
-                                    </a>
-                                    <a href="{{ route('usuario.edit', $usuario) }}" class="btn btn-warning btn-sm mr-1">
-                                        <i class="fas fa-user"></i> <i class="fas fa-pen"></i> Editar
-                                    </a>
-
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-
-                        <span>NO HAY CATEGORIAS</span>
-
-
-                    @endforelse
-
-
-                    </tfoot>
-                  </table>
-              </div>
-              <!-- /.card-body -->
+                        <div class="card-body bg-secondary">
+                            <div class="table-responsive">
+                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Email</th>
+                                            <th>Nombre</th>
+                                            <th>Rol</th>
+                                            <th>Cambio Contraseña</th>
+                                            <th>Activo</th>
+                                            <th>Editar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($usuarios as $usuario)
+                                            <tr>
+                                                <td>{{ $usuario->id }}</td>
+                                                <td>{{ $usuario->email }}</td>
+                                                <td>{{ $usuario->name }}</td>
+                                                <td>{{ $usuario->rol }}</td>
+                                                <td>
+                                                    <a class="btn btn-secondary btnCambioPassword" data-id="{{ $usuario->id }}">
+                                                        <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <div class="custom-control custom-switch toggle-estado">
+                                                        <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $usuario->id }}" {{ $usuario->activo ? 'checked' : '' }} data-id="{{ $usuario->id }}">
+                                                        <label class="custom-control-label" for="activoSwitch{{ $usuario->id }}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="d-inline-flex justify-content-center">
+                                                        <a href="{{ route('usuario.show', $usuario) }}" class="btn btn-info btn-sm mr-1">
+                                                            <i class="fas fa-eye"></i> Ver
+                                                        </a>
+                                                        <a href="{{ route('usuario.edit', $usuario) }}" class="btn btn-warning btn-sm mr-1">
+                                                            <i class="fas fa-user"></i> <i class="fas fa-pen"></i> Editar
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">NO HAY USUARIOS</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!-- /.col -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+            <!-- /.row -->
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
+        <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
 
     <!-- Modal de Cambio de Contraseña -->
     <div class="modal fade" id="modalCambioPassword" tabindex="-1" role="dialog" aria-labelledby="modalCambioPasswordLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-        <form id="formCambioPassword">
-            <div class="modal-content">
-            <div class="modal-header bg-secondary">
-                <h5 class="modal-title" id="modalCambioPasswordLabel">Cambiar Contraseña</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="userIdCambio" name="user_id">
-                <div class="form-group">
-                <label for="nuevoPassword">Nueva Contraseña</label>
-                <input placeholder="Escribe la nueva contraseña" type="password" class="form-control" id="nuevoPassword" name="password" required>
+            <form id="formCambioPassword">
+                <div class="modal-content">
+                    <div class="modal-header bg-secondary">
+                        <h5 class="modal-title" id="modalCambioPasswordLabel">Cambiar Contraseña</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="userIdCambio" name="user_id">
+                        <div class="form-group">
+                            <label for="nuevoPassword">Nueva Contraseña</label>
+                            <input placeholder="Escribe la nueva contraseña" type="password" class="form-control" id="nuevoPassword" name="password" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
-            </div>
-            </div>
-        </form>
+            </form>
         </div>
     </div>
 
@@ -140,9 +137,6 @@
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-
-
-
 
 @stop
 
@@ -156,7 +150,7 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
-   {{--  manejo de errores --}}
+   {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
             Swal.fire({
@@ -177,6 +171,7 @@
         @endif
     </script>
 
+    {{--CAMBIO DE CONTRASEÑA DEL USUARIO--}}
     <script>
         $(document).ready(function(){
 
@@ -195,7 +190,7 @@
                 let formData = $(this).serialize();
 
                 $.ajax({
-                    url: '{{ route("usuarios.cambiarPassword")}}', //nombreruta del backend
+                    url: '{{ route("usuarios.cambiarPassword")}}', //nombre ruta del backend
                     method: 'POST',
                     data: formData,
                     headers: {
@@ -266,6 +261,7 @@
         });
     </script>
 
+    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
             $('#example1').DataTable({
@@ -311,9 +307,9 @@
                 "searching": true,
                 "ordering": true,
                 "info": true,
-                "responsive": false,
+                "responsive": true,
                 "autoWidth": false,
-                "scrollX": true,
+                "scrollX": false,
 
 
             });

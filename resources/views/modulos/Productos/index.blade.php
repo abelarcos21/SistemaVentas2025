@@ -207,7 +207,7 @@
         });
     </script>
 
-     {{--ALERTA PARA ELIMINAR UN PRODUCTO--}}
+    {{--ALERTA PARA ELIMINAR UN PRODUCTO--}}
     <script>
         $(document).ready(function() {
             $(document).on('submit', '.formulario-eliminar', function(e) {
