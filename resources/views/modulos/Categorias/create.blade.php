@@ -1,21 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Nueva Categoria')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1>Categorias</h1>
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
+                <div class="col-sm-6">
+                    <h1><i class="fas fa-tags "></i> Categorias | Crear Nueva Categoria</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">DataTables</li>
+                    </ol>
+                </div>
           </div>
         </div><!-- /.container-fluid -->
     </section>
@@ -27,35 +27,42 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-info">
-                    <div class="card-header">
+                <div class="card card-outline card-info">
+                    <div class="card-header bg-secondary">
                         <h3 class="card-title">Agregar Nueva Categoria</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body">
+                    <div class="card-body bg-secondary">
                         <!-- Horizontal Form -->
-                        <div class="card card-info">
+                        <div class="card card-secondary">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('categoria.store')}}" method="POST">
                                 @csrf
-                                <div class="card-body">
+                                <div class="card-body bg-secondary">
                                     <div class="form-group row">
-                                    <label for="nombre" class="col-sm-2 col-form-label">Nombre de Categoria</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Nombre">
+                                        <label for="nombre" class="col-sm-2 col-form-label text-white">Nombre de Categoría</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-tag"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="nombre" class="form-control" id="nombre" placeholder="Ingrese el nombre">
+                                            </div>
+                                        </div>
                                     </div>
-                                    </div>
-
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer">
+                                <div class="card-footer bg-secondary">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>
-                                    <button type="button" class="btn btn-secondary float-right">
+
+                                    <a href="{{ route('categoria.index')}}" class="btn btn-secondary float-right">
                                         <i class="fas fa-times"></i> Cancelar
-                                    </button>
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>
