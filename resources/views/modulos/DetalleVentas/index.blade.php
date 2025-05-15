@@ -65,8 +65,7 @@
                                                     </a>
                                                 </td>
                                                 <td class="text-center">
-                                                    <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST"
-                                                        onsubmit="return confirm('¿¿Esta seguro de eliminar la venta??')">
+                                                    <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST" class="formulario-eliminar">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button class="btn btn-danger btn-sm">
