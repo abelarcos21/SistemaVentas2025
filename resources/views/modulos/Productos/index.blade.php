@@ -35,7 +35,7 @@
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
                                 <a href="{{ route('reporte.falta_stock') }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-boxes"></i> Productos con Stock Mínimo
+                                    <i class="fas fa-boxes"></i> Productos con Cantidad 1 y 0
                                 </a>
                             </div>
                         </div>
