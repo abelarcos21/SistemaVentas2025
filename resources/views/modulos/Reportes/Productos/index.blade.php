@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Reporte Productos')
+@section('title', 'Reporte De Productos')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -211,7 +211,7 @@
                         customize: function (win) {
                             $(win.document.body)
                                 .css('font-size', '10pt')
-                                .prepend('<h3 class="text-center">Lista de Productos</h3>');
+                                .prepend('<h3 class="text-center">Reporte De Productos</h3>');
 
                             $(win.document.body).find('table')
                                 .addClass('table table-bordered table-striped')

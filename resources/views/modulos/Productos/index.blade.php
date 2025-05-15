@@ -1,21 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'Productos')
+@section('title', 'Administrar Productos y Stock')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1> <i class="fas fa-boxes "></i> Administrar Productos y Stock</h1>
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
+                <div class="col-sm-6">
+                    <h1> <i class="fas fa-boxes "></i> Administrar Productos y Stock</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">DataTables</li>
+                    </ol>
+                </div>
           </div>
         </div><!-- /.container-fluid -->
     </section>
@@ -238,31 +238,38 @@
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
-                    {
+                    /* {
                         extend: 'copy',
                         text: '<i class="fas fa-copy"></i> COPIAR',
                         className: 'btn btn-primary btn-sm'
-                    },
+                    }, */
                     {
                         extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
                         className: 'btn btn-success btn-sm'
                     },
                     {
-                        extend: 'pdfHtml5',
+                        extend: 'pdf',
                         exportOptions: {
                             columns: ':not(.no-exportar)' // también en PDF
                         },
                         customize: function (doc) {
 
-                            // Establecer fuentes más pequeñas
+                            doc.styles.tableHeader.fillColor = '#6c757d'; // similar a bg-secondary
+                            doc.styles.tableHeader.color = 'white';
+                            doc.styles.title = {
+                                alignment: 'center',
+                                fontSize: 16
+                            };
+
+                            /* // Establecer fuentes más pequeñas
                             doc.defaultStyle.fontSize = 9;
                             doc.styles.tableHeader.fontSize = 10;
                             doc.styles.tableHeader.fillColor = '#f2f2f2'; // color del encabezado
-                            doc.styles.tableHeader.color = '#000'; // texto del encabezado
+                            doc.styles.tableHeader.color = '#000'; // texto del encabezado */
 
 
-                            // Añadir logo + título Encabezado del documento
+                           /*  // Añadir logo + título Encabezado del documento
                             doc.content.splice(0, 0, {
                                 columns: [
                                     {
@@ -270,16 +277,16 @@
                                         //width: 100
                                     },
                                     {
-                                        text: 'Mi Reporte de Datos',
+                                        text: 'Reporte De Productos y Stock',
                                         alignment: 'center',
                                         fontSize: 14,
                                         margin: [0, 20, 0, 0],
                                         bold: true
                                     }
                                 ]
-                            });
+                            }); */
 
-                            // Pie de página
+                            /* // Pie de página
                             doc.footer = function (currentPage, pageCount) {
                                 return {
                                     text: 'Página ' + currentPage + ' de ' + pageCount,
@@ -287,21 +294,21 @@
                                     fontSize: 8,
                                     margin: [0, 10, 0, 0]
                                 };
-                            };
+                            }; */
 
-                            // Ajustar anchos automáticamente
+                            /* // Ajustar anchos automáticamente
                             var tableBodyIndex = 1; // después del encabezado
                             if (!doc.content[tableBodyIndex].table) tableBodyIndex = 2; // por si hay logo o más encabezado
 
                             var table = doc.content[tableBodyIndex].table;
                             var columnCount = table.body[0].length;
-                            table.widths = Array(columnCount).fill('*');
+                            table.widths = Array(columnCount).fill('*'); */
 
                         },
                         orientation: 'landscape', // opcional para mejor ancho
                         pageSize: 'A4',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        className: 'btn btn-danger btn-sm'
+                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
+                        className: 'btn btn-danger btn-sm',
                     },
                     {
                         extend: 'print',
@@ -310,14 +317,27 @@
                         },
                         orientation: 'landscape', // opcional para mejor ancho
                         pageSize: 'A4',
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        className: 'btn btn-warning btn-sm'
+                        text: '<i class="fas fa-print"></i> Visualizar PDF',
+                        title: '', // <--- Esto evita que aparezca el título por defecto
+                        className: 'btn btn-warning btn-sm',
+                        customize: function (win) {
+                            $(win.document.body)
+                                .css('font-size', '10pt')
+                                .prepend('<h3 class="text-center">Reporte De Productos y Stock</h3>');
+
+                            $(win.document.body).find('table')
+                                .addClass('table table-bordered table-striped')
+                                .css({
+                                    'font-size': 'inherit',
+                                    'background-color': '#dee2e6' // similar a bg-secondary
+                                });
+                        },
                     },
-                    {
+                   /*  {
                         extend: 'csv',
                         text: '<i class="fas fa-upload"></i> CSV',
                         className: 'btn btn-info btn-sm'
-                    }
+                    } */
                 ],
 
                 "language": {
