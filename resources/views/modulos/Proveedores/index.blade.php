@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Proveedores')
+@section('title', 'Lista Proveedores')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -48,7 +48,7 @@
                                             <th>Codigo Postal</th>
                                             <th>Sitio Web</th>
                                             <th>Notas</th>
-                                            <th>Acciones</th>
+                                            <th class="no-exportar">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -173,31 +173,60 @@
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
-                    {
+                    /* {
                         extend: 'copy',
                         text: '<i class="fas fa-copy"></i> COPIAR',
                         className: 'btn btn-primary btn-sm'
-                    },
+                    }, */
                     {
                         extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
                         className: 'btn btn-success btn-sm'
                     },
                     {
                         extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
-                        className: 'btn btn-danger btn-sm'
+                        exportOptions: {
+                            columns: ':not(.no-exportar)' // también en PDF
+                        },
+                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'btn btn-danger btn-sm',
+                        customize: function(doc) {
+                            doc.styles.tableHeader.fillColor = '#6c757d'; // similar a bg-secondary
+                            doc.styles.tableHeader.color = 'white';
+                            doc.styles.title = {
+                                alignment: 'center',
+                                fontSize: 16
+                            };
+                        },
                     },
                     {
                         extend: 'print',
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        className: 'btn btn-warning btn-sm'
+                        exportOptions: {
+                            columns: ':not(.no-exportar)' // excluye columnas con esa clase
+                        },
+                        text: '<i class="fas fa-print"></i> Visualizar PDF',
+                        title: '', // <--- Esto evita que aparezca el título por defecto
+                        className: 'btn btn-warning btn-sm',
+                        customize: function (win) {
+                            $(win.document.body)
+                                .css('font-size', '10pt')
+                                .prepend('<h3 class="text-center">Reporte De Proveedores</h3>');
+
+                            $(win.document.body).find('table')
+                                .addClass('table table-bordered table-striped')
+                                .css({
+                                    'font-size': 'inherit',
+                                    'background-color': '#dee2e6' // similar a bg-secondary
+                                });
+                        },
                     },
-                    {
+                    /* {
                         extend: 'csv',
                         text: '<i class="fas fa-upload"></i> CSV',
                         className: 'btn btn-info btn-sm'
-                    }
+                    } */
                 ],
 
                 "language": {
