@@ -37,7 +37,7 @@
                             </a>
 
                             <a href="{{ route('reporte.falta_stock') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                                <i class="fas fa-boxes"></i> Productos con Stock Mínimo
+                                <i class="fas fa-boxes"></i> Productos con Cantidad 1 y 0
                             </a>
                         </div>
                         <!-- /.card-header -->
