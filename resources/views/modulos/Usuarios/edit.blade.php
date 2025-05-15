@@ -107,8 +107,12 @@
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer bg-secondary">
-                                    <button type="submit" class="btn btn-warning">Actualizar</button>
-                                    <button type="button" class="btn btn-secondary float-right">Cancelar</button>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-save"></i> Actualizar
+                                    </button>
+                                    <a href="{{ route('usuario.index')}}" class="btn btn-secondary float-right">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>
