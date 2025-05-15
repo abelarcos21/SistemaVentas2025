@@ -179,31 +179,31 @@
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
-                    {
+                    /* {
                         extend: 'copy',
                         text: '<i class="fas fa-copy"></i> COPIAR',
                         className: 'btn btn-primary btn-sm'
-                    },
+                    }, */
                     {
                         extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
                         className: 'btn btn-success btn-sm'
                     },
                     {
                         extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
                         className: 'btn btn-danger btn-sm'
                     },
                     {
                         extend: 'print',
-                        text: '<i class="fas fa-print"></i> IMPRIMIR',
+                        text: '<i class="fas fa-print"></i> Visualizar PDF',
                         className: 'btn btn-warning btn-sm'
                     },
-                    {
+                    /* {
                         extend: 'csv',
                         text: '<i class="fas fa-upload"></i> CSV',
                         className: 'btn btn-info btn-sm'
-                    }
+                    } */
                 ],
 
                 "language": {
