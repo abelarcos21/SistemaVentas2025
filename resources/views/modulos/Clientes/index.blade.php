@@ -8,7 +8,7 @@
         <div class="container-fluid">
            <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1> <i class="fas fa-users"></i> Listado de Clientes</h1>
+                    <h1><i class="fas fa-users"></i> Listado de Clientes</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -62,7 +62,13 @@
                                                 <td>{{ $cliente->rfc }}</td>
                                                 <td>{{ $cliente->telefono }}</td>
                                                 <td>{{ $cliente->correo }}</td>
-                                                <td>{{ $cliente->activo }}</td>
+                                                {{-- <td>{{ $cliente->activo }}</td> --}}
+                                                <td>
+                                                    <div class="custom-control custom-switch toggle-estado">
+                                                        <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $cliente->id }}" {{ $cliente->activo ? 'checked' : '' }} data-id="{{ $cliente->id }}">
+                                                        <label class="custom-control-label" for="activoSwitch{{ $cliente->id }}"></label>
+                                                    </div>
+                                                </td>
                                                 <td>{{ $cliente->created_at }}</td>
                                                 <td>
                                                     <div class="d-flex">
