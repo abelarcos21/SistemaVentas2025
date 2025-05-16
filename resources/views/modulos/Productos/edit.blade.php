@@ -27,9 +27,9 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-outline card-info">
+                <div class="card card-outline card-warning">
                     <div class="card-header bg-secondary">
-                        <h3 class="card-title">Agregar Nuevo Producto</h3>
+                        <h3 class="card-title">Editar  Producto</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body bg-secondary">
@@ -157,10 +157,13 @@
 
                                 </div>
                                 <!-- /.card-body -->
-
                                 <div class="card-footer bg-secondary">
-                                    <button type="submit" class="btn btn-info">Guardar</button>
-                                    <a href="{{ route('producto.index')}}" class="btn btn-secondary float-right">Cancelar</a>
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-save"></i> Actualizar
+                                    </button>
+                                    <a href="{{ route('producto.index')}}" class="btn btn-secondary float-right">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>

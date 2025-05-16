@@ -70,7 +70,7 @@
 
                             <td>
                                 <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
+                                    <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}" disabled>
                                     <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
                                 </div>
                             </td>
@@ -87,7 +87,7 @@
                     <button class="btn btn-danger btn-sm">
                         <i class="fas fa-trash-alt"></i> Eliminar producto
                     </button>
-                    <a href="{{ route('producto.index') }}" class="btn btn-info btn-sm">
+                    <a href="{{ route('producto.index') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </form>
