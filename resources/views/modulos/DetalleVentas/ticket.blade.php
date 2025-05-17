@@ -58,7 +58,8 @@
         <div class="titulo">Ticket de compra - SYSVentas 1.0</div>
         <p><strong>Cliente:</strong> {{ $venta->nombre_cliente }}</p>
         <p><strong>Cajero:</strong> {{ $venta->nombre_usuario }}</p>
-        <p><strong>Fecha:</strong> {{ $venta->created_at }}</p>
+        <p><strong>Fecha:</strong> {{ $venta->created_at->format('d/m/Y') }}</p>
+        <p><strong>Hora:</strong> {{ $venta->created_at->format('h:i A') }}</p>
 
         <div class="detalle">
             <table>
