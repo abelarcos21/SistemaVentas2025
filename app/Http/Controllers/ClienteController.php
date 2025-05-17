@@ -76,7 +76,8 @@ class ClienteController extends Controller
 
         try {
             //codigo...
-            $validated['activo'] = $request->has('activo');// Si no se envió el checkbox, se asume desactivado o false (0)
+           // $validated['activo'] = $request->has('activo');// Si no se envió el checkbox, se asume desactivado o false (0)
+            $validated['activo'] = $request->boolean('activo');
 
             $cliente->update($validated);//RECOMENDADO para actualizar directamente un modelo con datos validados.Internamente hace: $cliente->fill($validated);$cliente->save();
 
