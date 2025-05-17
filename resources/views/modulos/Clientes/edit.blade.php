@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Proveedores | Modificar Datos')
+@section('title', 'Clientes | Modificar Datos')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1><i class="fas fa-user"></i> <i class="fas fa-pen"></i> Proveedores | Modificar Datos Del Proveedor</h1>
+              <h1> <i class="fas fa-edit"></i> Clientes | Modificar Datos Del Cliente</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -27,22 +27,22 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class=" card card-outline card-warning">
-                    <div class="card-header bg-secondary ">
-                        <h3 class="card-title">Editar Proveedor</h3>
+                <div class="card card-outline card-warning">
+                    <div class="card-header bg-secondary">
+                        <h3 class="card-title">Editar  Cliente</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body bg-secondary">
                         <!-- Horizontal Form -->
-                        <div class="card card-info">
+                        <div class="card card-secondary">
 
                             <!-- form start -->
-                            <form class="form-horizontal" action="{{route('proveedor.update', $proveedor)}}" method="POST">
+                            <form class="form-horizontal" action="{{route('cliente.update', $cliente)}}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body bg-secondary">
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
+                                        <label for="nombre" class="col-sm-2 col-form-label">Nombres</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -50,11 +50,38 @@
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" placeholder="ingrese el nombre" class="form-control bg-secondary" value="{{ $proveedor->nombre }}">
+                                                <input type="text" name="nombre" placeholder="ingrese los nombres" class="form-control bg-secondary" value="{{ old('nombre', $cliente->nombre ?? '') }}"  required>
                                             </div>
                                         </div>
                                     </div>
 
+                                    <div class="form-group row">
+                                        <label for="nombre" class="col-sm-2 col-form-label">Apellidos</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-user-tag"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="apellido" placeholder="ingrese los apellidos" class="form-control bg-secondary" value="{{ old('apellido', $cliente->apellido ?? '')}}" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="nombre" class="col-sm-2 col-form-label">RFC</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text">
+                                                        <i class="fas fa-id-card"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="rfc" placeholder="ingrese el RFC" class="form-control bg-secondary" value="{{ old('rfc', $cliente->rfc ?? '')}}" required>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Telefono</label>
@@ -65,7 +92,7 @@
                                                         <i class="fas fa-phone"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="telefono" class="form-control bg-secondary" value="{{ $proveedor->telefono }}">
+                                                <input type="text" name="telefono" placeholder="ingrese el Telefono" class="form-control bg-secondary" value="{{ old('telefono', $cliente->telefono ?? '')}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -79,53 +106,30 @@
                                                         <i class="fas fa-envelope"></i>
                                                     </span>
                                                 </div>
-                                                <input type="email" name="email" class="form-control bg-secondary" value="{{ $proveedor->email }}">
+                                                <input type="email" name="correo" placeholder="ingrese el Correo" class="form-control bg-secondary" value="{{ old('correo', $cliente->correo ?? '')}}" required>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo Postal</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="text" name="codigo_postal" class="form-control bg-secondary" value="{{ $proveedor->codigo_postal }}">
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Sitio WEB</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-globe"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="url" name="sitio_web" class="form-control bg-secondary" value="{{ $proveedor->sitio_web }}">
-                                            </div>
+                                        <div class="custom-control custom-switch toggle-estado">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $cliente->id }}"  name="activo" {{ $cliente->activo ? 'checked' : '' }} data-id="{{ $cliente->id }}">
+                                            <label class="custom-control-label" for="activoSwitch{{ $cliente->id }}">¿Activo?</label>
                                         </div>
-                                    </div>
 
-                                    <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Notas</label>
-                                        <div class="col-sm-10">
-                                            <div class="form-group">
-                                                <textarea name="notas" class="form-control" id="exampleFormControlTextarea1" rows="3">{{ $proveedor->notas }}</textarea>
-                                            </div>
-                                        </div>
                                     </div>
 
                                 </div>
                                 <!-- /.card-body -->
+
                                 <div class="card-footer bg-secondary">
-                                    <button type="submit" class="btn btn-warning">Actualizar</button>
-                                    <a href="{{ route('proveedor.index')}}" type="button" class="btn btn-secondary float-right">Cancelar</a>
+                                    <button type="submit" class="btn btn-info">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <a href="{{ route('cliente.index')}}" class="btn btn-secondary float-right">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>
@@ -145,15 +149,13 @@
     <!-- /.content -->
 
 
-
 @stop
 
 @section('css')
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
 
 @stop
 
@@ -161,5 +163,6 @@
     <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 
 
-@stop
 
+
+@stop
