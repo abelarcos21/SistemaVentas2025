@@ -28,24 +28,21 @@ class ClienteController extends Controller
 
     public function store(Request $request){
 
-        // Validación clara y separada
+        // Validar datos
         $validated = $request->validate([
-            'nombre'    => 'required|string|max:100',
-            'apellido'  => 'required|string|max:100',
-            'rfc'       => 'required|string|size:13|unique:clientes,rfc',
-            'telefono'  => 'required|string|regex:/^[0-9]{10}$/',
-            'correo'    => 'required|email|max:100|unique:clientes,correo',
-            'activo' => 'sometimes|boolean',//Si quieres permitir activar o desactivar clientes
-            // 'activo' no es necesario porque la base de datos ya le pone true por defecto
+            'nombre'    => ['required', 'string', 'max:100'],
+            'apellido'  => ['required', 'string', 'max:100'],
+            'rfc'       => ['required', 'string', 'size:13', 'unique:clientes,rfc'],
+            'telefono'  => ['required', 'string', 'regex:/^[0-9]{10}$/'],
+            'correo'    => ['required', 'email', 'max:100', 'unique:clientes,correo'],
+            'activo'    => ['required', 'boolean'],// gracias al input hidden + checkbox, este campo siempre se enviará
         ]);
 
         DB::beginTransaction();
 
         try {
-            //codigo
-            $validated['activo'] = $request->has('activo');//Si quieres permitir activar o desactivar clientes en el formulario si el request tiene activo
-
-            Cliente::create($validated);
+            // Crear nuevo cliente
+            Cliente::create($validated);// requiere tener $fillable en el modelo
 
             DB::commit();
 

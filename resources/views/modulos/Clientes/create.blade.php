@@ -112,7 +112,8 @@
 
                                     <div class="form-group row">
                                         <div class="custom-control custom-switch toggle-estado">
-                                            <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch" name="activo" checked>
+                                            <input type="hidden" name="activo" value="0">
+                                            <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
                                             <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
                                         </div>
                                     </div>
