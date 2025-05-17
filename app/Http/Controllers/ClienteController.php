@@ -26,6 +26,11 @@ class ClienteController extends Controller
         return view('modulos.clientes.edit', compact('cliente'));
     }
 
+    public function show(Cliente $cliente){
+
+        return view('modulos.clientes.show', compact('cliente'));
+    }
+
     public function store(Request $request){
 
         // Validar datos

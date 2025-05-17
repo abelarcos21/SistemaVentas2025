@@ -68,7 +68,7 @@
                                                         <label class="custom-control-label" for="activoSwitch{{ $cliente->id }}"></label>
                                                     </div>
                                                 </td>
-                                                <td>{{ $cliente->created_at }}</td>
+                                                <td>{{ $cliente->created_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('cliente.show', $cliente) }}" class="btn btn-info btn-sm mr-1">
