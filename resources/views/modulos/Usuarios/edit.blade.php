@@ -73,7 +73,8 @@
                                     <div class="form-group row">
 
                                         <div class="custom-control custom-switch toggle-estado">
-                                            <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $user->id }}"  name="activo" {{ $user->activo ? 'checked' : '' }} data-id="{{ $user->id }}">
+                                            <input type="hidden" name="activo" value="0">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" value="1" id="activoSwitch{{ $user->id }}"  name="activo" {{ $user->activo ? 'checked' : '' }} data-id="{{ $user->id }}">
                                             <label class="custom-control-label" for="activoSwitch{{ $user->id }}">¿Activo?</label>
                                         </div>
 

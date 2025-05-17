@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Hash;
-
+use Exception;
 class UsuarioController extends Controller
 {
     //index
@@ -91,23 +93,29 @@ class UsuarioController extends Controller
 
     public function update(Request $request, User $user){
 
-
+        // Validar los datos
         $validated = $request->validate([
-
-            'name' => 'required|string|max:255',
-            'email' => 'required',
-            'activo' => 'nullable|boolean',
-            'rol' => 'required',
-
+            'name'   => ['required', 'string', 'max:255'],
+            'email'  => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'activo' => ['nullable', 'boolean'],
+            'rol'    => ['required', 'string'],
         ]);
+        
+        DB::beginTransaction();
 
-        $validated['activo'] = $request->has('activo');// El switch solo envía el valor si está activado
+        try {
 
-        $user->fill($validated); // metodo fill es igual que el método save() pero sin crear un nuevo registro
-
-        $user->save();
-
-        return redirect()->route('usuario.index')->with('success', 'Usuario Actualizado correctamente');
+            $user->fill($validated)->save();// Llenar el modelo con los datos validados y guardar
+    
+            DB::commit();
+    
+            return redirect()->route('usuario.index')->with('success', 'Usuario actualizado correctamente');
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar usuario: ' . $e->getMessage());
+    
+            return redirect()->route('usuario.index')->with('error', 'Error al actualizar usuario: ' . $e->getMessage());
+        }
 
     }
 

@@ -62,29 +62,24 @@ class ClienteController extends Controller
 
     public function update(Request $request, Cliente $cliente){
 
-        //$cliente = Cliente::findOrFail($id);no es nesesario porque el cliente lo estoy pasando con model binding por el metodo
+        // Validar datos
         $validated = $request->validate([
-            'nombre'    => 'required|string|max:100',
-            'apellido'  => 'required|string|max:100',
-            'rfc'       => 'required|string|size:13|unique:clientes,rfc,' . $cliente->id,//Esto evita que marque como duplicado el RFC o correo del mismo cliente.
-            'telefono'  => 'required|string|regex:/^[0-9]{10}$/',
-            'correo'    => 'required|email|max:100|unique:clientes,correo,' . $cliente->id,
-            'activo'    => 'sometimes|boolean',
+            'nombre'    => ['required', 'string', 'max:100'],
+            'apellido'  => ['required', 'string', 'max:100'],
+            'rfc'       => ['required', 'string', 'size:13', 'unique:clientes,rfc,' . $cliente->id],
+            'telefono'  => ['required', 'string', 'regex:/^[0-9]{10}$/'],
+            'correo'    => ['required', 'email', 'max:100', 'unique:clientes,correo,' . $cliente->id],
+            'activo'    => ['required', 'boolean'],
         ]);
 
+        
         DB::beginTransaction();
 
         try {
+
             //codigo...
-           // $validated['activo'] = $request->has('activo');// Si no se envió el checkbox, se asume desactivado o false (0)
-            $validated['activo'] = $request->boolean('activo');
+            $cliente->fill($validated)->save();// Llenar el modelo con los datos validados y guardar
 
-            $cliente->update($validated);//RECOMENDADO para actualizar directamente un modelo con datos validados.Internamente hace: $cliente->fill($validated);$cliente->save();
-
-            //Útil si necesitas modificar algo más entre fill() y save(), por ejemplo:
-            /* $cliente->fill($validated);
-            $cliente->nombre = strtoupper($cliente->nombre); // modifico algo manualmente
-            $cliente->save(); */
             DB::commit();
 
             return redirect()->route('cliente.index')->with('success', 'Cliente Actualizado Correctamente');

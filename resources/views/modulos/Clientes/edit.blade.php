@@ -6,17 +6,17 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1> <i class="fas fa-edit"></i> Clientes | Modificar Datos Del Cliente</h1>
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1> <i class="fas fa-edit"></i> Clientes | Modificar Datos Del Cliente</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">DataTables</li>
+                    </ol>
+                </div>
             </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
-          </div>
         </div><!-- /.container-fluid -->
     </section>
 @stop
@@ -114,7 +114,8 @@
                                     <div class="form-group row">
 
                                         <div class="custom-control custom-switch toggle-estado">
-                                            <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $cliente->id }}"  name="activo" {{ $cliente->activo ? 'checked' : '' }} data-id="{{ $cliente->id }}">
+                                            <input type="hidden" name="activo" value="0">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" value="1" id="activoSwitch{{ $cliente->id }}"  name="activo" {{ $cliente->activo ? 'checked' : '' }} data-id="{{ $cliente->id }}">
                                             <label class="custom-control-label" for="activoSwitch{{ $cliente->id }}">¿Activo?</label>
                                         </div>
 
