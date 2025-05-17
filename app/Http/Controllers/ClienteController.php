@@ -69,7 +69,7 @@ class ClienteController extends Controller
             'activo'    => ['required', 'boolean'],
         ]);
 
-        
+
         DB::beginTransaction();
 
         try {

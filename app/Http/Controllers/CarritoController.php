@@ -95,7 +95,12 @@ class CarritoController extends Controller
     }
 
     //Metodo para realizar una venta
-    public function vender(){
+    public function vender(Request $request){
+
+        $request->validate([
+            'cliente_id' => 'required|exists:clientes,id',
+        ]);
+
         $items_carrito = Session::get('items_carrito', []);
 
         //validar si el carrito esta vacio
@@ -114,6 +119,7 @@ class CarritoController extends Controller
             //crear la venta
             $venta = new Venta();
             $venta->user_id = Auth::id();
+            $venta->cliente_id  = $request->cliente_id;   // ← asignas aquí el cliente
             $venta->total_venta = $totalVenta;
             $venta->save();
 

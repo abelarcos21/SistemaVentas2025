@@ -79,9 +79,11 @@ class DetalleVentasController extends Controller
 
         $venta = Venta::select(
             'ventas.*',
-            'users.name as nombre_usuario'
+            'users.name as nombre_usuario',
+            'clientes.nombre as nombre_cliente'
         )
-        ->join('users', 'ventas.user_id', '=', 'users.id')
+        ->join('users', 'ventas.user_id', '=', 'users.id')//agregar el nombre del usuario quien hiso la venta
+        ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente
         ->where('ventas.id', $id)
         ->firstOrFail();
 

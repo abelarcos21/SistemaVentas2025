@@ -98,23 +98,56 @@
                 <!-- Carrito de Compras -->
                 <div class="col-8">
                     <div class="card card-outline card-info">
-                        <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title">Carrito de Compras</h3>
+                        <div class="card-header bg-secondary">
+                            <h3 class="card-title d-inline-block">Carrito de Compras</h3>
 
-                            <a href="{{ route('ventas.borrar.carrito') }}" class="mb-2 pt-2 pb-2 btn btn-warning btn-sm">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <a
+                                href="{{ route('ventas.borrar.carrito') }}"
+                                class="btn btn-warning btn-sm mr-4"
+                                >
                                 <i class="fas fa-boxes"></i> Vaciar Carrito
-                            </a>
+                                </a>
 
-                            <form action="{{ route('ventas.vender') }}" method="POST" style="display:inline;">
-                                @csrf
-                                <button class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                                    <i class="fas fa-boxes"></i> Realizar Venta
-                                </button>
-                            </form>
+                                <form
+                                    action="{{ route('ventas.vender') }}"
+                                    method="POST"
+                                    class="d-flex align-items-center  mr-4"
+                                    >
+                                    @csrf
+
+                                    <div class="form-group mb-0  mr-4">
+                                        <select
+                                        name="cliente_id"
+                                        id="cliente_id"
+                                        class="form-control form-control-sm  mr-4"
+                                        required
+                                        >
+                                        <option value="" disabled selected>-- Cliente --</option>
+                                        @foreach($clientes as $cliente)
+                                            <option value="{{ $cliente->id }}">
+                                            {{ $cliente->nombre }}
+                                            </option>
+                                        @endforeach
+                                        </select>
+
+                                        @error('cliente_id')
+                                        <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+
+                                    <button class="btn btn-info btn-sm">
+                                        <i class="fas fa-boxes"></i> Realizar Venta
+                                    </button>
+                                </form>
+                                {{-- Si quisieras un tercer botón independiente, por ejemplo --}}
+                                {{-- <a href="#" class="btn btn-secondary btn-sm  mr-4">Otro Botón</a> --}}
+                            </div>
                         </div>
                         <!-- /.card-header -->
 
                         <div class="card-body bg-secondary">
+                            {{-- ... tabla de carrito ... --}}
                             @if (session('items_carrito'))
                                 <div class="table-responsive">
                                     <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
@@ -163,11 +196,13 @@
                             @else
                                 <p>No tengo contenido</p>
                             @endif
+
                         </div>
                         <!-- /.card-body -->
                     </div>
-                    <!-- /.card -->
+                <!-- /.card -->
                 </div>
+
 
                 <!-- Total General -->
                 <div class="col-4">
