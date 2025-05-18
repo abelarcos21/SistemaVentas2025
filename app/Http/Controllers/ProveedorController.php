@@ -27,6 +27,8 @@ class ProveedorController extends Controller
 
     public function show(Proveedor $proveedor){
 
+        return view('modulos.proveedores.show', compact('proveedor'));
+
     }
 
     public function edit(Proveedor $proveedor){

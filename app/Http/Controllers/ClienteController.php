@@ -93,4 +93,29 @@ class ClienteController extends Controller
         }
 
     }
+
+    public function destroy(Cliente $cliente){
+
+        DB::beginTransaction();
+
+        try {
+
+            //codigo
+            $nombreCliente = $cliente->nombre;
+            $cliente->delete();
+
+            DB::commit();
+
+            return redirect()->route('cliente.index')->with('success','El Cliente  '.$nombreCliente.'  se Elimino');
+
+        } catch (Exception $e) {
+            //exception $e;
+            DB::rollBack();
+
+            Log::error('Error al Eliminar Cliente:' . $e->getMessage());
+            return redirect()->route('cliente.index')->with('error','Error al Eliminar Cliente');
+
+        }
+
+    }
 }
