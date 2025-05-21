@@ -29,7 +29,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0">Categorías registradas</h3>
+                            <h3 class="card-title mb-0"> <i class="fas fa-list"></i>Categorías registradas</h3>
                             <a href="{{ route('categoria.create') }}" class="btn btn-info btn-sm ">
                                 <i class="fas fa-tags"></i> Agregar Nuevo
                             </a>

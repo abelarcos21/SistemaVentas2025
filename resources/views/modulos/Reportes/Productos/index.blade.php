@@ -28,13 +28,16 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card card-outline card-info">
-                        <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title">Productos registrados</h3>
 
-                            <a href="{{ route('reporte.falta_stock') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                                <i class="fas fa-boxes"></i>
-                                Productos con Cantidad 1 y 0
-                            </a>
+                        <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0">Productos registrados</h3>
+                            <div>
+
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-boxes"></i>
+                                    Productos con Cantidad 1 y 0
+                                </a>
+                            </div>
                         </div>
                         <!-- /.card-header -->
 
@@ -182,7 +185,7 @@
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
-                    
+
                     {
                         extend: 'excel',
                         text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',

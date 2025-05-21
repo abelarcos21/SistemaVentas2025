@@ -29,7 +29,7 @@
                 <div class="col-12">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0">Productos registrados</h3>
+                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
                             <div>
                                 <a href="{{ route('producto.create') }}" class="btn btn-info btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
