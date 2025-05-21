@@ -12,8 +12,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">DataTables</li>
+                        <li class="breadcrumb-item"><a href="#">Productos</a></li>
+                        <li class="breadcrumb-item active">Administrar Productos y Stock</li>
                     </ol>
                 </div>
           </div>
@@ -46,16 +46,17 @@
                                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                                     <thead>
                                         <tr>
-                                            <th>Nro#</th>
-                                            <th>Categoría</th>
-                                            <th>Proveedor</th>
-                                            <th>Código</th>
-                                            <th>Nombre</th>
-                                            <th>Descripción</th>
+                                            <th>Nro</th>
                                             <th>Imagen</th>
-                                            <th>Cantidad</th>
-                                            <th>Venta</th>
-                                            <th>Compra</th>
+                                            <th>Codigo</th>
+                                            <th>Nombre</th>
+                                            <th>Categoria</th>
+                                            <th>Descripción</th>
+                                            <th>Proveedor</th>
+                                            <th>Stock</th>
+                                            <th>Precio Venta</th>
+                                            <th>Precio Compra</th>
+                                            <th>Fecha Registro</th>
                                             <th>Activo</th>
                                             <th class="no-exportar">Comprar</th>
                                             <th class="no-exportar">Acciones</th>
@@ -65,11 +66,6 @@
                                         @forelse($productos as $producto)
                                             <tr>
                                                 <td>{{ $producto->id }}</td>
-                                                <td>{{ $producto->nombre_categoria }}</td>
-                                                <td>{{ $producto->nombre_proveedor }}</td>
-                                                <td>{{ $producto->codigo }}</td>
-                                                <td>{{ $producto->nombre }}</td>
-                                                <td>{{ $producto->descripcion }}</td>
                                                 <td>
                                                     @if($producto->imagen)
                                                         <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="70" height="70" style="object-fit: cover;">
@@ -77,9 +73,15 @@
                                                         <span>Sin imagen</span>
                                                     @endif
                                                 </td>
+                                                <td>{{ $producto->codigo }}</td>
+                                                <td>{{ $producto->nombre }}</td>
+                                                <td>{{ $producto->nombre_categoria }}</td>
+                                                <td>{{ $producto->descripcion }}</td>
+                                                <td>{{ $producto->nombre_proveedor }}</td>
                                                 <td>{{ $producto->cantidad }}</td>
                                                 <td>${{ $producto->precio_venta }}</td>
                                                 <td>${{ $producto->precio_compra }}</td>
+                                                <td>{{ $producto->created_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input type="checkbox" role="switch" class="custom-control-input"

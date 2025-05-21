@@ -45,9 +45,10 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Email</th>
-                                            <th>Nombre</th>
+                                            <th>Nombres</th>
                                             <th>Rol</th>
                                             <th>Cambio Contraseña</th>
+                                            <th>Fecha Registro</th>
                                             <th>Activo</th>
                                             <th>Editar</th>
                                         </tr>
@@ -64,12 +65,14 @@
                                                         <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
                                                     </a>
                                                 </td>
+                                                <td>{{$usuario->created_at->format('d/m/Y')}}</td>
                                                 <td>
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $usuario->id }}" {{ $usuario->activo ? 'checked' : '' }} data-id="{{ $usuario->id }}">
                                                         <label class="custom-control-label" for="activoSwitch{{ $usuario->id }}"></label>
                                                     </div>
                                                 </td>
+
                                                 <td class="text-center">
                                                     <div class="d-inline-flex justify-content-center">
                                                         <a href="{{ route('usuario.show', $usuario) }}" class="btn btn-info btn-sm mr-1">

@@ -13,7 +13,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">DataTables</li>
+                        <li class="breadcrumb-item active">Crear Una Nueva Venta</li>
                     </ol>
                 </div>
           </div>
@@ -31,14 +31,6 @@
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary text-right">
                             <h3 class="card-title">Crear ventas de los productos existentes</h3>
-
-                            <a href="{{ route('producto.create') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                                <i class="fas fa-plus"></i> Agregar Nuevo
-                            </a>
-
-                            <a href="{{ route('reporte.falta_stock') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
-                                <i class="fas fa-boxes"></i> Productos con Cantidad 1 y 0
-                            </a>
                         </div>
                         <!-- /.card-header -->
 
@@ -48,9 +40,10 @@
                                     <thead>
                                         <tr>
                                             <th>Nro#</th>
-                                            <th>Código</th>
+                                            <th>Imagen</th>
                                             <th>Nombre</th>
-                                            <th>Cantidad</th>
+                                            <th>Código</th>
+                                            <th>Stock</th>
                                             <th>Precio Venta</th>
                                             <th>Acción</th>
                                         </tr>
@@ -59,13 +52,20 @@
                                         @forelse($productos as $producto)
                                             <tr>
                                                 <td>{{ $producto->id }}</td>
-                                                <td>{{ $producto->codigo }}</td>
+                                                <td>
+                                                    @if($producto->imagen)
+                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
+                                                    @else
+                                                        <span>Sin imagen</span>
+                                                    @endif
+                                                    </td>
                                                 <td>{{ $producto->nombre }}</td>
+                                                <td>{{ $producto->codigo }}</td>
                                                 <td>{{ $producto->cantidad }}</td>
                                                 <td>${{ $producto->precio_venta }}</td>
                                                 <td>
                                                     <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">
-                                                        <i class="fas fa-shopping-cart"></i> Agregar al Carrito
+                                                        <i class="fas fa-shopping-cart"></i> Agregar
                                                     </a>
                                                 </td>
                                             </tr>
@@ -153,8 +153,9 @@
                                     <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
                                         <thead>
                                             <tr>
-                                                <th>Código</th>
+                                                <th>Imagen</th>
                                                 <th>Nombre</th>
+                                                <th>Stock</th>
                                                 <th>Cantidad</th>
                                                 <th>Precio Venta</th>
                                                 <th>Total</th>
@@ -170,8 +171,15 @@
                                                     $totalGeneral += $totalProducto;
                                                 @endphp
                                                 <tr>
-                                                    <td class="text-center">{{ $item['codigo'] }}</td>
+                                                    <td>
+                                                        @if($producto->imagen)
+                                                            <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
+                                                        @else
+                                                            <span>Sin imagen</span>
+                                                        @endif
+                                                    </td>
                                                     <td class="text-center">{{ $item['nombre'] }}</td>
+                                                    <td class="text-center">{{ $producto->cantidad}}</td>
                                                     <td class="text-center">
                                                         <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
                                                             @csrf
@@ -219,6 +227,22 @@
                             <!-- /.card-body -->
                         </div>
                         <!-- /.card -->
+
+                    @else
+
+                        <div class="card card-outline card-info">
+                            <div class="card-header bg-secondary text-center">
+                                <h3><i class="fas fa-shopping-cart"></i> Total General</h3>
+                            </div>
+                            <!-- /.card-header -->
+
+                            <div class="card-body bg-secondary">
+                                <h3><strong>MX0.00</strong></h3>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+
                     @endif
                 </div>
                 <!-- /.col -->
