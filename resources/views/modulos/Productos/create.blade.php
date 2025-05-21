@@ -42,41 +42,44 @@
                                 <div class="card-body bg-secondary">
 
                                     <div class="form-group row">
-                                        <label for="rol" class="col-sm-2 col-form-label">Categoria</label>
+                                        <label for="categoria" class="col-sm-2 col-form-label">Categoría</label>
                                         <div class="col-sm-10">
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    <span class="input-group-text bg-gradient-secondary">
+                                                        <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
 
-                                                <select name="categoria_id" id="categoria_id" class=" form-control bg-secondary" aria-label="Default select example" required>
-                                                    <option value="">Selecciona una categoria</option>
-                                                    @foreach ($categorias as $item)
-                                                        <option value="{{ $item->id }}"> {{ $item->nombre }} </option>
+                                                <select id="categoria" name="categoria_id" class="form-control bg-secondary selectcategoria" required>
+                                                    <option value="">Selecciona una categoría</option>
+                                                    @foreach($categorias as $categoria)
+                                                        <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
+
                                         </div>
+
                                     </div>
 
+
                                     <div class="form-group row">
-                                        <label for="rol" class="col-sm-2 col-form-label">Proveedor</label>
+                                        <label for="proveedor_id" class="col-sm-2 col-form-label">Proveedor</label>
                                         <div class="col-sm-10">
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    <span class="input-group-text bg-gradient-secondary">
+                                                        <i class="fas fa-truck"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
 
-                                                <select name="proveedor_id" id="proveedor_id" class="form-control bg-secondary" aria-label="Default select example" required>
+                                                <select name="proveedor_id" id="proveedor_id" class="form-control  selectproveedor" required>
                                                     <option value="">Selecciona un proveedor</option>
-                                                    @foreach ($proveedores as $item)
-                                                    <option value="{{ $item->id }}"> {{ $item->nombre }} </option>
+                                                    @foreach ($proveedores as $proveedor)
+                                                        <option value="{{ $proveedor->id }}"> {{ $proveedor->nombre }} </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -88,11 +91,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user"></i>
+                                                    <span class="input-group-text bg-gradient-secondary">
+                                                        <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="codigo" placeholder="ingrese el nombre" class="form-control bg-secondary">
+                                                <input type="text" name="codigo" placeholder="ingrese el codigo" class="form-control bg-secondary">
                                             </div>
                                         </div>
                                     </div>
@@ -102,11 +105,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-phone"></i>
+                                                    <span class="input-group-text bg-gradient-secondary">
+                                                        <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" class="form-control bg-secondary">
+                                                <input type="text" name="nombre" placeholder="ingrese nombre del producto" class="form-control bg-secondary">
                                             </div>
                                         </div>
                                     </div>
@@ -125,8 +128,8 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user"></i>
+                                                    <span class="input-group-text bg-gradient-secondary">
+                                                        <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
                                                 <input type="file" id="imagen" name="imagen" class="form-control bg-secondary">
@@ -175,10 +178,25 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 
+    {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES Y CATEGORIAS--}}
+    <script>
+        $(document).ready(function () {
+            $('.selectcategoria').select2({
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca una Categoria"
+            });
+        });
+    </script>
 
-
+    <script>
+        $(document).ready(function () {
+            $('.selectproveedor').select2({
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca un Proveedor"
+            });
+        });
+    </script>
 
 @stop
 

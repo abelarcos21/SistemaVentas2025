@@ -96,7 +96,7 @@
         <div class="container-fluid">
             <div class="row">
                 <!-- Carrito de Compras -->
-                <div class="col-8">
+                <div class="col-9">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary">
                             <h3 class="card-title d-inline-block">Carrito de Compras</h3>
@@ -213,7 +213,7 @@
 
 
                 <!-- Total General -->
-                <div class="col-4">
+                <div class="col-3">
                     @if (session('items_carrito'))
                         <div class="card card-outline card-info">
                             <div class="card-header bg-secondary text-center">
