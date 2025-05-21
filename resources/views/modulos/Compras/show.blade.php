@@ -71,7 +71,7 @@
                     <button class="btn btn-danger btn-sm">
                         <i class="fas fa-trash-alt"></i> Eliminar Compra
                     </button>
-                    <a href="{{ route('compra.index') }}" class="btn btn-info btn-sm">
+                    <a href="{{ route('compra.index') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </form>

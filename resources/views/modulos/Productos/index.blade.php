@@ -31,10 +31,10 @@
                         <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
                             <div>
-                                <a href="{{ route('producto.create') }}" class="btn btn-info btn-sm mr-2">
+                                <a href="{{ route('producto.create') }}" class="btn btn-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
-                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-boxes"></i> Productos con Cantidad 1 y 0
                                 </a>
                             </div>

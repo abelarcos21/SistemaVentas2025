@@ -33,7 +33,7 @@
                             <h3 class="card-title mb-0">Productos registrados</h3>
                             <div>
 
-                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-boxes"></i>
                                     Productos con Cantidad 1 y 0
                                 </a>
@@ -46,7 +46,7 @@
                                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                                     <thead>
                                         <tr>
-                                            <th>Nro#</th>
+                                            <th>Nro</th>
                                             <th>Categoría</th>
                                             <th>Proveedor</th>
                                             <th>Código</th>

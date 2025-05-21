@@ -29,7 +29,7 @@
                 <div class="col-12">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title">Detalle de la Venta</h3>
+                            <h3 class="card-title"><i class="fas fa-search-dollar"></i> Detalle de la Venta</h3>
                             <a href="{{ route('detalleventas.index') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                                 <i class="fas fa-arrow-left"></i> Volver
                             </a>
@@ -39,7 +39,7 @@
                         <div class="card-body bg-secondary">
                             <p><strong>Usuario que hizo la venta: </strong> {{ $venta->nombre_usuario }}</p>
                             <p><strong>Total de venta: </strong> ${{ $venta->total_venta }}</p>
-                            <p><strong>Fecha: </strong> {{ $venta->created_at }}</p>
+                            <p><strong>Fecha: </strong> {{ $venta->created_at->format('d/m/Y') }}</p>
 
                             <hr>
 
@@ -47,7 +47,7 @@
                                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                                     <thead>
                                         <tr>
-                                            <th>Nro#</th>
+                                            <th>Nro</th>
                                             <th>Producto</th>
                                             <th>Cantidad</th>
                                             <th>Precio Unitario</th>

@@ -29,9 +29,9 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0"> <i class="fas fa-list"></i>Categorías registradas</h3>
-                            <a href="{{ route('categoria.create') }}" class="btn btn-info btn-sm ">
-                                <i class="fas fa-tags"></i> Agregar Nuevo
+                            <h3 class="card-title mb-0"> <i class="fas fa-list"></i> Categorías registradas</h3>
+                            <a href="{{ route('categoria.create') }}" class="btn btn-primary btn-sm ">
+                                <i class="fas fa-plus"></i> Agregar Nuevo
                             </a>
                         </div>
                         <!-- /.card-header -->
@@ -41,7 +41,7 @@
                                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                                     <thead>
                                         <tr>
-                                            <th>Nro#</th>
+                                            <th>Nro</th>
                                             <th>Usuario</th>
                                             <th>Nombre</th>
                                             <th>Fecha Registro</th>

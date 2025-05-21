@@ -38,7 +38,7 @@
                                 <table id="example1" class="table table-bordered table-striped bg-secondary">
                                     <thead>
                                         <tr>
-                                            <th>Nro#</th>
+                                            <th>Nro</th>
                                             <th>Usuario</th>
                                             <th>Producto</th>
                                             <th>Cantidad</th>
