@@ -30,7 +30,7 @@
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary text-right">
                             <h3 class="card-title"><i class="fas fa-search-dollar"></i> Detalle de la Venta</h3>
-                            <a href="{{ route('detalleventas.index') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                            <a href="{{ route('detalleventas.index') }}" class="mb-2 pt-2 pb-2 btn btn-primary btn-sm">
                                 <i class="fas fa-arrow-left"></i> Volver
                             </a>
                         </div>
