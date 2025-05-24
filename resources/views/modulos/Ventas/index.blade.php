@@ -154,6 +154,7 @@
                                         <thead>
                                             <tr>
                                                 <th>Nombre</th>
+                                                <th>Stock</th> <!-- NUEVA COLUMNA -->
                                                 <th>Cantidad</th>
                                                 <th>Precio Venta</th>
                                                 <th>Total</th>
@@ -167,10 +168,13 @@
                                                 @php
                                                     $totalProducto = $item['cantidad'] * $item['precio'];
                                                     $totalGeneral += $totalProducto;
+                                                    $producto = \App\Models\Producto::find($item['id']);//obtener el producto
                                                 @endphp
                                                 <tr>
 
                                                     <td class="text-center">{{ $item['nombre'] }}</td>
+
+                                                    <td class="text-center">{{ $producto->cantidad }}</td> <!-- NUEVA CELDA -->
 
                                                     <td class="text-center">
                                                         <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
