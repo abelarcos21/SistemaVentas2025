@@ -8,7 +8,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1> <i class="fas fa-edit"></i> Clientes | Modificar Datos Del Cliente</h1>
+                    <h1><i class="fas fa-edit"></i> Clientes | Modificar Datos Del Cliente</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -29,28 +29,28 @@
             <div class="col-12">
                 <div class="card card-outline card-warning">
                     <div class="card-header bg-secondary">
-                        <h3 class="card-title">Editar  Cliente</h3>
+                        <h3 class="card-title"> Editar  Cliente</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
-                        <div class="card card-secondary">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('cliente.update', $cliente)}}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombres</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" placeholder="ingrese los nombres" class="form-control bg-secondary" value="{{ old('nombre', $cliente->nombre ?? '') }}"  required>
+                                                <input type="text" name="nombre" placeholder="ingrese los nombres" class="form-control" value="{{ old('nombre', $cliente->nombre ?? '') }}"  required>
                                             </div>
                                         </div>
                                     </div>
@@ -60,11 +60,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-user-tag"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="apellido" placeholder="ingrese los apellidos" class="form-control bg-secondary" value="{{ old('apellido', $cliente->apellido ?? '')}}" required>
+                                                <input type="text" name="apellido" placeholder="ingrese los apellidos" class="form-control" value="{{ old('apellido', $cliente->apellido ?? '')}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -74,11 +74,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-id-card"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="rfc" placeholder="ingrese el RFC" class="form-control bg-secondary" value="{{ old('rfc', $cliente->rfc ?? '')}}" required>
+                                                <input type="text" name="rfc" placeholder="ingrese el RFC" class="form-control" value="{{ old('rfc', $cliente->rfc ?? '')}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -88,11 +88,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-phone"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="telefono" placeholder="ingrese el Telefono" class="form-control bg-secondary" value="{{ old('telefono', $cliente->telefono ?? '')}}" required>
+                                                <input type="text" name="telefono" placeholder="ingrese el Telefono" class="form-control" value="{{ old('telefono', $cliente->telefono ?? '')}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -102,11 +102,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-envelope"></i>
                                                     </span>
                                                 </div>
-                                                <input type="email" name="correo" placeholder="ingrese el Correo" class="form-control bg-secondary" value="{{ old('correo', $cliente->correo ?? '')}}" required>
+                                                <input type="email" name="correo" placeholder="ingrese el Correo" class="form-control" value="{{ old('correo', $cliente->correo ?? '')}}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -124,7 +124,7 @@
                                 </div>
                                 <!-- /.card-body -->
 
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>
