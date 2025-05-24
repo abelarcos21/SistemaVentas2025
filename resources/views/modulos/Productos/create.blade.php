@@ -32,14 +32,14 @@
                         <h3 class="card-title">Agregar Nuevo Producto</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
                         <div class="card card-secondary">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('producto.store')}}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
 
                                     <div class="form-group row">
                                         <label for="categoria" class="col-sm-2 col-form-label">Categoría</label>
@@ -47,12 +47,12 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-secondary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
 
-                                                <select id="categoria" name="categoria_id" class="form-control bg-secondary selectcategoria" required>
+                                                <select id="categoria" name="categoria_id" class="form-control selectcategoria" required>
                                                     <option value="">Selecciona una categoría</option>
                                                     @foreach($categorias as $categoria)
                                                         <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
@@ -71,7 +71,7 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-secondary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-truck"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
@@ -91,11 +91,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-secondary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="codigo" placeholder="ingrese el codigo" class="form-control bg-secondary">
+                                                <input type="text" name="codigo" placeholder="ingrese el codigo" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -105,11 +105,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-secondary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" placeholder="ingrese nombre del producto" class="form-control bg-secondary">
+                                                <input type="text" name="nombre" placeholder="ingrese nombre del producto" class="form-control ">
                                             </div>
                                         </div>
                                     </div>
@@ -117,7 +117,12 @@
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Descripcion</label>
                                         <div class="col-sm-10">
-                                            <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-comments"></i>
+                                                    </span>
+                                                </div>
                                                 <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                                             </div>
                                         </div>
@@ -128,11 +133,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-secondary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="file" id="imagen" name="imagen" class="form-control bg-secondary">
+                                                <input type="file" id="imagen" name="imagen" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -140,7 +145,7 @@
                                 </div>
                                 <!-- /.card-body -->
 
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer ">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>
