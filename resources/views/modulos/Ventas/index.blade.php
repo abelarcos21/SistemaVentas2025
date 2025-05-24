@@ -34,9 +34,9 @@
                         </div>
                         <!-- /.card-header -->
 
-                        <div class="card-body bg-secondary">
+                        <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>Nro#</th>
@@ -146,16 +146,14 @@
                         </div>
                         <!-- /.card-header -->
 
-                        <div class="card-body bg-secondary">
+                        <div class="card-body">
                             {{-- ... tabla de carrito ... --}}
                             @if (session('items_carrito'))
                                 <div class="table-responsive">
-                                    <table id="productos_carrito" class="table table-bordered table-striped bg-secondary">
+                                    <table id="productos_carrito" class="table table-bordered table-striped ">
                                         <thead>
                                             <tr>
-                                                <th>Imagen</th>
                                                 <th>Nombre</th>
-                                                <th>Stock</th>
                                                 <th>Cantidad</th>
                                                 <th>Precio Venta</th>
                                                 <th>Total</th>
@@ -171,15 +169,9 @@
                                                     $totalGeneral += $totalProducto;
                                                 @endphp
                                                 <tr>
-                                                    <td>
-                                                        @if($producto->imagen)
-                                                            <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
-                                                        @else
-                                                            <span>Sin imagen</span>
-                                                        @endif
-                                                    </td>
+
                                                     <td class="text-center">{{ $item['nombre'] }}</td>
-                                                    <td class="text-center">{{ $producto->cantidad}}</td>
+
                                                     <td class="text-center">
                                                         <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
                                                             @csrf
@@ -221,7 +213,7 @@
                             </div>
                             <!-- /.card-header -->
 
-                            <div class="card-body bg-secondary">
+                            <div class="card-body ">
                                 <h3><strong>${{ number_format($totalGeneral, 2) }}</strong></h3>
                             </div>
                             <!-- /.card-body -->
@@ -236,7 +228,7 @@
                             </div>
                             <!-- /.card-header -->
 
-                            <div class="card-body bg-secondary">
+                            <div class="card-body">
                                 <h3><strong>MX0.00</strong></h3>
                             </div>
                             <!-- /.card-body -->
@@ -298,26 +290,40 @@
     {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente--}}
     <script>
         document.querySelectorAll('.cantidad-mas').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault(); // Evita que el formulario se envíe automáticamente
+
                 const form = this.closest('form');
                 const input = form.querySelector('.cantidad-input');
                 const max = parseInt(input.getAttribute('max'));
+                const current = parseInt(input.value);
 
-                if (parseInt(input.value) < max) {
-                    input.value = parseInt(input.value) + 1;
+                if (current < max) {
+                    input.value = current + 1;
                     form.submit();
+                } else if (current === max) {
+                    if (max === 0) {
+                        alert('No hay productos disponibles.');
+                    } else if (max === 1) {
+                        alert('Solo queda 1 producto en stock.');
+                    } else {
+                        alert('Has alcanzado el límite disponible de este producto.');
+                    }
                 }
             });
         });
 
         document.querySelectorAll('.cantidad-menos').forEach(btn => {
-            btn.addEventListener('click', function () {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault(); // Evita que el formulario se envíe automáticamente
+
                 const form = this.closest('form');
                 const input = form.querySelector('.cantidad-input');
                 const min = parseInt(input.getAttribute('min'));
+                const current = parseInt(input.value);
 
-                if (parseInt(input.value) > min) {
-                    input.value = parseInt(input.value) - 1;
+                if (current > min) {
+                    input.value = current - 1;
                     form.submit();
                 }
             });
