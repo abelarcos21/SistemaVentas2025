@@ -176,9 +176,9 @@
                                                         <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
                                                             @csrf
                                                             @method('PUT')
-                                                            <button type="button" class="btn btn-sm btn-outline-warning cantidad-menos">−</button>
+                                                            <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
                                                             <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="10" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
-                                                            <button type="button" class="btn btn-sm btn-outline-warning cantidad-mas">+</button>
+                                                            <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
                                                         </form>
                                                     </td>
                                                     <td class="text-center">${{ $item['precio'] }}</td>
