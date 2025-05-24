@@ -36,7 +36,7 @@
                         </div>
                         <!-- /.card-header -->
 
-                        <div class="card-body bg-secondary">
+                        <div class="card-body">
                             <p><strong>Usuario que hizo la venta: </strong> {{ $venta->nombre_usuario }}</p>
                             <p><strong>Total de venta: </strong> ${{ $venta->total_venta }}</p>
                             <p><strong>Fecha: </strong> {{ $venta->created_at->format('d/m/Y') }}</p>
@@ -44,7 +44,7 @@
                             <hr>
 
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>Nro</th>

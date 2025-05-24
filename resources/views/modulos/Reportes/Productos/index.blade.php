@@ -41,9 +41,9 @@
                         </div>
                         <!-- /.card-header -->
 
-                        <div class="card-body bg-secondary">
+                        <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped bg-secondary">
+                                <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>Nro</th>
