@@ -32,16 +32,16 @@
                         <h3 class="card-title">Agregar Nueva Categoria</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body ">
                         <!-- Horizontal Form -->
-                        <div class="card card-secondary">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('categoria.store')}}" method="POST">
                                 @csrf
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label text-white">Nombre de Categoría</label>
+                                        <label for="nombre" class="col-sm-2 col-form-label">Nombre de Categoría</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>
