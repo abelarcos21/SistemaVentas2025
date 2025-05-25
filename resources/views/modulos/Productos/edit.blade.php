@@ -32,15 +32,15 @@
                         <h3 class="card-title">Editar  Producto</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
-                        <div class="card card-secondary">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('producto.update', $producto)}}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
 
                                     <div class="form-group row">
                                         <label for="rol" class="col-sm-2 col-form-label">Categoria</label>
@@ -48,12 +48,12 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
 
-                                                <select name="categoria_id" id="categoria_id" class=" form-control bg-secondary" aria-label="Default select example" required>
+                                                <select name="categoria_id" id="categoria_id" class=" form-control selectcategoria" aria-label="Default select example" required>
                                                     @foreach($categorias as $categoria)
                                                         <option value="{{ $categoria->id }}" {{ old('categoria_id', $producto->categoria_id ?? '') == $categoria->id ? 'selected' : '' }}>
                                                             {{ $categoria->nombre }}
@@ -70,12 +70,12 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-truck"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
 
-                                                <select name="proveedor_id" id="proveedor_id" class="form-control bg-secondary" aria-label="Default select example" required>
+                                                <select name="proveedor_id" id="proveedor_id" class="form-control selectproveedor" aria-label="Default select example" required>
                                                     @foreach($proveedores as $proveedor)
                                                         <option value="{{ $proveedor->id }}" {{ old('proveedor_id', $producto->proveedor_id ?? '') == $proveedor->id ? 'selected' : '' }}>
                                                             {{ $proveedor->nombre }}
@@ -91,11 +91,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user"></i>
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="codigo" class="form-control bg-secondary" value="{{ old('codigo', $producto->codigo ?? '') }}" required>
+                                                <input type="text" name="codigo" class="form-control" value="{{ old('codigo', $producto->codigo ?? '') }}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -105,11 +105,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-phone"></i>
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" class="form-control bg-secondary" value="{{ old('nombre', $producto->nombre ?? '') }}" required>
+                                                <input type="text" name="nombre" class="form-control" value="{{ old('nombre', $producto->nombre ?? '') }}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -117,8 +117,13 @@
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Descripcion</label>
                                         <div class="col-sm-10">
-                                            <div class="form-group">
-                                                <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" required>{{ old('descripcion', $producto->descripcion ?? '') }}</textarea>
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-comments"></i>
+                                                    </span>
+                                                </div>
+                                               <textarea name="descripcion" class="form-control" rows="3" id="exampleFormControlTextarea1" required>{{ old('descripcion', $producto->descripcion ?? '') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -128,11 +133,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-phone"></i>
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-dollar-sign"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="precio_venta" class="form-control bg-secondary" value="{{ old('precio_venta', $producto->precio_venta ?? '') }}" required>
+                                                <input type="text" name="precio_venta" class="form-control" value="{{ old('precio_venta', $producto->precio_venta ?? '') }}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -145,11 +150,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user"></i>
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="file" id="imagen" name="imagen" class="form-control bg-secondary">
+                                                <input type="file" id="imagen" name="imagen" class="form-control">
 
                                             </div>
                                         </div>
@@ -157,7 +162,7 @@
 
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-warning">
                                         <i class="fas fa-save"></i> Actualizar
                                     </button>
@@ -194,9 +199,24 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
 
+    {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES Y CATEGORIAS--}}
+    <script>
+        $(document).ready(function () {
+            $('.selectcategoria').select2({
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca una Categoria"
+            });
+        });
+    </script>
 
-
+    <script>
+        $(document).ready(function () {
+            $('.selectproveedor').select2({
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca un Proveedor"
+            });
+        });
+    </script>
 
 @stop
