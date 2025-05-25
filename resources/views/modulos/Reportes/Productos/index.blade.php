@@ -53,7 +53,7 @@
                                             <th>Nombre</th>
                                             <th>Descripción</th>
                                             <th>Imagen</th>
-                                            <th>Cantidad</th>
+                                            <th>Stock</th>
                                             <th>Venta</th>
                                             <th>Compra</th>
                                         </tr>
@@ -74,7 +74,7 @@
                                                         <span>Sin imagen</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $producto->cantidad }}</td>
+                                                <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
                                                 <td>${{ $producto->precio_venta }}</td>
                                                 <td>${{ $producto->precio_compra }}</td>
                                             </tr>

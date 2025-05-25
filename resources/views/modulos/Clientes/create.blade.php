@@ -32,24 +32,24 @@
                         <h3 class="card-title">Agregar Nuevo Cliente</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
-                        <div class="card card-secondary">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('cliente.store')}}" method="POST">
                                 @csrf
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombres</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" placeholder="ingrese los nombres" class="form-control bg-secondary">
+                                                <input type="text" name="nombre" placeholder="ingrese nombres..." class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -59,11 +59,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i>
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="apellido" placeholder="ingrese los apellidos" class="form-control bg-secondary">
+                                                <input type="text" name="apellido" placeholder="ingrese apellidos..." class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -73,11 +73,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-id-card"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="rfc" placeholder="ingrese el RFC" class="form-control bg-secondary">
+                                                <input type="text" name="rfc" placeholder="ingrese el RFC" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -87,11 +87,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-phone"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="telefono" placeholder="ingrese el Telefono" class="form-control bg-secondary">
+                                                <input type="text" name="telefono" placeholder="ingrese el Telefono" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -101,11 +101,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-envelope"></i>
                                                     </span>
                                                 </div>
-                                                <input type="email" name="correo" placeholder="ingrese el Correo" class="form-control bg-secondary">
+                                                <input type="email" name="correo" placeholder="ingrese el Correo" class="form-control">
                                             </div>
                                         </div>
                                     </div>
@@ -121,7 +121,7 @@
                                 </div>
                                 <!-- /.card-body -->
 
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>

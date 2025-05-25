@@ -32,25 +32,25 @@
                         <h3 class="card-title">Editar Usuario</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
-                        <div class="card card-info">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('usuario.update', $user)}}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="name" class="form-control bg-secondary" value="{{ $user->name }}">
+                                                <input type="text" name="name" class="form-control " value="{{ $user->name }}">
                                             </div>
                                         </div>
                                     </div>
@@ -60,11 +60,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-envelope"></i>
                                                     </span>
                                                 </div>
-                                                <input type="email" name="email" class="form-control bg-secondary" value="{{ $user->email }}">
+                                                <input type="email" name="email" class="form-control" value="{{ $user->email }}">
                                             </div>
                                         </div>
                                     </div>
@@ -86,11 +86,11 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-user"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
-                                                <select name="rol" id="rol"  class="form-control bg-secondary" aria-label="Default select example">
+                                                <select name="rol" id="rol"  class="form-control" aria-label="Default select example">
                                                     <option selected>Selecciona el Rol</option>
                                                     @if($user->rol == 'admin')
                                                         <option value="admin" selected>Admin</option>
@@ -107,7 +107,7 @@
 
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-warning">
                                         <i class="fas fa-save"></i> Actualizar
                                     </button>

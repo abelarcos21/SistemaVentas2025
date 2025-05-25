@@ -61,7 +61,7 @@
                                                     </td>
                                                 <td>{{ $producto->nombre }}</td>
                                                 <td>{{ $producto->codigo }}</td>
-                                                <td>{{ $producto->cantidad }}</td>
+                                                <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
                                                 <td>${{ $producto->precio_venta }}</td>
                                                 <td>
                                                     <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">

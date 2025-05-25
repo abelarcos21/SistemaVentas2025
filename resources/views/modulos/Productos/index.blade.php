@@ -78,7 +78,7 @@
                                                 <td>{{ $producto->nombre_categoria }}</td>
                                                 <td>{{ $producto->descripcion }}</td>
                                                 <td>{{ $producto->nombre_proveedor }}</td>
-                                                <td>{{ $producto->cantidad }}</td>
+                                                <td><span class="badge bg-success text-dark">{{ $producto->cantidad }}</span></td>
                                                 <td>${{ $producto->precio_venta }}</td>
                                                 <td>${{ $producto->precio_compra }}</td>
                                                 <td>{{ $producto->created_at->format('d/m/Y') }}</td>

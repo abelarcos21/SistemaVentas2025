@@ -32,32 +32,57 @@
                         <h3 class="card-title">Agregar Nuevo Usuario</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body  bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
-                        <div class="card card-secondary">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('usuario.store')}}" method="POST">
                                 @csrf
-                                <div class="card-body  bg-secondary">
+                                <div class="card-body ">
+
+
+
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
                                         <div class="col-sm-10">
-                                            <input type="text" name="name" class="form-control" id="nombre" placeholder="Nombre">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-user"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" name="name" id="name" placeholder="ingrese el nombre" class="form-control">
+                                            </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <label for="email" class="col-sm-2 col-form-label">Correo</label>
                                         <div class="col-sm-10">
-                                            <input type="text" name="email" class="form-control" id="nombre" placeholder="Correo Electronico">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="email" name="email" id="email" placeholder="ingrese el Correo" class="form-control">
+                                            </div>
                                         </div>
                                     </div>
+
 
                                     <div class="form-group row">
                                         <label for="password" class="col-sm-2 col-form-label">Contraseña</label>
                                         <div class="col-sm-10">
-                                            <input type="password" name="password" class="form-control" id="nombre" placeholder="Contraseña">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-lock"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="password" name="password" placeholder="ingrese contraseña" class="form-control">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -76,11 +101,11 @@
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <i class="fas fa-user-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-user"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
-                                                <select name="rol" id="rol"  class="form-control bg-secondary" aria-label="Default select example">
+                                                <select name="rol" id="rol"  class="form-control" aria-label="Default select example">
                                                     <option selected>Selecciona el Rol</option>
                                                     <option value="admin">Admin</option>
                                                     <option value="cajero">Cajero</option>
@@ -92,7 +117,7 @@
 
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>
