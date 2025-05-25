@@ -153,6 +153,7 @@
                                     <table id="productos_carrito" class="table table-bordered table-striped ">
                                         <thead>
                                             <tr>
+                                                <th>Imagen</th>
                                                 <th>Nombre</th>
                                                 <th>Stock</th> <!-- NUEVA COLUMNA -->
                                                 <th>Cantidad</th>
@@ -172,9 +173,17 @@
                                                 @endphp
                                                 <tr>
 
+                                                    <td>
+                                                        @if($producto->imagen)
+                                                            <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
+                                                        @else
+                                                            <span>Sin imagen</span>
+                                                        @endif
+                                                    </td>
+
                                                     <td class="text-center">{{ $item['nombre'] }}</td>
 
-                                                    <td class="text-center">{{ $producto->cantidad }}</td> <!-- NUEVA CELDA -->
+                                                    <td class="text-center"><span class="badge bg-success">{{ $producto->cantidad }}</span></td> <!-- NUEVA CELDA -->
 
                                                     <td class="text-center">
                                                         <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
