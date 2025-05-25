@@ -32,7 +32,7 @@
                     <div class="card card-outline card-info">
 
                         <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title">Detalles Del Proveedor</h3>
+                            <h3 class="card-title"><i class="fas fa-list"></i> Detalles Del Proveedor</h3>
                             <a href="{{ route('proveedor.index') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
                             <i class="fas fa-arrow-left"></i>
                             Volver
@@ -40,9 +40,9 @@
                         </div>
                         <!-- /.card-header -->
 
-                        <div class="card-body bg-secondary">
+                        <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped">
+                                <table class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -96,34 +96,7 @@
 
 @section('js')
 
-    <script>
-        $(document).ready(function() {
-            $('#example1').DataTable({
-                "responsive": true,
-                "autoWidth": false,
+    {{-- Add here extra js --}}
 
-                "language": {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-
-                // Opcional: Personalizaciones
-                "pageLength": 10,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[2, 'desc']], // Ordenar por fecha descendente
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-
-
-                //"dom": 'Bfrtip',
-                //"buttons": [
-                   // 'copy', 'excel', 'pdf'
-                //],
-            });
-        });
-    </script>
 @stop
 
