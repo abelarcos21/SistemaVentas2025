@@ -190,7 +190,7 @@
                                                             @csrf
                                                             @method('PUT')
                                                             <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
-                                                            <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="10" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
+                                                            <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
                                                             <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
                                                         </form>
                                                     </td>
