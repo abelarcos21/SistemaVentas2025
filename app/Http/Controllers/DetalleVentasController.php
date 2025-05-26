@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
 use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class DetalleVentasController extends Controller
 {
@@ -100,6 +101,35 @@ class DetalleVentasController extends Controller
                 ->setPaper([0, 0, 300, 900], 'portrait'); // 80mm de ancho
 
         return $pdf->stream("ticket_compra_{$venta->id}.pdf");
+    }
+
+    public function generarBoleta(){
+
+        $cliente = [
+            'nombre' => 'Carlos Martínez',
+            'documento' => 'MARC850101HDFLRS08', // puede ser RFC o CURP
+            'direccion' => 'Calle Reforma 45, Guadalajara, Jal.',
+            'telefono' => '3312345678',
+        ];
+
+        $items = [
+            ['nombre' => 'Laptop HP', 'cantidad' => 1, 'precio' => 12500.00],
+            ['nombre' => 'Mouse inalámbrico', 'cantidad' => 2, 'precio' => 350.00],
+            ['nombre' => 'Monitor Samsung 27"', 'cantidad' => 1, 'precio' => 4500.00],
+        ];
+
+        $total = collect($items)->sum(fn($item) => $item['cantidad'] * $item['precio']);
+        $nota = 'Gracias por su compra. No se aceptan devoluciones pasadas 24h.';
+
+        // Contenido del QR (puede ser una URL real de validación o datos clave)
+        $contenidoQR = "Folio: 001-000369\nCliente: {$cliente['nombre']}\nTotal: $" . number_format($total, 2);
+    
+        // Generar imagen base64
+        $qr = base64_encode(QrCode::format('png')->size(100)->generate($contenidoQR));
+
+        $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact('cliente', 'items', 'total', 'nota'))->setPaper('A4', 'portrait');
+        
+        return $pdf->stream('boleta_mexico.pdf');
     }
 
 }

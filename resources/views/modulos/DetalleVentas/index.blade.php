@@ -44,6 +44,7 @@
                                             <th>Usuario</th>
                                             <th>Ver Detalle</th>
                                             <th>Imprimir Ticket</th>
+                                            <th>Boleta De Venta</th>
                                             <th>Cancelar Venta</th>
                                         </tr>
                                     </thead>
@@ -61,7 +62,12 @@
                                                 </td>
                                                 <td>
                                                     <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success btn-sm">
-                                                        <i class="fas fa-print"></i> Imprimir Ticket
+                                                        <i class="fas fa-print"></i> Ticket
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-secondary btn-sm">
+                                                        <i class="fas fa-print"></i> Boleta
                                                     </a>
                                                 </td>
                                                 <td class="text-center">
