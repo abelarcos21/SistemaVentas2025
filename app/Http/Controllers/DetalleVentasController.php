@@ -7,7 +7,7 @@ use App\Models\Venta;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
-use Pdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DetalleVentasController extends Controller
 {

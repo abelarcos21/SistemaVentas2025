@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Venta;
 use App\Models\Producto;
 use App\Models\DetalleVenta;
-
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class CarritoController extends Controller
 {

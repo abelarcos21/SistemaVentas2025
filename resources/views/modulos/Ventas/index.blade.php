@@ -90,58 +90,23 @@
     </section>
     <!-- /.content -->
 
-
-    <!-- Main content  -->
+    <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
             <div class="row">
+
                 <!-- Carrito de Compras -->
-                <div class="col-9">
+                <div class="col-md-8">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary">
                             <h3 class="card-title d-inline-block">Carrito de Compras</h3>
-
                             <div class="d-flex align-items-center justify-content-end">
-                                <a
-                                href="{{ route('ventas.borrar.carrito') }}"
-                                class="btn btn-warning btn-sm mr-4"
-                                >
-                                <i class="fas fa-boxes"></i> Vaciar Carrito
+                                <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
+                                    <i class="fas fa-boxes"></i> Vaciar Carrito
                                 </a>
 
-                                <form
-                                    action="{{ route('ventas.vender') }}"
-                                    method="POST"
-                                    class="d-flex align-items-center  mr-4"
-                                    >
-                                    @csrf
-
-                                    <div class="form-group mb-0  mr-4">
-                                        <select
-                                        name="cliente_id"
-                                        id="cliente_id"
-                                        class="form-control form-control-sm  mr-4"
-                                        required
-                                        >
-                                        <option value="" disabled selected>-- Cliente --</option>
-                                        @foreach($clientes as $cliente)
-                                            <option value="{{ $cliente->id }}">
-                                            {{ $cliente->nombre }}
-                                            </option>
-                                        @endforeach
-                                        </select>
-
-                                        @error('cliente_id')
-                                        <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-
-                                    <button class="btn btn-info btn-sm">
-                                        <i class="fas fa-boxes"></i> Realizar Venta
-                                    </button>
-                                </form>
                                 {{-- Si quisieras un tercer botón independiente, por ejemplo --}}
-                                {{-- <a href="#" class="btn btn-secondary btn-sm  mr-4">Otro Botón</a> --}}
+                                {{-- <a href="#" class="btn btn-secondary btn-sm mr-4">Otro Botón</a> --}}
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -150,7 +115,7 @@
                             {{-- ... tabla de carrito ... --}}
                             @if (session('items_carrito'))
                                 <div class="table-responsive">
-                                    <table id="productos_carrito" class="table table-bordered table-striped ">
+                                    <table id="productos_carrito" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
                                                 <th>Imagen</th>
@@ -164,15 +129,13 @@
                                         </thead>
                                         <tbody>
                                             @php $totalGeneral = 0; @endphp
-
                                             @foreach (session('items_carrito') as $item)
                                                 @php
                                                     $totalProducto = $item['cantidad'] * $item['precio'];
                                                     $totalGeneral += $totalProducto;
-                                                    $producto = \App\Models\Producto::find($item['id']);//obtener el producto
+                                                    $producto = \App\Models\Producto::find($item['id']);
                                                 @endphp
                                                 <tr>
-
                                                     <td>
                                                         @if($producto->imagen)
                                                             <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
@@ -180,11 +143,10 @@
                                                             <span>Sin imagen</span>
                                                         @endif
                                                     </td>
-
                                                     <td class="text-center">{{ $item['nombre'] }}</td>
-
-                                                    <td class="text-center"><span class="badge bg-success">{{ $producto->cantidad }}</span></td> <!-- NUEVA CELDA -->
-
+                                                    <td class="text-center">
+                                                        <span class="badge bg-success">{{ $producto->cantidad }}</span>
+                                                    </td> <!-- NUEVA CELDA -->
                                                     <td class="text-center">
                                                         <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
                                                             @csrf
@@ -209,48 +171,87 @@
                             @else
                                 <p>No tengo contenido</p>
                             @endif
-
                         </div>
                         <!-- /.card-body -->
                     </div>
-                <!-- /.card -->
+                    <!-- /.card -->
                 </div>
-
 
                 <!-- Total General -->
-                <div class="col-3">
-                    @if (session('items_carrito'))
-                        <div class="card card-outline card-info">
-                            <div class="card-header bg-secondary text-center">
-                                <h3><i class="fas fa-shopping-cart"></i> Total General</h3>
+                <div class="col-md-4">
+                    <div class="card">
+                        @if (session('items_carrito'))
+                            {{-- Total --}}
+                            <div class="alert alert-secondary text-center">
+                                <h5>Total</h5>
+                                <h2><strong>${{ number_format($totalGeneral, 2) }}</strong></h2>
                             </div>
-                            <!-- /.card-header -->
+                        @else
+                            {{-- Total --}}
+                            <div class="alert alert-secondary text-center">
+                                <h5>Total</h5>
+                                <h2><strong>$MX0.00</strong></h2>
+                            </div>
 
-                            <div class="card-body ">
-                                <h3><strong>${{ number_format($totalGeneral, 2) }}</strong></h3>
+                        @endif
+                        {{-- Fecha de Venta --}}
+                        <div class="form-group">
+                            <label for="fecha_venta">Fecha De Venta</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                </div>
+                                <input type="text" class="form-control" id="fecha_venta" value="24/05/2025 20:23">
                             </div>
-                            <!-- /.card-body -->
                         </div>
-                        <!-- /.card -->
+                        <form action="{{ route('ventas.vender') }}"  method="POST">
+                            @csrf
 
-                    @else
+                            {{-- Buscar Cliente --}}
+                            <div class="form-group">
+                                <label for="buscar_cliente">Cliente</label>
+                                <select
+                                    name="cliente_id"
+                                    id="cliente_id"
+                                    class="form-control form-control-sm selectcliente"
+                                    required
+                                    >
+                                    <option value="" disabled selected></option>
+                                    @foreach($clientes as $cliente)
+                                        <option value="{{ $cliente->id }}">
+                                        {{ $cliente->nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
 
-                        <div class="card card-outline card-info">
-                            <div class="card-header bg-secondary text-center">
-                                <h3><i class="fas fa-shopping-cart"></i> Total General</h3>
+                                @error('cliente_id')
+                                <small class="text-danger d-block">{{ $message }}</small>
+                                @enderror
                             </div>
-                            <!-- /.card-header -->
 
-                            <div class="card-body">
-                                <h3><strong>MX0.00</strong></h3>
+                            {{-- Nota adicional --}}
+                            <div class="form-group">
+                                <label for="nota_adicional">Nota adicional</label>
+                                <textarea class="form-control" id="nota_adicional" rows="3" placeholder="Nota adicional"></textarea>
                             </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
 
-                    @endif
-                </div>
+                            {{-- Enviar Comprobante --}}
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="enviar_comprobante">
+                                <label class="form-check-label" for="enviar_comprobante">Enviar Comprobante</label>
+                            </div>
+
+                            {{-- Botón de Pagar --}}
+                            <button type="submit" class="btn btn-primary btn-block" style="background-color: #5f40f2; border: none;">
+                                Pagar
+                            </button>
+                        </form>
+                    </div>
+                        
                 <!-- /.col -->
+                </div>
             </div>
             <!-- /.row -->
         </div>
@@ -298,6 +299,17 @@
                 confirmButtonText: 'Aceptar'
             });
         @endif
+    </script>
+
+    {{--INCLUIR PLUGIN SELECT2 EN EL CARRITO PARA BUSCAR CLIENTE--}}
+    <script>
+        $(document).ready(function () {
+            $('.selectcliente').select2({
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca un Cliente",
+                
+            });
+        });
     </script>
 
     {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente--}}
