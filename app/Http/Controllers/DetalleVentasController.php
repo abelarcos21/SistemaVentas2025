@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
 use Barryvdh\DomPDF\Facade\Pdf;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class DetalleVentasController extends Controller
 {
@@ -120,12 +120,6 @@ class DetalleVentasController extends Controller
 
         $total = collect($items)->sum(fn($item) => $item['cantidad'] * $item['precio']);
         $nota = 'Gracias por su compra. No se aceptan devoluciones pasadas 24h.';
-
-        // Contenido del QR (puede ser una URL real de validación o datos clave)
-        $contenidoQR = "Folio: 001-000369\nCliente: {$cliente['nombre']}\nTotal: $" . number_format($total, 2);
-    
-        // Generar imagen base64
-        $qr = base64_encode(QrCode::format('png')->size(100)->generate($contenidoQR));
 
         $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact('cliente', 'items', 'total', 'nota'))->setPaper('A4', 'portrait');
         

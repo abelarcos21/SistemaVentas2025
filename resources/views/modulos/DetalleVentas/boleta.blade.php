@@ -126,14 +126,7 @@
 
     <div class="footer">
         Este documento no es un comprobante fiscal digital.<br>
-
-        @if(isset($qr))
-            <div class="text-center" style="margin-top: 20px;">
-                <p><strong>Escanea para validar</strong></p>
-                <img src="data:image/png;base64,{{ $qr }}" alt="QR" style="height: 100px;">
-            </div>
-        @endif
-
+        
         Página 1 de 1
     </div>
 
