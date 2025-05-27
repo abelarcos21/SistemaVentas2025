@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 
 class DetalleVentasController extends Controller
 {
@@ -120,9 +121,31 @@ class DetalleVentasController extends Controller
 
         $total = collect($items)->sum(fn($item) => $item['cantidad'] * $item['precio']);
         $nota = 'Gracias por su compra. No se aceptan devoluciones pasadas 24h.';
+        $folio = '001-000369'; // puedes hacerlo dinámico si tienes una tabla ventas
 
-        $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact('cliente', 'items', 'total', 'nota'))->setPaper('A4', 'portrait');
-        
+        // Contenido para el QR
+        $qrContenido = "BOLETA DE VENTA\n";
+        $qrContenido .= "Cliente: {$cliente['nombre']}\n";
+        $qrContenido .= "RFC/CURP: {$cliente['documento']}\n";
+        $qrContenido .= "Total: $" . number_format($total, 2) . "\n";
+        $qrContenido .= "Folio: {$folio}\n";
+        $qrContenido .= "Validación: Comercializadora México";
+            
+
+        // Generar QR y guardar en disco
+        $qrImage = QrCode::format('png')->size(150)->generate($qrContenido);
+        $filename = 'qr_temp_' . uniqid() . '.png';
+        Storage::disk('public')->put($filename, $qrImage);
+        $qrPath = public_path('storage/' . $filename);
+
+        // Generar PDF
+        $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact(
+            'cliente', 'items', 'total', 'nota', 'qrPath', 'folio'
+        ))->setPaper('A4', 'portrait');
+
+        // Opcional: borrar después si no se necesita guardar
+        // Storage::disk('public')->delete($filename);
+
         return $pdf->stream('boleta_mexico.pdf');
     }
 
