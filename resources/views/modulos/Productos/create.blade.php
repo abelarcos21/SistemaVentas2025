@@ -184,24 +184,33 @@
 
 @section('js')
 
+    {{--INCLUIR PLUGIN SELECT2 ESPAÑOL--}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
+
+
     {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES Y CATEGORIAS--}}
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('.selectcategoria').select2({
+                language: 'es',
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca una Categoria"
+                allowClear: true
             });
         });
     </script>
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('.selectproveedor').select2({
+                language: 'es',
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca un Proveedor"
+                allowClear: true
             });
         });
     </script>
+
 
 @stop
 

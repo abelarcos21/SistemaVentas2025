@@ -273,6 +273,8 @@
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
+
     {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
@@ -296,14 +298,17 @@
 
     {{--INCLUIR PLUGIN SELECT2 EN EL CARRITO PARA BUSCAR CLIENTE--}}
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('.selectcliente').select2({
+                language: 'es',
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca un Cliente",
-
+                allowClear: true
             });
         });
     </script>
+
+
 
     {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente--}}
     <script>
