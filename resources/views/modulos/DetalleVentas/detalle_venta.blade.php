@@ -29,8 +29,8 @@
                 <div class="col-12">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title"><i class="fas fa-search-dollar"></i> Detalle de la Venta</h3>
-                            <a href="{{ route('detalleventas.index') }}" class="mb-2 pt-2 pb-2 btn btn-primary btn-sm">
+                            <h3 class="card-title"><i class="fas fa-list"></i> Detalle de la Venta</h3>
+                            <a href="{{ route('detalleventas.index') }}" class=" btn btn-primary btn-sm">
                                 <i class="fas fa-arrow-left"></i> Volver
                             </a>
                         </div>
@@ -48,7 +48,8 @@
                                     <thead>
                                         <tr>
                                             <th>Nro</th>
-                                            <th>Producto</th>
+                                            <th>Imagen</th>
+                                            <th>Nombre Producto</th>
                                             <th>Cantidad</th>
                                             <th>Precio Unitario</th>
                                             <th>SubTotal</th>
@@ -56,9 +57,20 @@
                                     </thead>
                                     <tbody>
                                         @forelse($detalles as $detalle)
+
                                             <tr>
                                                 <td>{{ $detalle->id }}</td>
-                                                <td>{{ $detalle->nombre_producto }}</td>
+                                                <td>
+                                                    @if($detalle->producto && $detalle->producto->imagen)
+                                                        <img src="{{ asset('storage/' . $detalle->producto->imagen->ruta) }}"
+                                                        alt="{{ $detalle->producto->nombre }}"
+                                                        width="50" height="50"
+                                                        class="rounded">
+                                                    @else
+                                                        <span class="text-muted">Sin imagen</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $detalle->producto->nombre}}</td>
                                                 <td>{{ $detalle->cantidad }}</td>
                                                 <td>${{ $detalle->precio_unitario }}</td>
                                                 <td>${{ $detalle->sub_total }}</td>

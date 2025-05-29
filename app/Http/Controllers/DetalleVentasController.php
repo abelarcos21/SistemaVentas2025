@@ -38,11 +38,15 @@ class DetalleVentasController extends Controller
         ->where('ventas.id', $id)
         ->firstOrFail();
 
-        $detalles = DetalleVenta::select(
+       /*  $detalles = DetalleVenta::select(
             'detalle_venta.*',
-            'productos.nombre as nombre_producto'
+            'productos.nombre as nombre_producto',
         )
         ->join('productos', 'detalle_venta.producto_id', '=', 'productos.id')
+        ->where('venta_id', $id)
+        ->get(); */
+
+        $detalles = DetalleVenta::with('producto.imagen') // 👈 Trae producto e imagen en una sola consulta y acceder alos campos de tabla producto
         ->where('venta_id', $id)
         ->get();
 

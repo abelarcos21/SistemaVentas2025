@@ -340,9 +340,9 @@ return [
                 ],
 
                 [
-                    'text' => 'Consultar Ventas',
+                    'text' => 'Historial Ventas',
                     'url' => 'detalles/detalle-ventas',
-                    'icon' => 'fas fa-search-dollar',
+                    'icon' => 'fas fa-history',
                 ],
             ],
         ],
