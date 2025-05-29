@@ -30,7 +30,7 @@
                 <div class="col-12">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title">Crear ventas de los productos existentes</h3>
+                            <h3 class="card-title"><i class="fas fa-list"></i> Crear ventas de los productos existentes</h3>
                         </div>
                         <!-- /.card-header -->
 
@@ -99,7 +99,7 @@
                 <div class="col-md-8">
                     <div class="card card-outline card-info">
                         <div class="card-header bg-secondary">
-                            <h3 class="card-title d-inline-block">Carrito de Compras</h3>
+                            <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito de Compras</h3>
                             <div class="d-flex align-items-center justify-content-end">
                                 <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
                                     <i class="fas fa-boxes"></i> Vaciar Carrito
