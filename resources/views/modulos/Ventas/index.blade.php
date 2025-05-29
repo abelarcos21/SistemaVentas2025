@@ -179,79 +179,72 @@
 
                 <!-- Total General -->
                 <div class="col-md-4">
-                    <div class="card">
-                        @if (session('items_carrito'))
+                    <div class="card shadow-sm rounded-lg border-0" style="background-color: #f9f9f9;">
+                        <div class="card-body p-4">
+
                             {{-- Total --}}
-                            <div class="alert alert-secondary text-center">
-                                <h5>Total</h5>
-                                <h2><strong>${{ number_format($totalGeneral, 2) }}</strong></h2>
-                            </div>
-                        @else
-                            {{-- Total --}}
-                            <div class="alert alert-secondary text-center">
-                                <h5>Total</h5>
-                                <h2><strong>$MX0.00</strong></h2>
+                            <div class="text-center mb-4">
+                                <h5 class="text-secondary">Total a Pagar</h5>
+                                <h2 class="font-weight-bold text-primary">
+                                    @if (session('items_carrito'))
+                                        ${{ number_format($totalGeneral, 2) }}
+                                    @else
+                                        $MX0.00
+                                    @endif
+                                </h2>
                             </div>
 
-                        @endif
-                        {{-- Fecha de Venta --}}
-                        <div class="form-group">
-                            <label for="fecha_venta">Fecha De Venta</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <i class="fa fa-calendar"></i>
+                            {{-- Fecha de Venta --}}
+                            <div class="form-group mb-3">
+                                <label for="fecha_venta"><i class="fa fa-calendar-alt mr-1"></i> Fecha de Venta</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
                                     </div>
+                                    <input type="text" class="form-control" id="fecha_venta" value="24/05/2025 20:23" readonly>
                                 </div>
-                                <input type="text" class="form-control" id="fecha_venta" value="24/05/2025 20:23">
                             </div>
+
+                            <form action="{{ route('ventas.vender') }}" method="POST">
+                                @csrf
+
+                                {{-- Cliente --}}
+                                <div class="form-group mb-3">
+                                    <label for="cliente_id"><i class="fa fa-user mr-1"></i> Cliente</label>
+                                    <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
+                                        <option value="" disabled selected>Selecciona un cliente</option>
+                                        @foreach($clientes as $cliente)
+                                            <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('cliente_id')
+                                        <small class="text-danger d-block">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
+                                {{-- Nota adicional --}}
+                                <div class="form-group mb-3">
+                                    <label for="nota_adicional"><i class="fa fa-sticky-note mr-1"></i> Nota adicional</label>
+                                    <textarea class="form-control" name="nota_adicional" id="nota_adicional" rows="3" placeholder="Escribe una nota..."></textarea>
+                                </div>
+
+                                {{-- Enviar Comprobante --}}
+                                <div class="form-check mb-4">
+                                    <input type="checkbox" class="form-check-input" id="enviar_comprobante" name="enviar_comprobante">
+                                    <label class="form-check-label" for="enviar_comprobante">
+                                        <i class="fa fa-envelope mr-1"></i> Enviar comprobante por correo
+                                    </label>
+                                </div>
+
+                                {{-- Botón de Pagar --}}
+                                <button type="submit" class="btn btn-primary btn-block rounded-pill" style="background-color: #5f40f2; border: none;">
+                                    <i class="fa fa-credit-card mr-1"></i> Pagar ahora
+                                </button>
+                            </form>
                         </div>
-                        <form action="{{ route('ventas.vender') }}"  method="POST">
-                            @csrf
-
-                            {{-- Buscar Cliente --}}
-                            <div class="form-group">
-                                <label for="buscar_cliente">Cliente</label>
-                                <select
-                                    name="cliente_id"
-                                    id="cliente_id"
-                                    class="form-control form-control-sm selectcliente"
-                                    required
-                                    >
-                                    <option value="" disabled selected></option>
-                                    @foreach($clientes as $cliente)
-                                        <option value="{{ $cliente->id }}">
-                                        {{ $cliente->nombre }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                @error('cliente_id')
-                                <small class="text-danger d-block">{{ $message }}</small>
-                                @enderror
-                            </div>
-
-                            {{-- Nota adicional --}}
-                            <div class="form-group">
-                                <label for="nota_adicional">Nota adicional</label>
-                                <textarea class="form-control" id="nota_adicional" rows="3" placeholder="Nota adicional"></textarea>
-                            </div>
-
-                            {{-- Enviar Comprobante --}}
-                            <div class="form-check mb-3">
-                                <input type="checkbox" class="form-check-input" id="enviar_comprobante">
-                                <label class="form-check-label" for="enviar_comprobante">Enviar Comprobante</label>
-                            </div>
-
-                            {{-- Botón de Pagar --}}
-                            <button type="submit" class="btn btn-primary btn-block" style="background-color: #5f40f2; border: none;">
-                                Pagar
-                            </button>
-                        </form>
                     </div>
-                        
-                <!-- /.col -->
                 </div>
+
             </div>
             <!-- /.row -->
         </div>
@@ -307,7 +300,7 @@
             $('.selectcliente').select2({
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca un Cliente",
-                
+
             });
         });
     </script>
