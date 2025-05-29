@@ -117,9 +117,10 @@ class CarritoController extends Controller
             }
             //crear la venta
             $venta = new Venta();
-            $venta->user_id = Auth::id();
+            $venta->user_id = Auth::id(); // ← asignas aquí el usuario
             $venta->cliente_id  = $request->cliente_id;   // ← asignas aquí el cliente
             $venta->total_venta = $totalVenta;
+            $venta->estado = 'completada'; // ← Aquí asignas el estado de la venta
             $venta->save();
 
             foreach ($items_carrito as $item) {

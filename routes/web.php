@@ -36,7 +36,7 @@ Route::put('/venta/actualizar/{id}', [CarritoController::class, 'update'])->name
 Route::prefix('detalles')->group(function(){
     Route::get('/detalle-ventas', [DetalleVentasController::class, 'index'])->name('detalleventas.index');
     Route::get('/vista-detalle/{id_venta}', [DetalleVentasController::class, 'vista_detalle'])->name('detalleventas.detalle_venta');
-    Route::delete('/eliminar/{id_venta}', [DetalleVentasController::class, 'revocar'])->name('detalle.revocar');
+    Route::post('/eliminar/{id_venta}', [DetalleVentasController::class, 'revocar'])->name('detalle.revocar');
     Route::get('/ticket/{id_venta}', [DetalleVentasController::class, 'generarTicket'])->name('detalle.ticket');
     Route::get('/boleta/{id_venta}', [DetalleVentasController::class, 'generarBoleta'])->name('detalle.boleta');
 

@@ -50,14 +50,32 @@ class DetalleVentasController extends Controller
     }
 
     public function revocar($id) {
+
+        /* Anteriormente, este método eliminaba físicamente la venta y sus detalles de la base de datos,
+        lo cual no es ideal para un sistema de historial,
+        ya que no podrías rastrear ventas canceladas o eliminadas más adelante. */
+
+       /*  Recomendación: Usar lógica de "cancelación" o "eliminación" con estado
+        En lugar de borrar registros, lo ideal es actualizar el campo estado de la venta para
+        reflejar que ha sido cancelada o eliminada, y devolver el stock. */
         DB::beginTransaction();
         try {
 
-            $detalles = DetalleVenta::select(
+            $venta = Venta::findOrFail($id);
+
+            // Verificar si ya está cancelada o eliminada
+            if(in_array($venta->estado, ['cancelada','eliminada'])){
+                return to_route('detalleventas.index')->with('error','La venta ya ha sido cancelada o eliminada.');
+
+            }
+
+            /* $detalles = DetalleVenta::select(
                 'producto_id', 'cantidad'
             )
             ->where('venta_id', $id)
-            ->get();
+            ->get(); */
+
+            $detalles = DetalleVenta::Where('venta_id',$venta->id)->get();
 
             //devolver stock
             foreach($detalles as $detalle) {
@@ -65,15 +83,19 @@ class DetalleVentasController extends Controller
                 ->increment('cantidad', $detalle->cantidad);
             }
 
-            //eliminar productos vendidos y la venta
+            /* //eliminar productos vendidos y la venta
             DetalleVenta::where('venta_id', $id)->delete();
-            Venta::where('id', $id)->delete();
+            Venta::where('id', $id)->delete(); */
+
+            //cambiar estado de la venta(puedes usar cancelada o eliminada)
+            $venta->estado = 'cancelada'; // o 'eliminada' si quieres un tipo más fuerte
+            $venta->save();
 
             DB::commit();
-            return to_route('detalleventas.index')->with('success', 'Eliminacion de venta exitosa!!');
+            return to_route('detalleventas.index')->with('success', '¡Venta cancelada exitosamente!');
         } catch (\Throwable $th) {
             DB::rollBack();
-            return to_route('detalleventas.index')->with('error', 'No se pudo Eliminar la venta!!');
+            return to_route('detalleventas.index')->with('error', '¡No se pudo cancelar la venta! ' . $th->getMessage());
         }
     }
 
@@ -130,7 +152,7 @@ class DetalleVentasController extends Controller
         $qrContenido .= "Total: $" . number_format($total, 2) . "\n";
         $qrContenido .= "Folio: {$folio}\n";
         $qrContenido .= "Validación: Comercializadora México";
-            
+
 
         // Generar QR y guardar en disco
         $qrImage = QrCode::format('png')->size(150)->generate($qrContenido);

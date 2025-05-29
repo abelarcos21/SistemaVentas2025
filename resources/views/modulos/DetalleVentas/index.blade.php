@@ -38,14 +38,15 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead>
                                         <tr>
-                                            <th>Nro#</th>
+                                            <th>Nro</th>
                                             <th>Total Vendido</th>
                                             <th>Fecha Venta</th>
                                             <th>Usuario</th>
+                                            <th>Estado</th>
                                             <th>Ver Detalle</th>
                                             <th>Imprimir Ticket</th>
                                             <th>Boleta De Venta</th>
-                                            <th>Cancelar Venta</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -54,31 +55,47 @@
                                                 <td>{{ $venta->id }}</td>
                                                 <td>${{ $venta->total_venta }}</td>
                                                 <td>{{ $venta->created_at }}</td>
-                                                <td>{{ $venta->nombre_usuario }}</td>
+                                                <td>{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
+
+                                                <td>
+                                                    <span class="badge
+                                                        {{ $venta->estado === 'completada' ? 'bg-success' :
+                                                        ($venta->estado === 'cancelada' ? 'bg-danger' : 'bg-secondary') }}">
+                                                        {{ ucfirst($venta->estado) }}
+                                                    </span>
+                                                </td>
+
+
                                                 <td class="text-center">
                                                     <a href="{{ route('detalleventas.detalle_venta', $venta->id) }}" class="btn btn-info btn-sm">
-                                                        <i class="fas fa-eye"></i> Detalle
+                                                        <i class="fas fa-eye"></i> Ver
                                                     </a>
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success btn-sm">
                                                         <i class="fas fa-print"></i> Ticket
                                                     </a>
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-secondary btn-sm">
                                                         <i class="fas fa-print"></i> Boleta
                                                     </a>
                                                 </td>
+
                                                 <td class="text-center">
-                                                    <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST" class="formulario-eliminar">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                                        </button>
-                                                    </form>
+                                                    @if ($venta->estado === 'completada')
+                                                        <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST" class="formulario-eliminar">
+                                                            @csrf
+                                                            @method('POST')
+                                                            <button class="btn btn-sm btn-danger">
+                                                                <i class="fas fa-trash-alt"></i> Cancelar
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <span class="text-muted">Sin acciones</span>
+                                                    @endif
                                                 </td>
+
                                             </tr>
                                         @empty
                                             <tr>
@@ -154,14 +171,14 @@
                 var form = this;
 
                 Swal.fire({
-                    title: '¿Estás seguro?',
+                    title: '¿Cancelar Esta Venta?',
                     text: "¡Esta acción no se puede deshacer!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
+                    confirmButtonText: 'Sí, Cancelar',
+                    cancelButtonText: 'No, Cancelar'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form.submit(); // Aquí vuelve a enviar
