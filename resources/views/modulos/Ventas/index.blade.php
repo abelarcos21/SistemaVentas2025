@@ -326,11 +326,27 @@
                     form.submit();
                 } else if (current === max) {
                     if (max === 0) {
-                        alert('No hay productos disponibles.');
+                       /*  alert('No hay productos disponibles.'); */
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Sin stock',
+                            text: 'No hay productos disponibles.'
+                        });
                     } else if (max === 1) {
-                        alert('Solo queda 1 producto en stock.');
+                        /* alert('Solo queda 1 producto en stock.'); */
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Stock limitado',
+                            text: 'Solo queda 1 producto en stock.'
+
+                        });
                     } else {
-                        alert('Has alcanzado el límite disponible de este producto.');
+                       /*  alert('Has alcanzado el límite disponible de este producto.'); */
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Límite alcanzado',
+                            text: 'Has alcanzado el límite disponible de este producto.'
+                        });
                     }
                 }
             });
