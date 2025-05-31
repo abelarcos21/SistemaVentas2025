@@ -54,7 +54,7 @@
                                             <tr>
                                                 <td>{{ $venta->id }}</td>
                                                 <td>${{ $venta->total_venta }}</td>
-                                                <td>{{ $venta->created_at }}</td>
+                                                <td>{{ $venta->created_at->format('d/m/Y h:i A') }}</td>
                                                 <td>{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
 
                                                 <td>
