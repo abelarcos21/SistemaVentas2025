@@ -100,11 +100,17 @@ class ProductoController extends Controller
 
         try{
 
+            $number = mt_rand(1000000000,9999999999);
+
+            if($this->productCodeExists($number)){
+                $number = mt_rand(1000000000,9999999999);
+            }
+
             $producto = Producto::create([
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
-                'codigo'       => $validated['codigo'],
+                'codigo'       => $validated['codigo'] = $number,
                 'nombre'       => $validated['nombre'],
                 'descripcion'  => $validated['descripcion'],
 
@@ -124,6 +130,10 @@ class ProductoController extends Controller
             Log::error('Error al guardar el producto: ' . $e->getMessage());
             return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
         }
+    }
+
+    public function productCodeExists($number){
+        return Product::whereProductCode($number)->exists();
     }
 
     public function subir_imagen(Request $request, int $productoId):bool {
