@@ -73,8 +73,8 @@
                                                         <span>Sin imagen</span>
                                                     @endif
                                                 </td>
-                                                <td>{!! DNS1D::getBarcodeHTML("$producto->codigo",'UPCA',2,50) !!}</td>
-                                                 p - {{$producto->codigo}}
+                                                <td>{!! DNS1D::getBarcodeHTML("$producto->codigo",'UPCA',2,50) !!}
+                                                p - {{$producto->codigo}}</td>
                                                 <td>{{ $producto->nombre }}</td>
                                                 <td>{{ $producto->nombre_categoria }}</td>
                                                 <td>{{ $producto->descripcion }}</td>

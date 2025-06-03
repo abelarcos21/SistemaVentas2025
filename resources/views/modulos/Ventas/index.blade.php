@@ -23,72 +23,92 @@
 
 @section('content')
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card card-outline card-info">
-                        <div class="card-header bg-secondary text-right">
-                            <h3 class="card-title"><i class="fas fa-list"></i> Crear ventas de los productos existentes</h3>
-                        </div>
-                        <!-- /.card-header -->
+    <div class="container-fluid">
+        <div class="row">
 
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Nro#</th>
-                                            <th>Imagen</th>
-                                            <th>Nombre</th>
-                                            <th>Código</th>
-                                            <th>Stock</th>
-                                            <th>Precio Venta</th>
-                                            <th>Acción</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse($productos as $producto)
-                                            <tr>
-                                                <td>{{ $producto->id }}</td>
-                                                <td>
-                                                    @if($producto->imagen)
-                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
-                                                    @else
-                                                        <span>Sin imagen</span>
-                                                    @endif
-                                                    </td>
-                                                <td>{{ $producto->nombre }}</td>
-                                                <td>{{ $producto->codigo }}</td>
-                                                <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
-                                                <td>${{ $producto->precio_venta }}</td>
-                                                <td>
-                                                    <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-success btn-sm">
-                                                        <i class="fas fa-shopping-cart"></i> Agregar
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="6" class="text-center">NO HAY PRODUCTOS</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
+            {{-- Panel izquierdo --}}
+            <div class="col-md-9">
+                <h4>Nueva Venta</h4>
+
+                {{-- Buscador --}}
+                <input type="text" class="form-control mb-3" placeholder="Buscar Producto">
+
+                {{-- Filtros de categoría --}}
+                <div class="mb-3">
+                    <button class="btn btn-outline-secondary btn-sm">Todos (58)</button>
+                    <button class="btn btn-outline-secondary btn-sm">Aceite (9)</button>
+                    <button class="btn btn-outline-secondary btn-sm">Arroz (13)</button>
+                    <!-- agrega más según categorías -->
+                </div>
+
+                {{-- Productos --}}
+                <div class="row">
+
+                    @foreach($productos as $producto)
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+                            <div class="card text-center h-100 shadow-sm border-0" style="border-radius: 16px;">
+                                <div class="p-2">
+                                    @if($producto->imagen)
+                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}"
+                                        class="img-fluid"
+                                        width="50"
+                                        height="50"
+                                        style="height: 100px; object-fit: contain;"
+                                        alt="{{ $producto->nombre }}">
+                                    @else
+                                        <span>Sin imagen</span>
+                                    @endif
+
+                                </div>
+
+                                <div class="card-body p-2">
+                                    <h6 class="mb-1" style="font-size: 14px;">{{ $producto->nombre }}</h6>
+                                    <p class="mb-0 text-success font-weight-bold" style="font-size: 14px;">${{ number_format($producto->precio_venta, 2) }}</p>
+                                    <small class="text-muted">Stock: {{ $producto->cantidad }}</small>
+                                </div>
+
+                                <div class="card-footer bg-white border-0 pb-3 px-2">
+                                    <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-primary btn-sm btn-block rounded-pill">
+                                        Agregar
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
+                    @endforeach
+
                 </div>
-                <!-- /.col -->
+
             </div>
-            <!-- /.row -->
+
+            {{-- Panel derecho --}}
+            <div class="col-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h4 class="text-success text-center">Total<br><strong>GTQ0.00</strong></h4>
+                        <hr>
+                        <label>Fecha De Venta</label>
+                        <input type="text" class="form-control mb-2" value="{{ now()->format('d/m/Y H:i') }}" readonly>
+
+                        <label>Buscar Cliente</label>
+                        <input type="text" class="form-control mb-2" placeholder="Núm. de Documento o Correo">
+
+                        <label>Nota adicional</label>
+                        <textarea class="form-control mb-2" rows="2" placeholder="Nota adicional"></textarea>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="comprobante">
+                            <label class="form-check-label" for="comprobante">
+                                Enviar Comprobante
+                            </label>
+                        </div>
+
+                        <button class="btn btn-success btn-block" disabled>Pagar</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+    </div>
 
     <!-- Main content -->
     <section class="content">

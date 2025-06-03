@@ -89,7 +89,7 @@ class ProductoController extends Controller
 
             'categoria_id' => 'required',
             'proveedor_id' => 'required',
-            'codigo' => 'required|string|max:255',
+            'codigo' => 'required|string|max:255|unique:productos,codigo',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',// validación opcional de imagen
@@ -100,17 +100,11 @@ class ProductoController extends Controller
 
         try{
 
-            $number = mt_rand(1000000000,9999999999);
-
-            if($this->productCodeExists($number)){
-                $number = mt_rand(1000000000,9999999999);
-            }
-
             $producto = Producto::create([
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
-                'codigo'       => $validated['codigo'] = $number,
+                'codigo'       => $validated['codigo'],
                 'nombre'       => $validated['nombre'],
                 'descripcion'  => $validated['descripcion'],
 
@@ -133,7 +127,7 @@ class ProductoController extends Controller
     }
 
     public function productCodeExists($number){
-        return Product::whereProductCode($number)->exists();
+        return Producto::whereProductCode($number)->exists();
     }
 
     public function subir_imagen(Request $request, int $productoId):bool {
