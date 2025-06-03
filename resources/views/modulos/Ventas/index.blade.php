@@ -31,50 +31,21 @@
                 <h4>Nueva Venta</h4>
 
                 {{-- Buscador --}}
-                <input type="text" class="form-control mb-3" placeholder="Buscar Producto">
+                <input type="text" id="buscador" class="form-control mb-3" placeholder="Buscar Producto">
 
                 {{-- Filtros de categoría --}}
-                <div class="mb-3">
-                    <button class="btn btn-outline-secondary btn-sm">Todos (58)</button>
-                    <button class="btn btn-outline-secondary btn-sm">Aceite (9)</button>
-                    <button class="btn btn-outline-secondary btn-sm">Arroz (13)</button>
-                    <!-- agrega más según categorías -->
+                <div class="mb-3" id="filtros">
+                    <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="todos">Todos (58)</button>
+                    @foreach($categorias as $cat)
+                        <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}</button>
+                    @endforeach
                 </div>
 
+
                 {{-- Productos --}}
-                <div class="row">
+                <div class="row" id="contenedor-productos">
 
-                    @foreach($productos as $producto)
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
-                            <div class="card text-center h-100 shadow-sm border-0" style="border-radius: 16px;">
-                                <div class="p-2">
-                                    @if($producto->imagen)
-                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}"
-                                        class="img-fluid"
-                                        width="50"
-                                        height="50"
-                                        style="height: 100px; object-fit: contain;"
-                                        alt="{{ $producto->nombre }}">
-                                    @else
-                                        <span>Sin imagen</span>
-                                    @endif
-
-                                </div>
-
-                                <div class="card-body p-2">
-                                    <h6 class="mb-1" style="font-size: 14px;">{{ $producto->nombre }}</h6>
-                                    <p class="mb-0 text-success font-weight-bold" style="font-size: 14px;">${{ number_format($producto->precio_venta, 2) }}</p>
-                                    <small class="text-muted">Stock: {{ $producto->cantidad }}</small>
-                                </div>
-
-                                <div class="card-footer bg-white border-0 pb-3 px-2">
-                                    <a href="{{ route('carrito.agregar', $producto->id) }}" class="btn btn-primary btn-sm btn-block rounded-pill">
-                                        Agregar
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+                    @include('modulos.productos.listafiltrado', ['productos' => $productos])
 
                 </div>
 
@@ -325,6 +296,40 @@
                 placeholder: "Selecciona o Busca un Cliente",
                 allowClear: true
             });
+        });
+    </script>
+
+    {{--FILTRAR LAS CATEGORIAS AL SELECCIONARLA Y FILTRAR LOS PRODUCTOS--}}
+    <script>
+        let categoriaSeleccionada = 'todos';
+
+        function filtrarProductos() {
+            const busqueda = $('#buscador').val();
+
+            $.ajax({
+                url: "{{ route('productos.filtrar') }}",
+                data: {
+                    busqueda: busqueda,
+                    categoria_id: categoriaSeleccionada
+                },
+                success: function(data) {
+                    $('#contenedor-productos').html(data);
+                },
+                error: function() {
+                    alert('Error al filtrar productos');
+                }
+            });
+        }
+
+        $('#buscador').on('input', function() {
+            filtrarProductos();
+        });
+
+        $('.filtro-categoria').on('click', function() {
+            categoriaSeleccionada = $(this).data('id');
+            $('.filtro-categoria').removeClass('active');
+            $(this).addClass('active');
+            filtrarProductos();
         });
     </script>
 

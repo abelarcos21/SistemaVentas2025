@@ -103,6 +103,9 @@ Route::post('/usuarios/cambiar-estado/{id}', [UsuarioController::class, 'cambiar
 //RUTA PARA CAMBIAR DE ESTADO ACTIVO AL PRODUCTO
 Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambiarEstado']);
 
+//FILTRAR PRODUCTOS Y CATEGORIAS
+Route::get('/productos-filtrados', [ProductoController::class, 'filtrar'])->name('productos.filtrar');
+
 //RUTA PARA CAMBIAR LA CONTRASEÑA
 Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
 

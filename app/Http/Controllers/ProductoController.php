@@ -83,6 +83,25 @@ class ProductoController extends Controller
         return response()->json(['message' => 'Estado Actualizado Correctamente']);
     }
 
+    //FILTRAR LOS PRODUCTOS Y LAS CATEGORIAS
+    public function filtrar(Request $request){
+
+        $query = Producto::query();
+
+        if($request->filled('busqueda')){
+            $query->where('nombre','LIKE','%' . $request->busqueda . '%');
+        }
+
+        if ($request->filled('categoria_id') && $request->categoria_id !== 'todos') {
+            $query->where('categoria_id', $request->categoria_id);
+        }
+
+        $productos = $query->where('cantidad', '>', 0)->get();
+
+        return view('modulos.productos.listafiltrado', compact('productos'))->render();
+
+    }
+
     public function store(Request $request){
 
         $validated = $request->validate([
