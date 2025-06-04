@@ -28,7 +28,6 @@
 
             {{-- Panel izquierdo --}}
             <div class="col-md-9">
-                <h4>Nueva Venta</h4>
 
                 {{-- Buscador --}}
                 <input type="text" id="buscador" class="form-control mb-3" placeholder="Buscar Producto">
@@ -40,6 +39,87 @@
                         <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}</button>
                     @endforeach
                 </div>
+                <!-- Main content -->
+
+                <!-- Carrito de Compras -->
+                <div class="card card-outline card-info">
+                    <div class="card-header bg-secondary">
+                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito de Compras</h3>
+                        <div class="d-flex align-items-center justify-content-end">
+                            <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
+                                <i class="fas fa-boxes"></i> Vaciar Carrito
+                            </a>
+
+                            {{-- Si quisieras un tercer botón independiente, por ejemplo --}}
+                            {{-- <a href="#" class="btn btn-secondary btn-sm mr-4">Otro Botón</a> --}}
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+
+                    <div class="card-body">
+                        {{-- ... tabla de carrito ... --}}
+                        @if (session('items_carrito'))
+                            <div class="table-responsive">
+                                <table id="productos_carrito" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Imagen</th>
+                                            <th>Nombre</th>
+                                            <th>Stock</th> <!-- NUEVA COLUMNA -->
+                                            <th>Cantidad</th>
+                                            <th>Precio Venta</th>
+                                            <th>Total</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php $totalGeneral = 0; @endphp
+                                        @foreach (session('items_carrito') as $item)
+                                            @php
+                                                $totalProducto = $item['cantidad'] * $item['precio'];
+                                                $totalGeneral += $totalProducto;
+                                                $producto = \App\Models\Producto::find($item['id']);
+                                            @endphp
+                                            <tr>
+                                                <td>
+                                                    @if($producto->imagen)
+                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
+                                                    @else
+                                                        <span>Sin imagen</span>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">{{ $item['nombre'] }}</td>
+                                                <td class="text-center">
+                                                    <span class="badge bg-success">{{ $producto->cantidad }}</span>
+                                                </td> <!-- NUEVA CELDA -->
+                                                <td class="text-center">
+                                                    <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
+                                                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
+                                                        <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
+                                                    </form>
+                                                </td>
+                                                <td class="text-center">${{ $item['precio'] }}</td>
+                                                <td class="text-center">${{ $totalProducto }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash-alt"></i> Quitar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <p>No tengo contenido</p>
+                        @endif
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
 
 
                 {{-- Productos --}}
@@ -52,28 +132,70 @@
             </div>
 
             {{-- Panel derecho --}}
+            <!-- Total General -->
             <div class="col-md-3">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h4 class="text-success text-center">Total<br><strong>GTQ0.00</strong></h4>
-                        <hr>
-                        <label>Fecha De Venta</label>
-                        <input type="text" class="form-control mb-2" value="{{ now()->format('d/m/Y H:i') }}" readonly>
+                <div class="card shadow-sm rounded-lg border-0" style="background-color: #f9f9f9;">
+                    <div class="card-body p-4">
 
-                        <label>Buscar Cliente</label>
-                        <input type="text" class="form-control mb-2" placeholder="Núm. de Documento o Correo">
-
-                        <label>Nota adicional</label>
-                        <textarea class="form-control mb-2" rows="2" placeholder="Nota adicional"></textarea>
-
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="comprobante">
-                            <label class="form-check-label" for="comprobante">
-                                Enviar Comprobante
-                            </label>
+                        {{-- Total --}}
+                        <div class="text-center mb-4">
+                            <h5 class="text-secondary">Total a Pagar</h5>
+                            <h2 class="font-weight-bold text-primary">
+                                @if (session('items_carrito'))
+                                    ${{ number_format($totalGeneral, 2) }}
+                                @else
+                                    $MX0.00
+                                @endif
+                            </h2>
                         </div>
 
-                        <button class="btn btn-success btn-block" disabled>Pagar</button>
+                        {{-- Fecha de Venta --}}
+                        <div class="form-group mb-3">
+                            <label for="fecha_venta"><i class="fa fa-calendar-alt mr-1"></i> Fecha de Venta</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="fecha_venta" value="24/05/2025 20:23" readonly>
+                            </div>
+                        </div>
+
+                        <form action="{{ route('ventas.vender') }}" method="POST">
+                            @csrf
+
+                            {{-- Cliente --}}
+                            <div class="form-group mb-3">
+                                <label for="cliente_id"><i class="fa fa-user mr-1"></i> Cliente</label>
+                                <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
+                                    <option value="" disabled selected>Selecciona un cliente</option>
+                                    @foreach($clientes as $cliente)
+                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                                    @endforeach
+                                </select>
+                                @error('cliente_id')
+                                    <small class="text-danger d-block">{{ $message }}</small>
+                                @enderror
+                            </div>
+
+                            {{-- Nota adicional --}}
+                            <div class="form-group mb-3">
+                                <label for="nota_adicional"><i class="fa fa-sticky-note mr-1"></i> Nota adicional</label>
+                                <textarea class="form-control" name="nota_adicional" id="nota_adicional" rows="3" placeholder="Escribe una nota..."></textarea>
+                            </div>
+
+                            {{-- Enviar Comprobante --}}
+                            <div class="form-check mb-4">
+                                <input type="checkbox" class="form-check-input" id="enviar_comprobante" name="enviar_comprobante">
+                                <label class="form-check-label" for="enviar_comprobante">
+                                    <i class="fa fa-envelope mr-1"></i> Enviar comprobante por correo
+                                </label>
+                            </div>
+
+                            {{-- Botón de Pagar --}}
+                            <button type="submit" class="btn btn-primary btn-block rounded-pill" style="background-color: #5f40f2; border: none;">
+                                <i class="fa fa-credit-card mr-1"></i> Pagar ahora
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -81,167 +203,7 @@
         </div>
     </div>
 
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
 
-                <!-- Carrito de Compras -->
-                <div class="col-md-8">
-                    <div class="card card-outline card-info">
-                        <div class="card-header bg-secondary">
-                            <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito de Compras</h3>
-                            <div class="d-flex align-items-center justify-content-end">
-                                <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
-                                    <i class="fas fa-boxes"></i> Vaciar Carrito
-                                </a>
-
-                                {{-- Si quisieras un tercer botón independiente, por ejemplo --}}
-                                {{-- <a href="#" class="btn btn-secondary btn-sm mr-4">Otro Botón</a> --}}
-                            </div>
-                        </div>
-                        <!-- /.card-header -->
-
-                        <div class="card-body">
-                            {{-- ... tabla de carrito ... --}}
-                            @if (session('items_carrito'))
-                                <div class="table-responsive">
-                                    <table id="productos_carrito" class="table table-bordered table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th>Imagen</th>
-                                                <th>Nombre</th>
-                                                <th>Stock</th> <!-- NUEVA COLUMNA -->
-                                                <th>Cantidad</th>
-                                                <th>Precio Venta</th>
-                                                <th>Total</th>
-                                                <th>Acción</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $totalGeneral = 0; @endphp
-                                            @foreach (session('items_carrito') as $item)
-                                                @php
-                                                    $totalProducto = $item['cantidad'] * $item['precio'];
-                                                    $totalGeneral += $totalProducto;
-                                                    $producto = \App\Models\Producto::find($item['id']);
-                                                @endphp
-                                                <tr>
-                                                    <td>
-                                                        @if($producto->imagen)
-                                                            <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
-                                                        @else
-                                                            <span>Sin imagen</span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">{{ $item['nombre'] }}</td>
-                                                    <td class="text-center">
-                                                        <span class="badge bg-success">{{ $producto->cantidad }}</span>
-                                                    </td> <!-- NUEVA CELDA -->
-                                                    <td class="text-center">
-                                                        <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
-                                                            @csrf
-                                                            @method('PUT')
-                                                            <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
-                                                            <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
-                                                            <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
-                                                        </form>
-                                                    </td>
-                                                    <td class="text-center">${{ $item['precio'] }}</td>
-                                                    <td class="text-center">${{ $totalProducto }}</td>
-                                                    <td class="text-center">
-                                                        <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-trash-alt"></i> Quitar
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            @else
-                                <p>No tengo contenido</p>
-                            @endif
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-                </div>
-
-                <!-- Total General -->
-                <div class="col-md-4">
-                    <div class="card shadow-sm rounded-lg border-0" style="background-color: #f9f9f9;">
-                        <div class="card-body p-4">
-
-                            {{-- Total --}}
-                            <div class="text-center mb-4">
-                                <h5 class="text-secondary">Total a Pagar</h5>
-                                <h2 class="font-weight-bold text-primary">
-                                    @if (session('items_carrito'))
-                                        ${{ number_format($totalGeneral, 2) }}
-                                    @else
-                                        $MX0.00
-                                    @endif
-                                </h2>
-                            </div>
-
-                            {{-- Fecha de Venta --}}
-                            <div class="form-group mb-3">
-                                <label for="fecha_venta"><i class="fa fa-calendar-alt mr-1"></i> Fecha de Venta</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" id="fecha_venta" value="24/05/2025 20:23" readonly>
-                                </div>
-                            </div>
-
-                            <form action="{{ route('ventas.vender') }}" method="POST">
-                                @csrf
-
-                                {{-- Cliente --}}
-                                <div class="form-group mb-3">
-                                    <label for="cliente_id"><i class="fa fa-user mr-1"></i> Cliente</label>
-                                    <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
-                                        <option value="" disabled selected>Selecciona un cliente</option>
-                                        @foreach($clientes as $cliente)
-                                            <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('cliente_id')
-                                        <small class="text-danger d-block">{{ $message }}</small>
-                                    @enderror
-                                </div>
-
-                                {{-- Nota adicional --}}
-                                <div class="form-group mb-3">
-                                    <label for="nota_adicional"><i class="fa fa-sticky-note mr-1"></i> Nota adicional</label>
-                                    <textarea class="form-control" name="nota_adicional" id="nota_adicional" rows="3" placeholder="Escribe una nota..."></textarea>
-                                </div>
-
-                                {{-- Enviar Comprobante --}}
-                                <div class="form-check mb-4">
-                                    <input type="checkbox" class="form-check-input" id="enviar_comprobante" name="enviar_comprobante">
-                                    <label class="form-check-label" for="enviar_comprobante">
-                                        <i class="fa fa-envelope mr-1"></i> Enviar comprobante por correo
-                                    </label>
-                                </div>
-
-                                {{-- Botón de Pagar --}}
-                                <button type="submit" class="btn btn-primary btn-block rounded-pill" style="background-color: #5f40f2; border: none;">
-                                    <i class="fa fa-credit-card mr-1"></i> Pagar ahora
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <!-- /.row -->
-        </div>
-        <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
 
 @stop
 
