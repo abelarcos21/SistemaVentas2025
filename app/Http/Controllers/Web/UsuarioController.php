@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -100,20 +101,20 @@ class UsuarioController extends Controller
             'activo' => ['nullable', 'boolean'],
             'rol'    => ['required', 'string'],
         ]);
-        
+
         DB::beginTransaction();
 
         try {
 
             $user->fill($validated)->save();// Llenar el modelo con los datos validados y guardar
-    
+
             DB::commit();
-    
+
             return redirect()->route('usuario.index')->with('success', 'Usuario actualizado correctamente');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error al actualizar usuario: ' . $e->getMessage());
-    
+
             return redirect()->route('usuario.index')->with('error', 'Error al actualizar usuario: ' . $e->getMessage());
         }
 

@@ -7,7 +7,7 @@ use App\Http\Controllers\Web\VentaController;
 use App\Http\Controllers\Web\CategoriaController;
 use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\ClienteController;
-use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\Web\UsuarioController;
 use App\Http\Controllers\Web\ProveedorController;
 use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
