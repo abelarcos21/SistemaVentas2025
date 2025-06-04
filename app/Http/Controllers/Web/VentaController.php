@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
 use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Categoria;

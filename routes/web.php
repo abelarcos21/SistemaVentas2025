@@ -2,16 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\DetalleVentasController;
-use App\Http\Controllers\VentaController;
-use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\ProductoController;
-use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\Web\DetalleVentasController;
+use App\Http\Controllers\Web\VentaController;
+use App\Http\Controllers\Web\CategoriaController;
+use App\Http\Controllers\Web\ProductoController;
+use App\Http\Controllers\Web\ClienteController;
 use App\Http\Controllers\UsuarioController;
-use App\Http\Controllers\ProveedorController;
-use App\Http\Controllers\Reporte_productosController;
-use App\Http\Controllers\ComprasController;
-use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\Web\ProveedorController;
+use App\Http\Controllers\Web\Reporte_productosController;
+use App\Http\Controllers\Web\ComprasController;
+use App\Http\Controllers\Web\CarritoController;
 
 
 
