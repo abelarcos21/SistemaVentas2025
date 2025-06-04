@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "jeroennoten/laravel-adminlte": "^3.15",
         "laravel/framework": "^11.0",
+        "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
         "milon/barcode": "^12.0",
