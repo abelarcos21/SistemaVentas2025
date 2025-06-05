@@ -34,7 +34,7 @@
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
-                    <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="todos">Todos (58)</button>
+                    <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="todos">Todos ({{$categorias->count()}})</button>
                     @foreach($categorias as $cat)
                         <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}</button>
                     @endforeach
@@ -43,7 +43,7 @@
 
                 <!-- Carrito de Compras -->
                 <div class="card card-outline card-info">
-                    <div class="card-header bg-secondary">
+                    <div class="card-header">
                         <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito de Compras</h3>
                         <div class="d-flex align-items-center justify-content-end">
                             <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
