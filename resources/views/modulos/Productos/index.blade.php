@@ -34,8 +34,11 @@
                                 <a href="{{ route('producto.create') }}" class="btn btn-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
-                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm mr-2">
                                     <i class="fas fa-boxes"></i> Productos con Cantidad 1 y 0
+                                </a>
+                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-primary btn-sm" target="_blank">
+                                    <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
                             </div>
                         </div>
@@ -49,6 +52,7 @@
                                             <th>Nro</th>
                                             <th>Imagen</th>
                                             <th>Codigo</th>
+                                            <th>Código de Barras</th>
                                             <th>Nombre</th>
                                             <th>Categoria</th>
                                             <th>Descripción</th>
@@ -73,8 +77,12 @@
                                                         <span>Sin imagen</span>
                                                     @endif
                                                 </td>
-                                                <td>{!! DNS1D::getBarcodeHTML("$producto->codigo",'UPCA',2,50) !!}
-                                                p - {{$producto->codigo}}</td>
+                                                <td>{{$producto->codigo}}</td>
+                                                <td>
+                                                    @if ($producto->barcode_path)
+                                                        <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}">
+                                                    @endif
+                                                </td>
                                                 <td>{{ $producto->nombre }}</td>
                                                 <td>{{ $producto->nombre_categoria }}</td>
                                                 <td>{{ $producto->descripcion }}</td>
@@ -170,6 +178,22 @@
                 confirmButtonText: 'Aceptar'
             });
         @endif
+    </script>
+
+    <script>
+        function imprimirCodigo(imagenUrl) {
+            const ventana = window.open('', '_blank');
+            ventana.document.write(`
+                <html>
+                <head><title>Imprimir código</title></head>
+                <body style="text-align:center;">
+                    <img src="${imagenUrl}" style="width:300px;"><br>
+                    <button onclick="window.print();">Imprimir</button>
+                </body>
+                </html>
+            `);
+            ventana.document.close();
+        }
     </script>
 
     {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}

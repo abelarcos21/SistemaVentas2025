@@ -18,6 +18,7 @@ class Producto extends Model
         'categoria_id',
         'proveedor_id',
         'codigo',
+        'barcode_path',
         'nombre',
         'descripcion',
         'precio_venta'

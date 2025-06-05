@@ -32,7 +32,7 @@
                         <h3 class="card-title">Editar Proveedor</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
                         <div class="card card-info">
 
@@ -40,17 +40,17 @@
                             <form class="form-horizontal" action="{{route('proveedor.update', $proveedor)}}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" placeholder="ingrese el nombre" class="form-control bg-secondary" value="{{ $proveedor->nombre }}">
+                                                <input type="text" name="nombre" placeholder="ingrese el nombre" class="form-control" value="{{ $proveedor->nombre }}">
                                             </div>
                                         </div>
                                     </div>
@@ -61,11 +61,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-phone"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="telefono" class="form-control bg-secondary" value="{{ $proveedor->telefono }}">
+                                                <input type="text" name="telefono" class="form-control" value="{{ $proveedor->telefono }}">
                                             </div>
                                         </div>
                                     </div>
@@ -75,11 +75,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-envelope"></i>
                                                     </span>
                                                 </div>
-                                                <input type="email" name="email" class="form-control bg-secondary" value="{{ $proveedor->email }}">
+                                                <input type="email" name="email" class="form-control" value="{{ $proveedor->email }}">
                                             </div>
                                         </div>
                                     </div>
@@ -89,11 +89,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-user"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="codigo_postal" class="form-control bg-secondary" value="{{ $proveedor->codigo_postal }}">
+                                                <input type="text" name="codigo_postal" class="form-control" value="{{ $proveedor->codigo_postal }}">
                                             </div>
                                         </div>
                                     </div>
@@ -103,11 +103,11 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-globe"></i>
                                                     </span>
                                                 </div>
-                                                <input type="url" name="sitio_web" class="form-control bg-secondary" value="{{ $proveedor->sitio_web }}">
+                                                <input type="url" name="sitio_web" class="form-control" value="{{ $proveedor->sitio_web }}">
                                             </div>
                                         </div>
                                     </div>
@@ -123,9 +123,13 @@
 
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer bg-secondary">
-                                    <button type="submit" class="btn btn-warning">Actualizar</button>
-                                    <a href="{{ route('proveedor.index')}}" type="button" class="btn btn-secondary float-right">Cancelar</a>
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-warning">
+                                        <i class="fas fa-save"></i> Actualizar
+                                    </button>
+                                    <a href="{{ route('proveedor.index')}}" type="button" class="btn btn-secondary float-right">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
                                 </div>
                                 <!-- /.card-footer -->
                             </form>

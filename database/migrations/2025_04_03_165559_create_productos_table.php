@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEAS
             $table->foreignId('proveedor_id')->constrained('proveedores');
-            $table->string('codigo');
+            $table->string('codigo')->unique();
+            $table->string('barcode_path')->nullable(); // Imagen del código de barras
             $table->string('nombre', 50);
             $table->string('descripcion', 500);
             $table->integer('cantidad')->default(0);

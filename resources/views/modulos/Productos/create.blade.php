@@ -87,7 +87,7 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo</label>
+                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo (Opcional)</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">

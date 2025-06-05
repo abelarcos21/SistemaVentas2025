@@ -106,6 +106,9 @@ Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambi
 //FILTRAR PRODUCTOS Y CATEGORIAS
 Route::get('/productos-filtrados', [ProductoController::class, 'filtrar'])->name('productos.filtrar');
 
+//IMPRIMIR ETIQUETAS DE CODIGO DE BARRAS
+Route::get('/productos/imprimir-etiquetas', [ProductoController::class, 'imprimirEtiquetas'])->name('productos.imprimir.etiquetas');
+
 //RUTA PARA CAMBIAR LA CONTRASEÑA
 Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
 

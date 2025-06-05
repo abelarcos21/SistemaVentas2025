@@ -32,7 +32,7 @@
                         <h3 class="card-title">Editar Categoria</h3>
                     </div>
                     <!-- /.card-header -->
-                    <div class="card-body bg-secondary">
+                    <div class="card-body">
                         <!-- Horizontal Form -->
                         <div class="card card-info">
 
@@ -40,7 +40,7 @@
                             <form class="form-horizontal" action="{{route('categoria.update', $categoria)}}" method="POST">
                                 @csrf
                                 @method('PUT')
-                                <div class="card-body bg-secondary">
+                                <div class="card-body">
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label text-white">Nombre de Categoría</label>
                                         <div class="col-sm-10">
@@ -64,7 +64,7 @@
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer bg-secondary">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-warning">
                                          <i class="fas fa-save"></i> Actualizar
                                     </button>

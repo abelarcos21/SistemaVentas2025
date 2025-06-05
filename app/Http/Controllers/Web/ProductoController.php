@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Milon\Barcode\Facades\DNS1DFacade as DNS1D;
 use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\Imagen;
@@ -103,28 +104,50 @@ class ProductoController extends Controller
 
     }
 
+    //IMPRIMIR ETIQUETAS DE CODIGO DE BARRAS
+    public function imprimirEtiquetas(){
+        $productos = Producto::orderBy('nombre')->get(); // o filtra como quieras
+        return view('modulos.productos.etiquetas', compact('productos'));
+    }
+
     public function store(Request $request){
 
         $validated = $request->validate([
 
             'categoria_id' => 'required',
             'proveedor_id' => 'required',
-            'codigo' => 'required|string|max:255|unique:productos,codigo',
+            'codigo' => 'nullable|string|max:255|unique:productos,codigo',// validación nullable si se deja en blanco el campo
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',// validación opcional de imagen
 
         ]);
 
+
         DB::beginTransaction();
 
         try{
+
+            // Generar código si no se envía
+            $codigo = $request->input('codigo') ?? str_pad((Producto::max('id') ?? 0) + 1, 8, '0', STR_PAD_LEFT);
+
+            // Crear directorio si no existe
+            $barcodeDir = public_path('barcodes');
+            if (!file_exists($barcodeDir)) {
+                mkdir($barcodeDir, 0777, true);
+            }
+
+            // Generar imagen de código de barras
+            $barcode = DNS1D::getBarcodePNG($codigo, 'C128'); // Tipo C128 para mejor compatibilidad
+            $barcodePath = 'barcodes/' . $codigo . '.png';
+            file_put_contents(public_path($barcodePath), base64_decode($barcode));
 
             $producto = Producto::create([
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
-                'codigo'       => $validated['codigo'],
+                'codigo'       => $codigo,
+                'barcode_path' => $barcodePath,
                 'nombre'       => $validated['nombre'],
                 'descripcion'  => $validated['descripcion'],
 
@@ -142,6 +165,7 @@ class ProductoController extends Controller
         }catch (Exception $e){
             DB::rollBack();
             Log::error('Error al guardar el producto: ' . $e->getMessage());
+            //return back()->with('error', 'Error: ' . $e->getMessage());//mostrar error completo
             return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
         }
     }
