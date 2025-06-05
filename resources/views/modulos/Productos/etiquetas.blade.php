@@ -35,12 +35,15 @@
         @foreach($productos as $producto)
             <div class="etiqueta">
                 <strong>{{ $producto->nombre }}</strong><br>
-                <small>{{ $producto->codigo }}</small><br>
+                <p class="precio">${{ number_format($producto->precio_venta, 2) }}</p>
+
                 @if($producto->barcode_path && file_exists(public_path($producto->barcode_path)))
-                    <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}">
+                    <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}"><br>
                 @else
                     <p><em>Sin código</em></p>
                 @endif
+
+                <small>{{ $producto->codigo }}</small>
             </div>
         @endforeach
     </div>
