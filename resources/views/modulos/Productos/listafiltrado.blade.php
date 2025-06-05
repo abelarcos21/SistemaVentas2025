@@ -18,7 +18,7 @@
 
             <div class="card-body p-2">
                 <h6 class="mb-1" style="font-size: 14px;">{{ $producto->nombre }}</h6>
-                <p class="mb-0 text-success font-weight-bold" style="font-size: 14px;">${{ number_format($producto->precio_venta, 2) }}</p>
+                <p class="mb-0 text-success font-weight-bold" style="font-size: 14px;">MXN ${{ number_format($producto->precio_venta, 2) }}</p>
                 <small class="text-muted">Stock: {{ $producto->cantidad }}</small>
             </div>
 

@@ -34,9 +34,9 @@
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
-                    <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="todos">Todos ({{$categorias->count()}})</button>
+                    <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="todos">Todos ({{$totalProductos}})</button>
                     @foreach($categorias as $cat)
-                        <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}</button>
+                        <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}  ({{ $cat->productos_count }})</button>
                     @endforeach
                 </div>
                 <!-- Main content -->
@@ -123,6 +123,7 @@
 
 
                 {{-- Productos --}}
+                <p>Total encontrados: <span id="contador-filtrados">0</span></p>
                 <div class="row" id="contenedor-productos">
 
                     @include('modulos.productos.listafiltrado', ['productos' => $productos])
@@ -275,7 +276,8 @@
                     categoria_id: categoriaSeleccionada
                 },
                 success: function(data) {
-                    $('#contenedor-productos').html(data);
+                    $('#contenedor-productos').html(data.html);
+                    $('#contador-filtrados').text(data.total);
                 },
                 error: function() {
                     alert('Error al filtrar productos');

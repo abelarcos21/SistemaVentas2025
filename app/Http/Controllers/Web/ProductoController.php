@@ -88,19 +88,23 @@ class ProductoController extends Controller
     //FILTRAR LOS PRODUCTOS Y LAS CATEGORIAS
     public function filtrar(Request $request){
 
-        $query = Producto::query();
+       $query = Producto::query();
 
-        if($request->filled('busqueda')){
-            $query->where('nombre','LIKE','%' . $request->busqueda . '%');
+        if ($request->filled('busqueda')) {
+            $query->where('nombre', 'LIKE', '%' . $request->busqueda . '%');
         }
 
         if ($request->filled('categoria_id') && $request->categoria_id !== 'todos') {
             $query->where('categoria_id', $request->categoria_id);
         }
 
-        $productos = $query->where('cantidad', '>', 0)->get();
+        $productos = $query->where('cantidad', '>', 0)->get(); //Asegúrar de que los productos tengan cantidad > 0 en BD
 
-        return view('modulos.productos.listafiltrado', compact('productos'))->render();
+
+        return response()->json([
+            'html' => view('modulos.productos.listafiltrado', compact('productos'))->render(),
+            'total' => $productos->count(),
+        ]);
 
     }
 
