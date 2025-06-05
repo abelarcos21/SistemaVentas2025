@@ -33,6 +33,7 @@ class AuthController extends Controller{
 
     public function logout(Request $request){
         $request->user()->currentAccessToken()->delete();
+        //$request->user()->tokens()->delete();//para cerrar sesión en todos los dispositivos
         return response()->json(['message' => 'Sesion Cerrada Correctamente']);
     }
 
