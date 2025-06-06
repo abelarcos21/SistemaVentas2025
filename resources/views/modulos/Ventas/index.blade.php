@@ -30,7 +30,14 @@
             <div class="col-md-9">
 
                 {{-- Buscador --}}
-                <input type="text" id="buscador" class="form-control mb-3" placeholder="Buscar Producto">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-gradient-info">
+                            <i class="fas fa-search"></i> {{-- Ícono de búsqueda --}}
+                        </span>
+                    </div>
+                     <input type="text" id="buscador" class="form-control" placeholder="Buscar Producto">
+                </div>
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
@@ -143,9 +150,9 @@
                             <h5 class="text-secondary">Total a Pagar</h5>
                             <h2 class="font-weight-bold text-primary">
                                 @if (session('items_carrito'))
-                                    ${{ number_format($totalGeneral, 2) }}
+                                    MXN${{ number_format($totalGeneral, 2) }}
                                 @else
-                                    $MX0.00
+                                    MXN$0.00
                                 @endif
                             </h2>
                         </div>
