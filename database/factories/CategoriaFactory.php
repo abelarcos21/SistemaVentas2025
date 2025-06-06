@@ -19,10 +19,13 @@ class CategoriaFactory extends Factory
      */
     public function definition(): array
     {
+
+        $categorias = ['arroz', 'aceite', 'sal', 'condimentos', 'azúcar', 'harina', 'pastas', 'enlatados', 'lácteos'];
+
         return [
             //
             'user_id' => User::factory(),
-            'nombre' => $this->faker->word(),
+            'nombre' => $this->faker->randomElement($categorias),
         ];
     }
 }
