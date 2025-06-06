@@ -8,4 +8,10 @@ use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la 
 class MarcaController extends Controller
 {
     //
+    public function index(){
+
+        $marcas = Marca::all();
+        return view('marcas.index', compact('marcas'));
+
+    }
 }

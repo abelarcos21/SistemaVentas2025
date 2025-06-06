@@ -42,6 +42,7 @@ class ProductoFactory extends Factory
             'user_id' => User::factory(),
             'categoria_id' => Categoria::factory(),
             'proveedor_id' => Proveedor::factory(),
+            'marca_id' => Marca::factory(),
             'codigo' => $this->faker->unique()->ean8(),
             'barcode_path' =>"barcodes/{$barcodeNumber}.png",
             'nombre' => $this->faker->words(3, true),
