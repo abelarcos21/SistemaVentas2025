@@ -52,7 +52,7 @@
                                             <th>Nro</th>
                                             <th>Imagen</th>
                                             <th>Codigo</th>
-                                            <th>Código de Barras</th>
+                                            <th class="no-exportar">Código de Barras</th>
                                             <th>Nombre</th>
                                             <th>Categoria</th>
                                             <th>Descripción</th>
@@ -150,6 +150,10 @@
 @stop
 
 @section('js')
+
+    <!-- Carga logo base64 -->
+    <script src="{{ asset('js/logoBase64.js') }}"></script>
+
     {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
@@ -262,6 +266,11 @@
     {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
+
+            var fecha = new Date().toLocaleDateString('es-MX', {
+                timeZone: 'America/Mexico_City'
+            });
+
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
@@ -271,49 +280,60 @@
                         className: 'btn btn-primary btn-sm'
                     }, */
                     {
-                        extend: 'excel',
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)'
+                        },
+                        title: 'Reporte de Productos',
+                        filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
                         text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
                         className: 'btn btn-success btn-sm'
                     },
                     {
-                        extend: 'pdf',
+                        extend: 'pdfHtml5',
                         exportOptions: {
-                            columns: ':not(.no-exportar)' // también en PDF
+                            columns: ':not(.no-exportar)' // en PDF
                         },
+                        title: 'Reporte de Productos',
+                        filename: 'reporte_productos_' + new Date().toISOString().slice(0,10),
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
+                        className: 'btn btn-danger btn-sm',
                         customize: function (doc) {
 
-                            doc.styles.tableHeader.fillColor = '#6c757d'; // similar a bg-secondary
+                            // Insertar el logo al principio
+                            doc.content.unshift({
+                                image: logoBase64,
+                                width: 100, // ancho del logo
+                                alignment: 'left',
+                                margin: [0, 0, 0, 10]
+                            });
+
+                            // Centrar título, bg-secondary header, texto blanco
+                            doc.styles.tableHeader.fillColor = '#3498db'; // similar a bg-info
                             doc.styles.tableHeader.color = 'white';
                             doc.styles.title = {
                                 alignment: 'center',
-                                fontSize: 16
+                                fontSize: 16,
+                                bold: true,
                             };
 
-                            /* // Establecer fuentes más pequeñas
-                            doc.defaultStyle.fontSize = 9;
-                            doc.styles.tableHeader.fontSize = 10;
-                            doc.styles.tableHeader.fillColor = '#f2f2f2'; // color del encabezado
-                            doc.styles.tableHeader.color = '#000'; // texto del encabezado */
+                            // Agregar fecha debajo del título
+                            doc.content.splice(2, 0, {
+                                text: 'Fecha: ' + fecha,
+                                margin: [0, 0, 0, 12],
+                                alignment: 'center',
+                                fontSize: 10
+                            });
+
+                            // Centrar contenido de las celdas
+                            var objLayout = {};
+                            objLayout.hAlign = 'center';
+                            doc.content[2].layout = objLayout;
 
 
-                           /*  // Añadir logo + título Encabezado del documento
-                            doc.content.splice(0, 0, {
-                                columns: [
-                                    {
-                                        //image: 'https://picsum.photos/300/300', // Pega aquí tu base64
-                                        //width: 100
-                                    },
-                                    {
-                                        text: 'Reporte De Productos y Stock',
-                                        alignment: 'center',
-                                        fontSize: 14,
-                                        margin: [0, 20, 0, 0],
-                                        bold: true
-                                    }
-                                ]
-                            }); */
-
-                            /* // Pie de página
+                            // Pie de página
                             doc.footer = function (currentPage, pageCount) {
                                 return {
                                     text: 'Página ' + currentPage + ' de ' + pageCount,
@@ -321,50 +341,30 @@
                                     fontSize: 8,
                                     margin: [0, 10, 0, 0]
                                 };
-                            }; */
+                            };
 
-                            /* // Ajustar anchos automáticamente
-                            var tableBodyIndex = 1; // después del encabezado
-                            if (!doc.content[tableBodyIndex].table) tableBodyIndex = 2; // por si hay logo o más encabezado
-
-                            var table = doc.content[tableBodyIndex].table;
-                            var columnCount = table.body[0].length;
-                            table.widths = Array(columnCount).fill('*'); */
-
-                        },
-                        orientation: 'landscape', // opcional para mejor ancho
-                        pageSize: 'A4',
-                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
-                        className: 'btn btn-danger btn-sm',
+                        }
                     },
                     {
                         extend: 'print',
                         exportOptions: {
                             columns: ':not(.no-exportar)' // excluye columnas con esa clase
                         },
-                        orientation: 'landscape', // opcional para mejor ancho
-                        pageSize: 'A4',
-                        text: '<i class="fas fa-print"></i> Visualizar PDF',
-                        title: '', // <--- Esto evita que aparezca el título por defecto
-                        className: 'btn btn-warning btn-sm',
-                        customize: function (win) {
-                            $(win.document.body)
-                                .css('font-size', '10pt')
-                                .prepend('<h3 class="text-center">Reporte De Productos y Stock</h3>');
-
-                            $(win.document.body).find('table')
-                                .addClass('table table-bordered table-striped')
-                                .css({
-                                    'font-size': 'inherit',
-                                    'background-color': '#dee2e6' // similar a bg-secondary
-                                });
-                        },
+                        title: 'Reporte de Productos',
+                        text: '<i class="fas fa-print"></i> Imprimir',
+                        className: 'btn btn-secondary btn-sm'
+                       
                     },
-                   /*  {
-                        extend: 'csv',
-                        text: '<i class="fas fa-upload"></i> CSV',
+                    {
+                        extend: 'csvHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)'
+                        },
+                        title: 'Reporte de Productos',
+                        filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
+                        text: '<i class="fas fa-file-csv"></i> Exportar a CSV',
                         className: 'btn btn-info btn-sm'
-                    } */
+                    } 
                 ],
 
                 "language": {

@@ -207,7 +207,7 @@
                             });
 
                             // Centrar título, bg-secondary header, texto blanco
-                            doc.styles.tableHeader.fillColor = '#3498db'; // similar a bg-secondary
+                            doc.styles.tableHeader.fillColor = '#3498db'; // similar a bg-info
                             doc.styles.tableHeader.color = 'white';
                             doc.styles.title = {
                                 alignment: 'center',
