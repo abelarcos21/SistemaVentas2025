@@ -3,7 +3,12 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Bienvenido a SISVentas 1.0: <strong>{{Auth::user()->name}}</strong></h1>
+    <h1>Bienvenido a SISVentas V1.0: <strong>{{Auth::user()->name}}</strong></h1>
+    <li class="nav-item">
+        <button id="darkModeToggle" class="btn btn-sm btn-outline-light ml-2">
+            <span id="darkModeIcon">🌙</span> Modo
+        </button>
+    </li>
 @stop
 
 @section('content')
@@ -123,5 +128,37 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const iconSpan = document.getElementById('darkModeIcon');
+            const darkModeClass = 'dark-mode';
+
+            // Función para cambiar ícono
+            const updateIcon = () => {
+                if (body.classList.contains(darkModeClass)) {
+                    iconSpan.textContent = '🌞'; // Claro
+                } else {
+                    iconSpan.textContent = '🌙'; // Oscuro
+                }
+            };
+
+            // Cargar modo desde localStorage
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add(darkModeClass);
+            } else {
+                body.classList.remove(darkModeClass);
+            }
+            updateIcon();
+
+            // Evento del botón
+            toggleBtn.addEventListener('click', () => {
+                body.classList.toggle(darkModeClass);
+                const newTheme = body.classList.contains(darkModeClass) ? 'dark' : 'light';
+                localStorage.setItem('theme', newTheme);
+                updateIcon();
+            });
+        });
+    </script>
 @stop
