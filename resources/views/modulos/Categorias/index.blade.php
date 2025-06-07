@@ -44,6 +44,9 @@
                                             <th>Nro</th>
                                             <th>Usuario</th>
                                             <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Medida</th>
+                                            <th>Activo</th>
                                             <th>Fecha Registro</th>
                                             <th>Acciones</th>
                                         </tr>
@@ -54,7 +57,10 @@
                                                 <td>{{ $categoria->id }}</td>
                                                 <td>{{ $categoria->user_id }}</td>
                                                 <td>{{ $categoria->nombre }}</td>
-                                                <td>{{ $categoria->created_at }}</td>
+                                                <td>{{ $categoria->descripcion }}</td>
+                                                <td>{{ $categoria->medida }}</td>
+                                                <td>{{ $categoria->activo}}</td>
+                                                <td>{{ $categoria->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">

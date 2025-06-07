@@ -55,6 +55,7 @@
                                             <th class="no-exportar">Código de Barras</th>
                                             <th>Nombre</th>
                                             <th>Categoria</th>
+                                            <th>Marca</th>
                                             <th>Descripción</th>
                                             <th>Proveedor</th>
                                             <th>Stock</th>
@@ -85,12 +86,13 @@
                                                 </td>
                                                 <td>{{ $producto->nombre }}</td>
                                                 <td>{{ $producto->nombre_categoria }}</td>
+                                                <td>{{ $producto->nombre_marca}}</td>
                                                 <td>{{ $producto->descripcion }}</td>
                                                 <td>{{ $producto->nombre_proveedor }}</td>
                                                 <td><span class="badge bg-success text-dark">{{ $producto->cantidad }}</span></td>
-                                                <td>${{ $producto->precio_venta }}</td>
-                                                <td>${{ $producto->precio_compra }}</td>
-                                                <td>{{ $producto->created_at->format('d/m/Y') }}</td>
+                                                <td class="text-blue">MXN${{ $producto->precio_venta }}</td>
+                                                <td class="text-blue">MXN${{ $producto->precio_compra }}</td>
+                                                <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input type="checkbox" role="switch" class="custom-control-input"
@@ -353,7 +355,7 @@
                         title: 'Reporte de Productos',
                         text: '<i class="fas fa-print"></i> Imprimir',
                         className: 'btn btn-secondary btn-sm'
-                       
+
                     },
                     {
                         extend: 'csvHtml5',
@@ -364,7 +366,7 @@
                         filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
                         text: '<i class="fas fa-file-csv"></i> Exportar a CSV',
                         className: 'btn btn-info btn-sm'
-                    } 
+                    }
                 ],
 
                 "language": {

@@ -25,11 +25,13 @@ class ProductoController extends Controller
             'productos.*',
             'categorias.nombre as nombre_categoria',
             'proveedores.nombre as nombre_proveedor',
+            'marcas.nombre as nombre_marca',
             'imagens.ruta as imagen_producto',
             'imagens.id as imagen_id'
         )
         ->join('categorias', 'productos.categoria_id', '=' , 'categorias.id')
         ->join('proveedores', 'productos.proveedor_id', '=' , 'proveedores.id')
+        ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
         ->get();
 
