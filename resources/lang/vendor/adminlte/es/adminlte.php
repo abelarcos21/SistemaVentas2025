@@ -2,6 +2,8 @@
 
 return [
 
+    'profile'                     => 'Perfil',
+    'logout'                      => 'Cerrar sesión',
     'full_name'                   => 'Nombre completo',
     'email'                       => 'Correo electrónico',
     'password'                    => 'Contraseña',
