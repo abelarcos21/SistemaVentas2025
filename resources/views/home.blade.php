@@ -6,7 +6,8 @@
     <h1>Bienvenido a SISVentas V1.0: <strong>{{Auth::user()->name}}</strong></h1>
     <li class="nav-item">
         <button id="darkModeToggle" class="btn btn-sm btn-outline-light ml-2">
-            <span id="darkModeIcon">🌙</span> Modo
+            <span id="darkModeIcon">🌙</span>
+            <span id="darkModeText">Modo Oscuro</span>
         </button>
     </li>
 @stop
@@ -128,36 +129,34 @@
 @stop
 
 @section('js')
-    <script>
+   <script>
         document.addEventListener('DOMContentLoaded', () => {
             const body = document.body;
             const toggleBtn = document.getElementById('darkModeToggle');
             const iconSpan = document.getElementById('darkModeIcon');
+            const textSpan = document.getElementById('darkModeText');
             const darkModeClass = 'dark-mode';
 
-            // Función para cambiar ícono
-            const updateIcon = () => {
-                if (body.classList.contains(darkModeClass)) {
-                    iconSpan.textContent = '🌞'; // Claro
-                } else {
-                    iconSpan.textContent = '🌙'; // Oscuro
-                }
-            };
+            function updateButtonUI() {
+                const isDark = body.classList.contains(darkModeClass);
+                iconSpan.textContent = isDark ? '🌞' : '🌙';
+                textSpan.textContent = isDark ? 'Modo Claro' : 'Modo Oscuro';
+            }
 
-            // Cargar modo desde localStorage
+            // Aplicar modo guardado
             if (localStorage.getItem('theme') === 'dark') {
                 body.classList.add(darkModeClass);
             } else {
                 body.classList.remove(darkModeClass);
             }
-            updateIcon();
+            updateButtonUI();
 
-            // Evento del botón
+            // Alternar modo
             toggleBtn.addEventListener('click', () => {
                 body.classList.toggle(darkModeClass);
                 const newTheme = body.classList.contains(darkModeClass) ? 'dark' : 'light';
                 localStorage.setItem('theme', newTheme);
-                updateIcon();
+                updateButtonUI();
             });
         });
     </script>
