@@ -17,11 +17,12 @@ class MarcaFactory extends Factory
      */
     public function definition(): array
     {
-        $marcas = ['Don Vitorio', 'El Olivar', 'Tottus', 'Molitalia', 'Blanca flor', 'Ajinomoto', 'Marina', 'Costeña', 'Carbonel'];
+        //$marcas = ['Don Vitorio', 'El Olivar', 'Tottus', 'Molitalia', 'Blanca flor', 'Ajinomoto', 'Marina', 'Costeña', 'Carbonel'];
 
         return [
             //
-            'nombre' => $this->faker->randomElement($marcas),
+            //'nombre' => $this->faker->randomElement($marcas),
+            'nombre' => $this->faker->words(2, true),
             'descripcion' => $this->faker->sentence(3),
             'activo' => $this->faker->boolean(90), // 90% probabilidad de estar activo
         ];

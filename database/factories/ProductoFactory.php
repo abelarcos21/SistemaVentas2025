@@ -7,6 +7,7 @@ use App\Models\Producto;
 use App\Models\User;
 use App\Models\Categoria;
 use App\Models\Proveedor;
+use App\Models\Marca;
 
 
 
