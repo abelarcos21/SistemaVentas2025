@@ -106,6 +106,9 @@
 
 @section('js')
 
+    <!-- Carga logo base64 -->
+    <script src="{{ asset('js/logoBase64.js') }}"></script>
+
     {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
@@ -165,7 +168,9 @@
     <script>
         $(document).ready(function() {
 
-            var fecha = new Date().toLocaleDateString('es-MX');
+            var fecha = new Date().toLocaleDateString('es-MX', {
+                timeZone: 'America/Mexico_City'
+            });
 
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
@@ -192,15 +197,26 @@
                         text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
                         className: 'btn btn-danger btn-sm',
                         customize: function (doc) {
-                            // Centrar título
+
+                            // Insertar el logo al principio
+                            doc.content.unshift({
+                                image: logoBase64,
+                                width: 100, // ancho del logo
+                                alignment: 'left',
+                                margin: [0, 0, 0, 10]
+                            });
+
+                            // Centrar título, bg-secondary header, texto blanco
+                            doc.styles.tableHeader.fillColor = '#3498db'; // similar a bg-secondary
+                            doc.styles.tableHeader.color = 'white';
                             doc.styles.title = {
                                 alignment: 'center',
                                 fontSize: 16,
-                                bold: true
+                                bold: true,
                             };
 
                             // Agregar fecha debajo del título
-                            doc.content.splice(1, 0, {
+                            doc.content.splice(2, 0, {
                                 text: 'Fecha: ' + fecha,
                                 margin: [0, 0, 0, 12],
                                 alignment: 'center',
@@ -211,6 +227,17 @@
                             var objLayout = {};
                             objLayout.hAlign = 'center';
                             doc.content[2].layout = objLayout;
+
+
+                            // Pie de página
+                            doc.footer = function (currentPage, pageCount) {
+                                return {
+                                    text: 'Página ' + currentPage + ' de ' + pageCount,
+                                    alignment: 'center',
+                                    fontSize: 8,
+                                    margin: [0, 10, 0, 0]
+                                };
+                            };
 
                         }
                     },
