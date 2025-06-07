@@ -35,7 +35,7 @@
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
                                 <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm mr-2">
-                                    <i class="fas fa-boxes"></i> Productos con Cantidad 1 y 0
+                                    <i class="fas fa-boxes"></i> Productos con Stock 1 y 0
                                 </a>
                                 <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-primary btn-sm" target="_blank">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
