@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             ImagenSeeder::class,
             ClienteSeeder::class,
+            EmpresaSeeder::class,
         ]);
     }
 }
