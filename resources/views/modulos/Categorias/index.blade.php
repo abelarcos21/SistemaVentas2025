@@ -59,7 +59,12 @@
                                                 <td>{{ $categoria->nombre }}</td>
                                                 <td>{{ $categoria->descripcion }}</td>
                                                 <td>{{ $categoria->medida }}</td>
-                                                <td>{{ $categoria->activo}}</td>
+                                                <td>
+                                                    <div class="custom-control custom-switch toggle-estado">
+                                                        <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $categoria->id }}" {{ $categoria->activo ? 'checked' : '' }} data-id="{{ $categoria->id }}">
+                                                        <label class="custom-control-label" for="activoSwitch{{ $categoria->id }}"></label>
+                                                    </div>
+                                                </td>
                                                 <td>{{ $categoria->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="d-flex">

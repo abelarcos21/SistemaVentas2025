@@ -41,8 +41,9 @@
                                 @csrf
                                 @method('PUT')
                                 <div class="card-body">
+
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label text-white">Nombre de Categoría</label>
+                                        <label for="nombre" class="col-sm-2 col-form-label">Nombre de Categoría</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -62,6 +63,53 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="form-group row">
+                                        <label for="nombre" class="col-sm-2 col-form-label">Descripcion</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-comments"></i>
+                                                    </span>
+                                                </div>
+                                                <textarea placeholder="Escribe la descripcion" name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3" required>{{ old('descripcion', $categoria->descripcion ?? '') }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="medida" class="col-sm-2 col-form-label">Medida</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                         <i class="fas fa-balance-scale"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text"
+                                                name="medida"
+                                                class="form-control @error('medida') is-invalid @enderror"
+                                                value="{{ old('medida', $categoria->medida) }}"
+                                                id="medida"
+                                                required>
+                                                @error('medida')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+
+                                        <div class="custom-control custom-switch toggle-estado">
+                                            <input type="hidden" name="activo" value="0">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" value="1" id="activoSwitch{{ $categoria->id }}"  name="activo" {{ $categoria->activo ? 'checked' : '' }} data-id="{{ $categoria->id }}">
+                                            <label class="custom-control-label" for="activoSwitch{{ $categoria->id }}">¿Activo?</label>
+                                        </div>
+
+                                    </div>
+
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">

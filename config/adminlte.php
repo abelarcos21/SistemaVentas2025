@@ -401,9 +401,9 @@ return [
             'icon' => 'fas fa-user-shield ',
         ],
         [
-            'text' => 'Configuracion',
+            'text' => 'Negocio',
             'url' => 'configuracion/',
-            'icon' => 'fas fa-cogs ',
+            'icon' => 'fas fa-building ',
         ],
 
 

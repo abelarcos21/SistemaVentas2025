@@ -30,6 +30,9 @@ class CategoriaController extends Controller
             $validated = $request->validate([
 
                 'nombre' => 'required|string|max:255',
+                'descripcion' => 'nullable|string',
+                'medida' => 'required|string|max:100',
+                'activo' => 'required|boolean',// gracias al input hidden + checkbox, este campo siempre se enviará
 
             ]);
 
@@ -64,6 +67,9 @@ class CategoriaController extends Controller
         $validated = $request->validate([
 
             'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'medida' => 'required|string|max:100',
+            'activo' => 'required|boolean',// gracias al input hidden + checkbox, este campo siempre se enviará
 
         ]);
 
