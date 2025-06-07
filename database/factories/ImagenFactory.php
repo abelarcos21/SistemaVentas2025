@@ -21,7 +21,7 @@ class ImagenFactory extends Factory
             //
             'producto_id' => Producto::factory(), // o asigna uno fijo si ya existen
             'nombre' => $this->faker->word() . '.jpg',
-            'ruta' => 'storage/productos/' . $this->faker->uuid() . '.jpg',
+            'ruta' => 'storage/imagenes/' . $this->faker->uuid() . '.jpg',
 
         ];
     }

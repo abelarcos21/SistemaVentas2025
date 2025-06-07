@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;//USO ACEDER ALA RELACION
 
 class Producto extends Model
 {
@@ -17,6 +18,7 @@ class Producto extends Model
         'user_id',
         'categoria_id',
         'proveedor_id',
+        'marca_id',
         'codigo',
         'barcode_path',
         'nombre',
@@ -28,6 +30,11 @@ class Producto extends Model
     //RELACION PARA ACCEDER ALA IMAGEN
     public function imagen(){
         return $this->hasOne(Imagen::class);
+    }
+
+    //RELACION PARA ACCEDER ALA MARCA
+    public function marca(): BelongsTo{
+        return $this->belongsTo(Marca::class);
     }
 
    /*  public function categoria()

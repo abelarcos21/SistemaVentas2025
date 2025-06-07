@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEAS
-            $table->foreignId('proveedor_id')->constrained('proveedores');
+            $table->foreignId('user_id')->constrained('users');//LLAVES FORANEA
+            $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEA
+            $table->foreignId('proveedor_id')->constrained('proveedores');//LLAVES FORANEA
+            $table->foreignId('marca_id')->constrained('marcas');//LLAVES FORANEA
             $table->string('codigo')->unique();
             $table->string('barcode_path')->nullable(); // Imagen del código de barras
             $table->string('nombre', 50);
