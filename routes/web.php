@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Web\DetalleVentasController;
 use App\Http\Controllers\Web\VentaController;
 use App\Http\Controllers\Web\CategoriaController;
+use App\Http\Controllers\Web\MarcaController;
 use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\ClienteController;
 use App\Http\Controllers\Web\UsuarioController;
@@ -57,6 +58,18 @@ Route::prefix('categorias')->group(function(){
     Route::get('{categoria}/show', [CategoriaController::class, 'show'])->name('categoria.show');
     Route::put('{categoria}', [CategoriaController::class, 'update'])->name('categoria.update');
     Route::delete('{categoria}', [CategoriaController::class, 'destroy'])->name('categoria.destroy');
+
+});
+
+///////////////////RUTA MARCAS
+Route::prefix('marcas')->group(function(){
+    Route::get('/', [MarcaController::class, 'index'])->name('marca.index');
+    Route::get('create', [MarcaController::class, 'create'])->name('marca.create');
+    Route::post('store', [MarcaController::class, 'store'])->name('marca.store');
+    Route::get('{marca}/edit', [MarcaController::class, 'edit'])->name('marca.edit');
+    Route::get('{marca}/show', [MarcaController::class, 'show'])->name('marca.show');
+    Route::put('{marca}', [MarcaController::class, 'update'])->name('marca.update');
+    Route::delete('{marca}', [MarcaController::class, 'destroy'])->name('marca.destroy');
 
 });
 

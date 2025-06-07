@@ -360,6 +360,12 @@ return [
         ],
 
         [
+            'text' => 'Marcas',
+            'url' => 'marcas/',
+            'icon' => 'fas fa-tags ',
+        ],
+
+        [
             'text' => 'Productos',
             'icon' => 'fas fa-boxes',
             'submenu' => [
