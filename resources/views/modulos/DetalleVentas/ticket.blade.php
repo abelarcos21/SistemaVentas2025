@@ -87,6 +87,7 @@
         <p class="total">Total: ${{ number_format($venta->total_venta, 2) }}</p>
 
         <p class="gracias">¡Gracias por su compra!</p>
+        <img src="data:image/png;base64,{{ $qr }}" alt="Código QR" style="margin-top: 10px;">
     </div>
 </body>
 </html>

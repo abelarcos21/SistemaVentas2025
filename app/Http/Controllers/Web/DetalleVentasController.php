@@ -124,8 +124,11 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get();
 
+        // Generar QR y guardar en disco
+        $qr = base64_encode(QrCode::format('png')->size(100)->generate('http://sistemaventas2025.test:8080'));
+
         // Generar PDF con tamaño personalizado tipo ticket (80mm x altura ajustable)
-        $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles'))
+        $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles', 'qr'))
                 ->setPaper([0, 0, 300, 900], 'portrait'); // 80mm de ancho
 
         return $pdf->stream("ticket_compra_{$venta->id}.pdf");
@@ -159,15 +162,12 @@ class DetalleVentasController extends Controller
         $qrContenido .= "Validación: Comercializadora México";
 
 
-        // Generar QR y guardar en disco
-        $qrImage = QrCode::format('png')->size(150)->generate($qrContenido);
-        $filename = 'qr_temp_' . uniqid() . '.png';
-        Storage::disk('public')->put($filename, $qrImage);
-        $qrPath = public_path('storage/' . $filename);
+        // Generar QR
+        $qr = base64_encode(QrCode::format('png')->size(150)->generate($qrContenido));
 
         // Generar PDF
         $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact(
-            'cliente', 'items', 'total', 'nota', 'qrPath', 'folio'
+            'cliente', 'items', 'total', 'nota', 'qr', 'folio'
         ))->setPaper('A4', 'portrait');
 
         // Opcional: borrar después si no se necesita guardar
