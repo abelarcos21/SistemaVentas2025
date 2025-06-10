@@ -30,7 +30,7 @@
                     <div class="card">
                         <div class="card-header bg-secondary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"> <i class="fas fa-list"></i> Marcas registradas</h3>
-                            <a href="{{ route('categoria.create') }}" class="btn btn-primary btn-sm ">
+                            <a href="{{ route('marca.create') }}" class="btn btn-primary btn-sm ">
                                 <i class="fas fa-plus"></i> Agregar Nuevo
                             </a>
                         </div>
@@ -56,7 +56,12 @@
                                                 <td>{{ $marca->nombre }}</td>
                                                 <td>{{ $marca->descripcion }}</td>
                                                 <td>{{ $marca->created_at }}</td>
-                                                <td>{{ $marca->activo }}</td>
+                                                <td>
+                                                    <div class="custom-control custom-switch toggle-estado">
+                                                        <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $marca->id }}" {{ $marca->activo ? 'checked' : '' }} data-id="{{ $marca->id }}">
+                                                        <label class="custom-control-label" for="activoSwitch{{ $marca->id }}"></label>
+                                                    </div>
+                                                </td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('marca.edit', $marca) }}" class="btn btn-warning btn-sm mr-1">
