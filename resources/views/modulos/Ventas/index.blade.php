@@ -51,7 +51,7 @@
                 <!-- Carrito de Compras -->
                 <div class="card card-outline card-info">
                     <div class="card-header">
-                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito de Compras</h3>
+                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito</h3>
                         <div class="d-flex align-items-center justify-content-end">
                             <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
                                 <i class="fas fa-boxes"></i> Vaciar Carrito

@@ -89,7 +89,12 @@
                                                 <td>{{ $producto->nombre_marca}}</td>
                                                 <td>{{ $producto->descripcion }}</td>
                                                 <td>{{ $producto->nombre_proveedor }}</td>
-                                                <td><span class="badge bg-success text-dark">{{ $producto->cantidad }}</span></td>
+                                                @if($producto->cantidad > 5)
+                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
+                                                @else
+                                                    <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
+                                                @endif
+
                                                 <td class="text-blue">MXN${{ $producto->precio_venta }}</td>
                                                 <td class="text-blue">MXN${{ $producto->precio_compra }}</td>
                                                 <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>
