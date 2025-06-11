@@ -76,7 +76,7 @@
                                             <th>Cantidad</th>
                                             <th>Precio Venta</th>
                                             <th>Total</th>
-                                            <th>Acción</th>
+                                            <th>Quitar</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -96,9 +96,17 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">{{ $item['nombre'] }}</td>
-                                                <td class="text-center">
-                                                    <span class="badge bg-success">{{ $producto->cantidad }}</span>
-                                                </td> <!-- NUEVA CELDA -->
+                                                @if($producto->cantidad > 5)
+                                                    <td class="text-center">
+                                                        <span class="badge bg-success">{{ $producto->cantidad }}</span>
+                                                    </td>
+                                                @else
+
+                                                    <td class="text-center">
+                                                        <span class="badge bg-danger">{{ $producto->cantidad }}</span>
+                                                    </td> <!-- NUEVA CELDA -->
+                                                @endif
+
                                                 <td class="text-center">
                                                     <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
                                                         @csrf
@@ -108,11 +116,11 @@
                                                         <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
                                                     </form>
                                                 </td>
-                                                <td class="text-center">${{ $item['precio'] }}</td>
-                                                <td class="text-center">${{ $totalProducto }}</td>
+                                                <td class="text-center text-primary">MXN${{ $item['precio'] }}</td>
+                                                <td class="text-center text-primary">MXN${{ $totalProducto }}</td>
                                                 <td class="text-center">
                                                     <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-trash-alt"></i> Quitar
+                                                        <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -421,7 +429,7 @@
     </script>
 
     {{--DATATABLE PARA MOSTRAR LOS DATOS DEl CARRITO--}}
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             $('#productos_carrito').DataTable({
 
@@ -445,7 +453,7 @@
 
             });
         });
-    </script>
+    </script> --}}
 
     {{--español datatables traducir <script>
       $(document).ready(function(){
