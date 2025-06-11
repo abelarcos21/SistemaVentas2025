@@ -13,6 +13,8 @@ use App\Http\Controllers\Web\ProveedorController;
 use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
 use App\Http\Controllers\Web\CarritoController;
+use App\Http\Controllers\Web\NegocioController;
+
 
 
 
@@ -46,6 +48,12 @@ Route::prefix('detalles')->group(function(){
 ///////////////////RUTA CREAR VENTA
 Route::prefix('ventas')->group(function(){
     Route::get('/crear-venta', [VentaController::class, 'index'])->name('venta.index');
+});
+
+//////////////////RUTA CREAR INFORMACION NEGOCIO
+Route::prefix('negocio')->group(function(){
+    Route::get('create', [NegocioController::class, 'create'])->name('negocio.create');
+    Route::post('store', [NegocioController::class, 'store'])->name('negocio.store');
 });
 
 

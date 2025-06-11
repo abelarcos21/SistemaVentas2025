@@ -402,7 +402,7 @@ return [
         ],
         [
             'text' => 'Negocio',
-            'url' => 'configuracion/',
+            'url' => 'negocio/create',
             'icon' => 'fas fa-building ',
         ],
 
