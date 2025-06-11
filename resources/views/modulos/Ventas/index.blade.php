@@ -233,14 +233,6 @@
 @stop
 
 @section('js')
-    {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
@@ -373,87 +365,6 @@
         });
     </script>
 
-    {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
-    <script>
-        $(document).ready(function() {
-            $('#example1').DataTable({
-                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
-                buttons: [
-                   /*  {
-                        extend: 'copy',
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        className: 'btn btn-primary btn-sm'
-                    }, */
-                    {
-                        extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
-                        className: 'btn btn-success btn-sm'
-                    },
-                    {
-                        extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
-                        className: 'btn btn-danger btn-sm'
-                    },
-                    {
-                        extend: 'print',
-                        text: '<i class="fas fa-print"></i> Visualizar PDF',
-                        className: 'btn btn-warning btn-sm'
-                    },
-                    /* {
-                        extend: 'csv',
-                        text: '<i class="fas fa-upload"></i> CSV',
-                        className: 'btn btn-info btn-sm'
-                    } */
-                ],
-
-                "language": {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-
-                // Opcional: Personalizaciones
-                "pageLength": 5,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[2, 'desc']], // Ordenar por fecha descendente
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "responsive": true,
-                "autoWidth": false,
-                "scrollX": false,
-
-
-            });
-        });
-    </script>
-
-    {{--DATATABLE PARA MOSTRAR LOS DATOS DEl CARRITO--}}
-    {{-- <script>
-        $(document).ready(function() {
-            $('#productos_carrito').DataTable({
-
-                "language": {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-
-                // Opcional: Personalizaciones
-                "pageLength": 5,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[2, 'desc']], // Ordenar por fecha descendente
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "responsive": true,
-                "autoWidth": false,
-                "scrollX": false,
-
-
-            });
-        });
-    </script> --}}
 
     {{--español datatables traducir <script>
       $(document).ready(function(){
