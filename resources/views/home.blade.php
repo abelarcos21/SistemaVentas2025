@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-users"></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-users"></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Clientes registrados</span>
@@ -30,7 +30,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-user-shield"></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-user-shield"></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Usuarios registrados</span>
@@ -43,7 +43,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-truck"></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-truck"></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Proveedores registrados</span>
@@ -56,7 +56,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-tags"></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-tags"></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Categorias registradas</span>
@@ -69,7 +69,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-boxes"></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-boxes"></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Productos registrados</span>
@@ -82,7 +82,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-shopping-cart "></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-shopping-cart "></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Total Ventas</span>
@@ -95,7 +95,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-shopping-cart "></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-shopping-cart "></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Cantidad Ventas</span>
@@ -108,7 +108,7 @@
 
             <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-secondary"><i class="fas fa-boxes"></i></span>
+                    <span class="info-box-icon bg-gradient-info"><i class="fas fa-boxes"></i></span>
 
                     <div class="info-box-content">
                       <span class="info-box-text">Productos con Stock Minimo</span>

@@ -54,6 +54,8 @@ Route::prefix('ventas')->group(function(){
 Route::prefix('negocio')->group(function(){
     Route::get('create', [NegocioController::class, 'create'])->name('negocio.create');
     Route::post('store', [NegocioController::class, 'store'])->name('negocio.store');
+    Route::get('perfil', [NegocioController::class, 'perfil'])->name('configuracion.perfil');
+
 });
 
 
@@ -148,8 +150,6 @@ Route::prefix('usuarios')->group(function(){
     Route::get('{user}/show', [UsuarioController::class, 'show'])->name('usuario.show');
     Route::put('{user}', [UsuarioController::class, 'update'])->name('usuario.update');
     Route::delete('{user}', [UsuarioController::class, 'destroy'])->name('usuario.destroy');
-
-
 
 });
 

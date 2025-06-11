@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Nuevo Negocio')
+@section('title', 'Configuracion Perfil')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1><i class="fas fa-building"></i> Negocio | Información</h1>
+                    <h1><i class="fas fa-building"></i> Configuracion | Cuenta</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
@@ -24,9 +24,9 @@
 @section('content')
     <!-- Main content -->
     <div class="container mt-5">
-    <h4 class="font-weight-bold">Perfil General De La Empresa (Negocio)</h4>
-    <h5 class="text-muted">Boleta y Ticket</h5>
-    <p>La información a continuación se mostrará en las boletas y tickets de ventas generadas automáticamente.</p>
+    <h4 class="font-weight-bold">Perfil</h4>
+    <h5 class="text-muted">Informacion Personal</h5>
+    <p>Después de cambiar su información, necesitarás iniciar sesión nuevamente.</p>
 
         <div class="row">
             <!-- Imagen -->
@@ -34,7 +34,7 @@
                 <div class="border p-3">
                     <div class="mb-2">IMAGEN</div>
                     <img id="img" style="max-width:150px;"><br>
-                    <small>Te recomendamos usar una imagen de al menos 272 × 315 píxeles y un tamaño máximo de 250 KB.</small>
+                    <small>Te recomendamos que uses una foto de 98 × 98 píxeles como mínimo y 250KB como máximo. Usa un archivo PNG o GIF (sin animaciones).</small>
                 </div>
             </div>
 
@@ -46,41 +46,49 @@
                     <div class="form-group border p-3">
                         <label for="imagen">Logo (opcional)</label>
                         <input type="file" onchange="img.src = window.URL.createObjectURL(this.files[0])" class="form-control-file" id="imagen" name="imagen" accept="image/*">
-                        <small class="form-text text-muted">Tamaño recomendado y Extension: 272×315 px. .PNG Máx 250 KB.</small>
+                        <small class="form-text text-muted">Tamaño recomendado y Extension: 272×315 px. PNG o GIF Máx 250 KB.</small>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="razon_social">Razón Social*</label>
+                            <label for="razon_social">Rol*</label>
                             <input type="text" class="form-control" id="razon_social" name="razon_social" value="Perfisoft">
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="ruc">RFC*</label>
+                            <label for="ruc">Genero*</label>
                             <input type="text" class="form-control" id="ruc" name="ruc" value="05019045678655">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="celular">Telefono</label>
+                            <label for="celular">Nombres</label>
                             <input type="text" class="form-control" id="celular" name="celular" value="5559598787">
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="correo">Correo*</label>
+                            <label for="correo">Apellidos*</label>
                             <input type="email" class="form-control" id="correo" name="correo" value="notificaciones@perfisoft.com">
                         </div>
                     </div>
 
                     <div class="form-row">
+                       <div class="form-group col-md-6">
+                            <label for="fecha_registro">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" value="2025-01-13">
+                        </div>
+
                         <div class="form-group col-md-6">
-                            <label for="moneda">Moneda*</label>
-                            <select class="form-control" id="moneda" name="moneda">
-                                <option>Dólar Estadounidense (USD)</option>
-                                <option>Euro (EUR)</option>
-                                <option>Peso Mexicano (MXN)</option>
-                            </select>
+                            <label for="fecha_registro">Telefono</label>
+                            <input type="text" class="form-control" id="fecha_registro" name="fecha_registro" value="2025-01-13">
+                        </div>
+                    </div>
+
+                     <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="celular">Correo</label>
+                            <input type="text" class="form-control" id="celular" name="celular" value="5559598787">
                         </div>
 
                         <div class="form-group col-md-6">

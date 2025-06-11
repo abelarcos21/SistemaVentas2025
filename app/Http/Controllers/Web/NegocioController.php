@@ -16,6 +16,10 @@ class NegocioController extends Controller
         return view('modulos.negocio.informacion');
     }
 
+    public function perfil(){
+        return view('modulos.configuracion.perfil');
+    }
+
     public function store(Request $request){
 
         // Validación clara y separada
