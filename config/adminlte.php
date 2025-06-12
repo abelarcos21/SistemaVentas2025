@@ -63,7 +63,7 @@ return [
     |
     */
 
-    'logo' => '<b>SISVentas 1.0</b> Web',
+    'logo' => '<b>SISVentas 1.0</b> POS',
     'logo_img' => 'vendor/adminlte/dist/img/carrito-de-compras.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -196,7 +196,7 @@ return [
     'classes_content_wrapper' => '',
     'classes_content_header' => '',
     'classes_content' => '',
-    'classes_sidebar' => 'sidebar-dark-info elevation-4',
+    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
     'classes_topnav' => 'navbar-secondary  navbar-light', //navbar color
     'classes_topnav_nav' => 'navbar-expand',

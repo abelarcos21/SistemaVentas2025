@@ -27,8 +27,8 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card card-outline card-info">
-                        <div class="card-header bg-secondary text-right">
+                    <div class="card">
+                        <div class="card-header bg-gradient-primary text-right">
                             <h3 class="card-title"><i class="fas fa-list"></i> Compras registradas</h3>
                         </div>
                         <!-- /.card-header -->
