@@ -28,7 +28,7 @@
             </div>
 
             <div class="card-footer bg-white border-0 pb-3 px-2">
-                <a href="{{ route('carrito.agregar', $producto->id) }}" style="color: white !important;" class="btn btn-primary btn-sm btn-block rounded-pill">
+                <a href="{{ route('carrito.agregar', $producto->id) }}" style="color: white !important;" class="bg-gradient-primary btn-sm btn-block rounded-pill">
                     Agregar
                 </a>
             </div>

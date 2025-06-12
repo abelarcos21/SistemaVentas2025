@@ -32,7 +32,7 @@
                 {{-- Buscador --}}
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text bg-gradient-info">
+                        <span class="input-group-text bg-gradient-primary">
                             <i class="fas fa-search"></i> {{-- Ícono de búsqueda --}}
                         </span>
                     </div>
@@ -41,19 +41,19 @@
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
-                    <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="todos">Todos ({{$totalProductos}})</button>
+                    <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="todos">Todos ({{$totalProductos}})</button>
                     @foreach($categorias as $cat)
-                        <button class="btn btn-outline-secondary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}  ({{ $cat->productos_count }})</button>
+                        <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}  ({{ $cat->productos_count }})</button>
                     @endforeach
                 </div>
                 <!-- Main content -->
 
                 <!-- Carrito de Compras -->
-                <div class="card card-outline card-info">
+                <div class="card card-outline card-primary">
                     <div class="card-header">
                         <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito</h3>
                         <div class="d-flex align-items-center justify-content-end">
-                            <a href="{{ route('ventas.borrar.carrito') }}" class="btn btn-warning btn-sm mr-4">
+                            <a href="{{ route('ventas.borrar.carrito') }}" class=" btn btn-primary bg-gradient-primary btn-sm mr-4">
                                 <i class="fas fa-boxes"></i> Vaciar Carrito
                             </a>
 
@@ -213,7 +213,7 @@
                             </div>
 
                             {{-- Botón de Pagar --}}
-                            <button type="submit" class="btn btn-primary btn-block rounded-pill" style="background-color: #5f40f2; border: none;">
+                            <button type="submit" class="btn btn-primary bg-gradient-primary btn-block rounded-pill" style="border: none;">
                                 <i class="fa fa-credit-card mr-1"></i> Pagar ahora
                             </button>
                         </form>
