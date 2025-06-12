@@ -401,6 +401,40 @@ return [
             'icon' => 'fas fa-user-shield ',
         ],
         [
+            'text' => 'Facturacion',
+            'icon' => 'fas fa-file-alt',
+            'submenu' => [
+                [
+                    'text' => 'Nueva Factura',
+                    'url' => 'facturas/create',
+                    'icon' => 'fas fa-plus',
+                ],
+
+                [
+                    'text' => 'Mis Facturas',
+                    'url' => 'detalles/detalle-ventas',
+                    'icon' => 'fas fa-file-invoice',
+                ],
+
+                [
+                    'text' => 'Productos',
+                    'url' => 'productos/',
+                    'icon' => 'fas fa-boxes',
+                ],
+                [
+                    'text' => 'Clientes',
+                    'url' => 'clientes/',
+                    'icon' => 'fas fa-users ',
+                ],
+                [
+                    'text' => 'Impuestos',
+                    'url' => 'detalles/detalle-ventas',
+                    'icon' => 'fas fa-file-invoice-dollar',
+                ],
+            ],
+
+        ],
+        [
             'text' => 'Negocio',
             'url' => 'negocio/create',
             'icon' => 'fas fa-building ',

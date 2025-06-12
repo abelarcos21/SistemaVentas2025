@@ -14,6 +14,8 @@ use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
 use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
+use App\Http\Controllers\Web\FacturaController;
+
 
 
 
@@ -56,6 +58,11 @@ Route::prefix('negocio')->group(function(){
     Route::post('store', [NegocioController::class, 'store'])->name('negocio.store');
     Route::get('perfil', [NegocioController::class, 'perfil'])->name('configuracion.perfil');
 
+});
+
+///////////////////RUTA CREAR Factura
+Route::prefix('facturas')->group(function(){
+    Route::get('create', [FacturaController::class, 'create'])->name('factura.create');
 });
 
 
