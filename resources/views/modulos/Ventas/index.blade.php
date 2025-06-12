@@ -137,12 +137,17 @@
                 <!-- /.card -->
 
 
-                {{-- Productos --}}
+                {{-- PRODUCTOS --}}
                 <p>Total encontrados: <span id="contador-filtrados">0</span></p>
                 <div class="row" id="contenedor-productos">
 
                     @include('modulos.productos.listafiltrado', ['productos' => $productos])
 
+                </div>
+
+                {{-- PAGINACION --}}
+                <div class="d-flex justify-content-center mt-3" id="pagination-wrapper">
+                    {{ $productos->links() }} {{-- Muestra los enlaces de paginación --}}
                 </div>
 
             </div>
@@ -265,6 +270,35 @@
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca un Cliente",
                 allowClear: true
+            });
+        });
+    </script>
+
+    {{--FILTRAR LOS PRODUCTOS PAGINADOS--}}
+    <script>
+        $(document).ready(function() {
+            $(document).on('click', '.pagination a', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    beforeSend: function() {
+                        $('#contenedor-productos').html('<div class="text-center w-100">Cargando...</div>');
+                    },
+                    success: function(data) {
+                        // ✅ Aquí se espera que `data` sea el HTML de los productos
+                        $('#contenedor-productos').html(data);
+
+                        // ⚠️ Los links de paginación siguen siendo estáticos.
+                        // Si necesitas actualizar los links, deberías recibirlos también por AJAX o rehacer el HTML de la paginación.
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        alert("Ocurrió un error al cargar los productos.");
+                    }
+                });
             });
         });
     </script>

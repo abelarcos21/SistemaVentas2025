@@ -11,9 +11,15 @@ use App\Models\Categoria;
 class VentaController extends Controller
 {
     //index
-    public function index(){
+    public function index(Request $request){
 
-        $productos = Producto::all();
+        $productos = Producto::paginate(12);
+
+        if($request->ajax()){
+            return view('modulos.productos.listafiltrado', compact('productos'))->render();
+        }
+
+
         $clientes = Cliente::orderBy('nombre')->get();
 
         /* $categorias = Categoria::withCount(['productos' => function ($query){

@@ -21,19 +21,23 @@ class ProductoSeeder extends Seeder
         //crear 5 productos
         //Producto::factory()->count(5)->create();
 
-        Producto::factory()->count(5)->create()->each(function ($producto){
+        //asignar un usuario/proveedor/categoría ya existentes:
+        Producto::factory()->count(20)->create([
+            'user_id' => 1,
+            'categoria_id' => 2,
+            'proveedor_id' => 3,
+        ])->each(function ($producto){
             $code = basename($producto->barcode_path, '.png');
             $barcodeImage = DNS1D::getBarcodePNG($code, 'C128');
 
             $path = public_path($producto->barcode_path);
+
+            // Asegurarse que el directorio existe
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0755, true);
+            }
+
             file_put_contents($path, base64_decode($barcodeImage));
         });
-
-        //asignar un usuario/proveedor/categoría ya existentes:
-        /* Producto::factory()->count(10)->create([
-            'user_id' => 1,
-            'categoria_id' => 2,
-            'proveedor_id' => 3,
-        ]); */
     }
 }
