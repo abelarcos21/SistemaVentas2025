@@ -55,7 +55,7 @@
                                                 <td>{{ $marca->id }}</td>
                                                 <td>{{ $marca->nombre }}</td>
                                                 <td>{{ $marca->descripcion }}</td>
-                                                <td>{{ $marca->created_at }}</td>
+                                                <td>{{ $marca->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $marca->id }}" {{ $marca->activo ? 'checked' : '' }} data-id="{{ $marca->id }}">
@@ -79,7 +79,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">NO HAY CATEGORÍAS</td>
+                                                <td colspan="5" class="text-center">NO HAY MARCAS</td>
                                             </tr>
                                         @endforelse
                                     </tbody>

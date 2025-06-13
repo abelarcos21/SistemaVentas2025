@@ -55,7 +55,7 @@ class ClienteController extends Controller
             return redirect()->route('cliente.index')->with('success', 'Cliente Creado Correctamente');
 
         } catch (Exception $e) {
-            //exception $e;
+
             DB::rollBack();
             Log::error('Error al Guardar Cliente:' . $e->getMessage());
             return redirect()->route('cliente.index')->with('error', 'Error al Guardar Cliente' . $e->getMessage());
@@ -87,7 +87,7 @@ class ClienteController extends Controller
 
             return redirect()->route('cliente.index')->with('success', 'Cliente Actualizado Correctamente');
         } catch (Exception $e) {
-            //Exception $e;
+
             DB::rollBack();
             Log::error('Error al Actualizar Cliente:' . $e->getMessage());
             return redirect()->route('cliente.index')->with('error', 'Error al Actualizar Cliente' . $e->getMessage());

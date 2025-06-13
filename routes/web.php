@@ -18,8 +18,6 @@ use App\Http\Controllers\Web\FacturaController;
 
 
 
-
-
 Route::get('/', function () {
     return view('welcome');
 });
