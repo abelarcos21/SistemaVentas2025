@@ -27,12 +27,12 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Cuando el producto sea eliminado, no podra ser recuperado!!!!</h3>
+            <div class="card">
+              <div class="card-header bg-gradient-primary">
+                <h3 class="card-title"><i class="fas fa-trash-alt"></i> Cuando el producto sea eliminado, no podra ser recuperado!!!!</h3>
               </div>
               <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+              <div class="card-body">
 
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -64,9 +64,13 @@
                                 @endif
                             </td>
                             <td>{{$producto->descripcion}}</td>
-                            <td>{{$producto->cantidad}}</td>
-                            <td>{{$producto->precio_compra}}</td>
-                            <td>{{$producto->precio_venta}}</td>
+                            @if($producto->cantidad > 5)
+                              <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
+                            @else
+                              <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
+                            @endif
+                            <td class="text-primary">MXN ${{$producto->precio_compra}}</td>
+                            <td class="text-primary">MXN ${{$producto->precio_venta}}</td>
 
                             <td>
                                 <div class="custom-control custom-switch toggle-estado">

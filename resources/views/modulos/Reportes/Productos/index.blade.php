@@ -30,12 +30,12 @@
                     <div class="card">
 
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0">Productos registrados</h3>
+                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
                             <div>
 
                                 <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-boxes"></i>
-                                    Productos con Cantidad 1 y 0
+                                    Productos con Stock 1 y 0
                                 </a>
                             </div>
                         </div>
@@ -74,9 +74,15 @@
                                                         <span>Sin imagen</span>
                                                     @endif
                                                 </td>
-                                                <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
-                                                <td>${{ $producto->precio_venta }}</td>
-                                                <td>${{ $producto->precio_compra }}</td>
+
+                                                @if($producto->cantidad > 5)
+                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
+                                                @else
+                                                    <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
+                                                @endif
+                                                
+                                                <td class="text-primary">MXN ${{ $producto->precio_venta }}</td>
+                                                <td class="text-primary">MXN ${{ $producto->precio_compra }}</td>
                                             </tr>
                                         @empty
                                             <tr>
@@ -193,7 +199,7 @@
                     },
                     {
                         extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
+                        text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
                         orientation: 'landscape',
                         pageSize: 'A4',
                         className: 'btn btn-danger btn-sm',
@@ -208,9 +214,9 @@
                     },
                     {
                         extend: 'print',
-                        text: '<i class="fas fa-print"></i> Visualizar PDF',
+                        text: '<i class="fas fa-print"></i> Imprimir',
                         title: '', // <--- Esto evita que aparezca el título por defecto
-                        className: 'btn btn-warning btn-sm',
+                        className: 'btn btn-secondary btn-sm',
                         customize: function (win) {
                             $(win.document.body)
                                 .css('font-size', '10pt')

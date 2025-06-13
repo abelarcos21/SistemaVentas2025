@@ -27,14 +27,14 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-outline card-info">
-                    <div class="card-header bg-secondary">
-                        <h3 class="card-title">Agregar Nuevo Producto</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-primary">
+                        <h3 class="card-title"><i class="fas fa-plus"></i> Agregar Nuevo Producto</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <!-- Horizontal Form -->
-                        <div class="card card-secondary">
+                        <div class="card">
 
                             <!-- form start -->
                             <form class="form-horizontal" action="{{route('producto.store')}}" method="POST" enctype="multipart/form-data">

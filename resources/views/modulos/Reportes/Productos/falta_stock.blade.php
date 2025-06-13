@@ -29,9 +29,9 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-right">
-                            <h3 class="card-title">Reportes de productos con cantidad 1 y 0</h3>
+                            <h3 class="card-title"><i class="fas fa-list"></i> Reportes de productos con stock 1 y 0</h3>
 
-                            <a href="{{ route('reporte.index') }}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+                            <a href="{{ route('reporte.index') }}" class=" btn btn-primary btn-sm">
                                 <i class="fas fa-arrow-left"></i>
                                 Volver
                             </a>
@@ -71,9 +71,15 @@
                                                         <span>Sin imagen</span>
                                                     @endif
                                                 </td>
-                                                <td><span class="badge bg-success">{{$producto->cantidad}}</span></td>
-                                                <td>${{$producto->precio_venta}}</td>
-                                                <td>${{$producto->precio_compra}}</td>
+
+                                                @if($producto->cantidad > 5)
+                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
+                                                @else
+                                                    <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
+                                                @endif
+
+                                                <td class="text-primary">MXN ${{$producto->precio_venta}}</td>
+                                                <td class="text-primary">MXN ${{$producto->precio_compra}}</td>
 
                                             </tr>
                                         @empty
@@ -146,31 +152,31 @@
             $('#example1').DataTable({
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
-                    {
+                   /*  {
                         extend: 'copy',
                         text: '<i class="fas fa-copy"></i> COPIAR',
                         className: 'btn btn-primary btn-sm'
-                    },
+                    }, */
                     {
                         extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> EXCEL',
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
                         className: 'btn btn-success btn-sm'
                     },
                     {
                         extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> PDF',
+                        text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
                         className: 'btn btn-danger btn-sm'
                     },
                     {
                         extend: 'print',
                         text: '<i class="fas fa-print"></i> IMPRIMIR',
-                        className: 'btn btn-warning btn-sm'
+                        className: 'btn btn-secondary btn-sm'
                     },
-                    {
+                    /* {
                         extend: 'csv',
                         text: '<i class="fas fa-upload"></i> CSV',
                         className: 'btn btn-info btn-sm'
-                    }
+                    } */
                 ],
 
                 "language": {

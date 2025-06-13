@@ -53,9 +53,9 @@
                                         @forelse($ventas as $venta)
                                             <tr>
                                                 <td>{{ $venta->id }}</td>
-                                                <td>${{ $venta->total_venta }}</td>
+                                                <td class="text-primary">MXN ${{ $venta->total_venta }}</td>
                                                 <td>{{ $venta->created_at->format('d/m/Y h:i A') }}</td>
-                                                <td>{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
+                                                <td class="text-primary">{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
 
                                                 <td>
                                                     <span class="badge

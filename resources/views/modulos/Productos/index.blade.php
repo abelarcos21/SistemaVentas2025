@@ -108,7 +108,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-info btn-sm">
+                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary btn-sm">
                                                         <i class="fas fa-shopping-cart"></i> Comprar
                                                     </a>
                                                 </td>
