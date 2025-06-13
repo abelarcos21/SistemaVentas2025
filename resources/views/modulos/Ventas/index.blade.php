@@ -177,7 +177,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
                                 </div>
-                                <input type="text" class="form-control" id="fecha_venta" value="24/05/2025 20:23" readonly>
+                                <input type="date" class="form-control" id="fecha_venta" value="{{ now()->format('Y-m-d')}}" readonly>
                             </div>
                         </div>
 
