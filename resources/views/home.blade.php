@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <h1>Bienvenido a SISVentas V1.0: <strong>{{Auth::user()->name}}</strong></h1>
+    <h1>Bienvenido a SISVentasPOS V1.0: <strong>{{Auth::user()->name}}</strong></h1>
     <li class="nav-item">
         <button id="darkModeToggle" class="btn btn-sm btn-outline-light ml-2">
             <span id="darkModeIcon">🌙</span>
@@ -24,8 +24,8 @@
                       <span class="info-box-number"> 5 clientes</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -37,8 +37,8 @@
                       <span class="info-box-number">7 usuarios</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -50,8 +50,8 @@
                       <span class="info-box-number">3 proveedores</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -63,8 +63,8 @@
                       <span class="info-box-number">12 categorias</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -76,8 +76,8 @@
                       <span class="info-box-number">34 productos</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -89,8 +89,8 @@
                       <span class="info-box-number">$4,500.00</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -102,8 +102,8 @@
                       <span class="info-box-number">45</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
 
             <div class="col-md-3 col-sm-6 col-12">
@@ -115,8 +115,8 @@
                       <span class="info-box-number">45</span>
                     </div>
                     <!-- /.info-box-content -->
-                  </div>
-                  <!-- /.info-box -->
+                </div>
+                <!-- /.info-box -->
             </div>
         </div>
     </div>
