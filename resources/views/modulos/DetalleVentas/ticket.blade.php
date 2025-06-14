@@ -144,10 +144,10 @@
 <body>
     <h3>Ticket de compra - SYSVentas 1.0</h3>
     <img src="{{ public_path('images/logo-fis.png') }}" class="logo" alt="Logo">
+    <p>CLIENTE: Rosalia Del Carmen Rodriguez Blanquet</p>
     <p>RFC: AOPA950525HI0</p>
-    <p>FOLIO: 12343454</p>
-    <p>FECHA: 13/06/2025</p>
-    <p>CLIENTE: Andrew</p>
+    {{-- <p>FOLIO: 12343454</p> --}}
+   {{--  <p>FECHA: 13/06/2025</p> --}}
     <p>Expedido el: 25/junio/2025 17:53:32 am/pm en:</p>
     <p>San Francisco de Campeche  cp24520</p>
     <p>San Francisco de Campeche  Mexico</p>
@@ -163,37 +163,58 @@
                 <th>Descripcion</th>
                 <th>Cant.</th>
                 <th>Precio Un.</th>
-                <th>Subt.</th>
+                <th>Importe</th>
             </tr>
         </thead>
         <tbody>
             {{-- @foreach($productos as $item) --}}
                 <tr>
-                    <td>Pan de fibra molde</td>
+                    <td>PAN DE FIBRA MOLDE</td>
                     <td>6</td>
                     <td>$15.00</td>
                     <td>$90.00</td>
 
                 </tr>
                 <tr>
-                    <td>Pan integral tosta</td>
+                    <td>PAN INTEGRAL TOSTA</td>
                     <td>2</td>
                     <td>$30.00</td>
                     <td>$60.00</td>
 
                 </tr>
                 <tr>
-                    <td>Yogur surtido 250</td>
+                    <td>YOGURT SURTIDO 250</td>
                     <td>2</td>
                     <td>$24.00</td>
                     <td>$48.00</td>
 
                 </tr>
                 <tr>
-                    <td>Refresco natural</td>
+                    <td>REFRESCO NATURAL</td>
                     <td>2</td>
                     <td>$34.00</td>
                     <td>$68.00</td>
+
+                </tr>
+                <tr>
+                    <td>REFRESCO NATURAL</td>
+                    <td>2</td>
+                    <td>$34.00</td>
+                    <td>$68.00</td>
+
+                </tr>
+                <tr>
+                    <td>YOGURT CON FRUTA D</td>
+                    <td>2</td>
+                    <td>$24.00</td>
+                    <td>$48.00</td>
+
+                </tr>
+                <tr>
+                    <td>PAN INTEGRAL TOSTA</td>
+                    <td>1</td>
+                    <td>$30.00</td>
+                    <td>$30.00</td>
 
                 </tr>
            {{--  @endforeach --}}
@@ -201,7 +222,7 @@
     </table>
 
     <div class="totales">
-        <p><strong>TOTAL: $5,890.00</strong></p>
+        <p><strong>TOTAL: $412.00</strong></p>
         <p><strong>(cuatrocientos doce pesos 00/100 M.N.)</strong></p>
         <p>Impuestos: 56.83</p>
         <p>Usted. ahorro: 0.00</p>
@@ -215,6 +236,12 @@
         {{-- <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(100)->generate('https://tutienda.mx/ticket/'.$folio)) !!} "> //opcional --}}
         <img src="data:image/png;base64,{{$qr}}" alt="Código QR" style="margin-top: 10px;">
     </div>
+
+     <!-- Código de Barras -->
+    {{-- <div class="barcode">
+        <img src="https://barcode.tec-it.com/barcode.ashx?data=T-2023-00125&code=Code128&dpi=96" alt="Código de barras" style="width: 100%; max-width: 300px;">
+        <div>T-2023-00125</div>
+    </div> --}}
 
    <p>¡Gracias por su compra! | Este ticket es su comprobante de pago</p>
    <p>Devoluciones aceptadas dentro de los 15 días con ticket original</p>
