@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Marcas')
+@section('title', 'Facturacion')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -98,6 +98,8 @@
                         </label>
                     </div>
 
+                    <hr>
+
                     <h5>Datos del cliente</h5>
                     <div class="form-group">
                         <label for="cliente">Buscador de cliente</label>
@@ -123,6 +125,10 @@
                         </div>
                         <div class="form-group col-md-2">
                             <label>No. Interior</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label>Calle</label>
                             <input type="text" class="form-control">
                         </div>
                     </div>
@@ -180,11 +186,11 @@
                     <div class="form-row">
                         <div class="form-group col-md-3">
                             <label>*Clave producto/servicio</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" placeholder="Escribe para comenzar a buscar">
                         </div>
                         <div class="form-group col-md-3">
                             <label>*Clave unidad</label>
-                            <input type="text" class="form-control">
+                            <input type="text" class="form-control" placeholder="Escribe para comenzar a buscar">
                         </div>
                         <div class="form-group col-md-3">
                             <label>*Objeto de Impuesto</label>

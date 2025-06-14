@@ -24,9 +24,9 @@
 @section('content')
     <!-- Main content -->
     <div class="container mt-5">
-    <h4 class="font-weight-bold">Perfil General De La Empresa (Negocio)</h4>
-    <h5 class="text-muted">Boleta y Ticket</h5>
-    <p>La información a continuación se mostrará en las boletas y tickets de ventas generadas automáticamente.</p>
+        <h4 class="font-weight-bold">Perfil General De La Empresa (Negocio)</h4>
+        <h5 class="text-muted">Boleta y Ticket</h5>
+        <p>La información a continuación se mostrará en las boletas y tickets de ventas generadas automáticamente.</p>
 
         <div class="row">
             <!-- Imagen -->
