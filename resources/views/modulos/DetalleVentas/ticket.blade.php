@@ -152,7 +152,7 @@
     <p>San Francisco de Campeche  cp24520</p>
     <p>San Francisco de Campeche  Mexico</p>
     <p>PUNTO DE VENTA</p>
-    <p>Nota de Venta: NV 417,396</p>
+    <p>Numero de Venta: NV 001-000144</p>
 
 
 

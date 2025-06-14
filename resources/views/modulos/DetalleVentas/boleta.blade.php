@@ -83,7 +83,7 @@
             contacto@comercialmex.com<br>
             <div class="boleta-box">
                 BOLETA DE VENTA<br>
-                Folio: {{ $folio }}
+                Numero De Venta: {{ $folio }}
             </div>
         </div>
     </div>
