@@ -124,7 +124,7 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get();
 
-        // Generar QR y guardar en disco
+        // Generar QR
         $qr = base64_encode(QrCode::format('png')->size(100)->generate('http://sistemaventas2025.test:8080'));
 
         // Generar PDF con tamaño personalizado tipo ticket (80mm x altura ajustable)
