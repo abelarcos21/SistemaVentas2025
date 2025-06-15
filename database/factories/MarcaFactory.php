@@ -10,6 +10,9 @@ use App\Models\Marca;
  */
 class MarcaFactory extends Factory
 {
+
+    protected $model = \App\Models\Marca::class;
+
     /**
      * Define the model's default state.
      *
@@ -22,7 +25,7 @@ class MarcaFactory extends Factory
         return [
             //
             //'nombre' => $this->faker->randomElement($marcas),
-            'nombre' => $this->faker->words(2, true),
+            'nombre' => $this->faker->unique()->words(2, true),
             'descripcion' => $this->faker->sentence(3),
             'activo' => $this->faker->boolean(90), // 90% probabilidad de estar activo
         ];

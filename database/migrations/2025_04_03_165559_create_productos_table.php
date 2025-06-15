@@ -25,6 +25,11 @@ return new class extends Migration
             $table->float('precio_compra')->default(0);
             $table->float('precio_venta')->default(0);
             $table->boolean('activo')->default(true);
+            $table->string('clave_prod_serv', 10)->nullable(); // ClaveProdServ (ej: 01010101)
+            $table->string('clave_unidad', 5)->nullable(); // ClaveUnidad (ej: H87)
+            $table->string('unidad_descripcion')->nullable(); // Ej: "Pieza"
+            $table->decimal('iva', 5, 2)->default(16.00); // Porcentaje de IVA
+            $table->string('numero_identificacion')->nullable();
             $table->timestamps();
         });
     }

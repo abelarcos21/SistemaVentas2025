@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->id();
+            $table->string('razon_social');
+            $table->string('nombre_comercial')->nullable();
+            $table->string('calle');
+            $table->string('numero_exterior');
+            $table->string('numero_interior')->nullable();
+            $table->string('codigo_postal');
+            $table->string('estado');
+            $table->string('municipio');
+            $table->string('regimen_fiscal');
             $table->string('nombre');
             $table->string('apellido');
             $table->string('rfc');

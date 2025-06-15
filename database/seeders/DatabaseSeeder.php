@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ImagenSeeder::class,
             ClienteSeeder::class,
             EmpresaSeeder::class,
+            CatalogosSatSeeder::class,
         ]);
     }
 }

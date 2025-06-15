@@ -45,6 +45,14 @@ Route::prefix('detalles')->group(function(){
 
 });
 
+//RUTAS IMPUESTOS
+Route::get('/impuestos', [ImpuestoController::class, 'index'])->name('impuestos.index');
+Route::get('/impuestos/list', [ImpuestoController::class, 'list'])->name('impuestos.list');
+Route::post('/impuestos', [ImpuestoController::class, 'store'])->name('impuestos.store');
+Route::get('/impuestos/{impuesto}/edit', [ImpuestoController::class, 'edit'])->name('impuestos.edit');
+Route::put('/impuestos/{impuesto}', [ImpuestoController::class, 'update'])->name('impuestos.update');
+Route::delete('/impuestos/{impuesto}', [ImpuestoController::class, 'destroy'])->name('impuestos.destroy');
+
 ///////////////////RUTA CREAR VENTA
 Route::prefix('ventas')->group(function(){
     Route::get('/crear-venta', [VentaController::class, 'index'])->name('venta.index');
@@ -61,6 +69,8 @@ Route::prefix('negocio')->group(function(){
 ///////////////////RUTA CREAR Factura
 Route::prefix('facturas')->group(function(){
     Route::get('create', [FacturaController::class, 'create'])->name('factura.create');
+    Route::post('/factura/timbrar', [FacturaController::class, 'timbrar'])->name('factura.timbrar');
+
 });
 
 
