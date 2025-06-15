@@ -31,13 +31,13 @@
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
                             <div>
-                                <a href="{{ route('producto.create') }}" class="btn btn-primary btn-sm mr-2">
+                                <a href="{{ route('producto.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
-                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm mr-2">
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-boxes"></i> Productos con Stock 1 y 0
                                 </a>
-                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-primary btn-sm" target="_blank">
+                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm" target="_blank">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
                             </div>
@@ -108,13 +108,13 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary btn-sm">
+                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary bg-gradient-primary btn-sm">
                                                         <i class="fas fa-shopping-cart"></i> Comprar
                                                     </a>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex">
-                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-warning btn-sm mr-1">
+                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
                                                             <i class="fas fa-edit"></i> Editar
                                                         </a>
 

@@ -33,7 +33,7 @@
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
                             <div>
 
-                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-primary btn-sm">
+                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-light bg-gradient-light text-primary btn-sm">
                                     <i class="fas fa-boxes"></i>
                                     Productos con Stock 1 y 0
                                 </a>

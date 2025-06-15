@@ -29,7 +29,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-gradient-primary">
-                        <h3 class="card-title"><i class="fas fa-plus"></i> Compra nueva de <span class="badge bg-warning">{{ $producto->nombre }}</span></h3>
+                        <h3 class="card-title"><i class="fas fa-plus"></i> Compra nueva de <span class="badge bg-light text-primary">{{ $producto->nombre }}</span></h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

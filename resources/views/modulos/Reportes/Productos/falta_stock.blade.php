@@ -31,7 +31,7 @@
                         <div class="card-header bg-gradient-primary text-right">
                             <h3 class="card-title"><i class="fas fa-list"></i> Reportes de productos con stock 1 y 0</h3>
 
-                            <a href="{{ route('reporte.index') }}" class=" btn btn-primary btn-sm">
+                            <a href="{{ route('reporte.index') }}" class=" btn btn-light bg-gradient-light text-primary btn-sm">
                                 <i class="fas fa-arrow-left"></i>
                                 Volver
                             </a>

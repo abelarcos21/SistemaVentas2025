@@ -30,7 +30,7 @@
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"> <i class="fas fa-list"></i> Categorías registradas</h3>
-                            <a href="{{ route('categoria.create') }}" class="btn btn-primary btn-sm ">
+                            <a href="{{ route('categoria.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm ">
                                 <i class="fas fa-plus"></i> Agregar Nuevo
                             </a>
                         </div>
@@ -68,7 +68,7 @@
                                                 <td>{{ $categoria->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="d-flex">
-                                                        <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning btn-sm mr-1">
+                                                        <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
                                                             <i class="fas fa-edit"></i> Editar
                                                         </a>
                                                         <form action="{{ route('categoria.destroy', $categoria) }}" method="POST" class="formulario-eliminar" style="display:inline;">

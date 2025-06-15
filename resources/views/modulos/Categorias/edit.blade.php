@@ -27,9 +27,9 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-outline card-warning">
-                    <div class="card-header bg-secondary">
-                        <h3 class="card-title">Editar Categoria</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-primary">
+                        <h3 class="card-title"><i class="fas fa-edit"></i> Editar Categoria</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -47,7 +47,7 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-tag"></i>
                                                     </span>
                                                 </div>

@@ -28,53 +28,52 @@
       <div class="container-fluid">
         <div class="row">
           <div class="col-12">
-            <div class="card card-outline card-info">
-              <div class="card-header bg-secondary text-right">
-                <h3 class="card-title">Detalles Del Usuario</h3><a href="{{route('usuario.index')}}" class="mb-2 pt-2 pb-2 btn btn-info btn-sm">
+            <div class="card">
+              <div class="card-header bg-gradient-primary text-right">
+                <h3 class="card-title"><i class="fas fa-list"></i> Detalles Del Usuario</h3><a href="{{route('usuario.index')}}" class="btn btn-light bg-gradient-light text-primary btn-sm">
                     <i class="fas fa-arrow-left"></i>
                     Volver
                 </a>
               </div>
               <!-- /.card-header -->
-              <div class="card-body bg-secondary">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Email</th>
+                                    <th>Nombre</th>
+                                    <th>Rol</th>
+                                    <th>Cambio Contraseña</th>
+                                    <th>Activo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-                <table id="example1" class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Email</th>
-                      <th>Nombre</th>
-                      <th>Rol</th>
-                      <th>Cambio Contraseña</th>
-                      <th>Activo</th>
+                                <tr>
+                                    <td>{{$user->id}}</td>
+                                    <td class="text-primary">{{$user->email}}</td>
+                                    <td>{{$user->name}}</td>
+                                    <td>{{$user->rol}}</td>
+                                    <td>
+                                        <a  class="btn btn-primary bg-gradient-primary btnCambioPassword" data-id="{{ $user->id }}" >
+                                            <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <div class="custom-control custom-switch toggle-estado">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $user->id }}" {{ $user->activo ? 'checked' : '' }} data-id="{{ $user->id }}" disabled>
+                                            <label class="custom-control-label" for="activoSwitch{{ $user->id }}"></label>
+                                        </div>
+                                    </td>
 
-                    </tr>
-                    </thead>
-                    <tbody>
+                                </tr>
 
-                        <tr>
-                            <td>{{$user->id}}</td>
-                            <td>{{$user->email}}</td>
-                            <td>{{$user->name}}</td>
-                            <td>{{$user->rol}}</td>
-                            <td>
-                                <a  class="btn btn-secondary btnCambioPassword" data-id="{{ $user->id }}" >
-                                    <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
-                                </a>
-                            </td>
-                            <td>
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $user->id }}" {{ $user->activo ? 'checked' : '' }} data-id="{{ $user->id }}" disabled>
-                                    <label class="custom-control-label" for="activoSwitch{{ $user->id }}"></label>
-                                </div>
-                            </td>
-
-
-                        </tr>
-
-                    </tbody>
-                  </table>
-              </div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
@@ -222,36 +221,6 @@
                     }
                 });
 
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#example1').DataTable({
-                "responsive": true,
-                "autoWidth": false,
-
-                "language": {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-
-                // Opcional: Personalizaciones
-                "pageLength": 10,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[2, 'desc']], // Ordenar por fecha descendente
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-
-
-                //"dom": 'Bfrtip',
-                //"buttons": [
-                   // 'copy', 'excel', 'pdf'
-                //],
             });
         });
     </script>

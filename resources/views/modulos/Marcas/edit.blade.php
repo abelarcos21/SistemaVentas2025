@@ -47,7 +47,7 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-primary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-tag"></i>
                                                     </span>
                                                 </div>
@@ -69,7 +69,7 @@
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-primary">
+                                                    <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-comments"></i>
                                                     </span>
                                                 </div>

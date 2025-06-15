@@ -33,7 +33,7 @@
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Usuarios registrados</h3>
                             <div>
-                                <a href="{{ route('usuario.create') }}" class=" btn btn-primary btn-sm">
+                                <a href="{{ route('usuario.create') }}" class=" btn btn-light bg-gradient-light text-primary btn-sm">
                                 <i class="fas fa-plus"></i> Agregar Nuevo
                             </a>
 
@@ -65,7 +65,7 @@
                                                 <td>{{ $usuario->name }}</td>
                                                 <td>{{ $usuario->rol }}</td>
                                                 <td>
-                                                    <a class="btn btn-secondary btnCambioPassword" data-id="{{ $usuario->id }}">
+                                                    <a class="btn btn-info bg-gradient-primary btnCambioPassword" data-id="{{ $usuario->id }}">
                                                         <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
                                                     </a>
                                                 </td>
@@ -79,10 +79,10 @@
 
                                                 <td class="text-center">
                                                     <div class="d-inline-flex justify-content-center">
-                                                        <a href="{{ route('usuario.show', $usuario) }}" class="btn btn-info btn-sm mr-1">
+                                                        <a href="{{ route('usuario.show', $usuario) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
                                                             <i class="fas fa-eye"></i> Ver
                                                         </a>
-                                                        <a href="{{ route('usuario.edit', $usuario) }}" class="btn btn-warning btn-sm mr-1">
+                                                        <a href="{{ route('usuario.edit', $usuario) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
                                                             <i class="fas fa-user"></i> <i class="fas fa-pen"></i> Editar
                                                         </a>
                                                     </div>
@@ -114,9 +114,9 @@
         <div class="modal-dialog" role="document">
             <form id="formCambioPassword">
                 <div class="modal-content">
-                    <div class="modal-header bg-secondary">
+                    <div class="modal-header bg-gradient-primary">
                         <h5 class="modal-title" id="modalCambioPasswordLabel">Cambiar Contraseña</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                        <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -128,8 +128,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-info bg-gradient-info">
+                            <i class="fas fa-history"></i> Actualizar Contraseña
+                        </button>
                     </div>
                 </div>
             </form>

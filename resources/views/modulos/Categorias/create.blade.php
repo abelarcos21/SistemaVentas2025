@@ -27,9 +27,9 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-outline card-info">
-                    <div class="card-header bg-secondary">
-                        <h3 class="card-title">Agregar Nueva Categoria</h3>
+                <div class="card">
+                    <div class="card-header bg-gradient-primary">
+                        <h3 class="card-title"><i class="fas fa-plus"></i> Agregar Nueva Categoria</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body ">
