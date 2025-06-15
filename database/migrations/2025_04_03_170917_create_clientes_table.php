@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('clientes', function (Blueprint $table) {
             $table->id();
-            $table->string('razon_social');
+            $table->string('razon_social')->nullable();//para que pase el seeder se puso nullable
             $table->string('nombre_comercial')->nullable();
-            $table->string('calle');
-            $table->string('numero_exterior');
+            $table->string('calle')->nullable();//para que pase el seeder se puso nullable
+            $table->string('numero_exterior')->nullable();//para que pase el seeder se puso nullable
             $table->string('numero_interior')->nullable();
-            $table->string('codigo_postal');
-            $table->string('estado');
-            $table->string('municipio');
-            $table->string('regimen_fiscal');
+            $table->string('codigo_postal')->nullable();//para que pase el seeder se puso nullable;
+            $table->string('estado')->nullable();//para que pase el seeder se puso nullable;
+            $table->string('municipio')->nullable();//para que pase el seeder se puso nullable;
+            $table->string('regimen_fiscal')->nullable();//para que pase el seeder se puso nullable;
             $table->string('nombre');
             $table->string('apellido');
             $table->string('rfc');
