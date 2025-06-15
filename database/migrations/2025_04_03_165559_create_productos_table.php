@@ -20,14 +20,18 @@ return new class extends Migration
             $table->string('codigo')->unique();
             $table->string('barcode_path')->nullable(); // Imagen del código de barras
             $table->string('nombre', 50);
-            $table->string('descripcion', 500);
+            $table->string('descripcion', 500);//Descripción SAT o comercial
             $table->integer('cantidad')->default(0);
             $table->float('precio_compra')->default(0);
             $table->float('precio_venta')->default(0);
             $table->boolean('activo')->default(true);
-            $table->string('clave_prod_serv', 10)->nullable(); // ClaveProdServ (ej: 01010101)
-            $table->string('clave_unidad', 5)->nullable(); // ClaveUnidad (ej: H87)
-            $table->string('unidad_descripcion')->nullable(); // Ej: "Pieza"
+            $table->string('clave_prod_serv', 10)->nullable(); // Clave SAT ClaveProdServ (ej: 01010101)
+            $table->string('clave_unidad', 5)->nullable(); // Clave unidad SAT ClaveUnidad (ej: H87)
+            $table->string('unidad_descripcion')->nullable(); //Unidad comercial Ej: "Pieza"
+            $table->decimal('precio_unitario', 10, 2)->nullable();//para que pase el seeder se puso nullable
+            $table->string('impuesto_trasladado')->nullable(); // 002 para IVA
+            $table->decimal('tasa_o_cuota', 5, 4)->nullable(); // Ej. 0.1600
+            $table->string('tipo_factor')->nullable(); // Tasa, Exento, Cuota
             $table->decimal('iva', 5, 2)->default(16.00); // Porcentaje de IVA
             $table->string('numero_identificacion')->nullable();
             $table->timestamps();

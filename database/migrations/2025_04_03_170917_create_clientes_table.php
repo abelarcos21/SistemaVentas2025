@@ -21,10 +21,11 @@ return new class extends Migration
             $table->string('codigo_postal')->nullable();//para que pase el seeder se puso nullable;
             $table->string('estado')->nullable();//para que pase el seeder se puso nullable;
             $table->string('municipio')->nullable();//para que pase el seeder se puso nullable;
-            $table->string('regimen_fiscal')->nullable();//para que pase el seeder se puso nullable;
+            $table->string('regimen_fiscal',3)->nullable();// clave SAT//para que pase el seeder se puso nullable;
+            $table->string('uso_cfdi', 5)->nullable(); // clave SAT para que pase el seeder se puso nullable
             $table->string('nombre');
             $table->string('apellido');
-            $table->string('rfc');
+            $table->string('rfc',13);
             $table->string('telefono');
             $table->string('correo');
             $table->boolean('activo')->default(true);

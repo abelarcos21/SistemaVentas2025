@@ -6,8 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Impuesto extends Model
 {
-    //
-    protected $fillable = [
+    protected $table = 'impuestos'; // Asegura que apunta a la tabla correcta
+    /* protected $fillable = [
         'nombre', 'impuesto', 'tipo', 'factor', 'tasa'
+    ]; */
+
+    protected $fillable = [
+        'clave',
+        'nombre',
+        'tipo',
+        'tasa',
+        'activo',
     ];
 }

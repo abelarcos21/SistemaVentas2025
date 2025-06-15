@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class UsoCfdi extends Model
+class ClaveUnidad extends Model
 {
     //
-    use Hasfactory;
-    protected $table = 'usos_cfdi'; // Asegura que apunta a la tabla correcta
+    use HasFactory;
+
+    protected $table = 'claves_unidad';
+
     protected $fillable = [
         'clave',
-        'descripcion',
-        'persona_fisica',
-        'persona_moral',
+        'nombre',
         'activo',
     ];
 }
