@@ -252,6 +252,16 @@
             });
         @endif
 
+        @if(session('folio_generado'))
+            Swal.fire({
+                title: '¡Venta realizada con exito!',
+                html: 'Nro de Venta:<br><strong>{{ session('folio_generado') }}</strong>',
+                text: "{{ session('folio_generado')}}",//mostrar el folio
+                icon: "success",
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+
         @if(session('error'))
             Swal.fire({
                 title: "Error!",

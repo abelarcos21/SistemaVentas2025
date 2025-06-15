@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('ventas', function (Blueprint $table) {
-            $table->enum('estado', ['completada','cancelada','eliminada'])->default('completada')->after('total_venta');
+        Schema::create('folios', function (Blueprint $table) {
+            $table->id();
+            $table->string('serie')->default('001');
+            $table->unsignedBigInteger('ultimo_numero')->default(0);
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('ventas', function (Blueprint $table) {
-            $table->dropColumn('estado');
-        });
+        Schema::dropIfExists('folios');
     }
 };

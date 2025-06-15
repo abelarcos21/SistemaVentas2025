@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
             $table->float('total_venta');
+            $table->enum('estado', ['completada','cancelada','eliminada'])->default('completada');
+            $table->string('folio')->unique();
             $table->timestamps();
         });
     }

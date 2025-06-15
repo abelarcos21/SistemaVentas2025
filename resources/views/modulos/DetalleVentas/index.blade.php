@@ -40,6 +40,7 @@
                                         <tr>
                                             <th>Nro</th>
                                             <th>Total Vendido</th>
+                                            <th>Nro de Venta</th>
                                             <th>Fecha Venta</th>
                                             <th>Usuario</th>
                                             <th>Estado</th>
@@ -54,7 +55,8 @@
                                             <tr>
                                                 <td>{{ $venta->id }}</td>
                                                 <td class="text-primary">MXN ${{ $venta->total_venta }}</td>
-                                                <td>{{ $venta->created_at->format('d/m/Y h:i A') }}</td>
+                                                <td class="text-primary">{{ $venta->folio }}</td>
+                                                <td>{{ $venta->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td class="text-primary">{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
 
                                                 <td>

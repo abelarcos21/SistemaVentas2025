@@ -122,7 +122,22 @@ class CarritoController extends Controller
             $venta->cliente_id  = $request->cliente_id;   // ← asignas aquí el cliente
             $venta->total_venta = $totalVenta;
             $venta->estado = 'completada'; // ← Aquí asignas el estado de la venta
-            $venta->save();
+
+            // 👉 generar folio consecutivo Obtener o crear el folio actual con bloqueo
+            //Este método evita colisiones de folios porque usa lockForUpdate() dentro de la transacción.
+            $folio = \App\Models\Folio::lockForUpdate()->firstOrCreate(
+                ['serie' => '001'],
+                ['ultimo_numero' => 0]
+            );
+
+            // Incrementar y guardar en la bd
+            $folio->ultimo_numero += 1;
+            $folio->save();
+
+            // Generar el folio formateado y asignamos el folio ala venta
+            $venta->folio = sprintf('%s-%06d', $folio->serie, $folio->ultimo_numero);
+
+            $venta->save();//guardamos la venta
 
             foreach ($items_carrito as $item) {
                 $producto = Producto::find($item['id']);
@@ -146,7 +161,7 @@ class CarritoController extends Controller
 
             Session::forget('items_carrito');
             DB::commit();
-            return to_route('venta.index')->with('success', 'Venta realizada con exito!!');
+            return to_route('venta.index')->with('folio_generado', $venta->folio);;
         } catch (\Throwable $th) {
             DB::rollBack();
             return to_route('venta.index')->with('error', 'Error al procesar la venta!!' . $th->getMessage());
