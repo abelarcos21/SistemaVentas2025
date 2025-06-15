@@ -10,7 +10,7 @@ class FormaPago extends Model
 
     use HasFactory;
     //
-    protected $table = 'forma_pagos'; // Asegura que apunta a la tabla correcta
+    protected $table = 'formas_pago'; // Asegura que apunta a la tabla correcta
     //public $timestamps = true; // O false, según tu tabla
     protected $fillable = ['clave', 'descripcion', 'activo'];
 }
