@@ -68,9 +68,18 @@ class CarritoController extends Controller
     public function borrar_carrito()
     {
 
-        Session::forget('items_carrito');
+        // Verificar si el carrito existe y tiene productos
+        $items_carrito = Session::get('items_carrito');
+        if(empty($items_carrito)) {
+            return redirect()->route('venta.index')->with('error', 'El carrito está vacío, no hay productos que eliminar.');
+        }
 
-        return redirect()->route('venta.index')->with('success', 'Producto eliminado del carrito');
+        // Si hay productos, los elimina
+        if (Session::has('items_carrito')) {
+            Session::forget('items_carrito');//elimina la variable de sesión que contiene los productos del carrito.
+        }
+
+        return redirect()->route('venta.index')->with('success', 'Productos eliminados del carrito');
 
     }
 

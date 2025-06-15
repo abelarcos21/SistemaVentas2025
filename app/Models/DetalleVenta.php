@@ -14,4 +14,9 @@ class DetalleVenta extends Model
     public function producto(){
         return $this->belongsTo(Producto::class);
     }
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
 }

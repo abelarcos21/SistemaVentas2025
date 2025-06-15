@@ -42,9 +42,9 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped">
-                                    <thead>
+                                    <thead class="bg-gradient-info">
                                         <tr>
-                                            <th>#</th>
+                                            
                                             <th>Nombres</th>
                                             <th>Telefono</th>
                                             <th>Correo</th>
@@ -56,7 +56,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>{{ $proveedor->id }}</td>
+                                            
                                             <td>{{ $proveedor->nombre }}</td>
                                             <td>{{ $proveedor->telefono }}</td>
                                             <td>{{ $proveedor->email }}</td>

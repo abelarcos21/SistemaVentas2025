@@ -43,9 +43,9 @@
                         <div class="card-body ">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped">
-                                    <thead>
+                                    <thead class="bg-gradient-info">
                                         <tr>
-                                            <th>#</th>
+                                            
                                             <th>Nombre</th>
                                             <th>Apellido</th>
                                             <th>RFC</th>
@@ -57,7 +57,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>{{ $cliente->id }}</td>
+                                            
                                             <td>{{ $cliente->nombre }}</td>
                                             <td>{{ $cliente->apellido }}</td>
                                             <td>{{ $cliente->rfc }}</td>
@@ -80,7 +80,7 @@
                                                     ></label>
                                                 </div>
                                             </td>
-                                            <td>{{ $cliente->created_at->format('d/m/Y') }}</td>
+                                            <td>{{ $cliente->created_at->format('d/m/Y h:i a') }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

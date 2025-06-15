@@ -47,7 +47,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
+                                    <thead class="bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Imagen</th>

@@ -68,7 +68,7 @@
                         @if (session('items_carrito'))
                             <div class="table-responsive">
                                 <table id="productos_carrito" class="table table-bordered table-striped">
-                                    <thead>
+                                    <thead class="bg-gradient-info">
                                         <tr>
                                             <th>Imagen</th>
                                             <th>Nombre</th>
@@ -129,7 +129,7 @@
                                 </table>
                             </div>
                         @else
-                            <p>No tengo contenido</p>
+                            <p>Aún no tienes productos en tu carrito</p>
                         @endif
                     </div>
                     <!-- /.card-body -->

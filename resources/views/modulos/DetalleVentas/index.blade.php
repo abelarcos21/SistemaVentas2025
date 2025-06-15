@@ -32,11 +32,10 @@
                             <h3 class="card-title"><i class="fas fa-list"></i> Revisar Ventas existentes</h3>
                         </div>
                         <!-- /.card-header -->
-
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead>
+                                    <thead class="bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Total Vendido</th>
@@ -55,7 +54,7 @@
                                             <tr>
                                                 <td>{{ $venta->id }}</td>
                                                 <td class="text-primary">MXN ${{ $venta->total_venta }}</td>
-                                                <td class="text-primary">{{ $venta->folio }}</td>
+                                                <td>{{ $venta->folio }}</td>
                                                 <td>{{ $venta->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td class="text-primary">{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
 
@@ -69,17 +68,17 @@
 
 
                                                 <td class="text-center">
-                                                    <a href="{{ route('detalleventas.detalle_venta', $venta->id) }}" class="btn btn-info btn-sm">
+                                                    <a href="{{ route('detalleventas.detalle_venta', $venta->id) }}" class="btn btn-info bg-gradient-info btn-sm">
                                                         <i class="fas fa-eye"></i> Ver
                                                     </a>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success btn-sm">
+                                                    <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success bg-gradient-success btn-sm">
                                                         <i class="fas fa-print"></i> Ticket
                                                     </a>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-secondary btn-sm">
+                                                    <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-secondary bg-gradient-secondary btn-sm">
                                                         <i class="fas fa-print"></i> Boleta
                                                     </a>
                                                 </td>
