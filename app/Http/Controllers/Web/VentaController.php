@@ -16,7 +16,7 @@ class VentaController extends Controller
         $productos = Producto::paginate(12);
 
         if($request->ajax()){
-            return view('modulos.productos.listafiltrado', compact('productos'))->render();
+            return view('modulos.productos.ajaxproductos', compact('productos'))->render();
         }
 
 

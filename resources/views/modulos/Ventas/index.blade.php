@@ -319,31 +319,36 @@
 
     {{--FILTRAR LOS PRODUCTOS PAGINADOS--}}
     <script>
-        $(document).ready(function() {
-            $(document).on('click', '.pagination a', function(e) {
-                e.preventDefault();
-                let url = $(this).attr('href');
+        $(document).on('click', '#pagination-wrapper a', function(e) {
 
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    beforeSend: function() {
-                        $('#contenedor-productos').html('<div class="text-center w-100">Cargando...</div>');
-                    },
-                    success: function(data) {
-                        // ✅ Aquí se espera que `data` sea el HTML de los productos
-                        $('#contenedor-productos').html(data);
+            e.preventDefault();
 
-                        // ⚠️ Los links de paginación siguen siendo estáticos.
-                        // Si necesitas actualizar los links, deberías recibirlos también por AJAX o rehacer el HTML de la paginación.
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                        alert("Ocurrió un error al cargar los productos.");
-                    }
-                });
+            let url = $(this).attr('href');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                beforeSend: function() {
+                    // Mostrar solo el spinner
+                    $('#contenedor-productos').html('<div class="text-center w-100 my-5"><div class="spinner-border text-primary"></div></div>');
+
+                    // Limpiar completamente la paginación para que no aparezca al cambiar de pagina
+                    $('#pagination-wrapper').empty();
+                },
+                success: function(response) {
+                    // Remplaza el contenido completo del área que contiene productos y paginación
+                    // Actualiza el contenido de productos y paginación
+                    $('#contenedor-productos').parent().html(response);
+                   
+                    
+                },
+                error: function(xhr) {
+                    console.error('Error al cargar productos:', xhr);
+                    alert('Error al cargar los productos.');
+                }
             });
         });
+
     </script>
 
     {{--FILTRAR LAS CATEGORIAS AL SELECCIONARLA Y FILTRAR LOS PRODUCTOS--}}
