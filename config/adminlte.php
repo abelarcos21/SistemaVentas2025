@@ -258,6 +258,7 @@ return [
     */
 
     'use_route_url' => false,
+    'breadcrumbs' => true,
     'dashboard_url' => 'home',
     'logout_url' => 'logout',
     'login_url' => 'login',

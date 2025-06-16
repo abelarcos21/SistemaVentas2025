@@ -2,6 +2,10 @@
 
 @section('title', 'Administrar Productos y Stock')
 
+@section('navbar')
+    @include('partials.navbar') {{-- Tu navbar personalizado --}}
+@endsection
+
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -12,7 +16,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Productos</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
                         <li class="breadcrumb-item active">Administrar Productos y Stock</li>
                     </ol>
                 </div>
