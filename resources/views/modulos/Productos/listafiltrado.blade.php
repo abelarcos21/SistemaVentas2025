@@ -1,18 +1,52 @@
 
 @foreach($productos as $producto)
-    <div class="col-6 col-sm-4 col-md-3 col-lg-2 mb-4">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
         <div class="card text-center h-100 shadow-sm border-0" style="border-radius: 16px;">
             <div class="p-2">
-                @if($producto->imagen)
+
+                @php
+                    $ruta = $producto->imagen && $producto->imagen->ruta
+                    ? asset('storage/' . $producto->imagen->ruta)
+                    : asset('images/placeholder-caja.png');
+                @endphp
+
+                <!-- Imagen miniatura con enlace al modal -->
+                <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
+                    <img src="{{ $ruta }}" 
+                    width="50" height="50" 
+                    class="img-thumbnail rounded shadow" 
+                    style="object-fit: cover;">
+                </a>
+
+                <!-- Modal Bootstrap 4 -->
+                <div class="modal fade" id="modalImagen{{ $producto->id }}" 
+                    tabindex="-1" 
+                    role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content bg-white">
+                            <div class="modal-header bg-gradient-info">
+                                <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
+                                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <img src="{{ $ruta }}" class="img-fluid rounded shadow">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              {{--   @if($producto->imagen)
                     <img src="{{ asset('storage/' . $producto->imagen->ruta) }}"
-                    class="img-fluid"
-                    width="95"
-                    height="95"
-                    style="height: 100px; object-fit: contain;"
+                    class="img-thumbnail rounded shadow"
+                    width="50"
+                    height="50"
+                    style="object-fit: cover;"
                     alt="{{ $producto->nombre }}">
                 @else
-                    <span>Sin imagen</span>
-                @endif
+                    <img src="{{ asset('images/placeholder-caja.png') }}" width="50" height="50"  class="img-thumbnail rounded shadow" style="object-fit: cover;">
+                @endif --}}
 
             </div>
 
@@ -28,8 +62,10 @@
             </div>
 
             <div class="card-footer bg-white border-0 pb-3 px-2">
-                <a href="{{ route('carrito.agregar', $producto->id) }}" style="color: white !important;" class="bg-gradient-primary btn-sm btn-block rounded-pill">
-                    Agregar
+                <a href="{{ route('carrito.agregar', $producto->id) }}"
+                   style=" color: white !important; font-size: 0.8rem;"
+                   class="btn btn-primary bg-gradient-primary  rounded-pill px-3 py-1">
+                    <i class="fas fa-plus"></i> Agregar
                 </a>
             </div>
         </div>

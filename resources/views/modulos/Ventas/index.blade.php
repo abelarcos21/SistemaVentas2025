@@ -53,7 +53,7 @@
                     <div class="card-header">
                         <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito</h3>
                         <div class="d-flex align-items-center justify-content-end">
-                            <a href="{{ route('ventas.borrar.carrito') }}" class=" btn btn-primary bg-gradient-primary btn-sm mr-4">
+                            <a href="{{ route('ventas.borrar.carrito') }}" class=" btn btn-info bg-gradient-info btn-sm mr-4">
                                 <i class="fas fa-boxes"></i> Vaciar Carrito
                             </a>
 
@@ -89,11 +89,44 @@
                                             @endphp
                                             <tr>
                                                 <td>
-                                                    @if($producto->imagen)
+
+                                                    @php
+                                                        $ruta = $producto->imagen && $producto->imagen->ruta
+                                                        ? asset('storage/' . $producto->imagen->ruta)
+                                                        : asset('images/placeholder-caja.png');
+                                                    @endphp
+
+                                                    <!-- Imagen miniatura con enlace al modal -->
+                                                    <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
+                                                        <img src="{{ $ruta }}" 
+                                                        width="50" height="50" 
+                                                        class="img-thumbnail rounded shadow" 
+                                                        style="object-fit: cover;">
+                                                    </a>
+
+                                                    <!-- Modal Bootstrap 4 -->
+                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}" 
+                                                        tabindex="-1" 
+                                                        role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                            <div class="modal-content bg-white">
+                                                                <div class="modal-header bg-gradient-info">
+                                                                    <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
+                                                                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body text-center">
+                                                                    <img src="{{ $ruta }}" class="img-fluid rounded shadow">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{-- @if($producto->imagen)
                                                         <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
                                                     @else
                                                         <span>Sin imagen</span>
-                                                    @endif
+                                                    @endif --}}
                                                 </td>
                                                 <td class="text-center">{{ $item['nombre'] }}</td>
                                                 @if($producto->cantidad > 5)
