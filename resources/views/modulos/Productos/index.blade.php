@@ -2,9 +2,6 @@
 
 @section('title', 'Administrar Productos y Stock')
 
-@section('navbar')
-    @include('vendor.adminlte.partials.navbar.navbar') {{-- Tu navbar personalizado --}}
-@endsection
 
 @section('content_header')
     <!-- Content Header (Page header) -->

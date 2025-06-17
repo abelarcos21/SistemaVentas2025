@@ -68,9 +68,14 @@ Route::prefix('negocio')->group(function(){
 
 ///////////////////RUTA CREAR Factura
 Route::prefix('facturas')->group(function(){
+    Route::get('/', [FacturaController::class, 'index'])->name('factura.index');
     Route::get('create', [FacturaController::class, 'create'])->name('factura.create');
     Route::post('/factura/timbrar', [FacturaController::class, 'timbrar'])->name('factura.timbrar');
 
+    //Catalogos por el momento luego se refactoriza
+    Route::get('factura/productos', [FacturaController::class, 'lista_productos'])->name('listaproductos.index');
+    Route::get('factura/clientes', [FacturaController::class, 'lista_clientes'])->name('listaclientes.index');
+    Route::get('factura/impuestos', [FacturaController::class, 'lista_impuestos'])->name('listaimpuestos.index');
 });
 
 

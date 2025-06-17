@@ -413,23 +413,23 @@ return [
 
                 [
                     'text' => 'Mis Facturas',
-                    'url' => 'detalles/detalle-ventas',
+                    'url' => 'facturas/',
                     'icon' => 'fas fa-file-invoice',
                 ],
 
                 [
                     'text' => 'Productos',
-                    'url' => 'productos/',
+                    'url' => 'factura/productos/',
                     'icon' => 'fas fa-boxes',
                 ],
                 [
                     'text' => 'Clientes',
-                    'url' => 'clientes/',
+                    'url' => 'factura/clientes/',
                     'icon' => 'fas fa-users ',
                 ],
                 [
                     'text' => 'Impuestos',
-                    'url' => 'detalles/detalle-ventas',
+                    'url' => 'factura/impuestos/',
                     'icon' => 'fas fa-file-invoice-dollar',
                 ],
             ],

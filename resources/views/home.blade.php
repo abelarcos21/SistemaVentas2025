@@ -13,8 +13,9 @@
             <span id="darkModeText">Modo Oscuro</span>
         </button>
     </li>
-    
+
 @stop
+
 
 @section('content')
     <div class="container-fluid">
