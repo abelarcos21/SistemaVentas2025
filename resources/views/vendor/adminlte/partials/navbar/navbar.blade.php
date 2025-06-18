@@ -7,6 +7,13 @@
         <li class="nav-item d-none d-sm-inline-block">
             <a href="{{ route('home') }}" class="nav-link">Inicio</a>
         </li>
+
+        <li class="nav-item">
+            <button id="darkModeToggle" class="btn btn-sm btn-outline-primary ml-2">
+                <span id="darkModeIcon">🌙</span>
+                <span id="darkModeText">Modo Oscuro</span>
+            </button>
+        </li>
     </ul>
 
     <!-- Usuario -->

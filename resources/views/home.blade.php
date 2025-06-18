@@ -6,13 +6,6 @@
     <button type="button" class="btn btn-primary bg-gradient-primary btn-lg btn-block" disabled>
         <h1>¡Bienvenido a ClickVentaPOS V1.0!</h1><h6>Tu Sistema de Ventas rapido, simple y confiable.</h6><strong>{{Auth::user()->name}}</strong>
     </button>
-    <hr>
-    <li class="nav-item">
-        <button id="darkModeToggle" class="btn btn-sm btn-outline-primary ml-2">
-            <span id="darkModeIcon">🌙</span>
-            <span id="darkModeText">Modo Oscuro</span>
-        </button>
-    </li>
 
 @stop
 
