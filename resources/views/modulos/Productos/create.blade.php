@@ -87,6 +87,27 @@
                                     </div>
 
                                     <div class="form-group row">
+                                        <label for="marca_id" class="col-sm-2 col-form-label">Marca</label>
+                                        <div class="col-sm-10">
+
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    </span>
+                                                </div>
+
+                                                <select name="marca_id" id="marca_id" class="form-control  selectmarca" required>
+                                                    <option value="">Selecciona una Marca</option>
+                                                    @foreach ($marcas as $marca)
+                                                        <option value="{{ $marca->id }}"> {{ $marca->nombre }} </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Codigo (Opcional)</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
@@ -125,6 +146,14 @@
                                                 </div>
                                                 <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="custom-control custom-switch toggle-estado">
+                                            <input type="hidden" name="activo" value="0">
+                                            <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
+                                            <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
                                         </div>
                                     </div>
 

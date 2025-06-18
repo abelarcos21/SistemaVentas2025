@@ -26,14 +26,14 @@ class Producto extends Model
         'descripcion',
         'precio_venta',
         'activo',
-        'clave_prod_serv',//datos fiscales del sat cfdi 4.0
+        /* 'clave_prod_serv',//datos fiscales del sat cfdi 4.0
         'clave_unidad',
         'unidad_descripcion',
         'precio_unitario',
         'tasa_o_cuota',
         'tipo_factor',
         'objeto_imp',
-        'numero_identificacion',
+        'numero_identificacion', */
 
     ];
 

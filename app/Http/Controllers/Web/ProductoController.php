@@ -12,6 +12,7 @@ use App\Models\Producto;
 use App\Models\Imagen;
 use App\Models\Categoria;
 use App\Models\Proveedor;
+use App\Models\Marca;
 use Exception;
 use Storage;
 
@@ -45,8 +46,9 @@ class ProductoController extends Controller
     public function create(){
         $categorias = Categoria::all();
         $proveedores = Proveedor::all();
+        $marcas = Marca::all();
 
-        return view('modulos.productos.create', compact('categorias', 'proveedores'));
+        return view('modulos.productos.create', compact('categorias', 'proveedores','marcas'));
 
     }
 
@@ -159,7 +161,7 @@ class ProductoController extends Controller
                 'barcode_path' => $barcodePath,
                 'nombre'       => $validated['nombre'],
                 'descripcion'  => $validated['descripcion'],
-                'activo'  => $validated['activo'],
+                'activo'       => $validated['activo'],
 
             ]);
 
