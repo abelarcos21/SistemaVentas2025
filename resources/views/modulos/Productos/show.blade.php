@@ -35,7 +35,7 @@
               <div class="card-body">
 
                 <table class="table table-bordered table-striped">
-                    <thead>
+                    <thead class="bg-gradient-info">
                     <tr>
                       <th>Nro#</th>
                       <th>Categoria</th>
