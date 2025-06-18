@@ -77,7 +77,8 @@ class ProductoController extends Controller
     public function edit(Producto $producto){
         $categorias = Categoria::all();
         $proveedores = Proveedor::all();
-        return view('modulos.productos.edit', compact('producto','categorias','proveedores'));
+        $marcas = Marca::all();
+        return view('modulos.productos.edit', compact('producto','categorias','proveedores','marcas'));
 
     }
 
@@ -214,11 +215,13 @@ class ProductoController extends Controller
 
         $validated = $request->validate([
 
-            'categoria_id' => 'required',
-            'proveedor_id' => 'required',
+            'categoria_id' => 'required|exists:categorias,id',
+            'proveedor_id' => 'required|exists:proveedores,id',
+            'marca_id' => 'required|exists:marcas,id',
             'codigo' => 'required|string|max:255',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
+            'activo' => 'required|boolean',
             'precio_venta' => 'required|numeric|min:0',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',// validación opcional de imagen
 
@@ -233,9 +236,11 @@ class ProductoController extends Controller
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
+                'marca_id'     => $validated['marca_id'],
                 'codigo'       => $validated['codigo'],
                 'nombre'       => $validated['nombre'],
                 'descripcion'  => $validated['descripcion'],
+                'activo'       => $validated['activo'],
                 'precio_venta'  => $validated['precio_venta'],
 
             ]);

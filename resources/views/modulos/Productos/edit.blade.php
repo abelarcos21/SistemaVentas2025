@@ -87,6 +87,28 @@
                                     </div>
 
                                     <div class="form-group row">
+                                        <label for="rol" class="col-sm-2 col-form-label">Marca</label>
+                                        <div class="col-sm-10">
+
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                    </span>
+                                                </div>
+
+                                                <select name="marca_id" id="marca_id" class="form-control selectproveedor" aria-label="Default select example" required>
+                                                    @foreach($marcas as $marca)
+                                                        <option value="{{ $marca->id }}" {{ old('marca_id', $producto->marca_id ?? '') == $marca->id ? 'selected' : '' }}>
+                                                            {{ $marca->nombre }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Codigo</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
@@ -126,6 +148,16 @@
                                                <textarea name="descripcion" class="form-control" rows="3" id="exampleFormControlTextarea1" required>{{ old('descripcion', $producto->descripcion ?? '') }}</textarea>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="form-group row">
+
+                                        <div class="custom-control custom-switch toggle-estado">
+                                            <input type="hidden" name="activo" value="0">
+                                            <input  role="switch" type="checkbox" class="custom-control-input" value="1" id="activoSwitch{{ $producto->id }}"  name="activo" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}">
+                                            <label class="custom-control-label" for="activoSwitch{{ $producto->id }}">¿Activo?</label>
+                                        </div>
+
                                     </div>
 
                                     <div class="form-group row">
