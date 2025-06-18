@@ -14,7 +14,7 @@
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
-                        <li class="breadcrumb-item active">Lista Productos</li>
+                        <li class="breadcrumb-item active">Productos</li>
                     </ol>
                 </div>
           </div>
@@ -35,8 +35,7 @@
                                 <a href="{{ route('producto.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
-                                
-                                
+
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -55,27 +54,31 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        
-                                        <tr>
-                                            <td>1</td>
-                                            <td>rewrew</td>
-                                            <td>565.00</td>
-                                            <td>10202457</td>
-                                            <td>26</td>
-                                            
-                                            <td>
-                                                <div class="d-flex">
-                                                    <a href="#" class="btn btn-info bg-gradient-info btn-sm mr-1">
-                                                        <i class="fas fa-edit"></i> Editar
-                                                    </a>
+                                        @forelse($productos as $producto)
+                                            <tr>
+                                                <td>{{ $producto->id }}</td>
+                                                <td>{{ $producto->descripcion }}</td>
+                                                <td class="text-blue">MXN${{ $producto->precio_venta }}</td>
+                                                <td>{{ $producto->clave_prod_serv }}</td>
+                                                <td>{{ $producto->unidad_descripcion}}</td>
 
-                                                    <a href="#" class="btn btn-danger btn-sm mr-1">
-                                                        <i class="fas fa-trash-alt"></i> Eliminar
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                                                            <i class="fas fa-edit"></i> Editar
+                                                        </a>
+
+                                                        <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
+                                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="13" class="text-center">NO HAY PRODUCTOS</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

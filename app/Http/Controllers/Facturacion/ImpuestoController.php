@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers\Facturacion;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Impuesto;
 
 class ImpuestoController extends Controller
 {
     //
 
-    public function index()
-    {
-        return view('impuestos.index');
+    public function index() {
+        $impuestos = Impuesto::all();
+        return view('modulos.facturas.catalogos.impuestos.index', compact('impuestos'));
     }
 
     public function list()

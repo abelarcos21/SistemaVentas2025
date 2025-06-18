@@ -17,7 +17,11 @@ use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
 
 use App\Http\Controllers\Facturacion\FacturaController;
+use App\Http\Controllers\Facturacion\ImpuestoController;
 use App\Http\Controllers\Facturacion\ProductoController as FacturaProductoController;
+use App\Http\Controllers\Facturacion\ClienteController as FacturaClienteController;
+
+
 
 
 
@@ -78,7 +82,7 @@ Route::prefix('facturacion')->group(function(){
 
     //Catalogos por el momento luego se refactoriza
     Route::get('productos', [FacturaProductoController::class, 'index'])->name('listaproductos.index');
-    Route::get('clientes', [ClienteController::class, 'index'])->name('listaclientes.index');
+    Route::get('clientes', [FacturaClienteController::class, 'index'])->name('listaclientes.index');
     Route::get('impuestos', [ImpuestoController::class, 'index'])->name('listaimpuestos.index');
 });
 

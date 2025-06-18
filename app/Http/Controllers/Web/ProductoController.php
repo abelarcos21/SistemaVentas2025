@@ -120,11 +120,13 @@ class ProductoController extends Controller
 
         $validated = $request->validate([
 
-            'categoria_id' => 'required',
-            'proveedor_id' => 'required',
+            'categoria_id' => 'required|exists:categorias,id',
+            'proveedor_id' => 'required|exists:proveedores,id',
+            'marca_id' => 'required|exists:marcas,id',
             'codigo' => 'nullable|string|max:255|unique:productos,codigo',// validación nullable si se deja en blanco el campo
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
+            'activo' => 'required|boolean',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',// validación opcional de imagen
 
         ]);
@@ -152,10 +154,12 @@ class ProductoController extends Controller
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
+                'marca_id'     => $validated['marca_id'],
                 'codigo'       => $codigo,
                 'barcode_path' => $barcodePath,
                 'nombre'       => $validated['nombre'],
                 'descripcion'  => $validated['descripcion'],
+                'activo'  => $validated['activo'],
 
             ]);
 

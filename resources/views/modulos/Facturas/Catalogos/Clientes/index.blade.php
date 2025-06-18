@@ -30,7 +30,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Clientes registrados</h3>
+                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Lista Clientes</h3>
                             <a href="{{ route('cliente.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm">
                                 <i class="fas fa-plus"></i> Agregar Nuevo
                             </a>
@@ -42,14 +42,10 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
                                         <tr>
-                                            <th>Nro#</th>
-                                            <th>Nombres</th>
-                                            <th>Apellidos</th>
+                                            <th>Nro</th>
+                                            <th>Nombre</th>
+                                            <th>Nombre Comercial</th>
                                             <th>RFC</th>
-                                            <th>Telefono</th>
-                                            <th>Correo</th>
-                                            <th>Activo</th>
-                                            <th>Fecha Registro</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -58,26 +54,17 @@
                                             <tr>
                                                 <td>{{ $cliente->id }}</td>
                                                 <td>{{ $cliente->nombre }}</td>
-                                                <td>{{ $cliente->apellido }}</td>
+                                                <td>{{ $cliente->nombre_comercial }}</td>
                                                 <td>{{ $cliente->rfc }}</td>
-                                                <td>{{ $cliente->telefono }}</td>
-                                                <td>{{ $cliente->correo }}</td>
-                                                <td>
-                                                    <div class="custom-control custom-switch toggle-estado">
-                                                        <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $cliente->id }}" {{ $cliente->activo ? 'checked' : '' }} data-id="{{ $cliente->id }}">
-                                                        <label class="custom-control-label" for="activoSwitch{{ $cliente->id }}"></label>
-                                                    </div>
-                                                </td>
-                                                <td>{{ $cliente->created_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <div class="d-flex">
-                                                        <a href="{{ route('cliente.show', $cliente) }}" class="btn btn-info btn-sm mr-1">
+                                                        <a href="#" class="btn btn-info btn-sm mr-1">
                                                             <i class="fas fa-eye"></i> Ver
                                                         </a>
-                                                        <a href="{{ route('cliente.edit', $cliente) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                                                        <a href="#" class="btn btn-info bg-gradient-info btn-sm mr-1">
                                                             <i class="fas fa-edit"></i> Editar
                                                         </a>
-                                                        <form action="{{ route('cliente.destroy', $cliente) }}" method="POST" class="formulario-eliminar" style="display:inline;">
+                                                        <form action="#" method="POST" class="formulario-eliminar" style="display:inline;">
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit" class="btn btn-danger btn-sm">

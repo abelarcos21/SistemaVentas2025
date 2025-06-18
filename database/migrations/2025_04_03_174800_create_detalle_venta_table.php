@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('venta_id')->constrained('ventas')->cascadeOnDelete();
             $table->foreignId('producto_id')->constrained('productos')->cascadeOnDelete();
             $table->integer('cantidad');
-            $table->float('precio_unitario');
-            $table->float('sub_total');
+            $table->float('precio_unitario', 10, 2);
+            //$table->decimal('descuento', 10, 2)->default(0); // Descuento por línea
+            $table->float('sub_total', 10, 2);// cantidad * precio_unitario - descuento
             $table->timestamps();
         });
     }

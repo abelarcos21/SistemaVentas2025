@@ -19,11 +19,21 @@ class Producto extends Model
         'categoria_id',
         'proveedor_id',
         'marca_id',
+        'impuesto_id',
         'codigo',
         'barcode_path',
         'nombre',
         'descripcion',
-        'precio_venta'
+        'precio_venta',
+        'activo',
+        'clave_prod_serv',//datos fiscales del sat cfdi 4.0
+        'clave_unidad',
+        'unidad_descripcion',
+        'precio_unitario',
+        'tasa_o_cuota',
+        'tipo_factor',
+        'objeto_imp',
+        'numero_identificacion',
 
     ];
 
@@ -46,4 +56,18 @@ class Producto extends Model
     {
         return $this->belongsTo(Proveedor::class);
     } */
+
+    // Relaciones
+    public function usuario() {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function categoria() {
+        return $this->belongsTo(Categoria::class);
+    }
+
+    public function proveedor() {
+        return $this->belongsTo(Proveedor::class);
+    }
+
 }

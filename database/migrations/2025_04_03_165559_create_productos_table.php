@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEA
             $table->foreignId('proveedor_id')->constrained('proveedores');//LLAVES FORANEA
             $table->foreignId('marca_id')->constrained('marcas');//LLAVES FORANEA
+            $table->foreignId('impuesto_id')->nullable()->constrained('impuestos');// 002 para IVA. Si en un futuro los productos pueden tener más de un impuesto (IVA + IEPS), deberías tener una tabla pivote impuesto_producto.
             $table->string('codigo')->unique();
             $table->string('barcode_path')->nullable(); // Imagen del código de barras
             $table->string('nombre', 50);
@@ -25,14 +26,15 @@ return new class extends Migration
             $table->float('precio_compra')->default(0);
             $table->float('precio_venta')->default(0);
             $table->boolean('activo')->default(true);
-            $table->string('clave_prod_serv', 10)->nullable(); // Clave SAT ClaveProdServ (ej: 01010101)
-            $table->string('clave_unidad', 5)->nullable(); // Clave unidad SAT ClaveUnidad (ej: H87)
-            $table->string('unidad_descripcion')->nullable(); //Unidad comercial Ej: "Pieza"
+
+            // Campos relacionados al SAT
+            $table->string('clave_prod_serv', 10)->nullable();// Clave SAT ClaveProdServ (ej: 01010101)
+            $table->string('clave_unidad', 5)->nullable();// Clave unidad SAT ClaveUnidad (ej: H87)
+            $table->string('unidad_descripcion')->nullable();//Unidad comercial Ej: "Pieza"
             $table->decimal('precio_unitario', 10, 2)->nullable();//para que pase el seeder se puso nullable
-            $table->string('impuesto_trasladado')->nullable(); // 002 para IVA
-            $table->decimal('tasa_o_cuota', 5, 4)->nullable(); // Ej. 0.1600
-            $table->string('tipo_factor')->nullable(); // Tasa, Exento, Cuota
-            $table->decimal('iva', 5, 2)->default(16.00); // Porcentaje de IVA
+            $table->decimal('tasa_o_cuota', 5, 4)->nullable();// Ej. 0.1600
+            $table->enum('tipo_factor', ['Tasa', 'Cuota', 'Exento'])->nullable();// Tasa, Exento, Cuota
+            $table->string('objeto_imp', 2)->default('02');//01: No objeto, 02: Sí objeto, 03: Exento
             $table->string('numero_identificacion')->nullable();
             $table->timestamps();
         });

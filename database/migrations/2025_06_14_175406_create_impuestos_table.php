@@ -13,15 +13,10 @@ return new class extends Migration
     {
         Schema::create('impuestos', function (Blueprint $table) {
             $table->id();
-           /*Antes  $table->string('nombre');
+            $table->string('clave', 3); // Ej: 002
             $table->enum('impuesto', ['ISR', 'IVA', 'IEPS']);
             $table->enum('tipo', ['Traslado', 'Retención']);
             $table->enum('factor', ['Tasa', 'Cuota', 'Exento']);
-            $table->decimal('tasa', 8, 4); */
-
-            $table->string('clave', 3); // Ej: 002
-            $table->string('nombre');  // IVA, ISR, IEPS
-            $table->enum('tipo', ['traslado', 'retencion']);
             $table->decimal('tasa', 5, 4)->nullable(); // Ej: 0.1600 para 16%
             $table->boolean('activo')->default(true);
             $table->timestamps();
