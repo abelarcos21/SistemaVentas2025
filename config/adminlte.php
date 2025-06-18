@@ -407,29 +407,29 @@ return [
             'submenu' => [
                 [
                     'text' => 'Nueva Factura',
-                    'url' => 'facturas/create',
+                    'url' => 'facturacion/create',
                     'icon' => 'fas fa-plus',
                 ],
 
                 [
                     'text' => 'Mis Facturas',
-                    'url' => 'facturas/',
+                    'url' => 'facturacion/',
                     'icon' => 'fas fa-file-invoice',
                 ],
 
                 [
                     'text' => 'Productos',
-                    'url' => 'factura/productos/',
+                    'url' => 'facturacion/productos/',
                     'icon' => 'fas fa-boxes',
                 ],
                 [
                     'text' => 'Clientes',
-                    'url' => 'factura/clientes/',
+                    'url' => 'facturacion/clientes/',
                     'icon' => 'fas fa-users ',
                 ],
                 [
                     'text' => 'Impuestos',
-                    'url' => 'factura/impuestos/',
+                    'url' => 'facturacion/impuestos/',
                     'icon' => 'fas fa-file-invoice-dollar',
                 ],
             ],

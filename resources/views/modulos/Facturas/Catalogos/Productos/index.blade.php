@@ -2,13 +2,6 @@
 
 @section('title', 'Administrar Productos y Stock')
 
-@section('navbar')
-    @include('vendor.adminlte.partials.navbar.navbar') {{-- Tu navbar personalizado --}}
-@endsection
-
-@section('sidebar')
-    @include('vendor.adminlte.partials.sidebar.left-sidebarnavbar') {{-- Tu navbar personalizado --}}
-@endsection
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -16,12 +9,12 @@
         <div class="container-fluid">
           <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1> <i class="fas fa-boxes "></i> Administrar Productos y Stock</h1>
+                    <h1> <i class="fas fa-boxes "></i> Productos</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
-                        <li class="breadcrumb-item active">Administrar Productos y Stock</li>
+                        <li class="breadcrumb-item active">Lista Productos</li>
                     </ol>
                 </div>
           </div>
@@ -37,17 +30,13 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
+                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Lista Productos</h3>
                             <div>
                                 <a href="{{ route('producto.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
-                                <a href="{{ route('reporte.falta_stock') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
-                                    <i class="fas fa-boxes"></i> Productos con Stock 1 y 0
-                                </a>
-                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm" target="_blank">
-                                    <i class="fas fa-print"></i> Imprimir etiquetas
-                                </a>
+                                
+                                
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -58,118 +47,35 @@
                                     <thead class="bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
-                                            <th>Imagen</th>
-                                            <th>Codigo</th>
-                                            <th class="no-exportar">Código de Barras</th>
-                                            <th>Nombre</th>
-                                            <th>Categoria</th>
-                                            <th>Marca</th>
                                             <th>Descripción</th>
-                                            <th>Proveedor</th>
-                                            <th>Stock</th>
-                                            <th>Precio Venta</th>
-                                            <th>Precio Compra</th>
-                                            <th>Fecha Registro</th>
-                                            <th>Activo</th>
-                                            <th class="no-exportar">Comprar</th>
+                                            <th>Precio</th>
+                                            <th>Clave</th>
+                                            <th>Unidad</th>
                                             <th class="no-exportar">Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($productos as $producto)
-                                            <tr>
-                                                <td>{{ $producto->id }}</td>
-                                                <td>
-                                                    @php
-                                                        $ruta = $producto->imagen && $producto->imagen->ruta
-                                                        ? asset('storage/' . $producto->imagen->ruta)
-                                                        : asset('images/placeholder-caja.png');
-                                                    @endphp
-
-                                                    <!-- Imagen miniatura con enlace al modal -->
-                                                    <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                                                        <img src="{{ $ruta }}"
-                                                            width="50" height="50"
-                                                            class="img-thumbnail rounded shadow"
-                                                            style="object-fit: cover;">
+                                        
+                                        <tr>
+                                            <td>1</td>
+                                            <td>rewrew</td>
+                                            <td>565.00</td>
+                                            <td>10202457</td>
+                                            <td>26</td>
+                                            
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="#" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                                                        <i class="fas fa-edit"></i> Editar
                                                     </a>
 
-                                                    <!-- Modal Bootstrap 4 -->
-                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
-                                                        tabindex="-1"
-                                                        role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                            <div class="modal-content bg-white">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body text-center">
-                                                                    <img src="{{ $ruta }}" class="img-fluid rounded shadow">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {{-- @if($producto->imagen)
-                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50"  class="img-thumbnail rounded shadow" style="object-fit: cover;">
-                                                    @else
-                                                        <img src="{{ asset('images/placeholder-caja.png') }}" width="50" height="50"  class="img-thumbnail rounded shadow" style="object-fit: cover;">
-                                                    @endif --}}
-                                                </td>
-                                                <td>{{$producto->codigo}}</td>
-                                                <td>
-                                                    @if ($producto->barcode_path)
-                                                        <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}">
-                                                    @endif
-                                                </td>
-                                                <td>{{ $producto->nombre }}</td>
-                                                <td>{{ $producto->nombre_categoria }}</td>
-                                                <td>{{ $producto->nombre_marca}}</td>
-                                                <td>{{ $producto->descripcion }}</td>
-                                                <td>{{ $producto->nombre_proveedor }}</td>
-                                                @if($producto->cantidad > 5)
-                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
-                                                @else
-                                                    <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
-                                                @endif
-
-                                                <td class="text-blue">MXN${{ $producto->precio_venta }}</td>
-                                                <td class="text-blue">MXN${{ $producto->precio_compra }}</td>
-                                                <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>
-                                                <td>
-                                                    <div class="custom-control custom-switch toggle-estado">
-                                                        <input type="checkbox" role="switch" class="custom-control-input"
-                                                            id="activoSwitch{{ $producto->id }}"
-                                                            {{ $producto->activo ? 'checked' : '' }}
-                                                            data-id="{{ $producto->id }}">
-                                                        <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary bg-gradient-primary btn-sm">
-                                                        <i class="fas fa-shopping-cart"></i> Comprar
+                                                    <a href="#" class="btn btn-danger btn-sm mr-1">
+                                                        <i class="fas fa-trash-alt"></i> Eliminar
                                                     </a>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
-                                                            <i class="fas fa-edit"></i> Editar
-                                                        </a>
-
-                                                        <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
-                                                            <i class="fas fa-trash-alt"></i> Eliminar
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="13" class="text-center">NO HAY PRODUCTOS</td>
-                                            </tr>
-                                        @endforelse
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
                                     </tbody>
                                 </table>
                             </div>

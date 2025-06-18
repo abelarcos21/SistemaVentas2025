@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+
 use App\Http\Controllers\Web\DetalleVentasController;
 use App\Http\Controllers\Web\VentaController;
 use App\Http\Controllers\Web\CategoriaController;
@@ -14,7 +15,10 @@ use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
 use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
+
 use App\Http\Controllers\Facturacion\FacturaController;
+use App\Http\Controllers\Facturacion\ProductoController as FacturaProductoController;
+
 
 
 
@@ -67,15 +71,15 @@ Route::prefix('negocio')->group(function(){
 });
 
 ///////////////////RUTA CREAR Factura
-Route::prefix('facturas')->group(function(){
+Route::prefix('facturacion')->group(function(){
     Route::get('/', [FacturaController::class, 'index'])->name('factura.index');
     Route::get('create', [FacturaController::class, 'create'])->name('factura.create');
     Route::post('/factura/timbrar', [FacturaController::class, 'timbrar'])->name('factura.timbrar');
 
     //Catalogos por el momento luego se refactoriza
-    Route::get('factura/productos', [FacturaController::class, 'lista_productos'])->name('listaproductos.index');
-    Route::get('factura/clientes', [FacturaController::class, 'lista_clientes'])->name('listaclientes.index');
-    Route::get('factura/impuestos', [FacturaController::class, 'lista_impuestos'])->name('listaimpuestos.index');
+    Route::get('productos', [FacturaProductoController::class, 'index'])->name('listaproductos.index');
+    Route::get('clientes', [ClienteController::class, 'index'])->name('listaclientes.index');
+    Route::get('impuestos', [ImpuestoController::class, 'index'])->name('listaimpuestos.index');
 });
 
 
