@@ -14,7 +14,7 @@ use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
 use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
-use App\Http\Controllers\Web\FacturaController;
+use App\Http\Controllers\Facturacion\FacturaController;
 
 
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers\Facturacion;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,6 +26,11 @@ class FacturaController extends Controller
             'objetos_impuesto' => ObjetoImpuesto::where('activo', true)->pluck('descripcion', 'clave'),
 
         ]);
+    }
+
+    public function index(){
+        //$facturas = Factura::all();
+        return view('modulos.facturas.index');
     }
 
     public function timbrar(Request $request, FacturaCenterService $fc){
