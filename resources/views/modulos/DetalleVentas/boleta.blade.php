@@ -83,16 +83,16 @@
             contacto@comercialmex.com<br>
             <div class="boleta-box">
                 BOLETA DE VENTA<br>
-                Numero De Venta: {{ $folio }}
+                Numero De Venta: {{ $venta->folio }}
             </div>
         </div>
     </div>
 
     <div class="cliente-info">
-        <p><strong>Cliente:</strong> {{ $cliente['nombre'] ?? '----' }}</p>
-        <p><strong>RFC / CURP:</strong> {{ $cliente['documento'] ?? '----' }}</p>
+        <p><strong>Cliente:</strong> {{ $venta->nombre_cliente ?? '----' }}</p>
+        <p><strong>RFC / CURP:</strong> {{ $venta->rfc_cliente ?? '----'}}</p>
         <p><strong>Domicilio:</strong> {{ $cliente['direccion'] ?? '----' }}</p>
-        <p><strong>Teléfono:</strong> {{ $cliente['telefono'] ?? '----' }}</p>
+        <p><strong>Teléfono:</strong> {{ $venta->telefono_cliente ?? '----' }}</p>
     </div>
 
     <table>
@@ -105,19 +105,20 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($items as $item)
-            <tr>
-                <td class="text-center">{{ $item['cantidad'] }}</td>
-                <td>{{ $item['nombre'] }}</td>
-                <td class="text-right">${{ number_format($item['precio'], 2) }}</td>
-                <td class="text-right">${{ number_format($item['cantidad'] * $item['precio'], 2) }}</td>
-            </tr>
+
+            @foreach ($detalles as $item)
+                <tr>
+                    <td class="text-center">{{ $item->cantidad }}</td>
+                    <td>{{ $item->nombre_producto }}</td>
+                    <td class="text-right">${{ number_format($item->precio_unitario, 2) }}</td>
+                    <td class="text-right">${{ number_format($item->sub_total, 2) }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
 
     <div class="total">
-        TOTAL: ${{ number_format($total, 2) }}
+        TOTAL: ${{ number_format($venta->total_venta, 2) }}
     </div>
 
     <div class="nota">

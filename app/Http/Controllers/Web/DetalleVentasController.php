@@ -134,31 +134,43 @@ class DetalleVentasController extends Controller
         return $pdf->stream("ticket_compra_{$venta->id}.pdf");
     }
 
-    public function generarBoleta(){
+    public function generarBoleta($id){
+
+        $venta = Venta::select(
+            'ventas.*',
+            'users.name as nombre_usuario',
+            'clientes.nombre as nombre_cliente',
+            'clientes.rfc as rfc_cliente', // puede ser RFC o CURP
+            'clientes.telefono as telefono_cliente',
+        )
+        ->join('users', 'ventas.user_id', '=', 'users.id')//agregar el nombre del usuario quien hiso la venta
+        ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente
+        ->where('ventas.id', $id)
+        ->firstOrFail();
+
+        $detalles = DetalleVenta::select(
+            'detalle_venta.*',
+            'productos.nombre as nombre_producto'
+        )
+        ->join('productos', 'detalle_venta.producto_id', '=', 'productos.id')
+        ->where('venta_id', $id)
+        ->get();
 
         $cliente = [
-            'nombre' => 'Carlos Martínez',
-            'documento' => 'MARC850101HDFLRS08', // puede ser RFC o CURP
+
             'direccion' => 'Calle Reforma 45, Guadalajara, Jal.',
-            'telefono' => '3312345678',
+
         ];
 
-        $items = [
-            ['nombre' => 'Laptop HP', 'cantidad' => 1, 'precio' => 12500.00],
-            ['nombre' => 'Mouse inalámbrico', 'cantidad' => 2, 'precio' => 350.00],
-            ['nombre' => 'Monitor Samsung 27"', 'cantidad' => 1, 'precio' => 4500.00],
-        ];
-
-        $total = collect($items)->sum(fn($item) => $item['cantidad'] * $item['precio']);
         $nota = 'Gracias por su compra. No se aceptan devoluciones pasadas 24h.';
-        $folio = '001-000369'; // puedes hacerlo dinámico si tienes una tabla ventas
+
 
         // Contenido para el QR
         $qrContenido = "BOLETA DE VENTA\n";
-        $qrContenido .= "Cliente: {$cliente['nombre']}\n";
-        $qrContenido .= "RFC/CURP: {$cliente['documento']}\n";
-        $qrContenido .= "Total: $" . number_format($total, 2) . "\n";
-        $qrContenido .= "Folio: {$folio}\n";
+        $qrContenido .= "Cliente: {$venta->nombre_cliente}\n";
+        $qrContenido .= "RFC/CURP: {$venta->rfc_cliente}\n";
+        $qrContenido .= "Total: $" . number_format($venta->total_venta, 2) . "\n";
+        $qrContenido .= "Folio: {$venta->folio}\n";
         $qrContenido .= "Validación: Comercializadora México";
 
 
@@ -167,7 +179,7 @@ class DetalleVentasController extends Controller
 
         // Generar PDF
         $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact(
-            'cliente', 'items', 'total', 'nota', 'qr', 'folio'
+            'cliente', 'nota', 'detalles', 'venta', 'qr',
         ))->setPaper('A4', 'portrait');
 
         // Opcional: borrar después si no se necesita guardar
