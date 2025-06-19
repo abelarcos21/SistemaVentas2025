@@ -51,7 +51,7 @@
                                     <thead class="bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
-                                            <th>Imagen</th>
+                                            <th class="no-exportar">Imagen</th>
                                             <th>Codigo</th>
                                             <th class="no-exportar">Código de Barras</th>
                                             <th>Nombre</th>
@@ -328,7 +328,34 @@
                         title: 'Reporte de Productos',
                         filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
                         text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
-                        className: 'btn btn-success btn-sm'
+                        className: 'btn btn-success btn-sm',
+                        customize: function (xlsx) {
+                            let sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                            // 1. Centrar y combinar el título
+                            let mergeCells = sheet.getElementsByTagName('mergeCells')[0];
+                            if (!mergeCells) {
+                                mergeCells = sheet.createElement('mergeCells');
+                                sheet.documentElement.appendChild(mergeCells);
+                            }
+                            let mergeCell = sheet.createElement('mergeCell');
+                            mergeCell.setAttribute('ref', 'A1:G1'); // Ajusta a tu cantidad de columnas
+                            mergeCells.appendChild(mergeCell);
+                            mergeCells.setAttribute('count', mergeCells.childNodes.length);
+
+                            // Centrar título (A1)
+                            $('row c[r^="A1"]', sheet).attr('s', '51'); // ID 51 suele ser centrado
+
+                            // 2. Aplicar color y centrado al encabezado (segunda fila = thead)
+                            $('row[r="2"] c', sheet).attr('s', '51');
+                            // El estilo 32 suele ser: fondo azul, texto blanco, centrado.
+                            // Puedes probar también 22, 34, 36, 66 según tu versión.
+
+                            // 3. Centrar todo el contenido (desde la tercera fila)
+                            $('row:gt(1)', sheet).each(function () {
+                                $('c', this).attr('s', '51'); // estilo centrado
+                            });
+                        }
                     },
                     {
                         extend: 'pdfHtml5',
