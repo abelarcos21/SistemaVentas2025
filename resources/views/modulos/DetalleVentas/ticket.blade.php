@@ -144,18 +144,15 @@
 <body>
     <h3>Ticket de compra - SYSVentas 1.0</h3>
     <img src="{{ public_path('images/logo-fis.png') }}" class="logo" alt="Logo">
-    <p>CLIENTE: Rosalia Del Carmen Rodriguez Blanquet</p>
+    <p>Cliente: {{ $venta->nombre_cliente }}</p>
     <p>RFC: AOPA950525HI0</p>
     {{-- <p>FOLIO: 12343454</p> --}}
    {{--  <p>FECHA: 13/06/2025</p> --}}
-    <p>Expedido el: 25/junio/2025 17:53:32 am/pm en:</p>
+    <p>Expedido el: {{ $venta->created_at->format('d/m/Y') }} {{ $venta->created_at->format('h:i a') }} en:</p>
     <p>San Francisco de Campeche  cp24520</p>
     <p>San Francisco de Campeche  Mexico</p>
     <p>PUNTO DE VENTA</p>
     <p>Numero de Venta: NV 001-000144</p>
-
-
-
 
     <table class="productos">
         <thead>
@@ -167,69 +164,28 @@
             </tr>
         </thead>
         <tbody>
-            {{-- @foreach($productos as $item) --}}
+            @foreach ($detalles as $item)
                 <tr>
-                    <td>PAN DE FIBRA MOLDE</td>
-                    <td>6</td>
-                    <td>$15.00</td>
-                    <td>$90.00</td>
-
+                    <td>{{ $item->nombre_producto }}</td>
+                    <td>{{ $item->cantidad }}</td>
+                    <td>${{ number_format($item->precio_unitario, 2) }}</td>
+                    <td>${{ number_format($item->sub_total, 2) }}</td>
                 </tr>
-                <tr>
-                    <td>PAN INTEGRAL TOSTA</td>
-                    <td>2</td>
-                    <td>$30.00</td>
-                    <td>$60.00</td>
-
-                </tr>
-                <tr>
-                    <td>YOGURT SURTIDO 250</td>
-                    <td>2</td>
-                    <td>$24.00</td>
-                    <td>$48.00</td>
-
-                </tr>
-                <tr>
-                    <td>REFRESCO NATURAL</td>
-                    <td>2</td>
-                    <td>$34.00</td>
-                    <td>$68.00</td>
-
-                </tr>
-                <tr>
-                    <td>REFRESCO NATURAL</td>
-                    <td>2</td>
-                    <td>$34.00</td>
-                    <td>$68.00</td>
-
-                </tr>
-                <tr>
-                    <td>YOGURT CON FRUTA D</td>
-                    <td>2</td>
-                    <td>$24.00</td>
-                    <td>$48.00</td>
-
-                </tr>
-                <tr>
-                    <td>PAN INTEGRAL TOSTA</td>
-                    <td>1</td>
-                    <td>$30.00</td>
-                    <td>$30.00</td>
-
-                </tr>
-           {{--  @endforeach --}}
+            @endforeach
         </tbody>
     </table>
 
     <div class="totales">
-        <p><strong>TOTAL: $412.00</strong></p>
+        <p>===========</p>
+        <p><strong>TOTAL: ${{ number_format($venta->total_venta, 2) }}</strong></p>
         <p><strong>(cuatrocientos doce pesos 00/100 M.N.)</strong></p>
         <p>Impuestos: 56.83</p>
         <p>Usted. ahorro: 0.00</p>
         <p>EFECTIVO: $500.00</p>
+        <p>===========</p>
         <p>CAMBIO: $88.00</p>
         <p>Total de Articulos: 17</p>
-        <p>Cajero: SUPERVISOR</p>
+        <p><strong>Cajero:</strong> {{ $venta->nombre_usuario }}</p>
     </div>
 
     <div class="qr">
