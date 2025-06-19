@@ -402,7 +402,7 @@ return [
             'icon' => 'fas fa-user-shield ',
         ],
         [
-            'text' => 'Facturacion',
+            'text' => 'Facturación',
             'icon' => 'fas fa-file-alt',
             'submenu' => [
                 [
@@ -410,30 +410,33 @@ return [
                     'url' => 'facturacion/create',
                     'icon' => 'fas fa-plus',
                 ],
-
                 [
                     'text' => 'Mis Facturas',
-                    'url' => 'facturacion/',
+                    'url' => 'facturacion',
                     'icon' => 'fas fa-file-invoice',
                 ],
-
                 [
-                    'text' => 'Productos',
-                    'url' => 'facturacion/productos/',
-                    'icon' => 'fas fa-boxes',
-                ],
-                [
-                    'text' => 'Clientes',
-                    'url' => 'facturacion/clientes/',
-                    'icon' => 'fas fa-users ',
-                ],
-                [
-                    'text' => 'Impuestos',
-                    'url' => 'facturacion/impuestos/',
-                    'icon' => 'fas fa-file-invoice-dollar',
+                    'text' => 'Catálogos',
+                    'icon' => 'fas fa-folder-open',
+                    'submenu' => [
+                        [
+                            'text' => 'Productos',
+                            'url' => 'facturacion/productos',
+                            'icon' => 'fas fa-boxes',
+                        ],
+                        [
+                            'text' => 'Clientes',
+                            'url' => 'facturacion/clientes',
+                            'icon' => 'fas fa-users',
+                        ],
+                        [
+                            'text' => 'Impuestos',
+                            'url' => 'facturacion/impuestos',
+                            'icon' => 'fas fa-file-invoice-dollar',
+                        ],
+                    ],
                 ],
             ],
-
         ],
         [
             'text' => 'Negocio',
