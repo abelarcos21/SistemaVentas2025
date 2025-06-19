@@ -18,8 +18,11 @@ use App\Http\Controllers\Web\NegocioController;
 
 use App\Http\Controllers\Facturacion\FacturaController;
 use App\Http\Controllers\Facturacion\ImpuestoController;
+use App\Http\Controllers\Facturacion\ClaveProdServController;
+use App\Http\Controllers\Facturacion\ClaveUnidadController;
 use App\Http\Controllers\Facturacion\ProductoController as FacturaProductoController;
 use App\Http\Controllers\Facturacion\ClienteController as FacturaClienteController;
+
 
 
 
@@ -82,6 +85,7 @@ Route::prefix('facturacion')->group(function(){
 
     //Catalogos por el momento luego se refactoriza
     Route::get('productos', [FacturaProductoController::class, 'index'])->name('listaproductos.index');
+    Route::get('productos/create', [FacturaProductoController::class, 'create'])->name('productos.create');
     Route::get('clientes', [FacturaClienteController::class, 'index'])->name('listaclientes.index');
     Route::get('impuestos', [ImpuestoController::class, 'index'])->name('listaimpuestos.index');
 });
@@ -147,6 +151,12 @@ Route::prefix('clientes')->group(function(){
     Route::delete('{cliente}', [ClienteController::class, 'destroy'])->name('cliente.destroy');
 
 });
+
+//RUTA PARA el select2 buscar de clavesproductoservicio
+Route::get('api/sat/clave-producto', [ClaveProdServController::class, 'search']);
+
+//RUTA PARA el select2 buscar de clavesUnidadproducto
+Route::get('api/sat/clave-unidad', [ClaveUnidadController::class, 'search']);
 
 //RUTA PARA CAMBIAR DE ESTADO ACTIVO AL USUARIO
 Route::post('/usuarios/cambiar-estado/{id}', [UsuarioController::class, 'cambiarEstado']);

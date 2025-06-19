@@ -32,7 +32,7 @@
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Lista Productos</h3>
                             <div>
-                                <a href="{{ route('producto.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
+                                <a href="{{ route('productos.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
                                 </a>
 

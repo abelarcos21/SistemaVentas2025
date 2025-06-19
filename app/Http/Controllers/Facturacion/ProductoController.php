@@ -14,6 +14,10 @@ class ProductoController extends Controller
         return view('modulos.facturas.catalogos.productos.index', compact('productos'));
     }
 
+    public function create(){
+        return view('modulos.facturas.catalogos.productos.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
