@@ -200,13 +200,48 @@
     <!-- /.content -->
 
 
-
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
+
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
+    {{-- Este estilo limita la altura del dropdown a 300px y agrega una barra de desplazamiento si hay muchos elementos. --}}
+    <style>
+        .select2-container .select2-dropdown {
+            max-height: 300px !important; /* Altura máxima */
+            overflow-y: auto !important;  /* Scroll vertical */
+        }
+    </style>
+
+    <style>
+
+        /* Estilo del texto seleccionado */
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            color: #343a40; /* texto gris oscuro */
+            font-weight: 500;
+        }
+
+        /* Estilo del dropdown */
+        .select2-container--bootstrap4 .select2-dropdown {
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Hover sobre opciones */
+        .select2-container--bootstrap4 .select2-results__option--highlighted {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Estilo del campo de búsqueda */
+        .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+
+            border-radius: 0.25rem;
+        }
+    </style>
 
 
 @stop
@@ -217,14 +252,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
 
-    {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES Y CATEGORIAS--}}
+    {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES,CATEGORIAS y MARCAS--}}
     <script>
         $(document).ready(function() {
             $('.selectcategoria').select2({
                 language: 'es',
                 theme: 'bootstrap4',
-                placeholder: "Selecciona o Busca una Categoria"
-                allowClear: true
+                placeholder: "Selecciona o Busca una Categoria",
+                allowClear: true,
+                minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
+                dropdownAutoWidth: true //puede ayudar a que el ancho no se corte si los textos son largos.
+
+
+
             });
         });
     </script>
@@ -234,8 +274,26 @@
             $('.selectproveedor').select2({
                 language: 'es',
                 theme: 'bootstrap4',
-                placeholder: "Selecciona o Busca un Proveedor"
-                allowClear: true
+                placeholder: "Selecciona o Busca un Proveedor",
+                allowClear: true,
+                minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
+                dropdownAutoWidth: true //puede ayudar a que el ancho no se corte si los textos son largos.
+
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.selectmarca').select2({
+                language: 'es',
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca una Marca",
+                allowClear: true,
+                minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
+                dropdownAutoWidth: true //puede ayudar a que el ancho no se corte si los textos son largos.
+
+
             });
         });
     </script>
