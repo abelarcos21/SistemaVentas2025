@@ -12,15 +12,15 @@
 
                     <!-- Imagen miniatura con enlace al modal -->
                     <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                        <img src="{{ $ruta }}" 
-                        width="50" height="50" 
-                        class="img-thumbnail rounded shadow" 
+                        <img src="{{ $ruta }}"
+                        width="100" height="100"
+                        class="img-thumbnail rounded shadow"
                         style="object-fit: cover;">
                     </a>
 
                     <!-- Modal Bootstrap 4 -->
-                    <div class="modal fade" id="modalImagen{{ $producto->id }}" 
-                        tabindex="-1" 
+                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
+                        tabindex="-1"
                         role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content bg-white">
@@ -67,7 +67,7 @@
         </div>
     @endif
 
-   
+
 
 
 

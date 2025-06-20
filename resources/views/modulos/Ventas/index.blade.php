@@ -36,7 +36,7 @@
                             <i class="fas fa-search"></i> {{-- Ícono de búsqueda --}}
                         </span>
                     </div>
-                     <input type="text" id="buscador" class="form-control" placeholder="Buscar Producto">
+                     <input type="text" id="buscador" class="form-control" placeholder="Imgrese el código de barras o el nombre del Producto">
                 </div>
 
                 {{-- Filtros de categoría --}}
@@ -98,15 +98,15 @@
 
                                                     <!-- Imagen miniatura con enlace al modal -->
                                                     <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                                                        <img src="{{ $ruta }}" 
-                                                        width="50" height="50" 
-                                                        class="img-thumbnail rounded shadow" 
+                                                        <img src="{{ $ruta }}"
+                                                        width="50" height="50"
+                                                        class="img-thumbnail rounded shadow"
                                                         style="object-fit: cover;">
                                                     </a>
 
                                                     <!-- Modal Bootstrap 4 -->
-                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}" 
-                                                        tabindex="-1" 
+                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
+                                                        tabindex="-1"
                                                         role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                             <div class="modal-content bg-white">
@@ -339,8 +339,8 @@
                     // Remplaza el contenido completo del área que contiene productos y paginación
                     // Actualiza el contenido de productos y paginación
                     $('#contenedor-productos').parent().html(response);
-                   
-                    
+
+
                 },
                 error: function(xhr) {
                     console.error('Error al cargar productos:', xhr);
