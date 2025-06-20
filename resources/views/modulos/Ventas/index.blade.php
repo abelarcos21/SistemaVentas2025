@@ -192,7 +192,7 @@
                     <div class="card-body p-4">
 
                         {{-- Total --}}
-                        <div class="text-center mb-4">
+                        <div class="text-center mb-4 alert alert-info fade show alert-translucido" role="alert">
                             <h5 class="text-secondary">Total a Pagar</h5>
                             <h2 class="font-weight-bold text-primary">
                                 @if (session('items_carrito'))
@@ -247,7 +247,7 @@
 
                             {{-- Botón de Pagar --}}
                             <button type="submit" class="btn btn-primary bg-gradient-primary btn-block rounded-pill" style="border: none;">
-                                <i class="fa fa-credit-card mr-1"></i> Pagar ahora
+                                <i class="fa fa-credit-card mr-1"></i> Pagar
                             </button>
                         </form>
                     </div>
@@ -262,8 +262,54 @@
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
+
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+
+    {{-- Este estilo limita la altura del dropdown a 300px y agrega una barra de desplazamiento si hay muchos elementos. --}}
+    <style>
+        .select2-container .select2-dropdown {
+            max-height: 300px !important; /* Altura máxima */
+            overflow-y: auto !important;  /* Scroll vertical */
+        }
+    </style>
+
+    <style>
+
+        /* Estilo del texto seleccionado */
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            color: #343a40; /* texto gris oscuro */
+            font-weight: 500;
+        }
+
+        /* Estilo del dropdown */
+        .select2-container--bootstrap4 .select2-dropdown {
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Hover sobre opciones */
+        .select2-container--bootstrap4 .select2-results__option--highlighted {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Estilo del campo de búsqueda */
+        .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+
+            border-radius: 0.25rem;
+        }
+    </style>
+
+
+    <style>
+        .alert-translucido {
+            background-color: rgba(23, 162, 184, 0.4); /* azul info con 40% opacidad */
+            color: #0c5460; /* color de texto info */
+            border-color: rgba(23, 162, 184, 0.3); /* borde suave */
+        }
+    </style>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -312,7 +358,9 @@
                 language: 'es',
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca un Cliente",
-                allowClear: true
+                allowClear: true,
+                minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
+                dropdownAutoWidth: true //puede ayudar a que el ancho no se corte si los textos son largos.
             });
         });
     </script>
