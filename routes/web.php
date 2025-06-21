@@ -43,7 +43,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
 Route::get('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->name('ventas.borrar.carrito');
 Route::get('/quitar-carrito/{producto}', [CarritoController::class, 'quitar_carrito'])->name('ventas.quitar.carrito');
-Route::post('/vender', [CarritoController::class, 'vender'])->name('ventas.vender');
+
 
 Route::put('/venta/actualizar/{id}', [CarritoController::class, 'update'])->name('venta.actualizar');
 
@@ -69,6 +69,7 @@ Route::delete('/impuestos/{impuesto}', [ImpuestoController::class, 'destroy'])->
 ///////////////////RUTA CREAR VENTA
 Route::prefix('ventas')->group(function(){
     Route::get('/crear-venta', [VentaController::class, 'index'])->name('venta.index');
+    Route::post('/vender', [VentaController::class, 'vender'])->name('ventas.vender');
 });
 
 //////////////////RUTA CREAR INFORMACION NEGOCIO
