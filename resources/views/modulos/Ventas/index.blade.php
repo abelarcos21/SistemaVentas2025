@@ -51,7 +51,7 @@
                 <!-- Carrito de Compras -->
                 <div class="card card-outline card-primary">
                     <div class="card-header">
-                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Carrito</h3>
+                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Resumen de carrito</h3>
                         <div class="d-flex align-items-center justify-content-end">
                             <a href="{{ route('ventas.borrar.carrito') }}" class=" btn btn-info bg-gradient-info btn-sm mr-4">
                                 <i class="fas fa-boxes"></i> Vaciar Carrito
@@ -232,9 +232,9 @@
                             </div>
 
                             <div id="pagos-container">
-                                
+
                                 <div class="form-group">
-                                    <label for="metodo_pago"> 
+                                    <label for="metodo_pago">
                                         <i class="fa fa-credit-card mr-1"></i> Metodo Pago
                                     </label>
                                     <select name="metodo_pago[]" class="form-control">
@@ -246,10 +246,10 @@
                                 <div class="form-group">
                                     <input type="number" name="monto[]" class="form-control" placeholder="Monto">
                                 </div>
-                                
+
                             </div>
 
-                            <button type="button" class="btn btn-block btn-info mb-3" onclick="agregarPago()">Agregar otro pago</button>
+                            <button type="button" class="btn btn-block btn-info bg-gradient-info mb-3" onclick="agregarPago()">Agregar otro pago</button>
 
                             {{-- Nota adicional --}}
                             <div class="form-group mb-3">
