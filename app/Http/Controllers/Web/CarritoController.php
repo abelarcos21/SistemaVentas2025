@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Models\Venta;
 use App\Models\Producto;
 use App\Models\DetalleVenta;
+use App\Models\Pago;
 use Illuminate\Support\Facades\Auth;
 
 class CarritoController extends Controller
@@ -108,6 +109,8 @@ class CarritoController extends Controller
 
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
+            'metodo_pago.*' => 'required|string',
+            'monto.*' => 'required|numeric|min:0.01',
         ]);
 
         $items_carrito = Session::get('items_carrito', []);
@@ -164,8 +167,17 @@ class CarritoController extends Controller
                 $detalle->sub_total = $item['cantidad'] * $item['precio'];
                 $detalle->save();
 
-                $producto->cantidad -= $item['cantidad'];
+                $producto->cantidad -= $item['cantidad']; //le resta el producto cantidad disminuye al vender
                 $producto->save();
+            }
+
+            // Guardar los pagos
+            foreach ($request->metodo_pago as $i => $metodo) {
+                Pago::create([
+                    'venta_id' => $venta->id,
+                    'metodo_pago' => $metodo,
+                    'monto' => $request->monto[$i],
+                ]);
             }
 
             Session::forget('items_carrito');

@@ -178,15 +178,18 @@
     <div class="totales">
         <p>===========</p>
         <p><strong>TOTAL: ${{ number_format($venta->total_venta, 2) }}</strong></p>
-        <p><strong>(cuatrocientos doce pesos 00/100 M.N.)</strong></p>
-        <p>Impuestos: 56.83</p>
-        <p>Usted. ahorro: 0.00</p>
-        <p>Efectivo: $500.00</p>
+        <p><strong>({{ ucfirst($totalLetras)}} 00/100 M.N.)</strong></p>
+        <p><strong>Impuestos:</strong> 56.83</p>
+        <p><strong>Usted. ahorro:</strong> 0.00</p>
+        @foreach ($pagos as $pago)
+            <p>{{ ucfirst($pago->metodo_pago) }}: ${{ number_format($pago->monto, 2) }}</p>
+        @endforeach
         <p>===========</p>
-        <p>Pago Con: 500</p>
-        <p>Cambio: $88.00</p>
-        <p>Total de Articulos: 17</p>
+        <p><strong>Total Pagado:</strong> ${{ number_format($efectivoTotal, 2) }}</p>
+        <p><strong>Cambio:</strong> ${{ number_format($cambio, 2) }}</p>
+        <p><strong>Total de Articulos:</strong> {{ $totalArticulos}}</p>
         <p><strong>Cajero:</strong> {{ $venta->nombre_usuario }}</p>
+
     </div>
 
     <div class="qr">

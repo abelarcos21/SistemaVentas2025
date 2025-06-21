@@ -231,6 +231,26 @@
                                 @enderror
                             </div>
 
+                            <div id="pagos-container">
+                                
+                                <div class="form-group">
+                                    <label for="metodo_pago"> 
+                                        <i class="fa fa-credit-card mr-1"></i> Metodo Pago
+                                    </label>
+                                    <select name="metodo_pago[]" class="form-control">
+                                        <option value="efectivo">Efectivo</option>
+                                        <option value="tarjeta">Tarjeta</option>
+                                        <option value="transferencia">Transferencia</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" name="monto[]" class="form-control" placeholder="Monto">
+                                </div>
+                                
+                            </div>
+
+                            <button type="button" class="btn btn-block btn-info mb-3" onclick="agregarPago()">Agregar otro pago</button>
+
                             {{-- Nota adicional --}}
                             <div class="form-group mb-3">
                                 <label for="nota_adicional"><i class="fa fa-sticky-note mr-1"></i> Nota adicional</label>
@@ -363,6 +383,26 @@
                 dropdownAutoWidth: true //puede ayudar a que el ancho no se corte si los textos son largos.
             });
         });
+    </script>
+
+    {{--SCRIPT PARA AGREGAR EL METODO DE PAGO--}}
+    <script>
+        function agregarPago() {
+            const html = `
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <select name="metodo_pago[]" class="form-control">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" name="monto[]" class="form-control" placeholder="Monto">
+                </div>
+            </div>`;
+            document.getElementById('pagos-container').insertAdjacentHTML('beforeend', html);
+        }
     </script>
 
     {{--FILTRAR LOS PRODUCTOS PAGINADOS--}}

@@ -15,6 +15,8 @@ use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
 use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
+use App\Http\Controllers\Web\PagoController;
+
 
 use App\Http\Controllers\Facturacion\FacturaController;
 use App\Http\Controllers\Facturacion\ImpuestoController;
@@ -151,6 +153,9 @@ Route::prefix('clientes')->group(function(){
     Route::delete('{cliente}', [ClienteController::class, 'destroy'])->name('cliente.destroy');
 
 });
+
+//RUTA PARA REGISTRAR LOS METODOS DE PAGOS
+Route::post('/pagos', [PagoController::class, 'store'])->name('pagos.store');
 
 //RUTA PARA el select2 buscar de clavesproductoservicio
 Route::get('api/sat/clave-producto', [ClaveProdServController::class, 'search']);

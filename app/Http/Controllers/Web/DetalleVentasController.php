@@ -11,6 +11,7 @@ use App\Models\Producto;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
+use Luecano\NumeroALetras\NumeroALetras;
 
 class DetalleVentasController extends Controller
 {
@@ -124,11 +125,20 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get();
 
+        $formatter = new NumeroALetras();
+        $totalLetras = $formatter->toMoney($venta->total_venta, 2, 'pesos', 'centavos');
+
+        $pagos = $venta->pagos;
+        $efectivoTotal = $pagos->sum('monto');
+        $cambio = $efectivoTotal - $venta->total_venta;
+
+        $totalArticulos = $detalles->sum('cantidad');
+
         // Generar QR
         $qr = base64_encode(QrCode::format('png')->size(100)->generate('http://sistemaventas2025.test:8080'));
 
         // Generar PDF con tamaño personalizado tipo ticket (80mm x altura ajustable)
-        $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles', 'qr'))
+        $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles', 'qr', 'totalLetras','efectivoTotal','cambio', 'pagos','totalArticulos'))
                 ->setPaper([0, 0, 300, 900], 'portrait'); // 80mm de ancho
 
         return $pdf->stream("ticket_compra_{$venta->id}.pdf");
