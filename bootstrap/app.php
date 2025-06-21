@@ -18,6 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\MyCustomMiddleware::class,
         ]); */
 
+        //El paquete Spatie proporciona su middleware incorporado
+        $middleware->alias([
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class
+        ]);
+
         //midlewares de grupos
         $middleware->group('api', [
            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class, // si usas cookies (no obligatorio para móviles)

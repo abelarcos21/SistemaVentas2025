@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 
+
 use App\Http\Controllers\Web\DetalleVentasController;
 use App\Http\Controllers\Web\VentaController;
 use App\Http\Controllers\Web\CategoriaController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Web\MarcaController;
 use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\ClienteController;
 use App\Http\Controllers\Web\UsuarioController;
+use App\Http\Controllers\wEB\RoleController;
 use App\Http\Controllers\Web\ProveedorController;
 use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
@@ -27,10 +29,6 @@ use App\Http\Controllers\Facturacion\ClienteController as FacturaClienteControll
 
 
 
-
-
-
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -38,6 +36,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+//RUTAS PARA LOS ROLES Y USUARIOS
+Route::group(['middleware' => ['auth']], function() {
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UsuarioController::class);
+    Route::resource('products', ProductoController::class);
+});
 
 //RUTAS CARRITO
 Route::get('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
