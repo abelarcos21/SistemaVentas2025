@@ -28,7 +28,7 @@ class ProductoSeeder extends Seeder
             'proveedor_id' => 3,
         ])->each(function ($producto){
             $code = basename($producto->barcode_path, '.png');
-            $barcodeImage = DNS1D::getBarcodePNG($code, 'C128');
+            $barcodeImage = DNS1D::getBarcodePNG($code, 'EAN13');
 
             $path = public_path($producto->barcode_path);
 

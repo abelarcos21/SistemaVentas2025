@@ -126,7 +126,7 @@ class ProductoController extends Controller
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id' => 'required|exists:marcas,id',
-            'codigo' => 'nullable|string|max:255|unique:productos,codigo',// validación nullable si se deja en blanco el campo
+            'codigo' => 'nullable|string|digits:13|max:255|unique:productos,codigo',// validación nullable si se deja en blanco el campo
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'activo' => 'required|boolean',
@@ -139,8 +139,34 @@ class ProductoController extends Controller
 
         try{
 
+            //si se envio un codigo manual
+            if(!empty($validated['codigo'])){
+                $codigo = $validated['codigo'];
+                //validar que sea numerico de 13 digitos
+                if(!preg_match('/^\d{13}$/', $codigo)){
+                    return back()->withErrors(['codigo' => 'El código debe tener exactamente 13 dígitos numéricos.']);
+                }
+            }else{
+
+                //Generar codigo EAN-13 valido y unico
+                do{
+
+                    $base12 = '750' . str_pad(random_int(0, 999999999), 9, '0', STR_PAD_LEFT);
+
+                    $suma = 0;
+                    for ($i = 0; $i < 12; $i++) {
+                        $digito = (int)$base12[$i];
+                        $suma += ($i % 2 === 0) ? $digito : $digito * 3;
+                    }
+
+                    $verificador = (10 - ($suma % 10)) % 10;
+                    $codigo = $base12 . $verificador;
+
+                } while (Producto::where('codigo', $codigo)->exists());
+            }
+
             // Generar código si no se envía
-            $codigo = $request->input('codigo') ?? str_pad((Producto::max('id') ?? 0) + 1, 8, '0', STR_PAD_LEFT);
+            //$codigo = $request->input('codigo') ?? str_pad((Producto::max('id') ?? 0) + 1, 8, '0', STR_PAD_LEFT);
 
             // Crear directorio si no existe
             $barcodeDir = public_path('barcodes');
@@ -149,7 +175,7 @@ class ProductoController extends Controller
             }
 
             // Generar imagen de código de barras
-            $barcode = DNS1D::getBarcodePNG($codigo, 'C128'); // Tipo C128 para mejor compatibilidad
+            $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13'); // Tipo C128 para mejor compatibilidad
             $barcodePath = 'barcodes/' . $codigo . '.png';
             file_put_contents(public_path($barcodePath), base64_decode($barcode));
 
