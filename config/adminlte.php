@@ -439,7 +439,7 @@ return [
             ],
         ],
         [
-            'text' => 'Negocio',
+            'text' => 'Configuracion Negocio',
             'url' => 'negocio/create',
             'icon' => 'fas fa-building ',
         ],

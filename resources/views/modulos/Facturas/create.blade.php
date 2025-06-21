@@ -216,22 +216,66 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label>Clave Producto/Servicio *</label>
-                        <input type="text" name="clave_producto" class="form-control" required>
+                        <input type="text" name="clave_producto" placeholder="Escribe para comenzar a buscar" class="form-control" required>
                     </div>
                     <div class="form-group col-md-4">
                         <label>Clave Unidad *</label>
-                        <input type="text" name="unidad" class="form-control" required>
+                        <input type="text" name="unidad" placeholder="Escribe para comenzar a buscar" class="form-control" required>
                     </div>
                     <div class="form-group col-md-4">
                         <label>Objeto de Impuesto *</label>
-                        <select name="objeto_impuesto" class="form-control" required>
+                        <select id="objeto_impuesto" name="objeto_impuesto" class="form-control" required>
                             <option value="01">No objeto de impuesto</option>
-                            <option value="02">Sí objeto de impuesto</option>
-                            <option value="03">Sí objeto de impuesto y no obligado al desglose</option>
+                            <option  value="02">Sí objeto de impuesto</option>
+                            <option  value="03">Sí objeto de impuesto y no obligado al desglose</option>
                         </select>
                     </div>
+
                 </div>
+
+                <!-- oculto por defecto se activa con el select option de objeto impuesto-->
+                <!-- Objeto de Impuestos -->
+                <div class="text-right mt-4 mr-3 d-none" id="card-objetoimpuesto-info">
+                    <!-- Checkboxs -->
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="global">
+                        <label class="form-check-label" for="global">
+                            ISR (Retención 1.150000 Tasa)
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="global">
+                        <label class="form-check-label" for="global">
+                            IVA (Retención 1.160000 Tasa)
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="global">
+                        <label class="form-check-label" for="global">
+                            IVA 15% (Traslado 10.000000 Tasa)
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="global">
+                        <label class="form-check-label" for="global">
+                            Nada (Traslado 50.000000 Tasa)
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="global">
+                        <label class="form-check-label" for="global">
+                            IEPS (Retención 16.000000 Tasa)
+                        </label>
+                    </div>
+
+                </div>
+
             </div>
+
 
             <!-- Totales y botón -->
             <div class="text-right mt-4">
@@ -261,7 +305,7 @@
 
 @section('js')
 
-    <!-- PARA MOSTRAR U OCULTAR LA CARD MEDIANTE EL CHECKBOX -->
+    <!-- PARA MOSTRAR U OCULTAR LA CARD MEDIANTE EL CHECKBOX de informacion global -->
     <script>
         $(document).ready(function () {
             $('#global').on('change', function () {
@@ -273,6 +317,28 @@
                     });
                 }
             });
+        });
+    </script>
+
+    <!-- PARA MOSTRAR U OCULTAR Los checkboxs MEDIANTE EL SELECT DE OBJETO DE IMPUESTO -->
+    <script>
+        $(document).ready(function() {
+            $('#objeto_impuesto').on('change', function() {
+                const valor = $(this).val();
+
+                if (valor === '02' || valor === '03') {
+                    $('#card-objetoimpuesto-info').removeClass('d-none').hide().fadeIn();
+                } else {
+                    $('#card-objetoimpuesto-info').fadeOut(function() {
+                        $(this).addClass('d-none');
+                        // Opcional: Limpiar los campos dentro de la card
+                        $('#card-objetoimpuesto-info select').val('');
+                    });
+                }
+            });
+
+            // Opcional: ejecutar al cargar la página en caso de valor precargado
+            $('#objeto_impuesto').trigger('change');
         });
     </script>
 
