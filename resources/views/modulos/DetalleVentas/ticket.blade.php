@@ -73,7 +73,7 @@
         <p><strong>Impuestos:</strong> 56.83</p>
         <p><strong>Descuento:</strong> 0.00</p>
         @foreach ($pagos as $pago)
-            <p>Forma de Pago: {{ ucfirst($pago->metodo_pago) }}: ${{ number_format($pago->monto, 2) }}</p>
+            <p><strong>Forma de Pago:</strong> {{ ucfirst($pago->metodo_pago) }}</p>
         @endforeach
         <p>===========</p>
         <p><strong>Total Pagado:</strong> ${{ number_format($efectivoTotal, 2) }}</p>
