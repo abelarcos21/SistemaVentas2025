@@ -110,7 +110,8 @@ class DetalleVentasController extends Controller
         $venta = Venta::select(
             'ventas.*',
             'users.name as nombre_usuario',
-            'clientes.nombre as nombre_cliente'
+            'clientes.nombre as nombre_cliente',
+            'clientes.apellido as apellido_cliente',
         )
         ->join('users', 'ventas.user_id', '=', 'users.id')//agregar el nombre del usuario quien hiso la venta
         ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente
@@ -125,14 +126,22 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get();
 
+        //FORMATEO EN LETRAS LA CANTIDAD TOTAL VENTA
         $formatter = new NumeroALetras();
-        $totalLetras = $formatter->toMoney($venta->total_venta, 2, 'pesos', 'centavos');
+        $monto = number_format($venta->total_venta, 2, '.', ''); // Asegura 2 decimales
+        $partes = explode('.', $monto);
 
-        $pagos = $venta->pagos;
-        $efectivoTotal = $pagos->sum('monto');
-        $cambio = $efectivoTotal - $venta->total_venta;
+        $parteEntera = (int) $partes[0];
+        $centavos = isset($partes[1]) ? str_pad($partes[1], 2, '0', STR_PAD_RIGHT) : '00';
 
-        $totalArticulos = $detalles->sum('cantidad');
+        $letra = $formatter->toWords($parteEntera);
+        $totalLetras = ucfirst($letra) . " PESOS {$centavos}/100 M.N.";
+        //////////////////////////////
+        $pagos = $venta->pagos;  //METODOS DE PAGO EFECTIVO/TARJETA/TRANSFERENCIA
+        $efectivoTotal = $pagos->sum('monto'); //MONTO QUE PAGO TOTAL
+        $cambio = $efectivoTotal - $venta->total_venta; //SU CAMBIO
+
+        $totalArticulos = $detalles->sum('cantidad');//CANTIDAD DE ARTICULOS VENDIDOS
 
         // Generar QR
         $qr = base64_encode(QrCode::format('png')->size(100)->generate('http://sistemaventas2025.test:8080'));

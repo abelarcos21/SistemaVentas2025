@@ -2600,6 +2600,10 @@
                 "numero",
                 "sunat"
             ],
+            "support": {
+                "issues": "https://github.com/lecano/php-numero-a-letras/issues",
+                "source": "https://github.com/lecano/php-numero-a-letras/tree/v4.0.1"
+            },
             "funding": [
                 {
                     "url": "https://github.com/lecano",
