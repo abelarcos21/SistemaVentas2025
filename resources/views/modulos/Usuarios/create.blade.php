@@ -105,10 +105,11 @@
                                                         <i class="fas fa-user"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
-                                                <select name="rol" id="rol"  class="form-control" aria-label="Default select example">
-                                                    <option selected>Selecciona el Rol</option>
-                                                    <option value="admin">Admin</option>
-                                                    <option value="cajero">Cajero</option>
+                                                <select name="roles[]" id="roles" class="form-control" multiple="multiple">
+                                                    <option>--Selecciona uno o más roles--</option>
+                                                    @foreach ($roles as $value => $label)
+                                                        <option value="{{ $value }}">{{ $label }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>
@@ -148,11 +149,15 @@
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
+    
+
 
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script> --}}
+
+   
 
 @stop
 

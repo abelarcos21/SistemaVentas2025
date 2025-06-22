@@ -23,12 +23,11 @@ class UsuarioSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('admin123'), // contraseña segura
             'activo' => true,
-            'rol' => 'admin',
+            
         ]);
 
         // 5 Cajeros generados aleatoriamente
         User::factory()->count(5)->create([
-            'rol' => 'cajero',
             'activo' => true,
         ]);
 

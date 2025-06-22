@@ -29,7 +29,6 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // Contraseña por defecto
             'activo' => $this->faker->boolean(90), // 90% chance de estar activo
-            'rol' => $this->faker->randomElement(['admin', 'cajero']),
             'remember_token' => Str::random(10),
         ];
     }

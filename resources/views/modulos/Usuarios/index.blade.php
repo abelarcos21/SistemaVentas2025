@@ -50,20 +50,28 @@
                                             <th>#</th>
                                             <th>Email</th>
                                             <th>Nombres</th>
-                                            <th>Rol</th>
+                                            <th>Roles</th>
                                             <th>Cambio Contraseña</th>
                                             <th>Fecha Registro</th>
                                             <th>Activo</th>
-                                            <th>Editar</th>
+                                            <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($usuarios as $usuario)
+                                        @forelse($usuarios as $key => $usuario)
                                             <tr>
                                                 <td>{{ $usuario->id }}</td>
                                                 <td>{{ $usuario->email }}</td>
                                                 <td>{{ $usuario->name }}</td>
-                                                <td>{{ $usuario->rol }}</td>
+                                                
+                                                <td>
+                                                    @if(!empty($usuario->getRoleNames()))
+                                                        @foreach($usuario->getRoleNames() as $v)
+                                                        <label class="badge bg-success">{{ $v }}</label>
+                                                        @endforeach
+                                                    @endif
+                                                </td>
+                                                
                                                 <td>
                                                     <a class="btn btn-info bg-gradient-primary btnCambioPassword" data-id="{{ $usuario->id }}">
                                                         <i class="fas fa-user"></i> <i class="fas fa-lock"></i>

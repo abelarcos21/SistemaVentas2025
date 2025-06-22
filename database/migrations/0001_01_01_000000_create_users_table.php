@@ -18,7 +18,6 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('activo')->default(true);
-            $table->enum('rol', ['admin', 'cajero'])->default('cajero');
             $table->rememberToken();
             $table->timestamps();
         });

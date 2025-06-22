@@ -8,6 +8,10 @@
             <a href="{{ route('home') }}" class="nav-link">Inicio</a>
         </li>
 
+        <li><a class="nav-link" href="{{ route('users.index') }}">Manage Users</a></li>
+        <li><a class="nav-link" href="{{ route('roles.index') }}">Manage Role</a></li>
+        <li><a class="nav-link" href="{{ route('products.index') }}">Manage Product</a></li>
+
         <li class="nav-item">
             <button id="darkModeToggle" class="btn btn-sm btn-outline-primary ml-2">
                 <span id="darkModeIcon">🌙</span>

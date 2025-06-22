@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
             ClienteSeeder::class,
             EmpresaSeeder::class,
             CatalogosSatSeeder::class,
+            PermissionTableSeeder::class,
+            CreateAdminUserSeeder::class,
         ]);
     }
 }

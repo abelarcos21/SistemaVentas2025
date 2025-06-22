@@ -16,20 +16,20 @@ use Exception;
 class UsuarioController extends Controller
 {
     //index
-    public function index(){
+    public function index(Request $request): View {
 
-        $data = User::latest()->paginate(5);
+        $usuarios = User::latest()->paginate(5);
 
-        return view('users.index',compact('data'))->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('modulos.usuarios.index',compact('usuarios'))->with('i', ($request->input('page', 1) - 1) * 5);
         /* $usuarios = User::all();
         return view('modulos.usuarios.index', compact('usuarios')); */
     }
 
-    public function create(){
+    public function create(): View {
 
         $roles = Role::pluck('name','name')->all();
 
-        return view('users.create',compact('roles'));
+        return view('modulos.usuarios.create',compact('roles'));
        /*  return view('modulos.usuarios.create'); */
 
     }
