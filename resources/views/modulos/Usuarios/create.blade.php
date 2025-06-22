@@ -27,9 +27,9 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-outline card-info">
-                    <div class="card-header  bg-secondary">
-                        <h3 class="card-title">Agregar Nuevo Usuario</h3>
+                <div class="card">
+                    <div class="card-header  bg-gradient-primary">
+                        <h3 class="card-title"><i class="fas fa-plus"></i> Agregar Nuevo </h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
@@ -86,6 +86,20 @@
                                         </div>
                                     </div>
 
+                                    <div class="form-group row">
+                                        <label for="password" class="col-sm-2 col-form-label">Confirmar Contraseña</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-lock"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="password" name="confirm-password" placeholder="Confirmar Contraseña" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
 
                                     <div class="form-group row">
                                         <div class="custom-control custom-switch toggle-estado">
@@ -105,10 +119,11 @@
                                                         <i class="fas fa-user"></i> {{-- Ícono de Font Awesome --}}
                                                     </span>
                                                 </div>
-                                                <select name="roles[]" id="roles" class="form-control" multiple="multiple">
-                                                    <option>--Selecciona uno o más roles--</option>
+                                                <select name="roles[]" class="form-control" multiple="multiple">
                                                     @foreach ($roles as $value => $label)
-                                                        <option value="{{ $value }}">{{ $label }}</option>
+                                                        <option value="{{ $value }}">
+                                                            {{ $label }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -148,6 +163,8 @@
 @section('css')
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+    <!-- Select2 core -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
 
     
 
@@ -156,6 +173,18 @@
 
 @section('js')
     {{-- <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script> --}}
+
+    <script>
+        $(document).ready(function() {
+            $('#roles').select2({
+                theme: 'bootstrap4',
+                placeholder: 'Selecciona uno o más roles',
+                allowClear: true,
+                language: 'es',
+                width: '100%'
+            });
+        });
+    </script>
 
    
 
