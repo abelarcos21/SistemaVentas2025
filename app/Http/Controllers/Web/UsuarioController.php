@@ -11,7 +11,7 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use Exception;
 class UsuarioController extends Controller
 {
@@ -42,14 +42,15 @@ class UsuarioController extends Controller
             'roles' => 'required'
         ]);
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+        $validated = $request->all();
+        $validated['password'] = Hash::make($validated['password']);
+        $validated['activo'] = $request->has('activo'); // El switch solo envía el valor si está activado
 
-        $user = User::create($input);
+        $user = User::create($validated);
         $user->assignRole($request->input('roles'));
 
-        return redirect()->route('users.index')
-                        ->with('success','User created successfully');
+        return redirect()->route('usuario.index')
+                        ->with('success','Usuario guardado con exito!');
     }
     /* public function store(Request $request){
 

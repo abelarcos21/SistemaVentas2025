@@ -2,6 +2,7 @@
 
 @section('title', 'Dashboard')
 
+
 @section('content_header')
     <!-- Content Header (Page header) -->
     <section class="content-header">
@@ -22,151 +23,120 @@
 @stop
 
 @section('content')
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header  bg-gradient-primary">
-                        <h3 class="card-title"><i class="fas fa-plus"></i> Agregar Nuevo </h3>
-                    </div>
-                    <!-- /.card-header -->
-                    <div class="card-body">
-                        <!-- Horizontal Form -->
-                        <div class="card">
-
-                            <!-- form start -->
-                            <form class="form-horizontal" action="{{route('usuario.store')}}" method="POST">
-                                @csrf
-                                <div class="card-body ">
-
-
-
-                                    <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-user"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="text" name="name" id="name" placeholder="ingrese el nombre" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="email" class="col-sm-2 col-form-label">Correo</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-envelope"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="email" name="email" id="email" placeholder="ingrese el Correo" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group row">
-                                        <label for="password" class="col-sm-2 col-form-label">Contraseña</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-lock"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="password" name="password" placeholder="ingrese contraseña" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="password" class="col-sm-2 col-form-label">Confirmar Contraseña</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-lock"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="password" name="confirm-password" placeholder="Confirmar Contraseña" class="form-control">
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group row">
-                                        <div class="custom-control custom-switch toggle-estado">
-                                            <input type="hidden" name="activo" value="0">
-                                            <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
-                                            <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="rol" class="col-sm-2 col-form-label">Rol de Usuario</label>
-                                        <div class="col-sm-10">
-
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-user"></i> {{-- Ícono de Font Awesome --}}
-                                                    </span>
-                                                </div>
-                                                <select name="roles[]" class="form-control" multiple="multiple">
-                                                    @foreach ($roles as $value => $label)
-                                                        <option value="{{ $value }}">
-                                                            {{ $label }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                </div>
-                                <!-- /.card-body -->
-                                <div class="card-footer">
-                                    <button type="submit" class="btn btn-info">
-                                        <i class="fas fa-save"></i> Guardar
-                                    </button>
-                                    <a href="{{ route('usuario.index')}}" class="btn btn-secondary float-right">
-                                        <i class="fas fa-times"></i> Cancelar
-                                    </a>
-                                </div>
-                                <!-- /.card-footer -->
-                            </form>
-                        </div>
-                        <!-- /.card -->
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-               <!-- /.card -->
-            </div>
-            <!-- /.col -->
+   
+    <div class="card">
+        <div class="card-header bg-gradient-primary">
+            <h3 class="card-title"><i class="fas fa-plus"></i> Agregar Nuevo Usuario</h3>
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+
+        <div class="card-body">
+            <form action="{{ route('usuario.store') }}" method="POST">
+                @csrf
+
+                <!-- Campo nombre -->
+                <div class="form-group row">
+                    <label for="nombre" class="col-sm-2 col-form-label">Nombre</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-gradient-info">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                            <input type="text" name="name" id="name" placeholder="ingrese el nombre" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo email -->
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">Correo</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-gradient-info">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                            </div>
+                            <input type="email" name="email" id="email" placeholder="ingrese el Correo" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo contraseña -->
+               <div class="form-group row">
+                    <label for="password" class="col-sm-2 col-form-label">Contraseña</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-gradient-info">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            <input type="password" name="password" placeholder="ingrese contraseña" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo confirmar contraseña -->
+                <div class="form-group row">
+                    <label for="password" class="col-sm-2 col-form-label">Confirmar Contraseña</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-gradient-info">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                            </div>
+                            <input type="password" name="confirm-password" placeholder="Confirmar Contraseña" class="form-control">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campo activo checkbox -->
+                <div class="form-group row">
+                    <div class="custom-control custom-switch toggle-estado">
+                        <input type="hidden" name="activo" value="0">
+                        <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
+                        <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
+                    </div>
+                </div>
+
+                <!-- Campo de roles con Select2 -->
+                <div class="form-group row align-items-center">
+                    <label for="roles" class="col-sm-2 col-form-label">Rol de Usuario</label>
+                    <div class="col-sm-10">
+                        <div class="d-flex">
+                            <span class="input-group-text bg-gradient-info">
+                                <i class="fas fa-shield-alt"></i>
+                            </span>
+                            <select name="roles[]" id="roles" class="form-control select2 ml-2" multiple="multiple" style="width: 100%;">
+                                @foreach ($roles as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botónes -->
+                <div class="card-footer ">
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <a href="{{ route('usuario.index')}}" class="btn btn-secondary float-right">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
 
 @stop
 
 @section('css')
     {{-- Add here extra stylesheets --}}
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    <!-- Select2 core -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    
 
 
 @stop
@@ -177,11 +147,11 @@
     <script>
         $(document).ready(function() {
             $('#roles').select2({
-                theme: 'bootstrap4',
                 placeholder: 'Selecciona uno o más roles',
                 allowClear: true,
                 language: 'es',
-                width: '100%'
+                width: '100%',
+                
             });
         });
     </script>
