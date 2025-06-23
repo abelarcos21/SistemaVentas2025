@@ -23,7 +23,7 @@
 @stop
 
 @section('content')
-   
+
     <div class="card">
         <div class="card-header bg-gradient-primary">
             <h3 class="card-title"><i class="fas fa-plus"></i> Agregar Nuevo Usuario</h3>
@@ -64,7 +64,7 @@
                 </div>
 
                 <!-- Campo contraseña -->
-               <div class="form-group row">
+                <div class="form-group row">
                     <label for="password" class="col-sm-2 col-form-label">Contraseña</label>
                     <div class="col-sm-10">
                         <div class="input-group">
@@ -93,15 +93,6 @@
                     </div>
                 </div>
 
-                <!-- Campo activo checkbox -->
-                <div class="form-group row">
-                    <div class="custom-control custom-switch toggle-estado">
-                        <input type="hidden" name="activo" value="0">
-                        <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
-                        <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
-                    </div>
-                </div>
-
                 <!-- Campo de roles con Select2 -->
                 <div class="form-group row align-items-center">
                     <label for="roles" class="col-sm-2 col-form-label">Rol de Usuario</label>
@@ -116,6 +107,15 @@
                                 @endforeach
                             </select>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Campo activo checkbox -->
+                <div class="form-group row">
+                    <div class="custom-control custom-switch toggle-estado">
+                        <input type="hidden" name="activo" value="0">
+                        <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
+                        <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
                     </div>
                 </div>
 
@@ -151,12 +151,12 @@
                 allowClear: true,
                 language: 'es',
                 width: '100%',
-                
+
             });
         });
     </script>
 
-   
+
 
 @stop
 

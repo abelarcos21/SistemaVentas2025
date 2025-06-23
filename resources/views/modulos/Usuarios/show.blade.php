@@ -39,23 +39,28 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table id="example1" class="table table-bordered table-striped">
-                            <thead>
+                            <thead class="bg-gradient-info">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Email</th>
                                     <th>Nombre</th>
-                                    <th>Rol</th>
-                                    <th>Cambio Contraseña</th>
+                                    <th>Correo</th>
+                                    <th>Roles</th>
+                                    <th>Cambiar Contraseña</th>
                                     <th>Activo</th>
                                 </tr>
                             </thead>
                             <tbody>
 
                                 <tr>
-                                    <td>{{$user->id}}</td>
-                                    <td class="text-primary">{{$user->email}}</td>
+
                                     <td>{{$user->name}}</td>
-                                    <td>{{$user->rol}}</td>
+                                    <td class="text-primary">{{$user->email}}</td>
+                                    <td>
+                                        @if(!empty($user->getRoleNames()))
+                                            @foreach($user->getRoleNames() as $v)
+                                                <label class="badge badge-success">{{ $v }}</label>
+                                            @endforeach
+                                        @endif
+                                    </td>
                                     <td>
                                         <a  class="btn btn-primary bg-gradient-primary btnCambioPassword" data-id="{{ $user->id }}" >
                                             <i class="fas fa-user"></i> <i class="fas fa-lock"></i>

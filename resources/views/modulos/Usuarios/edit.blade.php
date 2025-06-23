@@ -69,7 +69,56 @@
                                         </div>
                                     </div>
 
+                                    <!-- Campo contraseña -->
+                                    <div class="form-group row">
+                                        <label for="password" class="col-sm-2 col-form-label">Contraseña</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-lock"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="password" name="password" placeholder="ingrese contraseña" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <!-- Campo confirmar contraseña -->
+                                    <div class="form-group row">
+                                        <label for="password" class="col-sm-2 col-form-label">Confirmar Contraseña</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                                    <span class="input-group-text bg-gradient-info">
+                                                        <i class="fas fa-lock"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="password" name="confirm-password" placeholder="Confirmar Contraseña" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campo de roles con Select2 -->
+                                    <div class="form-group row align-items-center">
+                                        <label for="roles" class="col-sm-2 col-form-label">Rol de Usuario</label>
+                                        <div class="col-sm-10">
+                                            <div class="d-flex">
+                                                <span class="input-group-text bg-gradient-info">
+                                                    <i class="fas fa-shield-alt"></i>
+                                                </span>
+                                                <select name="roles[]" id="roles" class="form-control select2 ml-2" multiple="multiple" style="width: 100%;">
+                                                    @foreach ($roles as $value => $label)
+                                                        <option value="{{ $value }}" {{ isset($userRole[$value]) ? 'selected' : ''}}>
+                                                            {{ $label }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campo activo checkbox -->
                                     <div class="form-group row">
 
                                         <div class="custom-control custom-switch toggle-estado">
@@ -80,35 +129,10 @@
 
                                     </div>
 
-                                    <div class="form-group row">
-                                        <label for="rol" class="col-sm-2 col-form-label">Rol de Usuario</label>
-                                        <div class="col-sm-10">
-
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-user"></i> {{-- Ícono de Font Awesome --}}
-                                                    </span>
-                                                </div>
-                                                <select name="rol" id="rol"  class="form-control" aria-label="Default select example">
-                                                    <option selected>Selecciona el Rol</option>
-                                                    @if($user->rol == 'admin')
-                                                        <option value="admin" selected>Admin</option>
-                                                        <option value="cajero">Cajero</option>
-                                                    @else
-                                                        <option value="admin">Admin</option>
-                                                        <option value="cajero" selected>Cajero</option>
-                                                    @endif
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-warning">
+                                    <button type="submit" class="btn btn-info bg-gradient-info">
                                         <i class="fas fa-save"></i> Actualizar
                                     </button>
                                     <a href="{{ route('usuario.index')}}" class="btn btn-secondary float-right">

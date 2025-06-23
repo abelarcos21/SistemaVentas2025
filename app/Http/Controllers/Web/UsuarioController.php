@@ -39,12 +39,12 @@ class UsuarioController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
+            'activo' => 'required|boolean', //gracias al input hidden + checkbox, este campo siempre se enviará
             'roles' => 'required'
         ]);
 
         $validated = $request->all();
         $validated['password'] = Hash::make($validated['password']);
-        $validated['activo'] = $request->has('activo'); // El switch solo envía el valor si está activado
 
         $user = User::create($validated);
         $user->assignRole($request->input('roles'));
@@ -101,6 +101,7 @@ class UsuarioController extends Controller
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'password' => 'required|string|min:6',
+
         ]);
 
         $usuario = User::findOrFail($request->user_id);
@@ -112,7 +113,7 @@ class UsuarioController extends Controller
      public function show($id): View {
         $user = User::find($id);
 
-        return view('users.show',compact('user'));
+        return view('modulos.usuarios.show',compact('user'));
     }
 
    /*  public function show(User $user){
@@ -124,7 +125,7 @@ class UsuarioController extends Controller
         $roles = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
 
-        return view('users.edit',compact('user','roles','userRole'));
+        return view('modulos.usuarios.edit',compact('user','roles','userRole'));
     }
 
     /* public function edit(User $user){
@@ -138,6 +139,7 @@ class UsuarioController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
+            'activo' => 'required|boolean', //gracias al input hidden + checkbox, este campo siempre se enviará
             'roles' => 'required'
         ]);
 
@@ -154,8 +156,8 @@ class UsuarioController extends Controller
 
         $user->assignRole($request->input('roles'));
 
-        return redirect()->route('users.index')
-                        ->with('success','User updated successfully');
+        return redirect()->route('usuario.index')
+                        ->with('success','Usuario actualizado correctamente');
     }
 
    /*  public function update(Request $request, User $user){
