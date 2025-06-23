@@ -354,33 +354,33 @@ return [
             'icon' => 'fas fa-store',
         ],
 
-        [
-            'text' => 'Categorias',
-            'url' => 'categorias/',
-            'icon' => 'fas fa-tags ',
-        ],
+
+
+
 
         [
-            'text' => 'Marcas',
-            'url' => 'marcas/',
-            'icon' => 'fas fa-tags ',
-        ],
-
-        [
-            'text' => 'Productos',
+            'text' => 'Inventario',
             'icon' => 'fas fa-boxes',
             'submenu' => [
                 [
                     'text' => 'Administrar Productos',
                     'url' => 'productos/',
-                    'icon' => 'fas fa-cash-register',
+                    'icon' => 'fas fa-boxes',
                 ],
 
                 [
-                    'text' => 'Reportes de Productos',
-                    'url' => 'reporte-productos/',
-                    'icon' => 'fas fa-chart-line',
+                    'text' => 'Marcas',
+                    'url' => 'marcas/',
+                    'icon' => 'fas fa-tags ',
                 ],
+
+                [
+                    'text' => 'Categorias',
+                    'url' => 'categorias/',
+                    'icon' => 'fas fa-tags ',
+                ],
+
+
             ],
         ],
 
@@ -413,6 +413,19 @@ return [
                 ],
             ],
         ],
+
+        [
+            'text' => 'Reportes',
+            'icon' => 'fas fa-chart-line',
+            'submenu' => [
+                [
+                    'text' => 'Reportes de Productos',
+                    'url' => 'reporte-productos/',
+                    'icon' => 'fas fa-chart-bar',
+                ],
+            ],
+        ],
+
         [
             'text' => 'Facturación',
             'icon' => 'fas fa-file-alt',
