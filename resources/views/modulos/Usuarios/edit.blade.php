@@ -157,7 +157,6 @@
     <!-- /.content -->
 
 
-
 @stop
 
 @section('css')
@@ -170,8 +169,18 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+  {{--   <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script> --}}
+    <script>
+        $(document).ready(function() {
+            $('#roles').select2({
+                placeholder: 'Selecciona uno o más roles',
+                allowClear: true,
+                language: 'es',
+                width: '100%',
 
+            });
+        });
+    </script>
 
 @stop
 

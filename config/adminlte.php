@@ -397,9 +397,21 @@ return [
         ],
 
         [
-            'text' => 'Usuarios',
-            'url' => 'usuarios/',
+            'text' => 'Administrar Usuarios',
             'icon' => 'fas fa-user-shield ',
+            'submenu' => [
+                [
+                    'text' => 'Usuarios',
+                    'url' => 'usuarios/',
+                    'icon' => 'fas fa-users',
+                ],
+
+                [
+                    'text' => 'Roles',
+                    'url' => 'roles/',
+                    'icon' => 'fas fa-user-shield',
+                ],
+            ],
         ],
         [
             'text' => 'Facturación',

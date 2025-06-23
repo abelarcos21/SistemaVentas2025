@@ -23,13 +23,13 @@ class RoleController extends Controller
 
     public function index(Request $request): View {
         $roles = Role::orderBy('id','DESC')->paginate(5);
-        return view('roles.index',compact('roles'))
+        return view('modulos.rolesusuarios.index',compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
     }
 
     public function create(): View {
         $permission = Permission::get();
-        return view('roles.create',compact('permission'));
+        return view('modulos.rolesusuarios.create',compact('permission'));
     }
 
     public function store(Request $request): RedirectResponse {
@@ -47,7 +47,7 @@ class RoleController extends Controller
         $role->syncPermissions($permissionsID);
 
         return redirect()->route('roles.index')
-                        ->with('success','Role created successfully');
+                        ->with('success','Rol Creado Correctamente');
     }
 
     public function show($id): View {
@@ -56,7 +56,7 @@ class RoleController extends Controller
             ->where("role_has_permissions.role_id",$id)
             ->get();
 
-        return view('roles.show',compact('role','rolePermissions'));
+        return view('modulos.rolesusuarios.show',compact('role','rolePermissions'));
     }
 
     public function edit($id): View {
@@ -66,7 +66,7 @@ class RoleController extends Controller
             ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
             ->all();
 
-        return view('roles.edit',compact('role','permission','rolePermissions'));
+        return view('modulos.rolesusuarios.edit',compact('role','permission','rolePermissions'));
     }
 
     public function update(Request $request, $id): RedirectResponse {
@@ -87,12 +87,12 @@ class RoleController extends Controller
         $role->syncPermissions($permissionsID);
 
         return redirect()->route('roles.index')
-                        ->with('success','Role updated successfully');
+                        ->with('success','Rol Actualizado Correctamente');
     }
 
     public function destroy($id): RedirectResponse {
         DB::table("roles")->where('id',$id)->delete();
         return redirect()->route('roles.index')
-                        ->with('success','Role deleted successfully');
+                        ->with('success','Rol Eliminado Correctamente');
     }
 }
