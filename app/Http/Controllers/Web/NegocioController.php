@@ -51,15 +51,15 @@ class NegocioController extends Controller
             }
 
             // Actualiza la moneda en productos si cambió
-            if ($empresa->moneda !== $data['moneda']) {
-                \App\Models\Producto::query()->update(['moneda' => $data['moneda']]);
+            if ($empresa->moneda !== $validated['moneda']) {
+                \App\Models\Producto::query()->update(['moneda' => $validated['moneda']]);
             }
 
-            Empresa::create($validated);
+            $empresa->update($validated); // ✅ actualiza el registro ya existente
 
             DB::commit();
 
-            return redirect()->route('negocio.edit')->with('success', 'Informacion Negocio Actualizada Correctamente.');
+            return redirect()->route('negocio.edit')->with('success', 'Informacion Actualizada Correctamente.');
         } catch (Exception $e) {
             DB::rollBack();
 

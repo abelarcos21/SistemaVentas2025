@@ -135,7 +135,12 @@
                                                     @endphp
                                                     {{ $simbolo }}{{ number_format($producto->precio_venta, 2) }}
                                                 </td>
-                                                <td class="text-blue">MXN${{ $producto->precio_compra }}</td>
+                                                <td class="text-blue">
+                                                    @php
+                                                        $simbolo = $producto->moneda === 'USD' ? 'USD $' : 'MXN $';
+                                                    @endphp
+                                                    {{ $simbolo }}{{ number_format($producto->precio_compra, 2) }}
+                                                </td>
                                                 <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="custom-control custom-switch toggle-estado">
