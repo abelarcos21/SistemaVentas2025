@@ -20,12 +20,14 @@ class EmpresaFactory extends Factory
         return [
             //
             'razon_social' => $this->faker->company,
-            'rfc' => strtoupper($this->faker->unique()->bothify('???#########')),
+            'rfc' => strtoupper($this->faker->unique()->bothify('???######???')),
             'telefono' => $this->faker->phoneNumber,
-            'correo' => $this->faker->unique()->companyEmail,
-            'moneda' => $this->faker->randomElement(['Peso Mexicano (MXN)', 'Dólar Estadounidense (USD)', 'Euro (EUR)']),
+            'correo' => $this->faker->unique()->safeEmail,
+            'moneda' => $this->faker->randomElement(['MXN', 'USD', 'EUR']),
             'imagen' => null,
             'direccion' => $this->faker->address,
+            'regimen_fiscal' => '601',
+            'codigo_postal' => $this->faker->postcode,
         ];
     }
 }

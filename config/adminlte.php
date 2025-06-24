@@ -465,7 +465,7 @@ return [
         ],
         [
             'text' => 'Configuracion Negocio',
-            'url' => 'negocio/create',
+            'url' => 'negocio/configuracion',
             'icon' => 'fas fa-building ',
         ],
 

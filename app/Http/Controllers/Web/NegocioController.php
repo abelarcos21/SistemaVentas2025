@@ -12,25 +12,33 @@ use Exception;
 class NegocioController extends Controller
 {
     //
-    public function create(){
-        return view('modulos.negocio.informacion');
+    public function edit(Empresa $empresa){
+
+        $empresa = \App\Models\Empresa::first(); // asumes solo una
+
+        return view('modulos.negocio.informacion',compact('empresa'));
     }
 
     public function perfil(){
         return view('modulos.configuracion.perfil');
     }
 
-    public function store(Request $request){
+    public function update(Request $request){
+
+        $empresa = \App\Models\Empresa::first();
 
         // Validación clara y separada
         $validated = $request->validate([
-            'razon_social' => 'required|string|max:255',
-            'rfc' => 'required|string|max:13|unique:empresas',
-            'telefono' => 'required|string',
-            'correo' => 'required|email|unique:empresas',
-            'moneda' => 'required|string',
+
+           'razon_social' => 'required|string|max:255',
+           'rfc' => 'required|string|max:13|unique:empresas,rfc,' . $empresa->id,
+            'telefono' => 'nullable|string|max:20',
+            'correo' => 'required|email|unique:empresas,correo,' . $empresa->id,
+            'moneda' => 'required|string|max:3',
             'imagen' => 'nullable|image|max:2048',
-            'direccion' => 'nullable|string|max:500',
+            'direccion' => 'nullable|string',
+            'regimen_fiscal' => 'nullable|string|max:5',
+            'codigo_postal' => 'nullable|string|max:10',
 
         ]);
 
@@ -38,17 +46,26 @@ class NegocioController extends Controller
 
         try {
 
+            if($request->hasFile('imagen')) {
+                $validated['imagen'] = $request->file('imagen')->store('empresa', 'public');
+            }
+
+            // Actualiza la moneda en productos si cambió
+            if ($empresa->moneda !== $data['moneda']) {
+                \App\Models\Producto::query()->update(['moneda' => $data['moneda']]);
+            }
+
             Empresa::create($validated);
 
             DB::commit();
 
-            return redirect()->route('negocio.create')->with('success', 'Informacion Negocio Creada Correctamente.');
+            return redirect()->route('negocio.edit')->with('success', 'Informacion Negocio Actualizada Correctamente.');
         } catch (Exception $e) {
             DB::rollBack();
 
             Log::error('Error al guardar Informacion Negocio: ' . $e->getMessage());
 
-            return redirect()->route('negocio.create')->with('error', 'Error al guardar Informacion Negocio.');
+            return redirect()->route('negocio.edit')->with('error', 'Error al guardar Informacion Negocio.');
         }
     }
 }

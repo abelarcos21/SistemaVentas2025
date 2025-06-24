@@ -25,6 +25,7 @@ return new class extends Migration
             $table->integer('cantidad')->default(0);
             $table->float('precio_compra')->default(0);
             $table->float('precio_venta')->default(0);
+            $table->string('moneda', 3)->default('MXN');
             $table->boolean('activo')->default(true);
 
             // Campos relacionados al SAT

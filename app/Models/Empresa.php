@@ -12,6 +12,7 @@ class Empresa extends Model
 
 
     protected $fillable = [
+
         'razon_social',
         'rfc',
         'telefono',
@@ -19,5 +20,7 @@ class Empresa extends Model
         'moneda',
         'imagen',
         'direccion',
+        'regimen_fiscal',
+        'codigo_postal',
     ];
 }

@@ -79,8 +79,10 @@ Route::prefix('ventas')->group(function(){
 
 //////////////////RUTA CREAR INFORMACION NEGOCIO
 Route::prefix('negocio')->group(function(){
-    Route::get('create', [NegocioController::class, 'create'])->name('negocio.create');
-    Route::post('store', [NegocioController::class, 'store'])->name('negocio.store');
+    Route::get('configuracion', [NegocioController::class, 'edit'])->name('negocio.edit');
+    Route::put('configuracion', [NegocioController::class, 'update'])->name('negocio.update');
+   /*  Route::get('edit', [NegocioController::class, 'edit'])->name('negocio.create'); */
+   /*  Route::post('store', [NegocioController::class, 'store'])->name('negocio.store'); */
     Route::get('perfil', [NegocioController::class, 'perfil'])->name('configuracion.perfil');
 
 });

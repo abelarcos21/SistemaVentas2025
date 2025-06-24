@@ -40,8 +40,9 @@
 
             <!-- Formulario -->
             <div class="col-md-9">
-                <form method="POST" action="{{ route('negocio.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('negocio.update') }}" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
 
                     <div class="form-group border p-3">
                         <label for="imagen">Logo (opcional)</label>
@@ -52,52 +53,61 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="razon_social">Razón Social*</label>
-                            <input type="text" class="form-control" id="razon_social" name="razon_social" value="Perfisoft">
+                            <input type="text" class="form-control" id="razon_social" name="razon_social" value="{{ old('razon_social', $empresa->razon_social ?? '') }}" required>
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="ruc">RFC*</label>
-                            <input type="text" class="form-control" id="ruc" name="ruc" value="05019045678655">
+                            <label for="rfc">RFC*</label>
+                            <input type="text" class="form-control" id="rfc" name="rfc" maxlength="13" value="{{ old('rfc', $empresa->rfc ?? '') }}" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <label for="celular">Telefono</label>
-                            <input type="text" class="form-control" id="celular" name="celular" value="5559598787">
+                            <label for="telefono">Telefono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" value="{{ old('telefono', $empresa->telefono ?? '') }}">
                         </div>
 
                         <div class="form-group col-md-6">
                             <label for="correo">Correo*</label>
-                            <input type="email" class="form-control" id="correo" name="correo" value="notificaciones@perfisoft.com">
+                            <input type="email" class="form-control" id="correo" name="correo" value="{{ old('correo', $empresa->correo ?? '') }}" required>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="moneda">Moneda*</label>
-                            <select class="form-control" id="moneda" name="moneda">
-                                <option>Dólar Estadounidense (USD)</option>
-                                <option>Euro (EUR)</option>
-                                <option>Peso Mexicano (MXN)</option>
+                            <select class="form-control" id="moneda" name="moneda" required>
+                                {{-- <option value="USD">USD - Dólar Estadounidense</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="MXN">MXN - Peso Mexicano</option> --}}
+                                <option value="MXN" @selected(old('moneda', $empresa->moneda) === 'MXN')>MXN</option>
+                                <option value="USD" @selected(old('moneda', $empresa->moneda) === 'USD')>USD</option>
+                                <option value="EUR" @selected(old('moneda', $empresa->moneda) === 'EUR')>EUR</option>
+
                             </select>
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label for="fecha_registro">Fecha de Registro</label>
-                            <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" value="2025-01-13">
+                            <label for="regimen_fiscal">Régimen Fiscal*</label>
+                            <input type="text" class="form-control" id="regimen_fiscal" name="regimen_fiscal" value="{{ old('regimen_fiscal', $empresa->regimen_fiscal ?? '') }}" maxlength="5">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="codigo_postal">Código Postal*</label>
+                            <input type="text" class="form-control" id="codigo_postal" name="ruc" value="{{ old('codigo_postal', $empresa->codigo_postal ?? '') }}" maxlength="10">
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label for="direccion">Dirección</label>
-                        <textarea class="form-control" id="direccion" name="direccion" rows="2">Dirección de la empresa</textarea>
+                        <textarea class="form-control" id="direccion"  name="direccion" rows="3">{{ old('direccion', $empresa->direccion ?? '') }}</textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-sm ">
+                    <button type="submit" class="btn btn-primary bg-gradient-primary btn-md mb-3 ">
                          <i class="fas fa-save"></i> Guardar
                     </button>
-                    <a href="{{ route('home')}}" class="btn btn-secondary float-right btn-sm">
+                    <a href="{{ route('home')}}" class="btn btn-secondary float-right btn-md mb-3">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </form>
@@ -116,6 +126,27 @@
 
 @section('js')
     <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+
+    {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
+    <script>
+        @if(session('success'))
+            Swal.fire({
+                title: "Exito!",
+                text: "{{ session('success')}}",
+                icon: "success",
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                title: "Error!",
+                text: "{{ session('error')}}",
+                icon: "error",
+                confirmButtonText: 'Aceptar'
+            });
+        @endif
+    </script>
 
 
 

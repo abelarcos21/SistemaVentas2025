@@ -13,13 +13,32 @@ return new class extends Migration
     {
         Schema::create('empresas', function (Blueprint $table) {
             $table->id();
+
+            // Nombre o razón social de la empresa (requerido)
             $table->string('razon_social');
-            $table->string('rfc')->unique();
-            $table->string('telefono');
+
+            // RFC válido, único
+            $table->string('rfc', 13)->unique();
+
+            // Teléfono de contacto
+            $table->string('telefono', 20)->nullable(); // puede ser opcional y con longitud acotada
+
+            // Correo electrónico
             $table->string('correo')->unique();
-            $table->string('moneda');
-            $table->string('imagen')->nullable(); // ruta de imagen
-            $table->text('direccion');
+
+            // Moneda predeterminada, puede ser mejor con un código ISO como "MXN", "USD", etc.
+            $table->string('moneda', 3)->default('MXN'); // Estándar ISO 4217
+
+            // Logo o imagen de la empresa
+            $table->string('imagen')->nullable();
+
+            // Dirección completa
+            $table->text('direccion')->nullable(); // puede no ser obligatoria al inicio
+
+            // Nuevos campos útiles (opcional)
+            $table->string('regimen_fiscal', 5)->nullable(); // Clave SAT si usarás CFDI 4.0
+            $table->string('codigo_postal', 10)->nullable(); // Útil si usas catálogos SAT
+
             $table->timestamps();
         });
     }

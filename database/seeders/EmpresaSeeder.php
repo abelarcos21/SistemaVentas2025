@@ -13,7 +13,13 @@ class EmpresaSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        Empresa::factory()->count(1)->create();
+
+        /* Empresa::factory()->count(1)->create(); */
+
+        Empresa::factory()->create([
+            'razon_social' => 'Mi Empresa S.A. de C.V.',
+            'rfc' => 'ABC123456T12',
+            'moneda' => 'MXN',
+        ]);
     }
 }
