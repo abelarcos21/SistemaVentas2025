@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             ImagenSeeder::class,
             ClienteSeeder::class,
+            MonedaSeeder::class,
             EmpresaSeeder::class,
             CatalogosSatSeeder::class,
             PermissionTableSeeder::class,

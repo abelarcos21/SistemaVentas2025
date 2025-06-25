@@ -77,14 +77,14 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="moneda">Moneda*</label>
-                            <select class="form-control" id="moneda" name="moneda" required>
-                                {{-- <option value="USD">USD - Dólar Estadounidense</option>
-                                <option value="EUR">EUR - Euro</option>
-                                <option value="MXN">MXN - Peso Mexicano</option> --}}
-                                <option value="MXN" @selected(old('moneda', $empresa->moneda) === 'MXN')>MXN</option>
-                                <option value="USD" @selected(old('moneda', $empresa->moneda) === 'USD')>USD</option>
-                                <option value="EUR" @selected(old('moneda', $empresa->moneda) === 'EUR')>EUR</option>
-
+                            <select id="moneda" name="moneda" class="form-control select2" required>
+                                <option value="">Seleccione una moneda</option>
+                                @foreach($monedas as $moneda)
+                                    <option value="{{ $moneda->codigo }}"
+                                        {{ old('moneda', $empresa->moneda ?? '') == $moneda->codigo ? 'selected' : '' }}>
+                                        {{ $moneda->nombre }} ({{ $moneda->codigo }})
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -125,7 +125,19 @@
 @stop
 
 @section('js')
-    <script> console.log("Hi, I'm using the Laravel-AdminLTE package!"); </script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#moneda').select2({
+                language: 'es',
+                theme: 'bootstrap4',
+                placeholder: "Selecciona o Busca Moneda",
+                allowClear: true,
+                minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
+              
+            });
+        });
+    </script>
 
     {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>

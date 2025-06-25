@@ -31,7 +31,22 @@ class ProductoController extends Controller
     public function index(){
 
         $productos = Producto::select(
-            'productos.*',
+            'productos.id',
+            'productos.nombre',
+            'productos.descripcion',
+            'productos.precio_compra',
+            'productos.precio_venta',
+            'productos.cantidad',
+            'productos.moneda',
+            'productos.codigo',
+            'productos.barcode_path',
+            'productos.categoria_id',
+            'productos.proveedor_id',
+            'productos.marca_id',
+            'productos.created_at',
+            'productos.activo',
+            // otros campos que necesites de productos
+            
             'categorias.nombre as nombre_categoria',
             'proveedores.nombre as nombre_proveedor',
             'marcas.nombre as nombre_marca',
@@ -42,6 +57,7 @@ class ProductoController extends Controller
         ->join('proveedores', 'productos.proveedor_id', '=' , 'proveedores.id')
         ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
+        ->with('monedas') // 👈 importante: carga el modelo relacionado correctamente
         ->get();
 
         return view('modulos.productos.index', compact('productos'));

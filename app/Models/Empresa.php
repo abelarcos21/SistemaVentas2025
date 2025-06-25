@@ -23,4 +23,8 @@ class Empresa extends Model
         'regimen_fiscal',
         'codigo_postal',
     ];
+
+    public function moneda(){
+        return $this->belongsTo(Moneda::class, 'moneda', 'codigo');
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Empresa;
+use App\Models\Moneda;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -15,8 +16,9 @@ class NegocioController extends Controller
     public function edit(Empresa $empresa){
 
         $empresa = \App\Models\Empresa::first(); // asumes solo una
+        $monedas = Moneda::all(); // o puedes ordenar alfabéticamente
 
-        return view('modulos.negocio.informacion',compact('empresa'));
+        return view('modulos.negocio.informacion',compact('empresa', 'monedas'));
     }
 
     public function perfil(){
@@ -34,7 +36,7 @@ class NegocioController extends Controller
            'rfc' => 'required|string|max:13|unique:empresas,rfc,' . $empresa->id,
             'telefono' => 'nullable|string|max:20',
             'correo' => 'required|email|unique:empresas,correo,' . $empresa->id,
-            'moneda' => 'required|string|max:3',
+            'moneda' => 'required|exists:monedas,codigo',
             'imagen' => 'nullable|image|max:2048',
             'direccion' => 'nullable|string',
             'regimen_fiscal' => 'nullable|string|max:5',

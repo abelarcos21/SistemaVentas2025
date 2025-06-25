@@ -47,6 +47,10 @@ class Producto extends Model
         return $this->belongsTo(Marca::class);
     }
 
+    public function monedas():  BelongsTo{
+        return $this->belongsTo(\App\Models\Moneda::class, 'moneda', 'codigo');
+    }
+
    /*  public function categoria()
     {
         return $this->belongsTo(Categoria::class);
