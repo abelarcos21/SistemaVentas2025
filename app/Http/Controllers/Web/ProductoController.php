@@ -46,7 +46,7 @@ class ProductoController extends Controller
             'productos.created_at',
             'productos.activo',
             // otros campos que necesites de productos
-            
+
             'categorias.nombre as nombre_categoria',
             'proveedores.nombre as nombre_proveedor',
             'marcas.nombre as nombre_marca',

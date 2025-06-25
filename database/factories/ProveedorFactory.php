@@ -25,7 +25,7 @@ class ProveedorFactory extends Factory
             'email' => $this->faker->unique()->companyEmail(),
             'codigo_postal' => $this->faker->postcode(),
             'sitio_web' => $this->faker->url(),
-            'notas' => $this->faker->sentence(10),
+            'notas' => $this->faker->sentence(5),
         ];
     }
 }

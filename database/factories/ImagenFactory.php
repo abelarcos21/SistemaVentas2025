@@ -21,7 +21,8 @@ class ImagenFactory extends Factory
             //
             'producto_id' => Producto::factory(), // o asigna uno fijo si ya existen
             'nombre' => $this->faker->word() . '.jpg',
-            'ruta' => 'imagenes/' . $this->faker->uuid() . '.jpg',
+            //'ruta' => 'imagenes/' . $this->faker->uuid() . '.jpg',
+            'ruta' => 'https://picsum.photos/200/300?random=' . $this->faker->unique()->numberBetween(1, 100),
 
         ];
     }
