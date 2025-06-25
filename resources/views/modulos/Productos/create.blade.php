@@ -172,9 +172,9 @@
 
                                         <!-- Imagen -->
                                         <div class="col-md-2 text-center">
-                                            <div class="border p-3">
+                                            <div class="img-thumbnail rounded shadow p-3">
                                                 <div class="mb-2">IMAGEN</div>
-                                                <img id="img" style="max-width:150px;"><br>
+                                                <img class="img-thumbnail rounded shadow" id="img" style="max-width:150px;"><br>
                                                 <small>Te recomendamos usar una imagen de al menos 272 × 315 píxeles y un tamaño máximo de 250 KB.</small>
                                             </div>
                                         </div>

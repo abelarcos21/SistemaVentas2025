@@ -176,20 +176,28 @@
 
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Imagen</label>
-                                        @if(isset($producto) && $producto->imagen)
-                                            <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="100">
-                                        @endif
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-4">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="file" id="imagen" name="imagen" class="form-control">
-
+                                                <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
                                             </div>
                                         </div>
+
+                                        <!-- Imagen -->
+                                        <div class="col-md-2 text-center">
+                                            <div class="img-thumbnail rounded shadow p-3">
+                                                <div class="mb-2">IMAGEN</div>
+                                                @if(isset($producto) && $producto->imagen)
+                                                    <img class="img-thumbnail rounded shadow" id="img" style="max-width:150px;" src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="100"><br>
+                                                @endif
+                                                <small>Te recomendamos usar una imagen de al menos 272 × 315 píxeles y un tamaño máximo de 250 KB.</small>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                 </div>
