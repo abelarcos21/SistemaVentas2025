@@ -369,13 +369,13 @@ return [
                 ],
 
                 [
-                    'text' => 'Marcas',
+                    'text' => 'Lista Marcas',
                     'url' => 'marcas/',
                     'icon' => 'fas fa-tags ',
                 ],
 
                 [
-                    'text' => 'Categorias',
+                    'text' => 'Lista Categorias',
                     'url' => 'categorias/',
                     'icon' => 'fas fa-tags ',
                 ],
@@ -401,13 +401,13 @@ return [
             'icon' => 'fas fa-user-shield ',
             'submenu' => [
                 [
-                    'text' => 'Usuarios',
+                    'text' => 'Lista Usuarios',
                     'url' => 'usuarios/',
                     'icon' => 'fas fa-users',
                 ],
 
                 [
-                    'text' => 'Roles',
+                    'text' => 'Lista Roles',
                     'url' => 'roles/',
                     'icon' => 'fas fa-user-shield',
                 ],

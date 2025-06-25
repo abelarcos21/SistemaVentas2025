@@ -54,8 +54,8 @@
                                             <th>Descripción</th>
                                             <th>Imagen</th>
                                             <th>Stock</th>
-                                            <th>Venta</th>
-                                            <th>Compra</th>
+                                            <th>Precio Venta</th>
+                                            <th>Precio Compra</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,12 +67,46 @@
                                                 <td>{{ $producto->codigo }}</td>
                                                 <td>{{ $producto->nombre }}</td>
                                                 <td>{{ $producto->descripcion }}</td>
-                                                <td>
-                                                    @if($producto->imagen)
+                                                <td class="text-center">
+
+                                                    @php
+                                                        $ruta = $producto->imagen && $producto->imagen->ruta
+                                                        ? asset('storage/' . $producto->imagen->ruta)
+                                                        : asset('images/placeholder-caja.png');
+                                                    @endphp
+
+                                                    <!-- Imagen miniatura con enlace al modal -->
+                                                    <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
+                                                        <img src="{{ $ruta }}"
+                                                            width="50" height="50"
+                                                            class="img-thumbnail rounded shadow"
+                                                            style="object-fit: cover;">
+                                                    </a>
+
+                                                    <!-- Modal Bootstrap 4 -->
+                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
+                                                        tabindex="-1"
+                                                        role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                            <div class="modal-content bg-white">
+                                                                <div class="modal-header bg-gradient-info">
+                                                                    <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                                        <span aria-hidden="true">&times;</span>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="modal-body text-center">
+                                                                    <img src="{{ $ruta }}" class="img-fluid rounded shadow">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{-- @if($producto->imagen)
                                                         <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
                                                     @else
                                                         <span>Sin imagen</span>
-                                                    @endif
+                                                    @endif --}}
                                                 </td>
 
                                                 @if($producto->cantidad > 5)
@@ -80,7 +114,7 @@
                                                 @else
                                                     <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
                                                 @endif
-                                                
+
                                                 <td class="text-primary">MXN ${{ $producto->precio_venta }}</td>
                                                 <td class="text-primary">MXN ${{ $producto->precio_compra }}</td>
                                             </tr>

@@ -126,7 +126,7 @@
 
                                 <div class="card-footer">
                                     <button type="submit" class="btn btn-info">
-                                        <i class="fas fa-save"></i> Guardar
+                                        <i class="fas fa-save"></i> Actualizar
                                     </button>
                                     <a href="{{ route('cliente.index')}}" class="btn btn-secondary float-right">
                                         <i class="fas fa-times"></i> Cancelar

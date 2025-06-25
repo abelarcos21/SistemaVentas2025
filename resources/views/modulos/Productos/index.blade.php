@@ -93,7 +93,7 @@
                                                         role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                                             <div class="modal-content bg-white">
-                                                                <div class="modal-header">
+                                                                <div class="modal-header bg-gradient-info">
                                                                     <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                                                                         <span aria-hidden="true">&times;</span>
@@ -133,7 +133,7 @@
                                                    {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_venta, 2) }}
                                                 </td>
                                                 <td class="text-blue">
-                                                   
+
                                                     {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_compra, 2) }}
                                                 </td>
                                                 <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>

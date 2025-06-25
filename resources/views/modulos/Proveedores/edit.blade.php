@@ -124,7 +124,7 @@
                                 </div>
                                 <!-- /.card-body -->
                                 <div class="card-footer">
-                                    <button type="submit" class="btn btn-warning">
+                                    <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Actualizar
                                     </button>
                                     <a href="{{ route('proveedor.index')}}" type="button" class="btn btn-secondary float-right">
