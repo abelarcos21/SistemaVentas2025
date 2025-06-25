@@ -40,7 +40,7 @@
 
             <!-- Formulario -->
             <div class="col-md-9">
-                <form method="POST" action="{{ route('negocio.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="#" enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-group border p-3">
@@ -102,10 +102,10 @@
                         <textarea class="form-control" id="direccion" name="direccion" rows="2">Dirección de la empresa</textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-sm ">
+                    <button type="submit" class="btn btn-primary btn-md">
                          <i class="fas fa-save"></i> Guardar
                     </button>
-                    <a href="{{ route('home')}}" class="btn btn-secondary float-right btn-sm">
+                    <a href="{{ route('home')}}" class="btn btn-secondary float-right btn-md">
                         <i class="fas fa-times"></i> Cancelar
                     </a>
                 </form>
