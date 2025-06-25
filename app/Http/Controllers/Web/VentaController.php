@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\VentaRealizada;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Pago;
 use App\Models\Venta;
 use App\Models\DetalleVenta;
@@ -119,6 +121,18 @@ class VentaController extends Controller
                     'metodo_pago' => $metodo,
                     'monto' => $request->monto[$i],
                 ]);
+            }
+
+            // Enviar comprobante de venta por correo
+           /*  if ($request->has('enviar_correo')) {
+                $cliente = Cliente::find($validated['cliente_id']);
+                Mail::to($cliente->correo)->send(new VentaRealizada($venta));
+            } */
+
+            // Crear detalles si es necesario aquí
+            if ($request->has('enviar_correo')  && $venta->cliente->email) {//Agrega validación para que no falle si el cliente no tiene email
+                $venta->load(['cliente', 'detalles.producto']); // Asegúrate de cargar relaciones
+                Mail::to($venta->cliente->correo)->send(new VentaRealizada($venta));
             }
 
             Session::forget('items_carrito');

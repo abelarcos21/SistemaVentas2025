@@ -223,7 +223,7 @@
                                 <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
                                     <option value="" disabled selected>Selecciona un cliente</option>
                                     @foreach($clientes as $cliente)
-                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->correo }}</option>
                                     @endforeach
                                 </select>
                                 @error('cliente_id')
@@ -259,10 +259,11 @@
 
                             {{-- Enviar Comprobante --}}
                             <div class="form-check mb-4">
-                                <input type="checkbox" class="form-check-input" id="enviar_comprobante" name="enviar_comprobante">
-                                <label class="form-check-label" for="enviar_comprobante">
+                                <input type="checkbox" name="enviar_correo" id="enviar_correo" class="form-check-input" value="1">
+                                <label class="form-check-label" for="enviar_correo">
                                     <i class="fa fa-envelope mr-1"></i> Enviar comprobante por correo
                                 </label>
+
                             </div>
 
                             {{-- Botón de Pagar --}}
