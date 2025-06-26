@@ -130,8 +130,13 @@ class VentaController extends Controller
             } */
 
             // Crear detalles si es necesario aquí
-            if ($request->has('enviar_correo')  && $venta->cliente->email) {//Agrega validación para que no falle si el cliente no tiene email
+           /*  if ($request->has('enviar_correo')  && $venta->cliente->correo) {//Agrega validación para que no falle si el cliente no tiene email
                 $venta->load(['cliente', 'detalles.producto']); // Asegúrate de cargar relaciones
+                Mail::to($venta->cliente->correo)->send(new VentaRealizada($venta));
+            } */
+
+            if($request->has('enviar_correo') && $venta->cliente && $venta->cliente->correo) {
+                $venta->load(['cliente', 'detalles.producto']); // Carga relaciones si aún no están
                 Mail::to($venta->cliente->correo)->send(new VentaRealizada($venta));
             }
 

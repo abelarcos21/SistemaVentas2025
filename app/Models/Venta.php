@@ -16,4 +16,12 @@ class Venta extends Model
     public function pagos(){
         return $this->hasMany(Pago::class);
     }
+
+    public function cliente(){
+        return $this->belongsTo(Cliente::class);
+    }
+
+    public function detalles(){
+        return $this->hasMany(DetalleVenta::class);
+    }
 }

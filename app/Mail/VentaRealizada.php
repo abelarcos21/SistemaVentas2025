@@ -8,9 +8,10 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
 
 use App\Models\Venta;
-use PDF; // DomPDF
+use Barryvdh\DomPDF\Facade\Pdf; // DomPDF
 
 class VentaRealizada extends Mailable
 {
@@ -33,7 +34,7 @@ class VentaRealizada extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Venta Realizada',
+            subject: 'Gracias por tu compra Venta Realizada',
         );
     }
 
@@ -43,7 +44,8 @@ class VentaRealizada extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'correos.venta_realizada',
+            with: ['venta' => $this->venta]
         );
     }
 
@@ -55,12 +57,22 @@ class VentaRealizada extends Mailable
     public function attachments(): array
     {
         // Generar PDF desde una vista
-        $pdf = PDF::loadView('pdf.boleta_venta', ['venta' => $this->venta]);
+       /*  $pdf = PDF::loadView('pdf.boleta_venta', ['venta' => $this->venta]);
 
         return $this->subject('Boleta de Venta')
-            ->view('emails.venta_realizada') // correo html
+            ->view('correos.venta_realizada') // correo html vista opcional para contenido del email
             ->attachData($pdf->output(), 'boleta_venta_' . $this->venta->id . '.pdf', [
                 'mime' => 'application/pdf',
-            ]);
+            ]); */
+
+
+        // Generar PDF desde una vista
+        // puede usar este método fromData si ha generado un PDF en memoria y
+        // desea adjuntarlo al correo electrónico sin escribirlo en el disco
+        $pdf = Pdf::loadView('pdf.boleta_venta', ['venta' => $this->venta]);
+        return [
+            Attachment::fromData(fn () => $pdf->output(), 'boleta_venta_'.$this->venta->id.'.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }
