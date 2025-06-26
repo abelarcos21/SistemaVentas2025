@@ -183,7 +183,7 @@
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
+                                                <input onchange="document.getElementById('img').src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
                                             </div>
                                         </div>
 
@@ -191,9 +191,10 @@
                                         <div class="col-md-2 text-center">
                                             <div class="img-thumbnail rounded shadow p-3">
                                                 <div class="mb-2">IMAGEN</div>
-                                                @if(isset($producto) && $producto->imagen)
-                                                    <img class="img-thumbnail rounded shadow" id="img" style="max-width:150px;" src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="100"><br>
-                                                @endif
+                                                <img
+                                                class ="img-thumbnail rounded shadow"
+                                                id ="img" style="max-width:150px;"
+                                                src ="{{ isset($producto) && $producto->imagen ? asset('storage/' . $producto->imagen->ruta) : asset('images/placeholder-caja.png') }}"><br>
                                                 <small>Te recomendamos usar una imagen de al menos 272 × 315 píxeles y un tamaño máximo de 250 KB.</small>
                                             </div>
                                         </div>
