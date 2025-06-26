@@ -154,7 +154,7 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'activo' => 'required|boolean',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',// validación opcional de imagen
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',// validación opcional de imagen max en KB
 
         ]);
 

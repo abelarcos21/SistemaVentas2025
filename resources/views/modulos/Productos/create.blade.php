@@ -167,6 +167,9 @@
                                                     </span>
                                                 </div>
                                                 <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
+                                                @error('imagen')
+                                                    <div class="text-danger">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
 
@@ -257,6 +260,32 @@
 @stop
 
 @section('js')
+
+    <script>
+        document.getElementById('imagen').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+            const maxSize = 250 * 1024; // 250 KB
+
+            if (file) {
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Solo se permiten imágenes JPG, JPEG, PNG o WEBP.');
+                    event.target.value = ''; // limpiar input
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert('La imagen no debe superar los 250 KB.');
+                    event.target.value = ''; // limpiar input
+                    return;
+                }
+
+                // Mostrar preview
+                const imgPreview = document.getElementById('img');
+                imgPreview.src = URL.createObjectURL(file);
+            }
+        });
+    </script>
 
     {{--INCLUIR PLUGIN SELECT2 ESPAÑOL--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
