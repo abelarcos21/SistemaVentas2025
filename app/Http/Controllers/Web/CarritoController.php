@@ -17,18 +17,20 @@ use Illuminate\Support\Facades\Auth;
 class CarritoController extends Controller
 {
     //Metodo Agregar
-    public function agregar($id)
+    public function agregar(Request $request, $id)
     {
 
         return DB::transaction(function () use ($id) {
             $producto = Producto::findOrFail($id);
 
             if (!$producto) {
-                return Redirect::route('venta.index')->with('error', 'Producto no encontrado.');
+                //return Redirect::route('venta.index')->with('error', 'Producto no encontrado.');
+                return response()->json(['error' => 'Producto no encontrado.'], 404);
             }
 
             if ($producto->cantidad < 1) {
-                return Redirect::route('venta.index')->with('error', 'Producto sin stock disponible.');
+                //return Redirect::route('venta.index')->with('error', 'Producto sin stock disponible.');
+                return response()->json(['error' => 'Producto sin stock disponible.'], 400);
             }
 
             $items_carrito = Session::get('items_carrito', []);
@@ -38,7 +40,8 @@ class CarritoController extends Controller
             foreach ($items_carrito as $index => $item) {
                 if ($item['id'] == $id) {
                     if ($item['cantidad'] >= $producto->cantidad) {
-                        return Redirect::route('venta.index')->with('error', 'No hay stock suficiente para agregar más unidades.');
+                        //return Redirect::route('venta.index')->with('error', 'No hay stock suficiente para agregar más unidades.');
+                        return response()->json(['error' => 'No hay stock suficiente para agregar más unidades.'], 400);
                     }
 
                     $items_carrito[$index]['cantidad'] += 1;
@@ -61,7 +64,28 @@ class CarritoController extends Controller
             //realmente creamos una sesion
             Session::put('items_carrito', $items_carrito);
 
-            return Redirect::route('venta.index')->with('success', 'Producto agregado correctamente.');
+            // 🔁 Generar nueva estructura para respuesta con stock e imagen
+            $carritoConInfo = collect($items_carrito)->map(function ($item) {
+                $prod = \App\Models\Producto::find($item['id']);
+                return [
+                    'id' => $item['id'],
+                    'nombre' => $item['nombre'],
+                    'cantidad' => $item['cantidad'],
+                    'precio' => $item['precio'],
+                    'stock' => $prod->cantidad ?? 0,
+                    'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
+                ];
+            });
+
+            $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
+
+            //return Redirect::route('venta.index')->with('success', 'Producto agregado correctamente.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Producto agregado correctamente.',
+                'carrito' => $carritoConInfo,
+                'total' => $total,
+            ]);
         });
     }
 
@@ -87,21 +111,57 @@ class CarritoController extends Controller
 
     //Metodo para quitar un producto del carrito
     public function quitar_carrito($id_producto) {
+
         $items_carrito = Session::get('items_carrito', []);
+
+        if (!is_array($items_carrito)) {
+            $items_carrito = [];
+        }
+
+        $productoEncontrado = false; // 👈 IMPORTANTE
 
         foreach ($items_carrito as $key => $carrito) {
             if ($carrito['id'] == $id_producto) {
+                $productoEncontrado = true;
+
                 if ($carrito['cantidad'] > 1) {
                     $items_carrito[$key]['cantidad'] -= 1;
                 } else {
                     unset($items_carrito[$key]);
-                    $items_carrito = array_values($items_carrito); // 👈 Reindexamos el array
+                    $items_carrito = array_values($items_carrito);
                 }
+
                 break;
             }
         }
+
+        if (!$productoEncontrado) {
+            return response()->json(['error' => 'Producto no encontrado en el carrito.'], 404);
+        }
+
         Session::put('items_carrito', $items_carrito);
-        return to_route('venta.index')->with('success', 'Producto actualizado en el carrito.');
+
+        $carritoConInfo = collect($items_carrito)->map(function ($item) {
+            $prod = \App\Models\Producto::find($item['id']);
+            return [
+                'id' => $item['id'],
+                'nombre' => $item['nombre'],
+                'cantidad' => $item['cantidad'],
+                'precio' => $item['precio'],
+                'stock' => $prod?->cantidad ?? 0,
+                'imagen' => $prod && $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
+            ];
+        });
+
+        $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Producto eliminado del carrito.',
+            'carrito' => $carritoConInfo,
+            'total' => $total,
+        ]);
+
     }
 
 
@@ -114,8 +174,7 @@ class CarritoController extends Controller
             $producto = Producto::findOrFail($id);
 
             if ($producto->cantidad < $nuevaCantidad) {
-                return redirect()->route('venta.index')
-                    ->with('error', 'No hay stock suficiente para esa cantidad.');
+                return response()->json(['error' => 'No hay stock suficiente para esa cantidad.'], 400);
             }
 
             $items_carrito = Session::get('items_carrito', []);
@@ -125,14 +184,31 @@ class CarritoController extends Controller
                     $items_carrito[$index]['cantidad'] = $nuevaCantidad;
                     Session::put('items_carrito', $items_carrito);
 
-                    return redirect()->route('venta.index')
-                        ->with('success', 'Cantidad actualizada correctamente.');
+                    // Preparar respuesta actualizada
+                    $carritoConInfo = collect($items_carrito)->map(function ($item) {
+                        $prod = \App\Models\Producto::find($item['id']);
+                        return [
+                            'id' => $item['id'],
+                            'nombre' => $item['nombre'],
+                            'cantidad' => $item['cantidad'],
+                            'precio' => $item['precio'],
+                            'stock' => $prod->cantidad ?? 0,
+                            'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
+                        ];
+                    });
+
+                    $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
+
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Cantidad actualizada correctamente.',
+                        'carrito' => $carritoConInfo,
+                        'total' => $total,
+                    ]);
                 }
             }
 
-            // Si el producto no está en el carrito, opcionalmente podrías agregarlo
-            return redirect()->route('venta.index')
-                ->with('error', 'El producto no se encuentra en el carrito.');
+            return response()->json(['error' => 'El producto no se encuentra en el carrito.'], 404);
         });
     }
 

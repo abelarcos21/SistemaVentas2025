@@ -65,105 +65,105 @@
 
                     <div class="card-body">
                         {{-- ... tabla de carrito ... --}}
-                        @if (session('items_carrito'))
-                            <div class="table-responsive">
-                                <table id="productos_carrito" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+
+                        <div class="table-responsive" id="tabla-carrito-container" style="display: none;">
+                            <table id="productos_carrito" class="table table-bordered table-striped">
+                                <thead class="bg-gradient-info">
+                                    <tr>
+                                        <th>Imagen</th>
+                                        <th>Nombre</th>
+                                        <th>Stock</th> <!-- NUEVA COLUMNA -->
+                                        <th>Cantidad</th>
+                                        <th>Precio Venta</th>
+                                        <th>Total</th>
+                                        <th>Quitar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="carrito-items">
+                                    <!-- Aquí se renderiza dinámicamente -->
+                                    {{--  @php $totalGeneral = 0; @endphp
+                                    @foreach (session('items_carrito') as $item)
+                                        @php
+                                            $totalProducto = $item['cantidad'] * $item['precio'];
+                                            $totalGeneral += $totalProducto;
+                                            $producto = \App\Models\Producto::find($item['id']);
+                                        @endphp
                                         <tr>
-                                            <th>Imagen</th>
-                                            <th>Nombre</th>
-                                            <th>Stock</th> <!-- NUEVA COLUMNA -->
-                                            <th>Cantidad</th>
-                                            <th>Precio Venta</th>
-                                            <th>Total</th>
-                                            <th>Quitar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php $totalGeneral = 0; @endphp
-                                        @foreach (session('items_carrito') as $item)
-                                            @php
-                                                $totalProducto = $item['cantidad'] * $item['precio'];
-                                                $totalGeneral += $totalProducto;
-                                                $producto = \App\Models\Producto::find($item['id']);
-                                            @endphp
-                                            <tr>
-                                                <td>
+                                            <td>
 
-                                                    @php
-                                                        $ruta = $producto->imagen && $producto->imagen->ruta
-                                                        ? asset('storage/' . $producto->imagen->ruta)
-                                                        : asset('images/placeholder-caja.png');
-                                                    @endphp
+                                                @php
+                                                    $ruta = $producto->imagen && $producto->imagen->ruta
+                                                    ? asset('storage/' . $producto->imagen->ruta)
+                                                    : asset('images/placeholder-caja.png');
+                                                @endphp
 
-                                                    <!-- Imagen miniatura con enlace al modal -->
-                                                    <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                                                        <img src="{{ $ruta }}"
-                                                        width="50" height="50"
-                                                        class="img-thumbnail rounded shadow"
-                                                        style="object-fit: cover;">
-                                                    </a>
+                                                <!-- Imagen miniatura con enlace al modal -->
+                                                <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
+                                                    <img src="{{ $ruta }}"
+                                                    width="50" height="50"
+                                                    class="img-thumbnail rounded shadow"
+                                                    style="object-fit: cover;">
+                                                </a>
 
-                                                    <!-- Modal Bootstrap 4 -->
-                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
-                                                        tabindex="-1"
-                                                        role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                            <div class="modal-content bg-white">
-                                                                <div class="modal-header bg-gradient-info">
-                                                                    <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
-                                                                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body text-center">
-                                                                    <img src="{{ $ruta }}" class="img-fluid rounded shadow">
-                                                                </div>
+                                                <!-- Modal Bootstrap 4 -->
+                                                <div class="modal fade" id="modalImagen{{ $producto->id }}"
+                                                    tabindex="-1"
+                                                    role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                        <div class="modal-content bg-white">
+                                                            <div class="modal-header bg-gradient-info">
+                                                                <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
+                                                                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body text-center">
+                                                                <img src="{{ $ruta }}" class="img-fluid rounded shadow">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    {{-- @if($producto->imagen)
-                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
-                                                    @else
-                                                        <span>Sin imagen</span>
-                                                    @endif --}}
-                                                </td>
-                                                <td class="text-center">{{ $item['nombre'] }}</td>
-                                                @if($producto->cantidad > 5)
-                                                    <td class="text-center">
-                                                        <span class="badge bg-success">{{ $producto->cantidad }}</span>
-                                                    </td>
+                                                </div>
+                                                {{-- @if($producto->imagen)
+                                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
                                                 @else
-
-                                                    <td class="text-center">
-                                                        <span class="badge bg-danger">{{ $producto->cantidad }}</span>
-                                                    </td> <!-- NUEVA CELDA -->
-                                                @endif
+                                                    <span>Sin imagen</span>
+                                                @endif --}}
+                                            {{--   </td>
+                                            <td class="text-center">{{ $item['nombre'] }}</td>
+                                            @if($producto->cantidad > 5)
+                                                <td class="text-center">
+                                                    <span class="badge bg-success">{{ $producto->cantidad }}</span>
+                                                </td>
+                                            @else
 
                                                 <td class="text-center">
-                                                    <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
-                                                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
-                                                        <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
-                                                    </form>
-                                                </td>
-                                                <td class="text-center text-primary">MXN${{ $item['precio'] }}</td>
-                                                <td class="text-center text-primary">MXN${{ $totalProducto }}</td>
-                                                <td class="text-center">
-                                                    <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <p>Aún no tienes productos en tu carrito</p>
-                        @endif
+                                                    <span class="badge bg-danger">{{ $producto->cantidad }}</span>
+                                                </td> <!-- NUEVA CELDA -->
+                                            @endif
+
+                                            <td class="text-center">
+                                                <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
+                                                    <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
+                                                    <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
+                                                </form>
+                                            </td>
+                                            <td class="text-center text-primary">MXN${{ $item['precio'] }}</td>
+                                            <td class="text-center text-primary">MXN${{ $totalProducto }}</td>
+                                            <td class="text-center">
+                                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr> --}}
+                                    {{--@endforeach --}}
+                                </tbody>
+                            </table>
+                        </div>
+                        <p id="carrito-vacio" class="text-center text-muted">Aún no tienes productos en tu carrito</p>
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -196,7 +196,8 @@
                             <h5 class="text-secondary">Total a Pagar</h5>
                             <h2 class="font-weight-bold text-primary">
                                 @if (session('items_carrito'))
-                                    MXN${{ number_format($totalGeneral, 2) }}
+                                   {{--  MXN${{ number_format($totalGeneral, 2) }} --}}
+                                    <p>Total: <span id="total-carrito">MXN$0.00</span></p>
                                 @else
                                     MXN$0.00
                                 @endif
@@ -372,6 +373,175 @@
         @endif
     </script>
 
+    <script>
+        function agregarProductoAlCarrito(productoId) {
+            $.ajax({
+                url: '/carrito/agregar/' + productoId,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (response) {
+                    if (response.success) {
+                        //alert(response.message);
+
+                       /*  Swal.fire({ //usa SweetAlert2
+                            icon: 'success',
+                            title: 'Producto',
+                            text: 'Agregado Correctamente.'
+                        }); */
+
+                        Swal.fire('Agregado', response.message, 'success');
+                        renderizarTablaCarrito(response.carrito, response.total);
+
+                        // actualizar el carrito en la vista si es necesario
+                    }
+                },
+                error: function (xhr) {
+                    let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error.';
+                    //alert(errorMsg);
+
+                    /* Swal.fire({ //usa SweetAlert2
+                        icon: 'warning',
+                        title: 'Error',
+                        text: 'Al agregar producto.'
+                    }); */
+
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        }
+
+        function renderizarTablaCarrito(items, total) {
+
+
+            const tbody = $('#carrito-items');
+            const tablaContainer = $('#tabla-carrito-container');
+            const mensajeVacio = $('#carrito-vacio');
+
+            tbody.empty();
+
+            if (!items.length) {
+               /*  tbody.append('<tr><td colspan="7" class="text-center">No hay productos en el carrito.</td></tr>');
+                $('#total-carrito').text('MXN$0.00');
+                return; */
+
+                tablaContainer.hide();
+                mensajeVacio.show();
+                $('#total-carrito').text('MXN$0.00');
+                return;
+            }
+
+            tablaContainer.show();
+            mensajeVacio.hide();
+
+            items.forEach(item => {
+                const totalProducto = item.precio * item.cantidad;
+
+                const row = `
+                    <tr>
+                        <td><img src="${item.imagen || '/images/placeholder-caja.png'}" width="50" height="50" class="img-thumbnail rounded shadow" style="object-fit: cover;"></td>
+                        <td class="text-center">${item.nombre}</td>
+                        <td class="text-center"><span class="badge ${item.stock > 5 ? 'bg-success' : 'bg-danger'}">${item.stock}</span></td>
+                        <td class="text-center">
+                            <div class="d-inline-flex align-items-center">
+                                <button type="button" class="btn btn-sm btn-outline-info cantidad-menos" data-id="${item.id}">−</button>
+                                <input type="number" class="form-control form-control-sm text-center mx-1 cantidad-input" value="${item.cantidad}" min="1" max="${item.stock}" style="width: 60px;" readonly>
+                                <button type="button" class="btn btn-sm btn-outline-info cantidad-mas" data-id="${item.id}">+</button>
+                            </div>
+                        </td>
+                        <td class="text-center text-primary">MXN$${item.precio}</td>
+                        <td class="text-center text-primary">MXN$${totalProducto.toFixed(2)}</td>
+                        <td class="text-center">
+                            <button class="btn btn-danger btn-sm quitar-producto" data-id="${item.id}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                tbody.append(row);
+            });
+
+            $('#total-carrito').text('MXN$' + total.toFixed(2));
+        }
+
+        //Captura los clics con jQuery
+        $(document).on('click', '.cantidad-mas', function () {
+            const id = $(this).data('id');
+            const input = $(this).siblings('.cantidad-input');
+            const nuevaCantidad = parseInt(input.val()) + 1;
+            actualizarCantidad(id, nuevaCantidad);
+        });
+
+        $(document).on('click', '.cantidad-menos', function () {
+            const id = $(this).data('id');
+            const input = $(this).siblings('.cantidad-input');
+            const nuevaCantidad = parseInt(input.val()) - 1;
+            if (nuevaCantidad >= 1) {
+                actualizarCantidad(id, nuevaCantidad);
+            }
+        });
+
+    </script>
+
+    <script>
+        function actualizarCantidad(id, nuevaCantidad) {
+            $.ajax({
+                url: `/venta/actualizar/${id}`,
+                method: 'PUT',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    cantidad: nuevaCantidad
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Actualizado', response.message, 'success');
+                        renderizarTablaCarrito(response.carrito, response.total);
+                    }
+                },
+                error: function (xhr) {
+                    let errorMsg = xhr.responseJSON?.error || 'Error al actualizar cantidad.';
+                    Swal.fire('Error', errorMsg, 'error');
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(document).on('click', '.quitar-producto', function () {
+            const id = $(this).data('id');
+
+            Swal.fire({
+                title: '¿Quitar producto?',
+                text: 'Se eliminará una unidad del producto.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, quitar',
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/venta/quitar/${id}`,
+                        method: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Eliminado', response.message, 'success');
+                                renderizarTablaCarrito(response.carrito, response.total);
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire('Error', xhr.responseJSON?.error || 'No se pudo eliminar.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
     {{--INCLUIR PLUGIN SELECT2 EN EL CARRITO PARA BUSCAR CLIENTE--}}
     <script>
         $(document).ready(function() {
@@ -477,7 +647,7 @@
 
 
 
-    {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente--}}
+    {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente js vanilla javascript--}}
     <script>
         document.querySelectorAll('.cantidad-mas').forEach(btn => {
             btn.addEventListener('click', function (e) {

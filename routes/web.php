@@ -45,9 +45,11 @@ Route::group(['middleware' => ['auth']], function() {
 });
 
 //RUTAS CARRITO
-Route::get('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+Route::post('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+
 Route::get('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->name('ventas.borrar.carrito');
-Route::get('/quitar-carrito/{producto}', [CarritoController::class, 'quitar_carrito'])->name('ventas.quitar.carrito');
+
+Route::delete('/venta/quitar/{id}', [CarritoController::class, 'quitar_carrito'])->name('ventas.quitar.carrito');
 
 
 Route::put('/venta/actualizar/{id}', [CarritoController::class, 'update'])->name('venta.actualizar');

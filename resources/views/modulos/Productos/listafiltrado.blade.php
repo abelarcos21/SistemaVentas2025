@@ -51,11 +51,11 @@
                 </div>
 
                 <div class="card-footer bg-white border-0 pb-3 px-2">
-                    <a href="{{ route('carrito.agregar', $producto->id) }}"
+                    <button  onclick="agregarProductoAlCarrito({{ $producto->id }})"
                     style=" color: white !important; font-size: 0.8rem;"
                     class="btn btn-primary bg-gradient-primary  rounded-pill px-3 py-1">
                         <i class="fas fa-plus"></i> Agregar
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -66,6 +66,8 @@
             <p>No se encontraron productos.</p>
         </div>
     @endif
+
+
 
 
 
