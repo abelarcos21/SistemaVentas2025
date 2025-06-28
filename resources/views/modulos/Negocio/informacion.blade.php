@@ -22,8 +22,243 @@
 @stop
 
 @section('content')
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-gradient-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="fas fa-cogs mr-2"></i>
+                            Configuraciones del sistema
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info bg-gradient-info" role="alert">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Modificar los datos del formulario
+                        </div>
+
+                        <form action="{{ route('negocio.update') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+
+                            <div class="row">
+                                <!-- Nombre -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">
+                                        <i class="fas fa-building mr-1"></i>
+                                        Nombre <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                        class="form-control @error('nombre') is-invalid @enderror"
+                                        id="nombre"
+                                        name="nombre"
+                                        value="{{ old('nombre', $configuracion->nombre ?? 'Sistema Hilari 66666') }}"
+                                        placeholder="Ingrese el nombre del sistema"
+                                        required>
+                                    @error('nombre')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Descripción -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="descripcion" class="form-label">
+                                        <i class="fas fa-align-left mr-1"></i>
+                                        Descripción <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                        class="form-control @error('descripcion') is-invalid @enderror"
+                                        id="descripcion"
+                                        name="descripcion"
+                                        value="{{ old('descripcion', $configuracion->descripcion ?? 'Sistema Hilari 666666') }}"
+                                        placeholder="Ingrese la descripción"
+                                        required>
+                                    @error('descripcion')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Dirección -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="direccion" class="form-label">
+                                        <i class="fas fa-map-marker-alt mr-1"></i>
+                                        Dirección <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                        class="form-control @error('direccion') is-invalid @enderror"
+                                        id="direccion"
+                                        name="direccion"
+                                        value="{{ old('direccion', $configuracion->direccion ?? 'Zona Alto Lima 3ra Sección') }}"
+                                        placeholder="Ingrese la dirección"
+                                        required>
+                                    @error('direccion')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Teléfono -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">
+                                        <i class="fas fa-phone mr-1"></i>
+                                        Teléfono <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel"
+                                        class="form-control @error('telefono') is-invalid @enderror"
+                                        id="telefono"
+                                        name="telefono"
+                                        value="{{ old('telefono', $configuracion->telefono ?? '59175657007') }}"
+                                        placeholder="Ingrese el número de teléfono"
+                                        required>
+                                    @error('telefono')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Email -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="email" class="form-label">
+                                        <i class="fas fa-envelope mr-1"></i>
+                                        Email <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email"
+                                        class="form-control @error('email') is-invalid @enderror"
+                                        id="email"
+                                        name="email"
+                                        value="{{ old('email', $configuracion->email ?? 'hilariweb@gmail.com') }}"
+                                        placeholder="correo@ejemplo.com"
+                                        required>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Sitio Web -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="sitio_web" class="form-label">
+                                        <i class="fas fa-globe mr-1"></i>
+                                        Sitio Web
+                                    </label>
+                                    <input type="url"
+                                        class="form-control @error('sitio_web') is-invalid @enderror"
+                                        id="sitio_web"
+                                        name="sitio_web"
+                                        value="{{ old('sitio_web', $configuracion->sitio_web ?? 'https://www.hilariweb.com') }}"
+                                        placeholder="https://www.ejemplo.com">
+                                    @error('sitio_web')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <!-- Moneda -->
+                                <div class="col-md-4 mb-3">
+                                    <label for="moneda" class="form-label">
+                                        <i class="fas fa-dollar-sign mr-1"></i>
+                                        Moneda <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-control @error('moneda') is-invalid @enderror"
+                                            id="moneda"
+                                            name="moneda"
+                                            required>
+                                        <option value="">Seleccione una moneda</option>
+                                        <option value="PEN" {{ old('moneda', $configuracion->moneda ?? '') == 'PEN' ? 'selected' : '' }}>Sol Peruano (PEN)</option>
+                                        <option value="USD" {{ old('moneda', $configuracion->moneda ?? '') == 'USD' ? 'selected' : '' }}>Dólar Americano (USD)</option>
+                                        <option value="EUR" {{ old('moneda', $configuracion->moneda ?? '') == 'EUR' ? 'selected' : '' }}>Euro (EUR)</option>
+                                        <option value="BOB" {{ old('moneda', $configuracion->moneda ?? '') == 'BOB' ? 'selected' : '' }}>Boliviano (BOB)</option>
+                                        <option value="MXN" {{ old('moneda', $configuracion->moneda ?? '') == 'MXN' ? 'selected' : '' }}>Peso Mexicano (MXN)</option>
+                                    </select>
+                                    @error('moneda')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Logo -->
+                                <div class="col-md-8 mb-3">
+                                    <label for="logo" class="form-label">
+                                        <i class="fas fa-image mr-1"></i>
+                                        Logo <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="custom-file">
+                                        <input type="file"
+                                            class="custom-file-input @error('logo') is-invalid @enderror"
+                                            id="logo"
+                                            name="logo"
+                                            accept="image/*"
+                                            onchange="previewImage(this)">
+                                        <label class="custom-file-label" for="logo" id="logo-label">
+                                            {{ isset($configuracion->logo) ? basename($configuracion->logo) : 'Seleccionar archivo' }}
+                                        </label>
+                                        @error('logo')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB
+                                    </small>
+                                </div>
+
+                                <!-- Vista previa del logo -->
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Vista previa</label>
+                                    <div class="border rounded p-3 text-center bg-light" style="min-height: 120px;">
+                                        @if(isset($configuracion->logo))
+                                            <img src="{{ asset('storage/' . $configuracion->logo) }}"
+                                                alt="Logo actual"
+                                                class="img-fluid rounded shadow"
+                                                style="max-height: 100px; max-width: 100%;"
+                                                id="logo-preview">
+                                        @else
+                                            <img src="{{ asset('images/leche-png.png') }}"
+                                                alt="Logo por defecto"
+                                                class="img-fluid rounded shadow"
+                                                style="max-height: 100px; max-width: 100%;"
+                                                id="logo-preview">
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Botones -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button type="submit" class="btn btn-primary btn-md">
+                                                <i class="fas fa-save mr-2"></i>
+                                                Guardar
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-md ml-2" onclick="history.back()">
+                                                <i class="fas fa-times mr-2"></i>
+                                                Cancelar
+                                            </button>
+                                        </div>
+
+                                        @if(isset($configuracion))
+                                            <button type="button" class="btn btn-warning btn-lg" onclick="resetForm()">
+                                                <i class="fas fa-undo mr-2"></i>
+                                                Restablecer
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- Main content -->
-    <div class="container mt-5">
+    {{-- <div class="container mt-5">
         <h4 class="font-weight-bold">Perfil General De La Empresa (Negocio)</h4>
         <h5 class="text-muted">Boleta y Ticket</h5>
         <p>La información a continuación se mostrará en las boletas y tickets de ventas generadas automáticamente.</p>
@@ -113,7 +348,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 @stop
 
@@ -125,7 +360,7 @@
 @stop
 
 @section('js')
-    
+
     <script>
         $(document).ready(function() {
             $('#moneda').select2({
@@ -134,7 +369,7 @@
                 placeholder: "Selecciona o Busca Moneda",
                 allowClear: true,
                 minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
-              
+
             });
         });
     </script>
