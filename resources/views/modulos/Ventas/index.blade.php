@@ -195,12 +195,12 @@
                         <div class="text-center mb-4 alert alert-info fade show alert-translucido" role="alert">
                             <h5 class="text-secondary">Total a Pagar</h5>
                             <h2 class="font-weight-bold text-primary">
-                                @if (session('items_carrito'))
-                                   {{--  MXN${{ number_format($totalGeneral, 2) }} --}}
-                                    <p>Total: <span id="total-carrito">MXN$0.00</span></p>
-                                @else
-                                    MXN$0.00
-                                @endif
+
+                                {{--  MXN${{ number_format($totalGeneral, 2) }} --}}
+                                <div id="carrito-total-container" class="text-center mt-3" style="display: none;">
+                                    <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
+                                </div>
+
                             </h2>
                         </div>
 
@@ -418,6 +418,7 @@
             const tbody = $('#carrito-items');
             const tablaContainer = $('#tabla-carrito-container');
             const mensajeVacio = $('#carrito-vacio');
+            const totalContainer = $('#carrito-total-container');
 
             tbody.empty();
 
@@ -434,6 +435,8 @@
 
             tablaContainer.show();
             mensajeVacio.hide();
+            totalContainer.show();
+
 
             items.forEach(item => {
                 const totalProducto = item.precio * item.cantidad;
