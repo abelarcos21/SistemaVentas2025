@@ -373,6 +373,24 @@
     </script>
 
     <script>
+        // Función para cargar el carrito existente
+        function cargarCarritoExistente() {
+            $.ajax({
+                url: '/carrito/obtener',
+                method: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        renderizarTablaCarrito(response.carrito, response.total);
+                    }
+                },
+                error: function (xhr) {
+                    console.error('Error al cargar carrito:', xhr);
+                }
+            });
+        }
+    </script>
+
+    <script>
         $('#btn-vaciar-carrito').on('click', function () {
             Swal.fire({
                 title: '¿Vaciar carrito?',
@@ -498,6 +516,11 @@
 
             $('#total-carrito').text('MXN$' + total.toFixed(2));
         }
+
+        // IMPORTANTE: Cargar el carrito cuando la página esté lista
+        $(document).ready(function() {
+            cargarCarritoExistente();
+        });
 
         //Captura los clics con jQuery
         $(document).on('click', '.cantidad-mas', function () {

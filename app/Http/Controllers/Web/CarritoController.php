@@ -16,6 +16,40 @@ use Illuminate\Support\Facades\Auth;
 
 class CarritoController extends Controller
 {
+    //METODO OBTENER EL CARRITO CUANDO SE RECARGUE LA PAGINA QUE PERSISTA
+    public function obtenerCarrito(){
+        $items_carrito = Session::get('items_carrito', []);
+
+        if (empty($items_carrito)) {
+            return response()->json([
+                'success' => true,
+                'carrito' => [],
+                'total' => 0,
+            ]);
+        }
+
+        // Generar estructura con stock e imagen (igual que en agregar)
+        $carritoConInfo = collect($items_carrito)->map(function ($item) {
+            $prod = \App\Models\Producto::find($item['id']);
+            return [
+                'id' => $item['id'],
+                'nombre' => $item['nombre'],
+                'cantidad' => $item['cantidad'],
+                'precio' => $item['precio'],
+                'stock' => $prod->cantidad ?? 0,
+                'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
+            ];
+        });
+
+        $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
+
+        return response()->json([
+            'success' => true,
+            'carrito' => $carritoConInfo,
+            'total' => $total,
+        ]);
+    }
+
     //Metodo Agregar
     public function agregar(Request $request, $id)
     {

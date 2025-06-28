@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth']], function() {
 });
 
 //RUTAS CARRITO
+
+Route::get('/carrito/obtener', [CarritoController::class, 'obtenerCarrito'])->name('carrito.obtener');
+
 Route::post('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
 
 Route::delete('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->name('ventas.borrar.carrito');
