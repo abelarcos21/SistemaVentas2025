@@ -95,8 +95,10 @@ class CarritoController extends Controller
 
         // Verificar si el carrito existe y tiene productos
         $items_carrito = Session::get('items_carrito');
+
         if(empty($items_carrito)) {
-            return redirect()->route('venta.index')->with('error', 'El carrito está vacío, no hay productos que eliminar.');
+            //return redirect()->route('venta.index')->with('error', 'El carrito está vacío, no hay productos que eliminar.');
+            return response()->json(['error' => 'El carrito ya está vacío.', ], 400);
         }
 
         // Si hay productos, los elimina
@@ -104,7 +106,13 @@ class CarritoController extends Controller
             Session::forget('items_carrito');//elimina la variable de sesión que contiene los productos del carrito.
         }
 
-        return redirect()->route('venta.index')->with('success', 'Productos eliminados del carrito');
+        //return redirect()->route('venta.index')->with('success', 'Productos eliminados del carrito');
+        return response()->json([
+            'success' => true,
+            'message' => 'Productos eliminados del carrito.',
+            'carrito' => [],
+            'total' => 0,
+        ]);
 
     }
 

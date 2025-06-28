@@ -53,7 +53,7 @@
                     <div class="card-header">
                         <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Resumen de carrito</h3>
                         <div class="d-flex align-items-center justify-content-end">
-                            <a href="{{ route('ventas.borrar.carrito') }}" class=" btn btn-info bg-gradient-info btn-sm mr-4">
+                            <a id="btn-vaciar-carrito" class=" btn btn-info bg-gradient-info btn-sm mr-4">
                                 <i class="fas fa-boxes"></i> Vaciar Carrito
                             </a>
 
@@ -65,7 +65,6 @@
 
                     <div class="card-body">
                         {{-- ... tabla de carrito ... --}}
-
                         <div class="table-responsive" id="tabla-carrito-container" style="display: none;">
                             <table id="productos_carrito" class="table table-bordered table-striped">
                                 <thead class="bg-gradient-info">
@@ -371,6 +370,37 @@
                 confirmButtonText: 'Aceptar'
             });
         @endif
+    </script>
+
+    <script>
+        $('#btn-vaciar-carrito').on('click', function () {
+            Swal.fire({
+                title: '¿Vaciar carrito?',
+                text: "Se eliminarán todos los productos.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, vaciar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/borrar-carrito', // Asegúrate de que esta ruta sea correcta
+                        method: 'DELETE',
+                        data: {
+                            _token: '{{ csrf_token() }}'
+                        },
+                        success: function (response) {
+                            Swal.fire('Listo', response.message, 'success');
+                            renderizarTablaCarrito([], 0);
+                        },
+                        error: function (xhr) {
+                            let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error al vaciar el carrito.';
+                            Swal.fire('Error', errorMsg, 'error');
+                        }
+                    });
+                }
+            });
+        });
     </script>
 
     <script>
