@@ -30,12 +30,13 @@
             text-align: right;
         }
         .boleta-box {
-            border: 1px solid #000;
+            border: 2px solid #17a2b8;
             padding: 5px;
             width: 100%;
             text-align: center;
             font-weight: bold;
             margin-top: 5px;
+            
         }
         .cliente-info {
             margin-bottom: 15px;
@@ -46,7 +47,7 @@
             margin-top: 10px;
         }
         th, td {
-            border: 1px solid #000;
+            border: none;
             padding: 5px;
             font-size: 12px;
         }
@@ -96,7 +97,7 @@
     </div>
 
     <table>
-        <thead>
+        <thead style="background-color:#17a2b8; color:#FFFFFF; ">
             <tr>
                 <th class="text-center">CANT.</th>
                 <th>DESCRIPCIÓN</th>
