@@ -119,7 +119,7 @@
                                                     @endif
                                                 </td>
                                                 <td>{{ $producto->nombre }}</td>
-                                                <td>{{ $producto->nombre_categoria }}</td>
+                                                <td><span class="badge bg-primary">{{ $producto->nombre_categoria }}</span></td>
                                                 <td>{{ $producto->nombre_marca}}</td>
                                                 <td>{{ $producto->descripcion }}</td>
                                                 <td>{{ $producto->nombre_proveedor }}</td>

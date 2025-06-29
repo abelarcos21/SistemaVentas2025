@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('proveedor_id')->constrained('proveedores');//LLAVES FORANEA
             $table->foreignId('marca_id')->constrained('marcas');//LLAVES FORANEA
             $table->foreignId('impuesto_id')->nullable()->constrained('impuestos');// 002 para IVA. Si en un futuro los productos pueden tener más de un impuesto (IVA + IEPS), deberías tener una tabla pivote impuesto_producto.
-            $table->string('codigo', 13)->unique();
+            $table->string('codigo', 13)->unique()->nullable();
             $table->string('barcode_path')->nullable(); // Imagen del código de barras
             $table->string('nombre', 50);
             $table->string('descripcion', 500);//Descripción SAT o comercial

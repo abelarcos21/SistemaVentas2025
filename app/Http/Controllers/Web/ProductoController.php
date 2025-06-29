@@ -150,7 +150,7 @@ class ProductoController extends Controller
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id' => 'required|exists:marcas,id',
-            'codigo' => 'nullable|string|digits:13|max:255|unique:productos,codigo',// validación nullable si se deja en blanco el campo
+            'codigo' => 'nullable|string|max:255|unique:productos,codigo',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'activo' => 'required|boolean',
@@ -163,13 +163,24 @@ class ProductoController extends Controller
 
         try{
 
+            $codigo = null;
             //si se envio un codigo manual
             if(!empty($validated['codigo'])){
                 $codigo = $validated['codigo'];
                 //validar que sea numerico de 13 digitos
                 if(!preg_match('/^\d{13}$/', $codigo)){
-                    return back()->withErrors(['codigo' => 'El código debe tener exactamente 13 dígitos numéricos.']);
+                    DB::rollBack();
+                    return back()->withErrors(['codigo' => 'El código debe tener exactamente 13 dígitos numéricos.'])
+                             ->withInput();
                 }
+
+                // Validar dígito verificador EAN-13
+                if(!$this->validateEAN13($codigo)){
+                    DB::rollBack();  
+                    return back()->withErrors(['codigo' => 'El código EAN-13 no es válido (dígito verificador incorrecto).'])
+                                ->withInput();
+                }
+
             }else{
 
                 //Generar codigo EAN-13 valido y unico
@@ -199,10 +210,21 @@ class ProductoController extends Controller
             }
 
             // Generar imagen de código de barras
-            $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13'); // Tipo C128 para mejor compatibilidad
-            $barcodePath = 'barcodes/' . $codigo . '.png';
-            file_put_contents(public_path($barcodePath), base64_decode($barcode));
+            try {
+                $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13');
+                $barcodePath = 'barcodes/' . $codigo . '.png';
+                $fullBarcodePath = public_path($barcodePath);
+                
+                if(!file_put_contents($fullBarcodePath, base64_decode($barcode))) {
+                    throw new Exception('No se pudo generar el código de barras');
+                }
+                
+            } catch (Exception $barcodeError) {
+                Log::error('Error al generar código de barras: ' . $barcodeError->getMessage());
+                $barcodePath = null; // Continuar sin código de barras
+            }
 
+            // Crear el producto
             $producto = Producto::create([
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
@@ -216,9 +238,24 @@ class ProductoController extends Controller
 
             ]);
 
+            // Verificar que el producto se creó correctamente
+            if (!$producto) {
+                throw new Exception('No se pudo crear el producto');
+            }
+
             //SI HAY CONTIENE IMAGEN SUBIRLA
-            if($request->hasFile('imagen')){
+            /* if($request->hasFile('imagen')){
                 $this->subir_imagen($request, $producto->id);
+            } */
+
+            // Si hay imagen, subirla
+            if($request->hasFile('imagen')){
+                try {
+                    $this->subir_imagen($request, $producto->id);
+                } catch (Exception $imageError) {
+                    Log::error('Error al subir imagen: ' . $imageError->getMessage());
+                    // Continuar aunque falle la imagen
+                }
             }
 
             DB::commit();
@@ -228,13 +265,33 @@ class ProductoController extends Controller
         }catch (Exception $e){
             DB::rollBack();
             Log::error('Error al guardar el producto: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             //return back()->with('error', 'Error: ' . $e->getMessage());//mostrar error completo
-            return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
+            //return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
+            return back()->withErrors(['error' => 'Error al guardar el producto: ' . $e->getMessage()])
+                    ->withInput();
         }
     }
 
     public function productCodeExists($number){
         return Producto::whereProductCode($number)->exists();
+    }
+
+    
+    //Validar código EAN-13
+    private function validateEAN13($ean13) {
+        if (strlen($ean13) !== 13 || !ctype_digit($ean13)) {
+            return false;
+        }
+        
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $digit = (int)$ean13[$i];
+            $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+        }
+        
+        $checkDigit = (10 - ($sum % 10)) % 10;
+        return $checkDigit == (int)$ean13[12];
     }
 
     public function subir_imagen(Request $request, int $productoId):bool {
