@@ -108,7 +108,7 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo EAN-13 (Opcional)</label>
+                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo de Barras (EAN-13)</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -116,8 +116,11 @@
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="codigo" placeholder="Para generarlo automáticamente dejar vacío " class="form-control">
+                                                <input type="text" name="codigo" placeholder="Escanea o ingresa el código" class="form-control">
                                             </div>
+                                            <small class="form-text text-muted"><br>
+                                                    Escanea el código de barras o déjalo vacío para generar uno automático
+                                            </small>
                                         </div>
                                     </div>
 

@@ -330,7 +330,7 @@
 
                         <div class="form-group col-md-6">
                             <label for="codigo_postal">Código Postal*</label>
-                            <input type="text" class="form-control" id="codigo_postal" name="ruc" value="{{ old('codigo_postal', $empresa->codigo_postal ?? '') }}" maxlength="10">
+                            <input type="text" class="form-contr ol" id="codigo_postal" name="ruc" value="{{ old('codigo_postal', $empresa->codigo_postal ?? '') }}" maxlength="10">
                         </div>
                     </div>
 

@@ -53,8 +53,8 @@
                 <div class="card-footer bg-white border-0 pb-3 px-2">
                     <button  onclick="agregarProductoAlCarrito({{ $producto->id }})"
                     style=" color: white !important; font-size: 0.8rem;"
-                    class="btn btn-primary bg-gradient-primary  rounded-pill px-3 py-1">
-                        <i class="fas fa-plus"></i> Agregar
+                    class="btn btn-primary bg-gradient-primary  rounded-pill px-4 py-1">
+                        <i class="fas fa-cart-plus fa-lg me-2"></i>
                     </button>
                 </div>
             </div>

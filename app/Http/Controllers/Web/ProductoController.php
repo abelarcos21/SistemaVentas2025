@@ -176,7 +176,7 @@ class ProductoController extends Controller
 
                 // Validar dígito verificador EAN-13
                 if(!$this->validateEAN13($codigo)){
-                    DB::rollBack();  
+                    DB::rollBack();
                     return back()->withErrors(['codigo' => 'El código EAN-13 no es válido (dígito verificador incorrecto).'])
                                 ->withInput();
                 }
@@ -214,11 +214,11 @@ class ProductoController extends Controller
                 $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13');
                 $barcodePath = 'barcodes/' . $codigo . '.png';
                 $fullBarcodePath = public_path($barcodePath);
-                
+
                 if(!file_put_contents($fullBarcodePath, base64_decode($barcode))) {
                     throw new Exception('No se pudo generar el código de barras');
                 }
-                
+
             } catch (Exception $barcodeError) {
                 Log::error('Error al generar código de barras: ' . $barcodeError->getMessage());
                 $barcodePath = null; // Continuar sin código de barras
@@ -277,19 +277,19 @@ class ProductoController extends Controller
         return Producto::whereProductCode($number)->exists();
     }
 
-    
+
     //Validar código EAN-13
     private function validateEAN13($ean13) {
         if (strlen($ean13) !== 13 || !ctype_digit($ean13)) {
             return false;
         }
-        
+
         $sum = 0;
         for ($i = 0; $i < 12; $i++) {
             $digit = (int)$ean13[$i];
             $sum += ($i % 2 === 0) ? $digit : $digit * 3;
         }
-        
+
         $checkDigit = (10 - ($sum % 10)) % 10;
         return $checkDigit == (int)$ean13[12];
     }

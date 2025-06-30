@@ -70,7 +70,7 @@
         <p>===========</p>
         <p><strong>TOTAL: ${{ number_format($venta->total_venta, 2) }}</strong></p>
         <p><strong>({{ ucfirst($totalLetras)}})</strong></p>
-        <p><strong>Impuestos:</strong> 56.83</p>
+        <p><strong>Impuestos:</strong> 0.00</p>
         <p><strong>Descuento:</strong> 0.00</p>
         @foreach ($pagos as $pago)
             <p><strong>Forma de Pago:</strong> {{ ucfirst($pago->metodo_pago) }}</p>
