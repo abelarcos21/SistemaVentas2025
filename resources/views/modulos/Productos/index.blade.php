@@ -124,14 +124,22 @@
                                                 <td>{{ $producto->descripcion }}</td>
                                                 <td>{{ $producto->nombre_proveedor }}</td>
                                                 @if($producto->cantidad == 0)
-                                                    <td><span class="badge bg-warning">Sin stock inicial</span></td>
+                                                    <td><span class="badge bg-warning">Sin stock</span></td>
                                                 @else
                                                     <td><span class="badge bg-success">{{ $producto->cantidad }} Unidades</span></td>
                                                 @endif
 
                                                 <td class="text-blue">
-                                                   {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_venta, 2) }}
+                                                     @if($producto->precio_venta)
+                                                        <strong>{{ $producto->monedas->codigo ?? 'Sin codigo' }} ${{ number_format($producto->precio_venta, 2) }}</strong>
+                                                    @else
+                                                        <span class="text-muted">No definido</span>
+                                                    @endif
                                                 </td>
+
+                                               {{--  <td class="text-blue">
+                                                   {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_venta, 2) }}
+                                                </td> --}}
                                                 <td class="text-blue">
 
                                                     {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_compra, 2) }}
@@ -153,7 +161,7 @@
                                                                 <i class="fas fa-shopping-cart"></i> Primera Compra
                                                             </button> --}}
                                                             <a href="{{ route('compra.create', $producto) }}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
-                                                                <i class="fas fa-shopping-cart mr-1"></i> 1era.Compra
+                                                                <i class="fas fa-shopping-cart mr-1"></i> Comprar
                                                             </a>
                                                         @else
                                                             {{-- <button class="btn btn-primary btn-sm" onclick="addStock({{ $producto->id }})">
