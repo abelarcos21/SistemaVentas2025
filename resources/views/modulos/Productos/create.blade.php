@@ -115,13 +115,14 @@
                                                     <span class="input-group-text bg-gradient-info">
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
+
                                                 </div>
-                                                <input type="text" name="codigo" placeholder="Escanea o ingresa el código" class="form-control">
+                                                <input type="text" name="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático " class="form-control">
+
                                             </div>
-                                            <small class="form-text text-muted"><br>
-                                                    Escanea el código de barras o déjalo vacío para generar uno automático
-                                            </small>
+
                                         </div>
+
                                     </div>
 
                                     <div class="form-group row">

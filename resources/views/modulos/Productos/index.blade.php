@@ -70,7 +70,7 @@
                                     </thead>
                                     <tbody>
                                         @forelse($productos as $producto)
-                                            <tr>
+                                            <tr class="{{ $producto->cantidad == 0 ? 'table-warning' : '' }}">
                                                 <td>{{ $producto->id }}</td>
                                                 <td>
                                                     @php
@@ -123,10 +123,10 @@
                                                 <td>{{ $producto->nombre_marca}}</td>
                                                 <td>{{ $producto->descripcion }}</td>
                                                 <td>{{ $producto->nombre_proveedor }}</td>
-                                                @if($producto->cantidad > 5)
-                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
+                                                @if($producto->cantidad == 0)
+                                                    <td><span class="badge bg-warning">Sin stock inicial</span></td>
                                                 @else
-                                                    <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
+                                                    <td><span class="badge bg-success">{{ $producto->cantidad }} Unidades</span></td>
                                                 @endif
 
                                                 <td class="text-blue">
@@ -147,18 +147,33 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary bg-gradient-primary btn-sm">
-                                                        <i class="fas fa-shopping-cart"></i> Comprar
-                                                    </a>
+                                                    <div class="d-flex">
+                                                         @if($producto->cantidad == 0)
+                                                        {{--  <button class="btn btn-success btn-sm" onclick="firstPurchase({{ $producto->id }})">
+                                                                <i class="fas fa-shopping-cart"></i> Primera Compra
+                                                            </button> --}}
+                                                            <a href="{{ route('compra.create', $producto) }}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
+                                                                <i class="fas fa-shopping-cart mr-1"></i> 1era.Compra
+                                                            </a>
+                                                        @else
+                                                            {{-- <button class="btn btn-primary btn-sm" onclick="addStock({{ $producto->id }})">
+                                                                <i class="fas fa-plus"></i> Reabastecer
+                                                            </button> --}}
+                                                            <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary btn-sm mr-1 d-flex align-items-center">
+                                                                <i class="fas fa-plus mr-1"></i> Reabastecer
+                                                            </a>
+                                                        @endif
+                                                    </div>
+
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex">
-                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
-                                                            <i class="fas fa-edit"></i> Editar
+                                                   <div class="d-flex">
+                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
+                                                            <i class="fas fa-edit mr-1"></i> Editar
                                                         </a>
 
-                                                        <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1">
-                                                            <i class="fas fa-trash-alt"></i> Eliminar
+                                                        <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
+                                                            <i class="fas fa-trash-alt mr-1"></i> Eliminar
                                                         </a>
                                                     </div>
                                                 </td>
