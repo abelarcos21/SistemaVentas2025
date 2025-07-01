@@ -38,9 +38,12 @@
                                 <a href="{{ route('reporte.falta_stock') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-boxes"></i> Productos con Stock 1 y 0
                                 </a>
-                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm" target="_blank">
+                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" target="_blank">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
+                                <button class="btn btn-light bg-gradient-light text-primary btn-sm" data-toggle="modal" data-target="#modalScan">
+                                    <i class="fas fa-boxes"></i> Escanear producto
+                                </button>
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -189,8 +192,13 @@
                                                 </td>
                                             </tr>
                                         @empty
+
                                             <tr>
-                                                <td colspan="13" class="text-center">NO HAY PRODUCTOS</td>
+                                                <td colspan="16" class="text-center py-4">
+                                                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay productos registrados</p>
+
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
@@ -208,6 +216,47 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalScan" tabindex="-1" role="dialog" aria-labelledby="modalScanLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header bg-gradient-info">
+                <h5 class="modal-title">Escanear código de producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="scanForm">
+                    <div class="form-group">
+                        <label for="codigo_scan">Escanea o escribe el código EAN-13</label>
+                        <input type="text" id="codigo_scan" class="form-control" autocomplete="off" autofocus>
+                        <small class="text-muted">Presiona Enter para continuar</small>
+                    </div>
+                </form>
+                <div id="mensaje_resultado"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Crear Producto -->
+    <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="crearProductoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Crear nuevo producto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="contenido_formulario_creacion">
+                <!-- Aquí se cargará el formulario dinámicamente con el código escaneado -->
+            </div>
+            </div>
+        </div>
+    </div>
 
 @stop
 
@@ -255,6 +304,41 @@
         @endif
     </script>
 
+    <script>
+        document.getElementById('codigo_scan').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const codigo = e.target.value;
+
+                if (codigo.length === 13) {
+                    fetch(`/producto/verificar-codigo/${codigo}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.existe) {
+                                document.getElementById('mensaje_resultado').innerHTML = `
+                                    <div class="alert alert-danger">
+                                        El producto ya existe. <a href="/producto/${data.id}" class="btn btn-sm btn-outline-secondary ml-2">Ver producto</a>
+                                    </div>`;
+                            } else {
+                                // Cargar formulario por AJAX
+                                fetch(`/producto/formulario-crear?codigo=${codigo}`)
+                                    .then(res => res.text())
+                                    .then(html => {
+                                        document.getElementById('contenido_formulario_creacion').innerHTML = html;
+                                        $('#modalScan').modal('hide');
+                                        $('#modalCrearProducto').modal('show');
+                                    });
+                            }
+                        });
+                } else {
+                    alert('El código debe tener exactamente 13 dígitos.');
+                }
+            }
+        });
+    </script>
+
+
+    {{-- IMPRIMIR CODIGOS EAN-13 ETIQUETAS  --}}
     <script>
         function imprimirCodigo(imagenUrl) {
             const ventana = window.open('', '_blank');

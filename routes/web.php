@@ -44,8 +44,26 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('products', ProductoController::class);
 });
 
-//RUTAS CARRITO
 
+// Verificar si el código ya existe
+Route::get('/producto/verificar-codigo/{codigo}', function ($codigo) {
+    $producto = \App\Models\Producto::where('codigo', $codigo)->first();
+
+    return response()->json([
+        'existe' => (bool)$producto,
+        'id' => optional($producto)->id,
+    ]);
+});
+
+// Devolver formulario parcial con el código
+Route::get('/producto/formulario-crear', function (Illuminate\Http\Request $request) {
+    $codigo = $request->input('codigo');
+    return view('modulos.productos._form_modal', compact('codigo'));
+});
+
+
+
+//RUTAS CARRITO
 Route::get('/carrito/obtener', [CarritoController::class, 'obtenerCarrito'])->name('carrito.obtener');
 
 Route::post('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
