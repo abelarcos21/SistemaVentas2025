@@ -130,20 +130,22 @@
                                                 @endif
 
                                                 <td class="text-blue">
-                                                     @if($producto->precio_venta)
+                                                    @if($producto->precio_venta)
                                                         <strong>{{ $producto->monedas->codigo ?? 'Sin codigo' }} ${{ number_format($producto->precio_venta, 2) }}</strong>
                                                     @else
                                                         <span class="text-muted">No definido</span>
                                                     @endif
                                                 </td>
 
-                                               {{--  <td class="text-blue">
-                                                   {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_venta, 2) }}
-                                                </td> --}}
-                                                <td class="text-blue">
 
-                                                    {{ $producto->monedas->codigo ?? 'Sin codigo' }} {{ number_format($producto->precio_compra, 2) }}
+                                                <td class="text-blue">
+                                                    @if($producto->precio_compra)
+                                                        <strong>{{ $producto->monedas->codigo ?? 'Sin codigo' }} ${{ number_format($producto->precio_compra, 2) }}</strong>
+                                                    @else
+                                                        <span class="text-muted">No definido</span>
+                                                    @endif
                                                 </td>
+
                                                 <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="custom-control custom-switch toggle-estado">

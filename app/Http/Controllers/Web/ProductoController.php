@@ -260,7 +260,7 @@ class ProductoController extends Controller
 
             DB::commit();
 
-            return redirect()->route('producto.index')->with('success', 'Producto creado exitosamente!');
+            return redirect()->route('producto.index')->with('success', 'Producto creado exitosamente. Puedes realizar la compra más tarde usando el botón Comprar.!');
 
         }catch (Exception $e){
             DB::rollBack();
