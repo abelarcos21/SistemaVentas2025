@@ -304,6 +304,7 @@
         @endif
     </script>
 
+    {{--ESCANEAR EL PRODUCTO O ESCRIBIRLO PARA VERIFICAR SI EXISTE SI NO SE CREA UN NUEVO PRODUCTO--}}
     <script>
         document.getElementById('codigo_scan').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
