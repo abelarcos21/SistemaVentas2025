@@ -30,88 +30,114 @@
                     <div class="card-header bg-gradient-primary text-white">
                         <h4 class="mb-0">
                             <i class="fas fa-cogs mr-2"></i>
-                            Configuraciones del sistema
+                            Configuraciones del sistema (Negocio)
                         </h4>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info bg-gradient-info" role="alert">
+                        <div class="alert alert-light" role="alert">
                             <i class="fas fa-info-circle mr-2"></i>
-                            Modificar los datos del formulario
+                            La información a continuación se mostrará en las boletas y tickets de ventas generadas automáticamente.
                         </div>
 
                         <form action="{{ route('negocio.update') }}" method="POST" enctype="multipart/form-data">
                             @csrf
-
+                            @method('PUT')
                             <div class="row">
-                                <!-- Nombre -->
+
+                                <!-- NOMBRE O RAZON SOCIAL-->
                                 <div class="col-md-6 mb-3">
-                                    <label for="nombre" class="form-label">
-                                        <i class="fas fa-building mr-1"></i>
-                                        Nombre <span class="text-danger">*</span>
+                                    <label for="razon_social" class="form-label">
+                                        Nombre / Razon social <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text"
-                                        class="form-control @error('nombre') is-invalid @enderror"
-                                        id="nombre"
-                                        name="nombre"
-                                        value="{{ old('nombre', $configuracion->nombre ?? 'Sistema Hilari 66666') }}"
-                                        placeholder="Ingrese el nombre del sistema"
-                                        required>
-                                    @error('nombre')
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-building"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text"
+                                            class="form-control @error('razon_social') is-invalid @enderror"
+                                            id="razon_social"
+                                            name="razon_social"
+                                            value="{{ old('razon_social', $empresa->razon_social ?? '') }}"
+                                            placeholder="Ingrese el nombre o razon social"
+                                            required>
+                                    </div>
+                                    @error('razon_social')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <!-- Descripción -->
+
+                                <!-- RFC -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="descripcion" class="form-label">
-                                        <i class="fas fa-align-left mr-1"></i>
-                                        Descripción <span class="text-danger">*</span>
+                                    <label for="rfc" class="form-label">
+                                        RFC <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text"
-                                        class="form-control @error('descripcion') is-invalid @enderror"
-                                        id="descripcion"
-                                        name="descripcion"
-                                        value="{{ old('descripcion', $configuracion->descripcion ?? 'Sistema Hilari 666666') }}"
-                                        placeholder="Ingrese la descripción"
-                                        required>
-                                    @error('descripcion')
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-id-card"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text"
+                                            class="form-control @error('rfc') is-invalid @enderror"
+                                            id="rfc"
+                                            name="rfc"
+                                            value="{{ old('rfc', $empresa->rfc ?? '') }}"
+                                            placeholder="Ingrese el RFC"
+                                            required>
+                                    </div>
+                                    @error('rfc')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
                             <div class="row">
-                                <!-- Dirección -->
+                                <!-- DIRECCION -->
                                 <div class="col-md-6 mb-3">
                                     <label for="direccion" class="form-label">
-                                        <i class="fas fa-map-marker-alt mr-1"></i>
                                         Dirección <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text"
-                                        class="form-control @error('direccion') is-invalid @enderror"
-                                        id="direccion"
-                                        name="direccion"
-                                        value="{{ old('direccion', $configuracion->direccion ?? 'Zona Alto Lima 3ra Sección') }}"
-                                        placeholder="Ingrese la dirección"
-                                        required>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text"
+                                            class="form-control @error('direccion') is-invalid @enderror"
+                                            id="direccion"
+                                            name="direccion"
+                                            value="{{ old('direccion', $empresa->direccion ?? '') }}"
+                                            placeholder="Ingrese la dirección"
+                                            required>
+                                    </div>
                                     @error('direccion')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <!-- Teléfono -->
+                                <!-- TELEFONO -->
                                 <div class="col-md-6 mb-3">
                                     <label for="telefono" class="form-label">
-                                        <i class="fas fa-phone mr-1"></i>
                                         Teléfono <span class="text-danger">*</span>
                                     </label>
-                                    <input type="tel"
-                                        class="form-control @error('telefono') is-invalid @enderror"
-                                        id="telefono"
-                                        name="telefono"
-                                        value="{{ old('telefono', $configuracion->telefono ?? '59175657007') }}"
-                                        placeholder="Ingrese el número de teléfono"
-                                        required>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-phone"></i>
+                                            </span>
+                                        </div>
+                                        <input type="tel"
+                                            class="form-control @error('telefono') is-invalid @enderror"
+                                            id="telefono"
+                                            name="telefono"
+                                            value="{{ old('telefono', $empresa->telefono ?? '') }}"
+                                            placeholder="Ingrese el número de teléfono"
+                                            required>
+                                    </div>
                                     @error('telefono')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -119,134 +145,169 @@
                             </div>
 
                             <div class="row">
-                                <!-- Email -->
-                                <div class="col-md-4 mb-3">
-                                    <label for="email" class="form-label">
-                                        <i class="fas fa-envelope mr-1"></i>
-                                        Email <span class="text-danger">*</span>
+                                <!-- CORREO -->
+                                <div class="col-md-3 mb-3">
+                                    <label for="correo" class="form-label">
+                                        Correo <span class="text-danger">*</span>
                                     </label>
-                                    <input type="email"
-                                        class="form-control @error('email') is-invalid @enderror"
-                                        id="email"
-                                        name="email"
-                                        value="{{ old('email', $configuracion->email ?? 'hilariweb@gmail.com') }}"
-                                        placeholder="correo@ejemplo.com"
-                                        required>
-                                    @error('email')
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-envelope"></i>
+                                            </span>
+                                        </div>
+                                        <input type="email"
+                                            class="form-control @error('correo') is-invalid @enderror"
+                                            id="correo"
+                                            name="correo"
+                                            value="{{ old('correo', $empresa->correo ?? '') }}"
+                                            placeholder="correo@ejemplo.com"
+                                            required>
+                                    </div>
+                                    @error('correo')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <!-- Sitio Web -->
-                                <div class="col-md-4 mb-3">
-                                    <label for="sitio_web" class="form-label">
-                                        <i class="fas fa-globe mr-1"></i>
-                                        Sitio Web
+                                <!-- CODIGO POSTAL -->
+                                <div class="col-md-3 mb-3">
+                                    <label for="codigo_postal" class="form-label">
+                                        Código Postal
                                     </label>
-                                    <input type="url"
-                                        class="form-control @error('sitio_web') is-invalid @enderror"
-                                        id="sitio_web"
-                                        name="sitio_web"
-                                        value="{{ old('sitio_web', $configuracion->sitio_web ?? 'https://www.hilariweb.com') }}"
-                                        placeholder="https://www.ejemplo.com">
-                                    @error('sitio_web')
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-mail-bulk"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text"
+                                            class="form-control @error('codigo_postal') is-invalid @enderror"
+                                            id="codigo_postal"
+                                            name="codigo_postal"
+                                            value="{{ old('codigo_postal', $empresa->codigo_postal ?? '') }}"
+                                            placeholder="Ingrese el código postal">
+                                    </div>
+                                    @error('codigo_postal')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
 
-                                <!-- Moneda -->
-                                <div class="col-md-4 mb-3">
+                                <!-- REGIMEN FISCAL -->
+                                <div class="col-md-3 mb-3">
+                                    <label for="regimen_fiscal" class="form-label">
+                                        Régimen Fiscal
+                                    </label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-file-invoice-dollar"></i>
+                                            </span>
+                                        </div>
+                                        <input type="text"
+                                            class="form-control @error('regimen_fiscal') is-invalid @enderror"
+                                            id="regimen_fiscal"
+                                            name="regimen_fiscal"
+                                            value="{{ old('regimen_fiscal', $empresa->regimen_fiscal ?? '') }}"
+                                            placeholder="Ingrese el régimen fiscal">
+                                    </div>
+                                    @error('regimen_fiscal')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+
+                                <!-- MONEDA -->
+                                <div class="col-md-3 mb-3">
                                     <label for="moneda" class="form-label">
-                                        <i class="fas fa-dollar-sign mr-1"></i>
                                         Moneda <span class="text-danger">*</span>
                                     </label>
-                                    <select class="form-control @error('moneda') is-invalid @enderror"
-                                            id="moneda"
-                                            name="moneda"
-                                            required>
-                                        <option value="">Seleccione una moneda</option>
-                                        <option value="PEN" {{ old('moneda', $configuracion->moneda ?? '') == 'PEN' ? 'selected' : '' }}>Sol Peruano (PEN)</option>
-                                        <option value="USD" {{ old('moneda', $configuracion->moneda ?? '') == 'USD' ? 'selected' : '' }}>Dólar Americano (USD)</option>
-                                        <option value="EUR" {{ old('moneda', $configuracion->moneda ?? '') == 'EUR' ? 'selected' : '' }}>Euro (EUR)</option>
-                                        <option value="BOB" {{ old('moneda', $configuracion->moneda ?? '') == 'BOB' ? 'selected' : '' }}>Boliviano (BOB)</option>
-                                        <option value="MXN" {{ old('moneda', $configuracion->moneda ?? '') == 'MXN' ? 'selected' : '' }}>Peso Mexicano (MXN)</option>
-                                    </select>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </span>
+                                        </div>
+                                        <select id="moneda" name="moneda" class="form-control @error('moneda') is-invalid @enderror select2" required>
+                                            <option value="">Seleccione una moneda</option>
+                                            @foreach($monedas as $moneda)
+                                                <option value="{{ $moneda->codigo }}"
+                                                    {{ old('moneda', $empresa->moneda ?? '') == $moneda->codigo ? 'selected' : '' }}>
+                                                    {{ $moneda->nombre }} ({{ $moneda->codigo }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     @error('moneda')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
+
+
                             </div>
 
                             <div class="row">
-                                <!-- Logo -->
+                                <!-- Logo Upload -->
                                 <div class="col-md-8 mb-3">
-                                    <label for="logo" class="form-label">
-                                        <i class="fas fa-image mr-1"></i>
+                                    <label for="imagen" class="form-label">
                                         Logo <span class="text-danger">*</span>
                                     </label>
-                                    <div class="custom-file">
-                                        <input type="file"
-                                            class="custom-file-input @error('logo') is-invalid @enderror"
-                                            id="logo"
-                                            name="logo"
-                                            accept="image/*"
-                                            onchange="previewImage(this)">
-                                        <label class="custom-file-label" for="logo" id="logo-label">
-                                            {{ isset($configuracion->logo) ? basename($configuracion->logo) : 'Seleccionar archivo' }}
-                                        </label>
-                                        @error('logo')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info">
+                                                <i class="fas fa-image"></i>
+                                            </span>
+                                        </div>
+                                        <div class="custom-file">
+                                            <input type="file"
+                                                class="custom-file-input @error('imagen') is-invalid @enderror"
+                                                id="imagen"
+                                                name="imagen"
+                                                accept="image/*"
+                                                onchange="img.src = window.URL.createObjectURL(this.files[0])">
+                                            <label class="custom-file-label" for="imagen" id="imagen-label">
+                                                {{ isset($empresa->imagen) ? basename($empresa->imagen) : 'Seleccionar archivo' }}
+                                            </label>
+                                        </div>
                                     </div>
-                                    <small class="form-text text-muted">
-                                        Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB
+                                    @error('imagen')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                    <small class="form-text text-muted mt-2">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Formatos: JPG, PNG, GIF. Tamaño recomendado: 272×315px (máx. 250KB)
                                     </small>
                                 </div>
 
                                 <!-- Vista previa del logo -->
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Vista previa</label>
-                                    <div class="border rounded p-3 text-center bg-light" style="min-height: 120px;">
-                                        @if(isset($configuracion->logo))
-                                            <img src="{{ asset('storage/' . $configuracion->logo) }}"
+                                    <div class="border rounded p-4 text-center bg-light d-flex align-items-center justify-content-center"
+                                        style="min-height: 160px;">
+                                        @if(isset($empresa->imagen))
+                                            <img src="{{ asset('storage/' . $empresa->imagen) }}"
                                                 alt="Logo actual"
-                                                class="img-fluid rounded shadow"
-                                                style="max-height: 100px; max-width: 100%;"
-                                                id="logo-preview">
+                                                class="img-fluid rounded shadow-sm"
+                                                style="max-height: 130px; max-width: 100%; object-fit: contain;"
+                                                id="img">
                                         @else
-                                            <img src="{{ asset('images/leche-png.png') }}"
-                                                alt="Logo por defecto"
-                                                class="img-fluid rounded shadow"
-                                                style="max-height: 100px; max-width: 100%;"
-                                                id="logo-preview">
+                                            <div class="text-muted text-center" id="img">
+                                                <i class="fas fa-image fa-3x mb-2 d-block text-secondary"></i>
+                                                <small>Vista previa del logo</small>
+                                            </div>
                                         @endif
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Botones -->
-                            <div class="row mt-4">
-                                <div class="col-12">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <button type="submit" class="btn btn-primary btn-md">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Guardar
-                                            </button>
-                                            <button type="button" class="btn btn-secondary btn-md ml-2" onclick="history.back()">
-                                                <i class="fas fa-times mr-2"></i>
-                                                Cancelar
-                                            </button>
-                                        </div>
 
-                                        @if(isset($configuracion))
-                                            <button type="button" class="btn btn-warning btn-lg" onclick="resetForm()">
-                                                <i class="fas fa-undo mr-2"></i>
-                                                Restablecer
-                                            </button>
-                                        @endif
-                                    </div>
-                                </div>
+                            <!-- Botónes -->
+                            <div class="card-footer ">
+                                <button type="submit" class="btn btn-info">
+                                    <i class="fas fa-save mr-2"></i> Guardar
+                                </button>
+                                <a  type="button" class="btn btn-secondary float-right" href="{{ route('home')}}">
+                                    <i class="fas fa-times mr-2"></i> Cancelar
+                                </a>
                             </div>
                         </form>
                     </div>
@@ -261,7 +322,7 @@
     {{-- <div class="container mt-5">
         <h4 class="font-weight-bold">Perfil General De La Empresa (Negocio)</h4>
         <h5 class="text-muted">Boleta y Ticket</h5>
-        <p>La información a continuación se mostrará en las boletas y tickets de ventas generadas automáticamente.</p>
+
 
         <div class="row">
             <!-- Imagen -->
@@ -283,68 +344,10 @@
                         <label for="imagen">Logo (opcional)</label>
                         <input type="file" onchange="img.src = window.URL.createObjectURL(this.files[0])" class="form-control-file" id="imagen" name="imagen" accept="image/*">
                         <small class="form-text text-muted">Tamaño recomendado y Extension: 272×315 px. .PNG Máx 250 KB.</small>
-                    </div>
+                    </div
 
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="razon_social">Razón Social*</label>
-                            <input type="text" class="form-control" id="razon_social" name="razon_social" value="{{ old('razon_social', $empresa->razon_social ?? '') }}" required>
-                        </div>
 
-                        <div class="form-group col-md-6">
-                            <label for="rfc">RFC*</label>
-                            <input type="text" class="form-control" id="rfc" name="rfc" maxlength="13" value="{{ old('rfc', $empresa->rfc ?? '') }}" required>
-                        </div>
-                    </div>
 
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="telefono">Telefono</label>
-                            <input type="text" class="form-control" id="telefono" name="telefono" value="{{ old('telefono', $empresa->telefono ?? '') }}">
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="correo">Correo*</label>
-                            <input type="email" class="form-control" id="correo" name="correo" value="{{ old('correo', $empresa->correo ?? '') }}" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="moneda">Moneda*</label>
-                            <select id="moneda" name="moneda" class="form-control select2" required>
-                                <option value="">Seleccione una moneda</option>
-                                @foreach($monedas as $moneda)
-                                    <option value="{{ $moneda->codigo }}"
-                                        {{ old('moneda', $empresa->moneda ?? '') == $moneda->codigo ? 'selected' : '' }}>
-                                        {{ $moneda->nombre }} ({{ $moneda->codigo }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="regimen_fiscal">Régimen Fiscal*</label>
-                            <input type="text" class="form-control" id="regimen_fiscal" name="regimen_fiscal" value="{{ old('regimen_fiscal', $empresa->regimen_fiscal ?? '') }}" maxlength="5">
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label for="codigo_postal">Código Postal*</label>
-                            <input type="text" class="form-contr ol" id="codigo_postal" name="ruc" value="{{ old('codigo_postal', $empresa->codigo_postal ?? '') }}" maxlength="10">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="direccion">Dirección</label>
-                        <textarea class="form-control" id="direccion"  name="direccion" rows="3">{{ old('direccion', $empresa->direccion ?? '') }}</textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary bg-gradient-primary btn-md mb-3 ">
-                         <i class="fas fa-save"></i> Guardar
-                    </button>
-                    <a href="{{ route('home')}}" class="btn btn-secondary float-right btn-md mb-3">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
                 </form>
             </div>
         </div>
