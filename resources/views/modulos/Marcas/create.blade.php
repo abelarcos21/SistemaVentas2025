@@ -27,8 +27,8 @@
       <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <div class="card card-outline card-info">
-                    <div class="card-header bg-secondary">
+                <div class="card">
+                    <div class="card-header bg-gradient-primary">
                         <h3 class="card-title">Agregar Nueva Marca</h3>
                     </div>
                     <!-- /.card-header -->
