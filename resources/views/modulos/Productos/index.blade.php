@@ -129,7 +129,7 @@
                                                 @if($producto->cantidad == 0)
                                                     <td><span class="badge bg-warning">Sin stock</span></td>
                                                 @else
-                                                    <td><span class="badge bg-success">{{ $producto->cantidad }} Unidades</span></td>
+                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
                                                 @endif
 
                                                 <td class="text-blue">
@@ -447,7 +447,41 @@
                         customize: function (xlsx) {
                             let sheet = xlsx.xl.worksheets['sheet1.xml'];
 
-                            // 1. Centrar y combinar el título
+                            // 1. Crear nuevo estilo personalizado para el encabezado
+                            let styles = xlsx.xl['styles.xml'];
+
+                            // Agregar un nuevo estilo con fondo #17a2b8 y texto blanco
+                            let newFill = '<fill><patternFill patternType="solid"><fgColor rgb="FF17A2B8"/></patternFill></fill>';
+                            let newFont = '<font><color rgb="FFFFFFFF"/><b/></font>';
+
+                            // Buscar las secciones de fills y fonts
+                            let fillsSection = styles.getElementsByTagName('fills')[0];
+                            let fontsSection = styles.getElementsByTagName('fonts')[0];
+
+                            // Agregar el nuevo fill
+                            $(fillsSection).append(newFill);
+                            let fillCount = fillsSection.childNodes.length;
+                            fillsSection.setAttribute('count', fillCount);
+
+                            // Agregar la nueva fuente
+                            $(fontsSection).append(newFont);
+                            let fontCount = fontsSection.childNodes.length;
+                            fontsSection.setAttribute('count', fontCount);
+
+                            // Crear el nuevo estilo que combine fill, font y alineación
+                            let newCellXf = '<xf numFmtId="0" fontId="' + (fontCount - 1) + '" fillId="' + (fillCount - 1) + '" borderId="0" applyFont="1" applyFill="1" applyAlignment="1">' +
+                                        '<alignment horizontal="center" vertical="center"/>' +
+                                        '</xf>';
+
+                            let cellXfsSection = styles.getElementsByTagName('cellXfs')[0];
+                            $(cellXfsSection).append(newCellXf);
+                            let xfCount = cellXfsSection.childNodes.length;
+                            cellXfsSection.setAttribute('count', xfCount);
+
+                            // ID del nuevo estilo será xfCount - 1
+                            let customStyleId = xfCount - 1;
+
+                            // 2. Centrar y combinar el título
                             let mergeCells = sheet.getElementsByTagName('mergeCells')[0];
                             if (!mergeCells) {
                                 mergeCells = sheet.createElement('mergeCells');
@@ -459,16 +493,16 @@
                             mergeCells.setAttribute('count', mergeCells.childNodes.length);
 
                             // Centrar título (A1)
-                            $('row c[r^="A1"]', sheet).attr('s', '51'); // ID 51 suele ser centrado
+                            $('row c[r^="A1"]', sheet).attr('s', '51');
 
-                            // 2. Aplicar color y centrado al encabezado (segunda fila = thead)
-                            $('row[r="2"] c', sheet).attr('s', '51');
-                            // El estilo 32 suele ser: fondo azul, texto blanco, centrado.
-                            // Puedes probar también 22, 34, 36, 66 según tu versión.
+                            // 3. Aplicar el estilo personalizado al encabezado (segunda fila = thead)
+                            $('row[r="2"] c', sheet).attr('s', customStyleId);
 
-                            // 3. Centrar todo el contenido (desde la tercera fila)
+                            // 4. Centrar todo el contenido (desde la tercera fila)
                             $('row:gt(1)', sheet).each(function () {
-                                $('c', this).attr('s', '51'); // estilo centrado
+                                if ($(this).attr('r') !== '2') { // No aplicar a la fila del encabezado
+                                    $('c', this).attr('s', '51'); // estilo centrado
+                                }
                             });
                         }
                     },
@@ -494,7 +528,7 @@
                             });
 
                             // Centrar título, bg-secondary header, texto blanco
-                            doc.styles.tableHeader.fillColor = '#002060'; // similar a bg-primary
+                            doc.styles.tableHeader.fillColor = '#17a2b8'; // similar a bg-info
                             doc.styles.tableHeader.color = 'white';
                             doc.styles.title = {
                                 alignment: 'center',
@@ -546,7 +580,7 @@
                         title: 'Reporte de Productos',
                         filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
                         text: '<i class="fas fa-file-csv"></i> Exportar a CSV',
-                        className: 'btn btn-info btn-sm'
+                        className: 'btn btn-success btn-sm'
                     }
                 ],
 

@@ -36,7 +36,7 @@
             text-align: center;
             font-weight: bold;
             margin-top: 5px;
-            
+
         }
         .cliente-info {
             margin-bottom: 15px;
