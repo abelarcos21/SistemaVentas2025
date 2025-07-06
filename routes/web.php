@@ -55,6 +55,9 @@ Route::get('/producto/verificar-codigo/{codigo}', function ($codigo) {
     ]);
 });
 
+//BUSCAR PRODUCTO POR EL CODIGO
+Route::post('/productos/buscar', [ProductoController::class, 'buscar'])->name('productos.buscar');
+
 // Devolver formulario parcial con el código
 Route::get('/producto/formulario-crear', function (Illuminate\Http\Request $request) {
     $codigo = $request->input('codigo');

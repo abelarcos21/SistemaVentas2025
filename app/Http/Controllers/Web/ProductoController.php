@@ -105,6 +105,15 @@ class ProductoController extends Controller
         return view('modulos.productos.edit', compact('producto','categorias','proveedores','marcas'));
 
     }
+    
+    //BUSCAR PRODUCTO POR CODIGO PARA VERIFICAR SI EXISTE
+    public function buscar(Request $request){
+        $producto = Producto::where('codigo', $request->codigo)->first();
+
+        return response()->json([
+            'existe' => $producto !== null
+        ]);
+    }
 
     //CAMBIAR ESTADO DE PRODUCTO DE ACTIVO
     public function cambiarEstado(Request $request, $id){
