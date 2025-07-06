@@ -317,10 +317,15 @@
                         .then(response => response.json())
                         .then(data => {
                             if (data.existe) {
-                                document.getElementById('mensaje_resultado').innerHTML = `
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Este código ya está registrado',
+                                    text: 'Producto: ' + data.nombre
+                                });
+                                /* document.getElementById('mensaje_resultado').innerHTML = `
                                     <div class="alert alert-danger">
                                         El producto ya existe. <a href="/producto/${data.id}" class="btn btn-sm btn-outline-secondary ml-2">Ver producto</a>
-                                    </div>`;
+                                    </div>`; */
                             } else {
                                 // Cargar formulario por AJAX
                                 fetch(`/producto/formulario-crear?codigo=${codigo}`)
@@ -338,6 +343,7 @@
                         title: 'Código inválido',
                         text: 'El código debe tener exactamente 13 dígitos.'
                     });
+                    $(this).val('').focus();
                 }
             }
         });
