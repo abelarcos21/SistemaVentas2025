@@ -230,8 +230,8 @@
             <div class="modal-body">
                 <form id="scanForm">
                     <div class="form-group">
-                        <label for="codigo_scan">Escanea o escribe el código EAN-13</label>
-                        <input type="text" id="codigo_scan" class="form-control" autocomplete="off" autofocus>
+                        <label for="codigo_scan">Escanea o escribe el código de barras EAN-13</label>
+                        <input type="text" id="codigo_scan" placeholder="Escanea un producto..." class="form-control" autocomplete="off" autofocus>
                         <small class="text-muted">Presiona Enter para continuar</small>
                     </div>
                 </form>
@@ -245,7 +245,7 @@
     <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="crearProductoLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-            <div class="modal-header bg-success text-white">
+            <div class="modal-header bg-gradient-info text-white">
                 <h5 class="modal-title">Crear nuevo producto</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                 <span aria-hidden="true">&times;</span>
@@ -257,6 +257,7 @@
             </div>
         </div>
     </div>
+
 
 @stop
 
@@ -332,7 +333,11 @@
                             }
                         });
                 } else {
-                    alert('El código debe tener exactamente 13 dígitos.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Código inválido',
+                        text: 'El código debe tener exactamente 13 dígitos.'
+                    });
                 }
             }
         });
