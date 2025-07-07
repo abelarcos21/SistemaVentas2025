@@ -80,84 +80,6 @@
                                 </thead>
                                 <tbody id="carrito-items">
                                     <!-- Aquí se renderiza dinámicamente -->
-                                    {{--  @php $totalGeneral = 0; @endphp
-                                    @foreach (session('items_carrito') as $item)
-                                        @php
-                                            $totalProducto = $item['cantidad'] * $item['precio'];
-                                            $totalGeneral += $totalProducto;
-                                            $producto = \App\Models\Producto::find($item['id']);
-                                        @endphp
-                                        <tr>
-                                            <td>
-
-                                                @php
-                                                    $ruta = $producto->imagen && $producto->imagen->ruta
-                                                    ? asset('storage/' . $producto->imagen->ruta)
-                                                    : asset('images/placeholder-caja.png');
-                                                @endphp
-
-                                                <!-- Imagen miniatura con enlace al modal -->
-                                                <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                                                    <img src="{{ $ruta }}"
-                                                    width="50" height="50"
-                                                    class="img-thumbnail rounded shadow"
-                                                    style="object-fit: cover;">
-                                                </a>
-
-                                                <!-- Modal Bootstrap 4 -->
-                                                <div class="modal fade" id="modalImagen{{ $producto->id }}"
-                                                    tabindex="-1"
-                                                    role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                        <div class="modal-content bg-white">
-                                                            <div class="modal-header bg-gradient-info">
-                                                                <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
-                                                                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body text-center">
-                                                                <img src="{{ $ruta }}" class="img-fluid rounded shadow">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {{-- @if($producto->imagen)
-                                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
-                                                @else
-                                                    <span>Sin imagen</span>
-                                                @endif --}}
-                                            {{--   </td>
-                                            <td class="text-center">{{ $item['nombre'] }}</td>
-                                            @if($producto->cantidad > 5)
-                                                <td class="text-center">
-                                                    <span class="badge bg-success">{{ $producto->cantidad }}</span>
-                                                </td>
-                                            @else
-
-                                                <td class="text-center">
-                                                    <span class="badge bg-danger">{{ $producto->cantidad }}</span>
-                                                </td> <!-- NUEVA CELDA -->
-                                            @endif
-
-                                            <td class="text-center">
-                                                <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
-                                                    <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
-                                                    <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
-                                                </form>
-                                            </td>
-                                            <td class="text-center text-primary">MXN${{ $item['precio'] }}</td>
-                                            <td class="text-center text-primary">MXN${{ $totalProducto }}</td>
-                                            <td class="text-center">
-                                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                            </td>
-                                        </tr> --}}
-                                    {{--@endforeach --}}
                                 </tbody>
                             </table>
                         </div>
@@ -643,23 +565,35 @@
             $.ajax({
                 url: url,
                 type: 'GET',
+                data: {
+                    ajax: true // Indicar que es una petición AJAX
+                },
                 beforeSend: function() {
-                    // Mostrar solo el spinner
+
+                    // Mostrar spinner solo en el área de productos
                     $('#contenedor-productos').html('<div class="text-center w-100 my-5"><div class="spinner-border text-primary"></div></div>');
 
                     // Limpiar completamente la paginación para que no aparezca al cambiar de pagina
                     $('#pagination-wrapper').empty();
                 },
                 success: function(response) {
-                    // Remplaza el contenido completo del área que contiene productos y paginación
-                    // Actualiza el contenido de productos y paginación
-                    $('#contenedor-productos').parent().html(response);
+                    // Crear un elemento temporal para parsear la respuesta
+                    let tempDiv = $('<div>').html(response);
+
+                    // Actualizar solo el contenido de productos
+                    $('#contenedor-productos').html(tempDiv.find('#contenedor-productos').html());
+
+                    // Actualizar solo la paginación
+                    $('#pagination-wrapper').html(tempDiv.find('#pagination-wrapper').html());
+
+                    // Re-inicializar eventos de los productos (si los hay)
+                    /* inicializarEventosProductos(); */
 
 
                 },
                 error: function(xhr) {
                     console.error('Error al cargar productos:', xhr);
-                    alert('Error al cargar los productos.');
+                    $('#contenedor-productos').html('<div class="alert alert-danger">Error al cargar los productos.</div>');
                 }
             });
         });
