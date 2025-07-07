@@ -643,23 +643,31 @@
             $.ajax({
                 url: url,
                 type: 'GET',
+                data: {
+                    ajax: true // Indicar que es una petición AJAX
+                },
                 beforeSend: function() {
-                    // Mostrar solo el spinner
+                    // Mostrar spinner solo en el área de productos
                     $('#contenedor-productos').html('<div class="text-center w-100 my-5"><div class="spinner-border text-primary"></div></div>');
 
-                    // Limpiar completamente la paginación para que no aparezca al cambiar de pagina
-                    $('#pagination-wrapper').empty();
                 },
                 success: function(response) {
-                    // Remplaza el contenido completo del área que contiene productos y paginación
-                    // Actualiza el contenido de productos y paginación
-                    $('#contenedor-productos').parent().html(response);
+                    // Crear un elemento temporal para parsear la respuesta
+                    let tempDiv = $('<div>').html(response);
 
+                    // Actualizar solo el contenido de productos
+                    $('#contenedor-productos').html(tempDiv.find('#contenedor-productos').html());
+
+                    // Actualizar solo la paginación
+                    $('#pagination-wrapper').html(tempDiv.find('#pagination-wrapper').html());
+
+                    // Re-inicializar eventos de los productos (si los hay)
+                    inicializarEventosProductos();
 
                 },
                 error: function(xhr) {
                     console.error('Error al cargar productos:', xhr);
-                    alert('Error al cargar los productos.');
+                    $('#contenedor-productos').html('<div class="alert alert-danger">Error al cargar los productos.</div>');
                 }
             });
         });
