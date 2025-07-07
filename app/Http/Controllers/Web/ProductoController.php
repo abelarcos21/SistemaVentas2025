@@ -105,8 +105,8 @@ class ProductoController extends Controller
         return view('modulos.productos.edit', compact('producto','categorias','proveedores','marcas'));
 
     }
-    
-    //BUSCAR PRODUCTO POR CODIGO PARA VERIFICAR SI EXISTE
+
+    //BUSCAR PRODUCTO POR CODIGO PARA VERIFICAR SI EXISTE CUANDO SE ESCANEA UN PRODUCTO EN LA VISTA INDEX DE PRODUCTOS
     public function buscar(Request $request){
         $producto = Producto::where('codigo', $request->codigo)->first();
 
@@ -129,7 +129,23 @@ class ProductoController extends Controller
        $query = Producto::query();
 
         if ($request->filled('busqueda')) {
-            $query->where('nombre', 'LIKE', '%' . $request->busqueda . '%');
+            $busqueda = $request->busqueda;
+
+             // Si parece un código de barras (solo números y más de 8 dígitos)
+            if (preg_match('/^\d{8,}$/', $busqueda)) {
+                // Búsqueda exacta por código
+                $query->where(function($q) use ($busqueda) {
+                    $q->where('codigo', $busqueda);
+
+                });
+            } else {
+                // Búsqueda normal por nombre y códigos (con LIKE)
+                $query->where(function($q) use ($busqueda) {
+                    $q->where('nombre', 'LIKE', '%' . $busqueda . '%')
+                    ->orWhere('codigo', 'LIKE', '%' . $busqueda . '%');
+                });
+            }
+
         }
 
         if ($request->filled('categoria_id') && $request->categoria_id !== 'todos') {
@@ -142,8 +158,40 @@ class ProductoController extends Controller
         return response()->json([
             'html' => view('modulos.productos.listafiltrado', compact('productos'))->render(),
             'total' => $productos->count(),
+            /* 'paginacion' => $productos->links()->render(), */
+
         ]);
 
+    }
+
+    // Método adicional para búsqueda directa por código en la vista de nueva venta index para vender producto
+    public function buscarPorCodigo(Request $request){
+        $codigo = $request->input('codigo');
+
+        $producto = Producto::where('cantidad', '>', 0)
+                        ->where(function($q) use ($codigo) {
+                            $q->where('codigo', $codigo);
+                        })
+                        ->first();
+
+        if ($producto) {
+            return response()->json([
+                'success' => true,
+                'producto' => [
+                    'id' => $producto->id,
+                    'nombre' => $producto->nombre,
+                    'codigo' => $producto->codigo,
+                    'precio' => $producto->precio_venta,
+                    'stock' => $producto->cantidad,
+                    'imagen' => $producto->imagen ? asset('storage/' . $producto->imagen->ruta) : null
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'producto' => null
+        ]);
     }
 
     //IMPRIMIR ETIQUETAS DE CODIGO DE BARRAS

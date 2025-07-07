@@ -43,7 +43,9 @@
                 <div class="mb-3" id="filtros">
                     <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="todos">Todos ({{$totalProductos}})</button>
                     @foreach($categorias as $cat)
-                        <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="{{ $cat->id }}">{{ $cat->nombre }}  ({{ $cat->productos_count }})</button>
+                        <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="{{ $cat->id }}">
+                            <i class="fas fa-boxes "></i> {{ $cat->nombre }}  ({{ $cat->productos_count }})
+                        </button>
                     @endforeach
                 </div>
                 <!-- Main content -->
@@ -79,85 +81,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="carrito-items">
-                                    <!-- Aquí se renderiza dinámicamente -->
-                                    {{--  @php $totalGeneral = 0; @endphp
-                                    @foreach (session('items_carrito') as $item)
-                                        @php
-                                            $totalProducto = $item['cantidad'] * $item['precio'];
-                                            $totalGeneral += $totalProducto;
-                                            $producto = \App\Models\Producto::find($item['id']);
-                                        @endphp
-                                        <tr>
-                                            <td>
-
-                                                @php
-                                                    $ruta = $producto->imagen && $producto->imagen->ruta
-                                                    ? asset('storage/' . $producto->imagen->ruta)
-                                                    : asset('images/placeholder-caja.png');
-                                                @endphp
-
-                                                <!-- Imagen miniatura con enlace al modal -->
-                                                <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                                                    <img src="{{ $ruta }}"
-                                                    width="50" height="50"
-                                                    class="img-thumbnail rounded shadow"
-                                                    style="object-fit: cover;">
-                                                </a>
-
-                                                <!-- Modal Bootstrap 4 -->
-                                                <div class="modal fade" id="modalImagen{{ $producto->id }}"
-                                                    tabindex="-1"
-                                                    role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                        <div class="modal-content bg-white">
-                                                            <div class="modal-header bg-gradient-info">
-                                                                <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
-                                                                <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body text-center">
-                                                                <img src="{{ $ruta }}" class="img-fluid rounded shadow">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {{-- @if($producto->imagen)
-                                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50" style="object-fit: cover;">
-                                                @else
-                                                    <span>Sin imagen</span>
-                                                @endif --}}
-                                            {{--   </td>
-                                            <td class="text-center">{{ $item['nombre'] }}</td>
-                                            @if($producto->cantidad > 5)
-                                                <td class="text-center">
-                                                    <span class="badge bg-success">{{ $producto->cantidad }}</span>
-                                                </td>
-                                            @else
-
-                                                <td class="text-center">
-                                                    <span class="badge bg-danger">{{ $producto->cantidad }}</span>
-                                                </td> <!-- NUEVA CELDA -->
-                                            @endif
-
-                                            <td class="text-center">
-                                                <form action="{{ route('venta.actualizar', $item['id']) }}" method="POST" class="d-inline-flex align-items-center">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="button" class="btn btn-sm btn-outline-info cantidad-menos">−</button>
-                                                    <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $producto->cantidad }}" class="form-control form-control-sm text-center mx-1 cantidad-input" style="width: 60px;">
-                                                    <button type="button" class="btn btn-sm btn-outline-info cantidad-mas">+</button>
-                                                </form>
-                                            </td>
-                                            <td class="text-center text-primary">MXN${{ $item['precio'] }}</td>
-                                            <td class="text-center text-primary">MXN${{ $totalProducto }}</td>
-                                            <td class="text-center">
-                                                <a href="{{ route('ventas.quitar.carrito', $item['id']) }}" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </a>
-                                            </td>
-                                        </tr> --}}
-                                    {{--@endforeach --}}
+                                    <!-- Aquí se renderiza dinámicamente el carrito -->
                                 </tbody>
                             </table>
                         </div>
@@ -662,7 +586,7 @@
                     $('#pagination-wrapper').html(tempDiv.find('#pagination-wrapper').html());
 
                     // Re-inicializar eventos de los productos (si los hay)
-                    inicializarEventosProductos();
+                    //inicializarEventosProductos();
 
                 },
                 error: function(xhr) {
@@ -677,6 +601,7 @@
     {{--FILTRAR LAS CATEGORIAS AL SELECCIONARLA Y FILTRAR LOS PRODUCTOS--}}
     <script>
         let categoriaSeleccionada = 'todos';
+        let timerBusqueda = null;
 
         function filtrarProductos() {
             const busqueda = $('#buscador').val();
@@ -685,21 +610,110 @@
                 url: "{{ route('productos.filtrar') }}",
                 data: {
                     busqueda: busqueda,
-                    categoria_id: categoriaSeleccionada
+                    categoria_id: categoriaSeleccionada,
+                    buscar_codigo: true // Indicar que también busque por código
                 },
                 success: function(data) {
                     $('#contenedor-productos').html(data.html);
                     $('#contador-filtrados').text(data.total);
+
+                    // Actualizar paginación si existe
+                    if (data.pagination) {
+                        $('#pagination-wrapper').html(data.pagination);
+                    } else {
+                        $('#pagination-wrapper').empty();
+                    }
                 },
                 error: function() {
-                    alert('Error al filtrar productos');
+                    Swal.fire('Error', 'Error al filtrar productos', 'error');
                 }
             });
         }
 
+        // Función para detectar si es un código de barras
+        function esCodigoBarras(texto) {
+            // Asumiendo que los códigos de barras son solo números y tienen más de 8 dígitos
+            return /^\d{8,}$/.test(texto);
+        }
+
         $('#buscador').on('input', function() {
-            filtrarProductos();
+            const valor = $(this).val().trim();
+
+            // Limpiar el timer anterior
+            if (timerBusqueda) {
+                clearTimeout(timerBusqueda);
+            }
+
+            // Si parece un código de barras, buscar inmediatamente
+            if (esCodigoBarras(valor) && valor.length >= 8) {
+                buscarPorCodigoDirecto(valor);
+            } else {
+                // Para búsqueda normal, esperar un poco antes de buscar
+                timerBusqueda = setTimeout(() => {
+                    filtrarProductos();
+                }, 300);
+            }
         });
+
+        function buscarPorCodigoDirecto(codigo) {
+            $.ajax({
+                url: "{{ route('productos.buscar-codigo') }}",
+                data: {
+                    codigo: codigo
+                },
+                success: function(data) {
+                    if (data.producto) {
+                        // Producto encontrado por código exacto
+                        Swal.fire({
+                            title: '¡Producto encontrado!',
+                            html: `
+                                <div class="text-center">
+                                    <img src="${data.producto.imagen || '/images/placeholder-caja.png'}"
+                                        class="img-thumbnail mb-2" style="width: 100px; height: 100px;">
+                                    <h5>${data.producto.nombre}</h5>
+                                    <p class="text-muted">${data.producto.codigo}</p>
+                                    <h4 class="text-primary">MXN$${data.producto.precio}</h4>
+                                    <p class="text-info">Stock: ${data.producto.stock}</p>
+                                </div>
+                            `,
+                            icon: 'success',
+                            showCancelButton: true,
+                            confirmButtonText: 'Agregar al carrito',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonColor: '#28a745'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                agregarProductoAlCarrito(data.producto.id);
+                            }
+                            // Limpiar el buscador
+                            $('#buscador').val('');
+                        });
+                    } else {
+                        // No encontrado por código, hacer búsqueda normal
+                        filtrarProductos();
+                    }
+                },
+                error: function() {
+                    // Si hay error, hacer búsqueda normal
+                    filtrarProductos();
+                }
+            });
+        }
+
+        // Búsqueda al presionar Enter
+        $('#buscador').on('keypress', function(e) {
+            if (e.which === 13) { // Enter key
+                const valor = $(this).val().trim();
+                if (valor) {
+                    if (esCodigoBarras(valor)) {
+                        buscarPorCodigoDirecto(valor);
+                    } else {
+                        filtrarProductos();
+                    }
+                }
+            }
+        });
+
 
         $('.filtro-categoria').on('click', function() {
             categoriaSeleccionada = $(this).data('id');

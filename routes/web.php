@@ -45,24 +45,10 @@ Route::group(['middleware' => ['auth']], function() {
 });
 
 
-// Verificar si el código ya existe
-Route::get('/producto/verificar-codigo/{codigo}', function ($codigo) {
-    $producto = \App\Models\Producto::where('codigo', $codigo)->first();
-
-    return response()->json([
-        'existe' => (bool)$producto,
-        'id' => optional($producto)->id,
-    ]);
-});
 
 //BUSCAR PRODUCTO POR EL CODIGO
 Route::post('/productos/buscar', [ProductoController::class, 'buscar'])->name('productos.buscar');
 
-// Devolver formulario parcial con el código
-Route::get('/producto/formulario-crear', function (Illuminate\Http\Request $request) {
-    $codigo = $request->input('codigo');
-    return view('modulos.productos._form_modal', compact('codigo'));
-});
 
 
 
@@ -163,6 +149,13 @@ Route::prefix('productos')->group(function(){
 
 });
 
+//FILTRAR PRODUCTOS Y CATEGORIAS
+Route::get('/productos-filtrados', [ProductoController::class, 'filtrar'])->name('productos.filtrar');
+
+//BUSCAR PRODUCTOS POR CODIGO DIRECTO
+Route::get('/productos-buscarcodigodirecto', [ProductoController::class, 'buscarPorCodigo'])->name('productos.buscar-codigo');
+
+
 ///////////////////RUTA PROVEEDORES
 Route::prefix('proveedores')->group(function(){
     Route::get('/', [ProveedorController::class, 'index'])->name('proveedor.index');
@@ -202,8 +195,6 @@ Route::post('/usuarios/cambiar-estado/{id}', [UsuarioController::class, 'cambiar
 //RUTA PARA CAMBIAR DE ESTADO ACTIVO AL PRODUCTO
 Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambiarEstado']);
 
-//FILTRAR PRODUCTOS Y CATEGORIAS
-Route::get('/productos-filtrados', [ProductoController::class, 'filtrar'])->name('productos.filtrar');
 
 //IMPRIMIR ETIQUETAS DE CODIGO DE BARRAS
 Route::get('/productos/imprimir-etiquetas', [ProductoController::class, 'imprimirEtiquetas'])->name('productos.imprimir.etiquetas');
