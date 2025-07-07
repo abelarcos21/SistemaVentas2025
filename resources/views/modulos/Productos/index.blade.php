@@ -41,7 +41,7 @@
                                 <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" target="_blank">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
-                                <button class="btn btn-light bg-gradient-light text-primary btn-sm" data-toggle="modal" data-target="#modalScan">
+                                <button class="btn btn-light bg-gradient-light text-primary btn-sm" data-toggle="modal" data-target="#scannerModal">
                                     <i class="fas fa-boxes"></i> Escanear producto
                                 </button>
                             </div>
@@ -217,8 +217,8 @@
     </section>
     <!-- /.content -->
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalScan" tabindex="-1" role="dialog" aria-labelledby="modalScanLabel" aria-hidden="true">
+    <!-- Modal para scanear o escribir el codigo de barras -->
+    {{-- <div class="modal fade" id="modalScan" tabindex="-1" role="dialog" aria-labelledby="modalScanLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header bg-gradient-info">
@@ -239,22 +239,80 @@
             </div>
             </div>
         </div>
+    </div> --}}
+
+    <!-- MODAL PARA ESCANEAR PRODUCTO O ESCRIBIR MANUAL -->
+    <div class="container mt-5">
+        <div class="modal fade" id="scannerModal" tabindex="-1" role="dialog" aria-labelledby="scannerModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <!-- Header -->
+                    <div class="modal-header bg-gradient-primary">
+                        <h5 class="modal-title" id="scannerModalLabel">
+                            <i class="fas fa-barcode mr-2"></i>
+                            Escanear Código de Producto
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="form-group">
+                                <label for="codigo_input">Escanea o escribe el código del producto:</label>
+                                <input type="text" id="codigo_input" class="form-control" placeholder="Escanear código de barras..." autofocus>
+                                <small class="text-muted">Presiona Enter para continuar</small>
+                            </div>
+                            
+                            <!-- Información adicional -->
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <strong>Instrucciones:</strong> Puede escanear el código de barras con un lector o escribir manualmente el código del producto.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancelar
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Modal Crear Producto -->
-    <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="crearProductoLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-            <div class="modal-header bg-gradient-info text-white">
-                <h5 class="modal-title">Crear nuevo producto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="contenido_formulario_creacion">
-                <!-- Aquí se cargará el formulario dinámicamente con el código escaneado -->
-            </div>
-            </div>
+
+    <!-- Modal para crear nuevo producto -->
+    <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form id="formCrearProducto">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title">Crear nuevo producto</h5>
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="codigo">Código:</label>
+                            <input type="text" id="codigo" name="codigo" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" name="nombre" class="form-control" required>
+                        </div>
+                        <!-- Agrega aquí más campos como categoría, precio, etc. -->
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Guardar producto</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -307,45 +365,71 @@
 
     {{--ESCANEAR EL PRODUCTO O ESCRIBIRLO PARA VERIFICAR SI EXISTE SI NO SE CREA UN NUEVO PRODUCTO--}}
     <script>
-        document.getElementById('codigo_scan').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const codigo = e.target.value;
+        $(document).ready(function() {
+            $('#codigo_input').on('keypress', function(e) {
+                if (e.which === 13) { // Enter
+                    e.preventDefault();
+                    const codigo = $(this).val().trim();
 
-                if (codigo.length === 13) {
-                    fetch(`/producto/verificar-codigo/${codigo}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.existe) {
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Este código ya está registrado',
-                                    text: 'Producto: ' + data.nombre
-                                });
-                                /* document.getElementById('mensaje_resultado').innerHTML = `
-                                    <div class="alert alert-danger">
-                                        El producto ya existe. <a href="/producto/${data.id}" class="btn btn-sm btn-outline-secondary ml-2">Ver producto</a>
-                                    </div>`; */
-                            } else {
-                                // Cargar formulario por AJAX
-                                fetch(`/producto/formulario-crear?codigo=${codigo}`)
-                                    .then(res => res.text())
-                                    .then(html => {
-                                        document.getElementById('contenido_formulario_creacion').innerHTML = html;
-                                        $('#modalScan').modal('hide');
-                                        $('#modalCrearProducto').modal('show');
-                                    });
-                            }
+                    if (!codigo) return;
+
+                    // Validación EAN-13: 13 dígitos numéricos exactos
+                    const esEAN13 = /^\d{13}$/.test(codigo);
+                    if (!esEAN13) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Código inválido',
+                            text: 'El código debe contener exactamente 13 dígitos (EAN-13).'
                         });
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Código inválido',
-                        text: 'El código debe tener exactamente 13 dígitos.'
+                        $(this).val(''); // Limpiar
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '{{ route("productos.buscar") }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            codigo: codigo
+                        },
+                        success: function(res) {
+                            if (res.existe) {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: 'Producto ya registrado',
+                                    text: 'Este código ya está en el sistema.',
+                                });
+                            } else {
+                                $('#codigo').val(codigo); // Prellenar en el modal
+                                $('#modalCrearProducto').modal('show');
+                            }
+                        }
                     });
-                    $(this).val('').focus();
+
+                    $(this).val(''); // Limpiar campo para siguiente escaneo
                 }
-            }
+            });
+
+            $('#formCrearProducto').on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '{{ route("productos.store") }}',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(res) {
+                        $('#modalCrearProducto').modal('hide');
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Producto creado',
+                            text: 'Se ha guardado correctamente.',
+                        });
+                    },
+                    error: function(err) {
+                        Swal.fire('Error', 'Ocurrió un problema al guardar.', 'error');
+                    }
+                });
+            });
         });
     </script>
 
