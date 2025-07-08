@@ -181,13 +181,17 @@
                                                 </td>
                                                 <td>
                                                    <div class="d-flex">
-                                                        <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
-                                                            <i class="fas fa-edit mr-1"></i> Editar
-                                                        </a>
-
-                                                        <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
-                                                            <i class="fas fa-trash-alt mr-1"></i> Eliminar
-                                                        </a>
+                                                        @can('product-edit')
+                                                            <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
+                                                                <i class="fas fa-edit mr-1"></i> Editar
+                                                            </a>
+                                                        @endcan
+                                                        
+                                                        @can('product-delete')
+                                                            <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
+                                                                <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                                            </a>
+                                                        @endcan
                                                     </div>
                                                 </td>
                                             </tr>
