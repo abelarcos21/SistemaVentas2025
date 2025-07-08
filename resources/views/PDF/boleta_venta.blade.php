@@ -1,65 +1,142 @@
-@php use SimpleSoftwareIO\QrCode\Facades\QrCode; @endphp
-{{-- @php
-    $qr = base64_encode(QrCode::format('png')->size(120)->generate(
-        'Venta ID: ' . $venta->id . ' | Cliente: ' . $venta->cliente->nombre . ' | Total: $' . number_format($venta->total, 2)
-    ));
-@endphp --}}
-@php
-    $qrUrl = route('detalleventas.detalle_venta', $venta->id); // Asegúrate de tener esa ruta
-    $qr = base64_encode(QrCode::format('png')->size(120)->generate($qrUrl));
-@endphp
+
 
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>Boleta de Venta</title>
     <style>
-        body { font-family: sans-serif; font-size: 12px; }
-        .titulo { font-size: 18px; font-weight: bold; }
-        .tabla { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .tabla th, .tabla td { border: 1px solid #000; padding: 5px; text-align: left; }
+        @page { margin: 40px 30px; }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+            color: #000;
+        }
+        .encabezado {
+            display: table;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .logo {
+            display: table-cell;
+            width: 30%;
+            vertical-align: top;
+        }
+        .logo img {
+            height: 80px;
+        }
+        .datos-empresa {
+            display: table-cell;
+            width: 70%;
+            vertical-align: top;
+            text-align: right;
+        }
+        .boleta-box {
+            border: 2px solid #17a2b8;
+            padding: 5px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 5px;
+
+        }
+        .cliente-info {
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: none;
+            padding: 5px;
+            font-size: 12px;
+        }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .total {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: right;
+        }
+        .nota {
+            margin-top: 25px;
+            font-size: 12px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
 
-    <div class="titulo">Boleta de Venta #{{ $venta->id }}</div>
-    <p>Cliente: {{ $venta->cliente->nombre }}</p>
-    <p>Fecha: {{ $venta->created_at->format('d/m/Y H:i') }}</p>
+    <div class="encabezado">
+        <div class="logo">
+            <img src="{{ public_path('images/logo-fis.png') }}" alt="Logo">
+        </div>
+        <div class="datos-empresa">
+            <strong>Comercializadora México S.A. de C.V.</strong><br>
+            RFC: ABC123456789<br>
+            Av. Insurgentes Sur 1234, CDMX, México<br>
+            Tel: (55) 1234-5678<br>
+            contacto@comercialmex.com<br>
+            <div class="boleta-box">
+                BOLETA DE VENTA<br>
+                Numero De Venta: {{ $venta->folio }}
+            </div>
+        </div>
+    </div>
 
-    <table class="tabla">
-        <thead>
+    <div class="cliente-info">
+        <p><strong>Cliente:</strong> {{ $venta->cliente->nombre  ?? '----' }} {{ $venta->cliente->apellido ?? '----' }}</p>
+        <p><strong>RFC / CURP:</strong> {{ $venta->cliente->rfc ?? '----'}}</p>
+        <p><strong>Domicilio:</strong> {{ $cliente['direccion'] ?? '----' }}</p>
+        <p><strong>Teléfono:</strong> {{ $venta->cliente->telefono ?? '----' }}</p>
+    </div>
+
+    <table>
+        <thead style="background-color:#17a2b8; color:#FFFFFF; ">
             <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Subtotal</th>
+                <th class="text-center">CANT.</th>
+                <th>DESCRIPCIÓN</th>
+                <th class="text-right">P. UNITARIO</th>
+                <th class="text-right">IMPORTE</th>
             </tr>
         </thead>
         <tbody>
+
+
+
             @foreach($venta->detalles as $detalle)
                 <tr>
-                    <td>{{ $detalle->producto->nombre }}</td>
-                    <td>{{ $detalle->cantidad }}</td>
-                    <td>${{ number_format($detalle->producto->precio_venta, 2) }}</td>
-                    <td>${{ number_format($detalle->cantidad * $detalle->producto->precio_venta, 2) }}</td>
+                    <td class="text-center">{{ $detalle->cantidad }}</td>
+                    <td class="text-center">{{ $detalle->producto->nombre }}</td>
+                    <td class="text-right">${{ number_format($detalle->producto->precio_venta, 2) }}</td>
+                    <td class="text-right">${{ number_format($detalle->cantidad * $detalle->producto->precio_venta, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <p><strong>Total: ${{ number_format($venta->total_venta, 2) }}</strong></p>
+    <div class="total">
+        TOTAL: ${{ number_format($venta->total_venta, 2) }}
+    </div>
 
-   {{--  <div style="margin-top: 20px;">
-        <h4>Código QR de la Venta</h4>
-        <img src="data:image/png;base64,{{ $qr }}" width="120" height="120">
-    </div> --}}
+    <div class="nota">
+        <strong>Nota:</strong> {{ $nota ?? '----' }}
+    </div>
 
-    <div style="margin-top: 20px;">
-        <h4>Escanea para ver esta venta en línea</h4>
-        <img src="data:image/png;base64,{{ $qr }}" width="120" height="120">
-        <p style="font-size: 10px;">{{ $qrUrl }}</p>
+    <div class="footer">
+        Este documento no es un comprobante fiscal digital.<br>
+
+        {{-- <img src="data:image/png;base64,{{ $qr }}" alt="Código QR" style="margin-top: 10px;"> --}}
+        <p>Escanee para validar los datos de esta venta</p>
     </div>
 
 </body>
 </html>
+
