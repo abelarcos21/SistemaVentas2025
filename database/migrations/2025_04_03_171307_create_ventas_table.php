@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
+            $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete(); //cascadeondelete Si se elimina la empresa, también se eliminan las ventas relacionadas
             $table->float('total_venta');
             $table->enum('estado', ['completada','cancelada','eliminada'])->default('completada');
             $table->string('folio')->unique();

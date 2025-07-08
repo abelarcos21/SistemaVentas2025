@@ -74,14 +74,15 @@
 
     <div class="encabezado">
         <div class="logo">
-            <img src="{{ public_path('images/logo-fis.png') }}" alt="Logo">
+            <img src="{{ asset('storage/' . $venta->imagen_empresa) }}" alt="Logo">
+
         </div>
         <div class="datos-empresa">
-            <strong>Comercializadora México S.A. de C.V.</strong><br>
-            RFC: ABC123456789<br>
-            Av. Insurgentes Sur 1234, CDMX, México<br>
-            Tel: (55) 1234-5678<br>
-            contacto@comercialmex.com<br>
+            <strong>{{$venta->razon_social_empresa}}</strong><br>
+            RFC: {{$venta->rfc_empresa}}<br>
+            {{ $venta->direccion_empresa }}<br>
+            {{ $venta->telefono_empresa }}<br>
+            {{ $venta->correo_empresa }}<br>
             <div class="boleta-box">
                 BOLETA DE VENTA<br>
                 Numero De Venta: {{ $venta->folio }}
@@ -90,9 +91,9 @@
     </div>
 
     <div class="cliente-info">
-        <p><strong>Cliente:</strong> {{ $venta->nombre_cliente ?? '----' }}</p>
+        <p><strong>Cliente:</strong> {{ $venta->nombre_cliente ?? '----' }} {{ $venta->apellido_cliente ?? '----' }}</p>
         <p><strong>RFC / CURP:</strong> {{ $venta->rfc_cliente ?? '----'}}</p>
-        <p><strong>Domicilio:</strong> {{ $cliente['direccion'] ?? '----' }}</p>
+        <p><strong>Correo:</strong> {{ $venta->correo_cliente ?? '----' }}</p>
         <p><strong>Teléfono:</strong> {{ $venta->telefono_cliente ?? '----' }}</p>
     </div>
 

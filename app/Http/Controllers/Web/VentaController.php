@@ -75,6 +75,7 @@ class VentaController extends Controller
             $venta = new Venta();
             $venta->user_id = Auth::id(); // ← asignas aquí el usuario
             $venta->cliente_id  = $request->cliente_id;   // ← asignas aquí el cliente
+            $venta->empresa_id = 1;
             $venta->total_venta = $totalVenta;
             $venta->estado = 'completada'; // ← Aquí asignas el estado de la venta
 

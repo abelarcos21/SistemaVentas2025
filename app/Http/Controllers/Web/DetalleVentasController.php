@@ -8,6 +8,7 @@ use App\Models\Venta;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
+use App\Models\Empresa;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
@@ -158,16 +159,26 @@ class DetalleVentasController extends Controller
         $venta = Venta::select(
             'ventas.*',
             'users.name as nombre_usuario',
-            'clientes.nombre as nombre_cliente',
+            'clientes.nombre as nombre_cliente',//nombre del cliente
+            'clientes.apellido as apellido_cliente',//apellido del cliente
+            'clientes.correo as correo_cliente',//correo del cliente
             'clientes.rfc as rfc_cliente', // puede ser RFC o CURP
             'clientes.telefono as telefono_cliente',
+            //agregar datos de la empresa negocio
+            'empresas.razon_social as razon_social_empresa',
+            'empresas.rfc as rfc_empresa',
+            'empresas.direccion as direccion_empresa',
+            'empresas.telefono as telefono_empresa',
+            'empresas.correo as correo_empresa',
+            'empresas.imagen as imagen_empresa'
         )
         ->join('users', 'ventas.user_id', '=', 'users.id')//agregar el nombre del usuario quien hiso la venta
-        ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente
+        ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente quien hiso la compra
+        ->join('empresas', 'ventas.empresa_id', '=', 'empresas.id') // agregar los datos de la empresa negocio
         ->where('ventas.id', $id)
         ->firstOrFail();
 
-        $detalles = DetalleVenta::select(
+        $detalles = DetalleVenta::select( //detalles de la venta
             'detalle_venta.*',
             'productos.nombre as nombre_producto'
         )
@@ -175,22 +186,22 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get();
 
-        $cliente = [
 
-            'direccion' => 'Calle Reforma 45, Guadalajara, Jal.',
 
-        ];
+
 
         $nota = 'Gracias por su compra. No se aceptan devoluciones pasadas 24h.';
 
 
-        // Contenido para el QR
+        // Contenido para el QR con datos del cliente y datos de empresa
         $qrContenido = "BOLETA DE VENTA\n";
+        $qrContenido .= "Empresa: {$venta->razon_social_empresa}\n";
+        $qrContenido .= "RFC Empresa: {$venta->rfc_empresa}\n";
         $qrContenido .= "Cliente: {$venta->nombre_cliente}\n";
         $qrContenido .= "RFC/CURP: {$venta->rfc_cliente}\n";
         $qrContenido .= "Total: $" . number_format($venta->total_venta, 2) . "\n";
         $qrContenido .= "Folio: {$venta->folio}\n";
-        $qrContenido .= "Validación: Comercializadora México";
+        $qrContenido .= "Validación: {$venta->razon_social_empresa}";
 
 
         // Generar QR
@@ -198,7 +209,7 @@ class DetalleVentasController extends Controller
 
         // Generar PDF
         $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact(
-            'cliente', 'nota', 'detalles', 'venta', 'qr',
+            'nota', 'detalles', 'venta', 'qr',
         ))->setPaper('A4', 'portrait');
 
         // Opcional: borrar después si no se necesita guardar
