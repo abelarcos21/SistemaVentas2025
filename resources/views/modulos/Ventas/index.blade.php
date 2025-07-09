@@ -41,9 +41,9 @@
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
-                    <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="todos">Todos ({{$totalProductos}})</button>
+                    <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1" data-id="todos">Todos ({{$totalProductos}})</button>
                     @foreach($categorias as $cat)
-                        <button class="btn btn-outline-primary btn-sm filtro-categoria" data-id="{{ $cat->id }}">
+                        <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1" data-id="{{ $cat->id }}">
                             <i class="fas fa-boxes "></i> {{ $cat->nombre }}  ({{ $cat->productos_count }})
                         </button>
                     @endforeach
