@@ -23,7 +23,29 @@ class CategoriaFactory extends Factory
     public function definition(): array
     {
 
-        $categorias = ['arroz', 'aceite', 'sal', 'condimentos', 'azúcar', 'harina', 'pastas', 'enlatados', 'lácteos'];
+       /*  $categorias = ['arroz', 'aceite', 'sal', 'condimentos', 'azúcar', 'harina', 'pastas', 'enlatados', 'lácteos']; */
+
+        $categorias = [
+            'Alimentos y Bebidas',
+            'Abarrotes',
+            'Panadería',
+            'Lácteos',
+            'Carnes y Embutidos',
+            'Frutas y Verduras',
+            'Dulcería',
+            'Bebidas Alcohólicas',
+            'Limpieza y Hogar',
+            'Cuidado Personal',
+            'Farmacia',
+            'Electrónica',
+            'Papelería',
+            'Ropa y Accesorios',
+            'Juguetería',
+            'Mascotas',
+            'Ferretería',
+            'Automotriz',
+            'Servicios',
+        ];
 
         return [
             //
