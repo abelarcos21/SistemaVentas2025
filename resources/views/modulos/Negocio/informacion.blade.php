@@ -263,7 +263,7 @@
                                                 id="imagen"
                                                 name="imagen"
                                                 accept="image/*"
-                                                onchange="img.src = window.URL.createObjectURL(this.files[0])">
+                                                onchange="previewImage(this)">
                                             <label class="custom-file-label" for="imagen" id="imagen-label">
                                                 {{ isset($empresa->imagen) ? basename($empresa->imagen) : 'Seleccionar archivo' }}
                                             </label>
@@ -282,15 +282,15 @@
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">Vista previa</label>
                                     <div class="border rounded p-4 text-center bg-light d-flex align-items-center justify-content-center"
-                                        style="min-height: 160px;">
+                                        style="min-height: 160px;" id="preview-container">
                                         @if(isset($empresa->imagen))
                                             <img src="{{ asset('storage/' . $empresa->imagen) }}"
                                                 alt="Logo actual"
                                                 class="img-fluid rounded shadow-sm"
                                                 style="max-height: 130px; max-width: 100%; object-fit: contain;"
-                                                id="img">
+                                                id="img-preview">
                                         @else
-                                            <div class="text-muted text-center" id="img">
+                                            <div class="text-muted text-center" id="placeholder-preview">
                                                 <i class="fas fa-image fa-3x mb-2 d-block text-secondary"></i>
                                                 <small>Vista previa del logo</small>
                                             </div>
@@ -363,6 +363,61 @@
 @stop
 
 @section('js')
+
+    {{--Script Verifica si hay una imagen seleccionada
+    Si ya existe una imagen de vista previa, solo actualiza su src
+    Si no existe imagen (caso cuando no hay imagen en BD), crea una nueva imagen dinámicamente y oculta el placeholder
+    Actualiza el label del input file con el nombre del archivo
+    Si se cancela la selección, restaura el placeholder --}}
+    <script>
+        function previewImage(input) {
+            const previewContainer = document.getElementById('preview-container');
+            const placeholder = document.getElementById('placeholder-preview');
+            const imagePreview = document.getElementById('img-preview');
+            const label = document.getElementById('imagen-label');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Si ya existe una imagen de vista previa, la actualizamos
+                    if (imagePreview) {
+                        imagePreview.src = e.target.result;
+                    } else {
+                        // Si no existe, creamos una nueva imagen y ocultamos el placeholder
+                        if (placeholder) {
+                            placeholder.style.display = 'none';
+                        }
+                        
+                        const newImg = document.createElement('img');
+                        newImg.src = e.target.result;
+                        newImg.alt = 'Vista previa del logo';
+                        newImg.className = 'img-fluid rounded shadow-sm';
+                        newImg.style.maxHeight = '130px';
+                        newImg.style.maxWidth = '100%';
+                        newImg.style.objectFit = 'contain';
+                        newImg.id = 'img-preview';
+                        
+                        previewContainer.appendChild(newImg);
+                    }
+                    
+                    // Actualizar el label del input file
+                    label.textContent = input.files[0].name;
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Si no hay archivo seleccionado, mostrar placeholder
+                if (imagePreview) {
+                    imagePreview.remove();
+                }
+                if (placeholder) {
+                    placeholder.style.display = 'block';
+                }
+                label.textContent = 'Seleccionar archivo';
+            }
+        }
+    </script>
 
     <script>
         $(document).ready(function() {
