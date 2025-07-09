@@ -80,8 +80,12 @@
                                                 </td>
                                             </tr>
                                         @empty
-                                            <tr>
-                                                <td colspan="8" class="text-center">NO HAY PROVEEDORES</td>
+                                           <tr>
+                                                <td colspan="8" class="text-center py-4">
+                                                    <i class="fas fa-truck fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay proveedores registrados</p>
+
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>

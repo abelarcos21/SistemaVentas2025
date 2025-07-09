@@ -73,7 +73,11 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="text-center">NO HAY COMPRAS</td>
+                                                <td colspan="8" class="text-center py-4">
+                                                    <i class="fas fa-store fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay compras registradas</p>
+
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>

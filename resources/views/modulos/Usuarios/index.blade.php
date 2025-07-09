@@ -63,7 +63,7 @@
                                                 <td>{{ $usuario->id }}</td>
                                                 <td>{{ $usuario->email }}</td>
                                                 <td>{{ $usuario->name }}</td>
-                                                
+
                                                 <td>
                                                     @if(!empty($usuario->getRoleNames()))
                                                         @foreach($usuario->getRoleNames() as $v)
@@ -71,7 +71,7 @@
                                                         @endforeach
                                                     @endif
                                                 </td>
-                                                
+
                                                 <td>
                                                     <a class="btn btn-info bg-gradient-primary btnCambioPassword" data-id="{{ $usuario->id }}">
                                                         <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
@@ -98,7 +98,11 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="7" class="text-center">NO HAY USUARIOS</td>
+                                                <td colspan="8" class="text-center py-4">
+                                                    <i class="fas fa-user-shield fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay usuarios registrados</p>
+
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>

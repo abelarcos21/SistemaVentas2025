@@ -89,7 +89,11 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="9" class="text-center">NO HAY CLIENTES</td>
+                                                <td colspan="9" class="text-center py-4">
+                                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay clientes registrados</p>
+
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>

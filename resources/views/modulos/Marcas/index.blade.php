@@ -79,7 +79,11 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">NO HAY MARCAS</td>
+                                                <td colspan="6" class="text-center py-4">
+                                                    <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay marcas registradas</p>
+
+                                                </td>
                                             </tr>
                                         @endforelse
                                     </tbody>
