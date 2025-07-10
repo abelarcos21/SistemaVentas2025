@@ -45,6 +45,7 @@ class MarcaFactory extends Factory
 
         return [
             'nombre' => $this->faker->unique()->randomElement($marcas),
+            'descripcion' => $this->faker->sentence(2),
             'activo' => $this->faker->boolean(90), // 90% probabilidad de estar activo
         ];
     }

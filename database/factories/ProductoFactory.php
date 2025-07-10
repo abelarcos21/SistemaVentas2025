@@ -9,8 +9,6 @@ use App\Models\Categoria;
 use App\Models\Proveedor;
 use App\Models\Marca;
 
-
-
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Producto>
  */
@@ -22,21 +20,10 @@ class ProductoFactory extends Factory
      * @return array<string, mixed>
      */
 
-
     protected static int $barcodeCounter = 1; //Contador estático para mantener el número secuencial entre llamadas
-
 
     public function definition(): array
     {
-
-        // Generar número aleatorio de 8 dígitos (relleno con ceros a la izquierda)
-        //$barcodeNumber = str_pad($this->faker->unique()->numberBetween(1, 99999999), 8, '0', STR_PAD_LEFT);
-
-
-
-        // Generar número con 8 dígitos rellenado con ceros
-        //$barcodeNumber = str_pad(self::$barcodeCounter++, 8, '0', STR_PAD_LEFT);
-
         // Generar código EAN-13 válido
         $base12 = '750' . str_pad(random_int(0, 999999999), 9, '0', STR_PAD_LEFT);
 
@@ -49,15 +36,13 @@ class ProductoFactory extends Factory
         $verificador = (10 - ($suma % 10)) % 10;
         $codigo = $base12 . $verificador;
 
-
         return [
-            //
             'user_id' => User::factory(),
             'categoria_id' => Categoria::factory(),
             'proveedor_id' => Proveedor::factory(),
-            'marca_id' => Marca::factory(),
+            'marca_id' => $this->getRandomMarcaId(), // Usar marca existente
             'codigo' => $codigo,
-            'barcode_path' =>"barcodes/{$codigo}.png",
+            'barcode_path' => "barcodes/{$codigo}.png",
             'nombre' => $this->faker->words(3, true),
             'descripcion' => $this->faker->sentence(4),
             'cantidad' => $this->faker->numberBetween(0, 100),
@@ -65,5 +50,30 @@ class ProductoFactory extends Factory
             'precio_venta' => $this->faker->randomFloat(2, 20, 1000),
             'activo' => $this->faker->boolean(90),
         ];
+    }
+
+    /**
+     * Obtener ID de marca existente aleatoria
+     */
+    private function getRandomMarcaId()
+    {
+        $marca = Marca::inRandomOrder()->first();
+
+        // Si no hay marcas, crear una nueva
+        if (!$marca) {
+            return Marca::factory()->create()->id;
+        }
+
+        return $marca->id;
+    }
+
+    /**
+     * Usar IDs específicos (para cuando los pasas desde el seeder)
+     */
+    public function withSpecificIds(array $ids): static
+    {
+        return $this->state(function (array $attributes) use ($ids) {
+            return array_merge($attributes, $ids);
+        });
     }
 }
