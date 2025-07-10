@@ -18,8 +18,7 @@ class MarcaSeeder extends Seeder
         $faker = Faker::create();
         $faker->unique(true);
 
-        // Ejecutar factory
-        Marca::factory()->count(5)->create();
-
+        // Ejecutar factory para crear exactamente 20 marcas (o las que tengas disponibles)
+        Marca::factory()->count(20)->create();
     }
 }

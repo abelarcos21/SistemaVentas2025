@@ -20,14 +20,33 @@ class MarcaFactory extends Factory
      */
     public function definition(): array
     {
-        //$marcas = ['Don Vitorio', 'El Olivar', 'Tottus', 'Molitalia', 'Blanca flor', 'Ajinomoto', 'Marina', 'Costeña', 'Carbonel'];
+        $marcas = [
+            'Coca-Cola',
+            'Pepsi',
+            'Bimbo',
+            'Sabritas',
+            'Lala',
+            'Nestlé',
+            'Colgate',
+            'Palmolive',
+            'Knorr',
+            'Herdez',
+            'Great Value',
+            'Gamesa',
+            'Axe',
+            'Gillette',
+            'Zote',
+            'Nivea',
+            'Sony',
+            'Samsung',
+            'HP',
+            'Epson',
+        ];
 
         return [
-            //
-            //'nombre' => $this->faker->randomElement($marcas),
-            'nombre' => $this->faker->unique()->words(2, true),
-            'descripcion' => $this->faker->sentence(3),
+            'nombre' => $this->faker->unique()->randomElement($marcas),
             'activo' => $this->faker->boolean(90), // 90% probabilidad de estar activo
         ];
     }
+
 }

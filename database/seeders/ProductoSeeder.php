@@ -22,7 +22,7 @@ class ProductoSeeder extends Seeder
         //Producto::factory()->count(5)->create();
 
         //asignar un usuario/proveedor/categoría ya existentes:
-        Producto::factory()->count(100)->create([
+        Producto::factory()->count(10)->create([
             'user_id' => 1,
             'categoria_id' => 2,
             'proveedor_id' => 3,
