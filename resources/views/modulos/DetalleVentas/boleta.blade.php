@@ -15,14 +15,6 @@
             width: 100%;
             margin-bottom: 15px;
         }
-        .logo {
-            display: table-cell;
-            width: 30%;
-            vertical-align: top;
-        }
-        .logo img {
-            height: 80px;
-        }
         .datos-empresa {
             display: table-cell;
             width: 70%;
@@ -74,7 +66,14 @@
 
     <div class="encabezado">
         <div class="logo">
-            <img src="{{ asset('storage/' . $venta->imagen_empresa) }}" alt="Logo">
+           
+            @if($logoBase64)
+                <img src="{{ $logoBase64 }}" 
+                width="70" 
+                height="70"  
+                style="object-fit: contain;"
+                alt="Logo empresa">
+            @endif
 
         </div>
         <div class="datos-empresa">

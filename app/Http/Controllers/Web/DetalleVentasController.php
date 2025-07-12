@@ -178,6 +178,17 @@ class DetalleVentasController extends Controller
         ->where('ventas.id', $id)
         ->firstOrFail();
 
+        // Convertir imagen a base64 para DomPDF
+        $logoBase64 = null;
+        if ($venta->imagen_empresa) {
+            $imagePath = storage_path('app/public/' . $venta->imagen_empresa);
+            if (file_exists($imagePath)) {
+                $imageData = file_get_contents($imagePath);
+                $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
+                $logoBase64 = 'data:image/' . $imageType . ';base64,' . base64_encode($imageData);
+            }
+        }
+
         $detalles = DetalleVenta::select( //detalles de la venta
             'detalle_venta.*',
             'productos.nombre as nombre_producto'
@@ -186,12 +197,7 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get();
 
-
-
-
-
         $nota = 'Gracias por su compra. No se aceptan devoluciones pasadas 24h.';
-
 
         // Contenido para el QR con datos del cliente y datos de empresa
         $qrContenido = "BOLETA DE VENTA\n";
@@ -203,13 +209,12 @@ class DetalleVentasController extends Controller
         $qrContenido .= "Folio: {$venta->folio}\n";
         $qrContenido .= "Validación: {$venta->razon_social_empresa}";
 
-
         // Generar QR
         $qr = base64_encode(QrCode::format('png')->size(150)->generate($qrContenido));
 
         // Generar PDF
         $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact(
-            'nota', 'detalles', 'venta', 'qr',
+            'nota', 'detalles', 'venta', 'qr', 'logoBase64',
         ))->setPaper('A4', 'portrait');
 
         // Opcional: borrar después si no se necesita guardar
