@@ -113,11 +113,32 @@ class DetalleVentasController extends Controller
             'users.name as nombre_usuario',
             'clientes.nombre as nombre_cliente',
             'clientes.apellido as apellido_cliente',
+
+            //agregar datos de la empresa negocio
+            'empresas.razon_social as razon_social_empresa',
+            'empresas.rfc as rfc_empresa',
+            'empresas.direccion as direccion_empresa',
+            'empresas.codigo_postal as codigo_postal_empresa',
+            'empresas.telefono as telefono_empresa',
+            'empresas.correo as correo_empresa',
+            'empresas.imagen as imagen_empresa'
         )
         ->join('users', 'ventas.user_id', '=', 'users.id')//agregar el nombre del usuario quien hiso la venta
-        ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente
+        ->join('clientes', 'ventas.cliente_id', '=', 'clientes.id')//agregar el nombre del cliente quien hizo la compra
+        ->join('empresas', 'ventas.empresa_id', '=', 'empresas.id') // agregar los datos de la empresa negocio
         ->where('ventas.id', $id)
         ->firstOrFail();
+
+        // Convertir imagen a base64 para DomPDF
+        $logoBase64 = null;
+        if ($venta->imagen_empresa) {
+            $imagePath = storage_path('app/public/' . $venta->imagen_empresa);
+            if (file_exists($imagePath)) {
+                $imageData = file_get_contents($imagePath);
+                $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
+                $logoBase64 = 'data:image/' . $imageType . ';base64,' . base64_encode($imageData);
+            }
+        }
 
         $detalles = DetalleVenta::select(
             'detalle_venta.*',
@@ -148,7 +169,7 @@ class DetalleVentasController extends Controller
         $qr = base64_encode(QrCode::format('png')->size(100)->generate('http://sistemaventas2025.test:8080'));
 
         // Generar PDF con tamaño personalizado tipo ticket (80mm x altura ajustable)
-        $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles', 'qr', 'totalLetras','efectivoTotal','cambio', 'pagos','totalArticulos'))
+        $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles', 'qr', 'totalLetras','efectivoTotal','cambio', 'pagos','totalArticulos', 'logoBase64'))
                 ->setPaper([0, 0, 300, 900], 'portrait'); // 80mm de ancho
 
         return $pdf->stream("ticket_compra_{$venta->id}.pdf");

@@ -33,24 +33,31 @@
     </style>
 </head>
 <body>
-    <img src="{{ public_path('images/logo-fis.png') }}" class="logo" alt="Logo">
-    <h3>Nombre del Negocio</h3>
-    <p>RFC: AOPA950525HI0</p>
-    <p>Telefono: (+52) 981-13-17-868</p>
-    <p>AV. Maestros Campechanos 550 COL. Multunchac C.P. 24520 Campeche, Campeche</p>
-    <p>========================================</p>
+    {{-- <img src="{{ public_path('images/logo-fis.png') }}" class="logo" alt="Logo"> --}}
+    @if($logoBase64)
+        <img src="{{ $logoBase64 }}"
+        width="70"
+        height="70"
+        style="object-fit: contain;"
+        alt="Logo empresa">
+    @endif
+    <h3>{{ $venta->razon_social_empresa }}</h3>
+    <p>RFC: {{ $venta->rfc_empresa }}</p>
+    <p>{{ $venta->direccion_empresa }}, CP {{$venta->codigo_postal_empresa}}</p>
+    <p>Telefono: {{ $venta->telefono_empresa }} | www.ClickVenta.com</p>
+    <p>=====================================</p>
     <p>Expedido el: {{ $venta->created_at->format('d/m/Y') }} {{ $venta->created_at->format('h:i a') }}</p>
     <p>Cajero: {{ $venta->nombre_usuario }}</p>
     <p>Cliente: {{ $venta->nombre_cliente }} {{ $venta->apellido_cliente }}</p>
     <p>PUNTO DE VENTA</p>
     <p>Numero de Venta: {{$venta->folio}}</p>
-
+    <p>=====================================</p>
     <table class="productos">
         <thead>
             <tr>
                 <th>Descripcion</th>
                 <th>Cant.</th>
-                <th>Precio Un.</th>
+                <th>P. Unit</th>
                 <th>Importe</th>
             </tr>
         </thead>
@@ -79,9 +86,12 @@
         <p><strong>Total Pagado:</strong> ${{ number_format($efectivoTotal, 2) }}</p>
         <p><strong>Cambio:</strong> ${{ number_format($cambio, 2) }}</p>
         <p><strong>Total de Articulos:</strong> {{ $totalArticulos}}</p>
-
-
     </div>
+    <p>===================================</p>
+    <p>¡Gracias por su compra! | Este ticket es su comprobante de pago</p>
+    <p>Devoluciones aceptadas dentro de los 15 días con ticket original</p>
+    <p>Visítenos de nuevo en ClickVenta </p>
+    <p>* Este ticket no es factura fiscal *</p>
 
     <div class="qr">
         {{-- <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(100)->generate('https://tutienda.mx/ticket/'.$folio)) !!} "> //opcional --}}
@@ -94,8 +104,6 @@
         <div>T-2023-00125</div>
     </div> --}}
 
-   <p>¡Gracias por su compra! | Este ticket es su comprobante de pago</p>
-   <p>Devoluciones aceptadas dentro de los 15 días con ticket original</p>
-   <p>Visítenos en www.http://sistemaventas2025.test</p>
+
 </body>
 </html>
