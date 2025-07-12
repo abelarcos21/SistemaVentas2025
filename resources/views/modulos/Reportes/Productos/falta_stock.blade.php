@@ -118,8 +118,13 @@
                                             </tr>
                                         @empty
 
-                                            <span>NO HAY PRODUCTOS</span>
+                                            <tr>
+                                                <td colspan="16" class="text-center py-4">
+                                                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                                    <p class="text-muted">No hay productos con stock 1 y 0</p>
 
+                                                </td>
+                                            </tr>
 
                                         @endforelse
                                     </tbody>
