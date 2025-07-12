@@ -38,6 +38,9 @@
             border-collapse: collapse;
             margin-top: 10px;
         }
+        tbody tr { /* Bordes inferiores para cada fila */
+            border-bottom: 1px solid #ddd;
+        }
         th, td {
             border: none;
             padding: 5px;
@@ -66,11 +69,11 @@
 
     <div class="encabezado">
         <div class="logo">
-           
+
             @if($logoBase64)
-                <img src="{{ $logoBase64 }}" 
-                width="70" 
-                height="70"  
+                <img src="{{ $logoBase64 }}"
+                width="70"
+                height="70"
                 style="object-fit: contain;"
                 alt="Logo empresa">
             @endif
