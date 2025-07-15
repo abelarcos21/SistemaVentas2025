@@ -346,61 +346,6 @@
             });
         @endif
 
-        // Opcional: Validación en tiempo real antes de enviar el formulario
-        function validarPagoAntesDeEnviar() {
-            // Obtener el total de la venta (asume que tienes una variable o elemento con este valor)
-            const totalVenta = parseFloat(document.getElementById('total_venta').value || 0);
-
-            // Obtener todos los montos de pago
-            const montoInputs = document.querySelectorAll('input[name="monto[]"]');
-            let totalPagos = 0;
-
-            montoInputs.forEach(function(input) {
-                totalPagos += parseFloat(input.value || 0);
-            });
-
-            // Validar que el pago sea suficiente
-            if (totalPagos < totalVenta) {
-                const diferencia = (totalVenta - totalPagos).toFixed(2);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Pago Insuficiente',
-                    text: `El monto del pago es insuficiente. Total: ${totalVenta.toFixed(2)}, Pagado: ${totalPagos.toFixed(2)}. Falta: ${diferencia}`,
-                    confirmButtonText: 'Entendido',
-                    confirmButtonColor: '#d33'
-                });
-                return false; // Evitar envío del formulario
-            }
-
-            // Si hay cambio, mostrar confirmación
-            if (totalPagos > totalVenta) {
-                const cambio = (totalPagos - totalVenta).toFixed(2);
-
-                return Swal.fire({
-                    title: 'Confirmar Venta',
-                    html: `
-                        <div style="text-align: left;">
-                            <p><strong>Total de la venta:</strong> ${totalVenta.toFixed(2)}</p>
-                            <p><strong>Total pagado:</strong> ${totalPagos.toFixed(2)}</p>
-                            <hr>
-                            <p style="color: #28a745; font-size: 16px;"><strong>Cambio a entregar: ${cambio}</strong></p>
-                        </div>
-                    `,
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: 'Procesar Venta',
-                    cancelButtonText: 'Cancelar',
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#d33'
-                }).then((result) => {
-                    return result.isConfirmed;
-                });
-            }
-
-            return true; // Pago exacto, continuar
-        }
-
-
     </script>
 
 
