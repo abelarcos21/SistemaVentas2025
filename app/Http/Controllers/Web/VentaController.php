@@ -71,6 +71,32 @@ class VentaController extends Controller
             foreach ($items_carrito as $item) {
                 $totalVenta += $item['cantidad'] * $item['precio'];
             }
+
+            // 👉 VALIDAR QUE EL MONTO TOTAL DE PAGOS SEA IGUAL AL TOTAL DE LA VENTA
+            $totalPagos = 0;
+            foreach ($request->monto as $monto) {
+                $totalPagos += $monto;
+            }
+
+            // Calcular el cambio
+            $cambio = $totalPagos - $totalVenta;
+
+
+            // Si el pago es insuficiente
+            if ($totalPagos < $totalVenta) {
+                DB::rollBack();
+
+                // Formatear los montos para mostrar con decimales
+                $totalVentaFormateado = number_format($totalVenta, 2);
+                $totalPagosFormateado = number_format($totalPagos, 2);
+                $diferencia = number_format($totalVenta - $totalPagos, 2);
+
+                return to_route('venta.index')->with('error_pago', [
+                    'tipo' => 'insuficiente',
+                    'mensaje' => "El monto del pago es insuficiente. Total de la venta: ${totalVentaFormateado}, Total pagado: ${totalPagosFormateado}. Falta: ${diferencia}"
+                ]);
+            }
+
             //crear la venta
             $venta = new Venta();
             $venta->user_id = Auth::id(); // ← asignas aquí el usuario
@@ -124,17 +150,6 @@ class VentaController extends Controller
                 ]);
             }
 
-            // Enviar comprobante de venta por correo
-           /*  if ($request->has('enviar_correo')) {
-                $cliente = Cliente::find($validated['cliente_id']);
-                Mail::to($cliente->correo)->send(new VentaRealizada($venta));
-            } */
-
-            // Crear detalles si es necesario aquí
-           /*  if ($request->has('enviar_correo')  && $venta->cliente->correo) {//Agrega validación para que no falle si el cliente no tiene email
-                $venta->load(['cliente', 'detalles.producto']); // Asegúrate de cargar relaciones
-                Mail::to($venta->cliente->correo)->send(new VentaRealizada($venta));
-            } */
 
             if($request->has('enviar_correo') && $venta->cliente && $venta->cliente->correo) {
                 $venta->load(['cliente', 'detalles.producto']); // Carga relaciones si aún no están
@@ -142,7 +157,20 @@ class VentaController extends Controller
             }
 
             Session::forget('items_carrito');
+
             DB::commit();
+
+            // Si hay cambio, enviarlo en la sesión
+            if ($cambio > 0) {
+                return to_route('venta.index')->with([
+                    'folio_generado' => $venta->folio,
+                    'cambio' => $cambio,
+                    'total_venta' => $totalVenta,
+                    'total_pagado' => $totalPagos
+                ]);
+            } else {
+                return to_route('venta.index')->with('folio_generado', $venta->folio);
+            }
             return to_route('venta.index')->with('folio_generado', $venta->folio);;
         } catch (\Throwable $th) {
             DB::rollBack();
