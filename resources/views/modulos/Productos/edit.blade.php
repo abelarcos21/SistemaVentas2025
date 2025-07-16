@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Editar Producto')
 
 @section('content_header')
     <!-- Content Header (Page header) -->
@@ -108,19 +108,50 @@
                                         </div>
                                     </div>
 
+                                    {{-- Código de barras con lógica condicional --}}
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-boxes"></i>
-                                                    </span>
+                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo de Barras</label>
+                                        @if($producto->tieneVentas()) {{-- Método personalizado en el modelo producto --}}
+
+                                            {{-- Solo lectura si tiene ventas --}}
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text bg-gradient-info">
+                                                            <i class="fas fa-boxes"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" class="form-control" value="{{ $producto->codigo ?? '' }}" readonly>
+                                                    <input type="hidden" name="codigo" value="{{ $producto->codigo }}">
                                                 </div>
-                                                <input type="text" name="codigo" class="form-control" value="{{ old('codigo', $producto->codigo ?? '') }}" required>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-lock"></i>
+                                                    No se puede editar: el producto tiene ventas registradas
+                                                </small>
                                             </div>
-                                        </div>
+                                        @else
+
+                                            {{-- Editable si no tiene ventas --}}
+                                            <div class="col-sm-10">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text bg-gradient-info">
+                                                            <i class="fas fa-boxes"></i>
+                                                        </span>
+                                                    </div>
+                                                    <input type="text" name="codigo" class="form-control" value="{{ old('codigo', $producto->codigo ?? '') }}" required>
+
+                                                </div>
+                                                <small class="text-success">
+                                                    <i class="fas fa-edit"></i>
+                                                    Puedes editar el código (el producto no tiene ventas)
+                                                </small>
+                                            </div>
+
+                                        @endif
+
                                     </div>
+
 
                                     <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Nombre del Producto</label>
@@ -199,6 +230,27 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-md-4">
+                                            {{-- Mostrar imagen del código de barras --}}
+                                            <div class="card">
+                                                <div class="card-header bg-gradient-info">
+                                                    <h5>Código de Barras Actual</h5>
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <div id="barcode-container">
+                                                        @if ($producto->barcode_path)
+                                                            <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}">
+                                                        @endif
+                                                        {{-- <img src="{{ route('barcode.generate', $producto->codigo_barras) }}"
+                                                            alt="Código de barras" class="img-fluid"> --}}
+                                                    </div>
+                                                    <p class="mt-2">
+                                                        <code>{{ $producto->codigo }}</code>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
 
                                 </div>
@@ -243,6 +295,17 @@
 
     {{--INCLUIR PLUGIN SELECT2 ESPAÑOL--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
+
+    {{-- JavaScript para actualizar imagen en tiempo real --}}
+    {{-- <script>
+        document.getElementById('codigo_barras')?.addEventListener('input', function(e) {
+            const codigo = e.target.value;
+            if (codigo.length >= 8) { // Mínimo para código válido
+                const img = document.querySelector('#barcode-container img');
+                img.src = `{{ route('barcode.generate', '') }}/${codigo}`;
+            }
+        });
+    </script> --}}
 
 
     {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES Y CATEGORIAS--}}

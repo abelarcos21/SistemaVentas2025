@@ -51,15 +51,26 @@ class Producto extends Model
         return $this->belongsTo(\App\Models\Moneda::class, 'moneda', 'codigo');
     }
 
-   /*  public function categoria()
-    {
-        return $this->belongsTo(Categoria::class);
+    /**
+     * Verifica si el producto tiene ventas registradas
+     */
+    public function tieneVentas(){
+        return $this->detalleVentas()->exists();
     }
 
-    public function proveedor()
-    {
-        return $this->belongsTo(Proveedor::class);
-    } */
+    /**
+     * Relación con detalle de ventas
+     */
+    public function detalleVentas(){
+        return $this->hasMany(DetalleVenta::class, 'producto_id');
+    }
+
+    /**
+     * Verifica si el código de barras se puede editar
+     */
+    public function codigoEsEditable(){
+        return !$this->tieneVentas();
+    }
 
     // Relaciones
     public function usuario() {

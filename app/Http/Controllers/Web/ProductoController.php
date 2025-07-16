@@ -377,37 +377,57 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto){
 
-        $validated = $request->validate([
-
+        // Validaciones básicas
+        $rules = [
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id' => 'required|exists:marcas,id',
-            'codigo' => 'required|string|max:255',
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'activo' => 'required|boolean',
             'precio_venta' => 'required|numeric|min:0',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',// validación opcional de imagen
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ];
 
-        ]);
+        // Verificar si el producto puede ser editado
+        $codigoEsEditable = $producto->codigoEsEditable();
+
+        if ($codigoEsEditable) {
+            $rules['codigo'] = 'required|string|max:255|unique:productos,codigo,' . $producto->id;
+        } else {
+            // Si no es editable, verificar que no hayan intentado cambiarlo
+            if ($request->has('codigo') && $request->codigo !== $producto->codigo) {
+                return redirect()->back()
+                    ->withErrors(['codigo' => 'No puedes cambiar el código de barras de un producto con ventas registradas.'])
+                    ->withInput();
+            }
+        }
+
+        $validated = $request->validate($rules);
 
         DB::beginTransaction();
 
         try{
 
-            //LLAMAR EL METODO ASI PORQUE YA SE ESTA INYECTANDO EL PRODUCTO($PRODUCTO) MODEL BINDING
-            $producto->update([
+            // Preparar datos para actualizar
+            $updateData = [
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
-                'marca_id'     => $validated['marca_id'],
-                'codigo'       => $validated['codigo'],
-                'nombre'       => $validated['nombre'],
-                'descripcion'  => $validated['descripcion'],
-                'activo'       => $validated['activo'],
-                'precio_venta'  => $validated['precio_venta'],
+                'marca_id' => $validated['marca_id'],
+                'nombre' => $validated['nombre'],
+                'descripcion' => $validated['descripcion'],
+                'activo' => $validated['activo'],
+                'precio_venta' => $validated['precio_venta'],
+            ];
 
-            ]);
+            // Solo incluir código si es editable
+            if ($codigoEsEditable && isset($validated['codigo'])) {
+                $updateData['codigo'] = $validated['codigo'];
+            }
+
+            // Actualizar el producto
+            $producto->update($updateData);
 
             // Si se sube una nueva imagen, puedes opcionalmente eliminar la anterior aquí
             if ($request->hasFile('imagen')) {
