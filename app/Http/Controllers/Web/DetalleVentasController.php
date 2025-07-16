@@ -49,7 +49,15 @@ class DetalleVentasController extends Controller
         ->where('venta_id', $id)
         ->get(); */
 
-        $detalles = DetalleVenta::with('producto.imagen') // 👈 Trae producto e imagen en una sola consulta y acceder alos campos de tabla producto
+        /* $detalles = DetalleVenta::with('producto.imagen') // 👈 Trae producto e imagen en una sola consulta y acceder alos campos de tabla producto
+        ->where('venta_id', $id)
+        ->get(); */
+
+        $detalles = DetalleVenta::with([
+            'producto.imagen',     // 👈 Trae producto e imagen en una sola consulta y acceder alos campos de tabla producto
+            'producto.categoria',  // 👈 Relación con la categoría
+            'producto.marca'       // 👈 Relación con la marca
+        ])
         ->where('venta_id', $id)
         ->get();
 

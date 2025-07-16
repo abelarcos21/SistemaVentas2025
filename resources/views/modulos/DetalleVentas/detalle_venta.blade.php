@@ -133,17 +133,17 @@
                                                 <td class="align-middle">
                                                     <small class="text-muted">
                                                         <i class="fas fa-tag mr-1"></i>
-                                                        Categoría: <span class="badge badge-secondary">En desarrollo</span>
+                                                        Categoría: <span class="badge badge-secondary" style="font-size: 12px;">{{$detalle->producto->categoria->nombre}}</span>
                                                     </small>
                                                 </td>
                                                 <td class="align-middle">
                                                     <small class="text-muted">
                                                         <i class="fas fa-trademark mr-1"></i>
-                                                        Marca: <span class="badge badge-secondary">En desarrollo</span>
+                                                        Marca: <span class="badge badge-secondary" style="font-size: 12px;">{{$detalle->producto->marca->nombre}}</span>
                                                     </small>
                                                 </td>
                                                 <td class="text-center align-middle">
-                                                    <span class="badge badge-primary badge-pill px-3 py-2" style="font-size: 14px;">
+                                                    <span class="badge badge-primary badge-pill px-3 py-2" style="font-size: 13px;">
                                                         {{ $detalle->cantidad }}
                                                     </span>
                                                 </td>
