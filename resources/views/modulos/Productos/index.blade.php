@@ -55,8 +55,7 @@
                                         <tr>
                                             <th>Nro</th>
                                             <th class="no-exportar">Imagen</th>
-                                            <th>Codigo</th>
-                                            <th class="no-exportar">Código de Barras</th>
+                                            <th>Codigo de Barras</th>
                                             <th>Nombre</th>
                                             <th>Categoria</th>
                                             <th>Marca</th>
@@ -115,12 +114,12 @@
                                                         <img src="{{ asset('images/placeholder-caja.png') }}" width="50" height="50"  class="img-thumbnail rounded shadow" style="object-fit: cover;">
                                                     @endif --}}
                                                 </td>
-                                                <td>{{$producto->codigo}}</td>
-                                                <td>
+                                                <td> <code>{{ $producto->codigo }}</code> </td>
+                                                {{-- <td>
                                                     @if ($producto->barcode_path)
                                                         <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}">
                                                     @endif
-                                                </td>
+                                                </td> --}}
                                                 <td>{{ $producto->nombre }}</td>
                                                 <td><span class="badge bg-primary">{{ $producto->nombre_categoria }}</span></td>
                                                 <td>{{ $producto->nombre_marca}}</td>
@@ -186,7 +185,7 @@
                                                                 <i class="fas fa-edit mr-1"></i> Editar
                                                             </a>
                                                         @endcan
-                                                        
+
                                                         @can('product-delete')
                                                             <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
                                                                 <i class="fas fa-trash-alt mr-1"></i> Eliminar
@@ -260,7 +259,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    
+
                     <!-- Body -->
                     <div class="modal-body">
                         <div class="container">
@@ -269,7 +268,7 @@
                                 <input type="text" id="codigo_input" class="form-control" placeholder="Escanear código de barras..." autofocus>
                                 <small class="text-muted">Presiona Enter para continuar</small>
                             </div>
-                            
+
                             <!-- Información adicional -->
                             <div class="alert alert-info" role="alert">
                                 <i class="fas fa-info-circle mr-2"></i>
@@ -277,14 +276,14 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">
                             <i class="fas fa-times mr-2"></i>
                             Cancelar
                         </button>
-                        
+
                     </div>
                 </div>
             </div>
