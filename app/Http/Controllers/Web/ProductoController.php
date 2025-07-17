@@ -30,6 +30,10 @@ class ProductoController extends Controller
     //index
     public function index(){
 
+        $categorias = Categoria::all();
+        $proveedores = Proveedor::all();
+        $marcas = Marca::all();
+
         $productos = Producto::select(
             'productos.id',
             'productos.nombre',
@@ -60,7 +64,7 @@ class ProductoController extends Controller
         ->with('monedas') // 👈 importante: carga el modelo relacionado correctamente
         ->get();
 
-        return view('modulos.productos.index', compact('productos'));
+        return view('modulos.productos.index', compact('productos', 'categorias', 'proveedores', 'marcas'));
 
         /* $productos = Producto::with(['imagen', 'categoria', 'proveedor'])->get();
 
