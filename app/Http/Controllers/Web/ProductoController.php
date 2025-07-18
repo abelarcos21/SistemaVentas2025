@@ -299,11 +299,6 @@ class ProductoController extends Controller
 
             ]);
 
-            // Devolver los datos del producto creado
-            return response()->json([
-                'success' => true,
-                'producto' => $producto
-            ]);
 
             // Verificar que el producto se creó correctamente
             if (!$producto) {
@@ -326,6 +321,27 @@ class ProductoController extends Controller
             }
 
             DB::commit();
+
+            // Devolver los datos del producto creado
+            return response()->json([
+            'success' => true,
+            'producto' => [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'codigo' => $producto->codigo,
+                'descripcion' => $producto->descripcion,
+                'categoria' => $producto->categoria->nombre ?? '',
+                'marca' => $producto->marca->nombre ?? '',
+                'proveedor' => $producto->proveedor->nombre ?? '',
+                'precio_venta' => $producto->precio_venta,
+                'precio_compra' => $producto->precio_compra,
+                'cantidad' => $producto->cantidad,
+                'activo' => $producto->activo,
+                'imagen' => $producto->imagen,
+                'moneda' => $producto->monedas->codigo ?? 'BOB',
+                'created_at' => $producto->created_at
+                ]
+            ]);
 
             return redirect()->route('producto.index')->with('success', 'Producto creado exitosamente. Puedes realizar la compra más tarde usando el botón Comprar.!');
 

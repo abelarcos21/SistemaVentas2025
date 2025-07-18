@@ -572,6 +572,7 @@
                 e.preventDefault();
 
                 var formData = new FormData(this);
+                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
 
                 $.ajax({
                     url: '{{ route("producto.store") }}',
