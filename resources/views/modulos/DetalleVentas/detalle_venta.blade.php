@@ -34,7 +34,7 @@
                         <div class="card-header bg-gradient-primary">
                             <h3 class="card-title mb-0">
                                 <i class="fas fa-info-circle mr-2"></i>
-                                Información de la Venta
+                                Información de la Venta Nro. {{ $venta->folio}}
                             </h3>
                             <div class="card-tools">
                                 <a href="{{ route('detalleventas.index') }}" class="btn btn-light text-primary btn-sm">
