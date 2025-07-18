@@ -322,7 +322,7 @@ class ProductoController extends Controller
 
             DB::commit();
 
-            // Devolver los datos del producto creado
+            // Devolver los datos del producto creado para cuando se crea un producto con modal con ajax
             return response()->json([
             'success' => true,
             'producto' => [
@@ -330,9 +330,9 @@ class ProductoController extends Controller
                 'nombre' => $producto->nombre,
                 'codigo' => $producto->codigo,
                 'descripcion' => $producto->descripcion,
-                'categoria' => $producto->categoria->nombre ?? '',
-                'marca' => $producto->marca->nombre ?? '',
-                'proveedor' => $producto->proveedor->nombre ?? '',
+                'categoria_id' => $producto->categoria->nombre ?? '',
+                'marca_id' => $producto->marca->nombre ?? '',
+                'proveedor_id' => $producto->proveedor->nombre ?? '',
                 'precio_venta' => $producto->precio_venta,
                 'precio_compra' => $producto->precio_compra,
                 'cantidad' => $producto->cantidad,
