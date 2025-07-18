@@ -291,34 +291,6 @@
     </div>
 
 
-    {{-- <!-- Modal para crear nuevo producto -->
-    <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <form id="formCrearProducto">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title">Crear nuevo producto</h5>
-                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="codigo">Código:</label>
-                            <input type="text" id="codigo" name="codigo" class="form-control" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre">Nombre:</label>
-                            <input type="text" name="nombre" class="form-control" required>
-                        </div>
-                        <!-- Agrega aquí más campos como categoría, precio, etc. -->
-                    </div>
-                    <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Guardar producto</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div> --}}
-
     !-- Modal para crear nuevo producto -->
     <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -329,9 +301,21 @@
                         <h5 class="modal-title">Crear nuevo producto</h5>
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
-                    
+
                     <div class="modal-body">
-                        
+                        <!-- Mostrar errores generales -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        @endif
                         <div class="form-group row">
                             <label for="categoria" class="col-sm-3 col-form-label">Categoría</label>
                             <div class="col-sm-9">
@@ -341,13 +325,19 @@
                                             <i class="fas fa-tag"></i>
                                         </span>
                                     </div>
+
                                     <select id="categoria" name="categoria_id" class="form-control selectcategoria" required>
                                         <option value="">Selecciona una categoría</option>
                                         @foreach($categorias as $categoria)
-                                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                                            <option value="{{ $categoria->id }}" {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                                                {{ $categoria->nombre }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
+                                @error('categoria_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -363,10 +353,15 @@
                                     <select name="proveedor_id" id="proveedor_id" class="form-control selectproveedor" required>
                                         <option value="">Selecciona un proveedor</option>
                                         @foreach ($proveedores as $proveedor)
-                                            <option value="{{ $proveedor->id }}"> {{ $proveedor->nombre }} </option>
+                                            <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                                {{ $proveedor->nombre }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
+                                @error('proveedor_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -379,13 +374,18 @@
                                             <i class="fas fa-tag"></i>
                                         </span>
                                     </div>
-                                    <select name="marca_id" id="marca_id" class="form-control selectmarca" required>
+                                   <select name="marca_id" id="marca_id" class="form-control selectmarca" required>
                                         <option value="">Selecciona una Marca</option>
                                         @foreach ($marcas as $marca)
-                                            <option value="{{ $marca->id }}"> {{ $marca->nombre }} </option>
+                                            <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                                                {{ $marca->nombre }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
+                                @error('marca_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                 @enderror
                             </div>
                         </div>
 
@@ -398,10 +398,18 @@
                                             <i class="fas fa-boxes"></i>
                                         </span>
                                     </div>
-                                    <input type="text" id="codigo" name="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control" readonly>
+                                    <!-- Campo visible para mostrar el código -->
+                                    <input type="text" value="{{ old('codigo') }}" id="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control">
+                                    <!-- Campo oculto que se envía con el formulario -->
+                                    <input type="hidden" id="codigo" name="codigo" value="">
+                                    {{-- <input type="text" id="codigo" name="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control" readonly> --}}
                                 </div>
+                                @error('codigo')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
+
 
                         <div class="form-group row">
                             <label for="nombre" class="col-sm-3 col-form-label">Nombre del Producto</label>
@@ -412,8 +420,11 @@
                                             <i class="fas fa-boxes"></i>
                                         </span>
                                     </div>
-                                    <input type="text" name="nombre" placeholder="ingrese nombre del producto" class="form-control" required>
+                                    <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="ingrese nombre del producto" class="form-control" required>
                                 </div>
+                                @error('nombre')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -426,8 +437,11 @@
                                             <i class="fas fa-comments"></i>
                                         </span>
                                     </div>
-                                    <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3" required>{{ old('descripcion') }}</textarea>
                                 </div>
+                                @error('descripcion')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -435,7 +449,7 @@
                             <div class="col-sm-9 offset-sm-3">
                                 <div class="custom-control custom-switch toggle-estado">
                                     <input type="hidden" name="activo" value="0">
-                                    <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
+                                    <input role="switch" type="checkbox" class="custom-control-input"  {{ old('activo', '1') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
                                     <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
                                 </div>
                             </div>
@@ -451,12 +465,13 @@
                                         </span>
                                     </div>
                                     <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
-                                    @error('imagen')
-                                        <div class="text-danger">{{ $message }}</div>
-                                    @enderror
+
                                 </div>
+                                @error('imagen')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            
+
                             <!-- Imagen -->
                             <div class="col-sm-4 text-center">
                                 <div class="img-thumbnail rounded shadow p-2">
@@ -468,7 +483,7 @@
                         </div>
 
                     </div>
-                    
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-info">
                             <i class="fas fa-save"></i> Guardar

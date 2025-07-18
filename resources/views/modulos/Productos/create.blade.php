@@ -41,88 +41,109 @@
                                 @csrf
                                 <div class="card-body">
 
+                                    <!-- Mostrar errores generales -->
+                                    @if ($errors->any())
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
+                                                    <li>{{ $error }}</li>
+                                                @endforeach
+                                            </ul>
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                    @endif
+
                                     <div class="form-group row">
                                         <label for="categoria" class="col-sm-2 col-form-label">Categoría</label>
                                         <div class="col-sm-10">
-
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                        <i class="fas fa-tag"></i>
                                                     </span>
                                                 </div>
-
                                                 <select id="categoria" name="categoria_id" class="form-control selectcategoria" required>
                                                     <option value="">Selecciona una categoría</option>
                                                     @foreach($categorias as $categoria)
-                                                        <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                                                        <option value="{{ $categoria->id }}" {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                                                            {{ $categoria->nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-
+                                            @error('categoria_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
-
                                     </div>
-
 
                                     <div class="form-group row">
                                         <label for="proveedor_id" class="col-sm-2 col-form-label">Proveedor</label>
                                         <div class="col-sm-10">
-
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-truck"></i> {{-- Ícono de Font Awesome --}}
+                                                        <i class="fas fa-truck"></i>
                                                     </span>
                                                 </div>
-
-                                                <select name="proveedor_id" id="proveedor_id" class="form-control  selectproveedor" required>
+                                                <select name="proveedor_id" id="proveedor_id" class="form-control selectproveedor" required>
                                                     <option value="">Selecciona un proveedor</option>
                                                     @foreach ($proveedores as $proveedor)
-                                                        <option value="{{ $proveedor->id }}"> {{ $proveedor->nombre }} </option>
+                                                        <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
+                                                            {{ $proveedor->nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
+                                            @error('proveedor_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <label for="marca_id" class="col-sm-2 col-form-label">Marca</label>
                                         <div class="col-sm-10">
-
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-tag"></i> {{-- Ícono de Font Awesome --}}
+                                                        <i class="fas fa-tag"></i>
                                                     </span>
                                                 </div>
-
-                                                <select name="marca_id" id="marca_id" class="form-control  selectmarca" required>
+                                                <select name="marca_id" id="marca_id" class="form-control selectmarca" required>
                                                     <option value="">Selecciona una Marca</option>
                                                     @foreach ($marcas as $marca)
-                                                        <option value="{{ $marca->id }}"> {{ $marca->nombre }} </option>
+                                                        <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                                                            {{ $marca->nombre }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
+                                            @error('marca_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Codigo de Barras (EAN-13)</label>
+                                        <label for="codigo" class="col-sm-2 col-form-label">Código de Barras (EAN-13)</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-boxes"></i>
+                                                        <i class="fas fa-barcode"></i>
                                                     </span>
-
                                                 </div>
-                                                <input type="text" name="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático " class="form-control">
-
+                                                <input type="text" name="codigo" id="codigo" value="{{ old('codigo') }}"
+                                                    placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático"
+                                                    class="form-control">
                                             </div>
-
+                                            @error('codigo')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
-
                                     </div>
 
                                     <div class="form-group row">
@@ -134,13 +155,17 @@
                                                         <i class="fas fa-boxes"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="nombre" placeholder="ingrese nombre del producto" class="form-control ">
+                                                <input type="text" name="nombre" id="nombre" value="{{ old('nombre') }}"
+                                                    placeholder="Ingrese nombre del producto" class="form-control" required>
                                             </div>
+                                            @error('nombre')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Descripcion</label>
+                                        <label for="descripcion" class="col-sm-2 col-form-label">Descripción</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
@@ -148,33 +173,40 @@
                                                         <i class="fas fa-comments"></i>
                                                     </span>
                                                 </div>
-                                                <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                                <textarea name="descripcion" id="descripcion" class="form-control" rows="3" required>{{ old('descripcion') }}</textarea>
+                                            </div>
+                                            @error('descripcion')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-10 offset-sm-2">
+                                            <div class="custom-control custom-switch toggle-estado">
+                                                <input type="hidden" name="activo" value="0">
+                                                <input role="switch" type="checkbox" class="custom-control-input"
+                                                    {{ old('activo', '1') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo">
+                                                <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
-                                        <div class="custom-control custom-switch toggle-estado">
-                                            <input type="hidden" name="activo" value="0">
-                                            <input role="switch" type="checkbox" class="custom-control-input" {{ old('activo') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
-                                            <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
-                                        <label for="nombre" class="col-sm-2 col-form-label">Imagen</label>
+                                        <label for="imagen" class="col-sm-2 col-form-label">Imagen</label>
                                         <div class="col-sm-4">
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
                                                     <span class="input-group-text bg-gradient-info">
-                                                        <i class="fas fa-boxes"></i>
+                                                        <i class="fas fa-image"></i>
                                                     </span>
                                                 </div>
-                                                <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
-                                                @error('imagen')
-                                                    <div class="text-danger">{{ $message }}</div>
-                                                @enderror
+                                                <input onchange="img.src = window.URL.createObjectURL(this.files[0])"
+                                                    type="file" id="imagen" name="imagen" class="form-control">
                                             </div>
+                                            @error('imagen')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         <!-- Imagen -->
@@ -185,13 +217,12 @@
                                                 <small>Te recomendamos usar una imagen de al menos 272 × 315 píxeles y un tamaño máximo de 250 KB.</small>
                                             </div>
                                         </div>
-
                                     </div>
 
                                 </div>
                                 <!-- /.card-body -->
 
-                                <div class="card-footer ">
+                                <div class="card-footer">
                                     <button type="submit" class="btn btn-info">
                                         <i class="fas fa-save"></i> Guardar
                                     </button>
@@ -201,6 +232,7 @@
                                 </div>
                                 <!-- /.card-footer -->
                             </form>
+
                         </div>
                         <!-- /.card -->
                     </div>
