@@ -299,6 +299,12 @@ class ProductoController extends Controller
 
             ]);
 
+            // Devolver los datos del producto creado
+            return response()->json([
+                'success' => true,
+                'producto' => $producto
+            ]);
+
             // Verificar que el producto se creó correctamente
             if (!$producto) {
                 throw new Exception('No se pudo crear el producto');

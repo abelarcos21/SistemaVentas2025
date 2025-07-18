@@ -165,7 +165,7 @@
                                                                 <i class="fas fa-shopping-cart"></i> Primera Compra
                                                             </button> --}}
                                                             <a href="{{ route('compra.create', $producto) }}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
-                                                                <i class="fas fa-shopping-cart mr-1"></i> Comprar
+                                                                <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
                                                             </a>
                                                         @else
                                                             {{-- <button class="btn btn-primary btn-sm" onclick="addStock({{ $producto->id }})">
@@ -220,29 +220,6 @@
     </section>
     <!-- /.content -->
 
-    <!-- Modal para scanear o escribir el codigo de barras -->
-    {{-- <div class="modal fade" id="modalScan" tabindex="-1" role="dialog" aria-labelledby="modalScanLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header bg-gradient-info">
-                <h5 class="modal-title">Escanear código de producto</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="scanForm">
-                    <div class="form-group">
-                        <label for="codigo_scan">Escanea o escribe el código de barras EAN-13</label>
-                        <input type="text" id="codigo_scan" placeholder="Escanea un producto..." class="form-control" autocomplete="off" autofocus>
-                        <small class="text-muted">Presiona Enter para continuar</small>
-                    </div>
-                </form>
-                <div id="mensaje_resultado"></div>
-            </div>
-            </div>
-        </div>
-    </div> --}}
 
     <!-- MODAL PARA ESCANEAR PRODUCTO O ESCRIBIR MANUAL -->
     <div class="container mt-5">
@@ -294,7 +271,7 @@
     !-- Modal para crear nuevo producto -->
     <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
-            <form id="formCrearProducto" action="{{route('producto.store')}}" method="POST" enctype="multipart/form-data">
+            <form id="formCrearProducto" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -399,7 +376,7 @@
                                         </span>
                                     </div>
                                     <!-- Campo visible para mostrar el código -->
-                                    <input type="text" value="{{ old('codigo') }}" id="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control">
+                                    <input type="text" value="{{ old('codigo') }}" id="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control" readonly>
                                     <!-- Campo oculto que se envía con el formulario -->
                                     <input type="hidden" id="codigo" name="codigo" value="">
                                     {{-- <input type="text" id="codigo" name="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control" readonly> --}}
@@ -464,7 +441,7 @@
                                             <i class="fas fa-boxes"></i>
                                         </span>
                                     </div>
-                                    <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" class="form-control">
+                                    <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" accept="image/*" class="form-control">
 
                                 </div>
                                 @error('imagen')
@@ -594,10 +571,14 @@
             $('#formCrearProducto').on('submit', function(e) {
                 e.preventDefault();
 
+                var formData = new FormData(this);
+
                 $.ajax({
-                    url: '{{ route("productos.store") }}',
+                    url: '{{ route("producto.store") }}',
                     method: 'POST',
-                    data: $(this).serialize(),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(res) {
                         $('#modalCrearProducto').modal('hide');
                         Swal.fire({
@@ -605,6 +586,59 @@
                             title: 'Producto creado',
                             text: 'Se ha guardado correctamente.',
                         });
+
+                        // Agregar nueva fila al DataTable con todas las columnas
+                        $('#example1').DataTable().row.add([
+                            res.producto.id, // Nro
+                            `<a href="#" data-toggle="modal" data-target="#modalImagen${res.producto.id}">
+                                <img src="/storage/${res.producto.imagen ? res.producto.imagen.ruta : 'images/placeholder-caja.png'}" 
+                                    width="50" height="50" class="img-thumbnail rounded shadow" style="object-fit: cover;">
+                            </a>`, // Imagen
+                            `<code>${res.producto.codigo || ''}</code>`, // Código de Barras
+                            res.producto.nombre, // Nombre
+                            `<span class="badge bg-primary">${res.producto.categoria_id || ''}</span>`, // Categoría
+                            res.producto.marca_id || '', // Marca
+                            res.producto.descripcion || '', // Descripción
+                            res.producto.proveedor_id || '', // Proveedor
+                            res.producto.cantidad == 0 ? 
+                                '<span class="badge bg-warning">Sin stock</span>' : 
+                                `<span class="badge bg-success">${res.producto.cantidad || 0}</span>`, // Stock
+                            res.producto.precio_venta ? 
+                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_venta).toFixed(2)}</strong>` : 
+                                '<span class="text-muted">No definido</span>', // Precio Venta
+                            res.producto.precio_compra ? 
+                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_compra).toFixed(2)}</strong>` : 
+                                '<span class="text-muted">No definido</span>', // Precio Compra
+                            new Date().toLocaleDateString('es-ES', { 
+                                day: '2-digit', 
+                                month: '2-digit', 
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                            }), // Fecha Registro
+                            `<div class="custom-control custom-switch toggle-estado">
+                                <input type="checkbox" role="switch" class="custom-control-input"
+                                    id="activoSwitch${res.producto.id}" ${res.producto.activo ? 'checked' : ''} data-id="${res.producto.id}">
+                                <label class="custom-control-label" for="activoSwitch${res.producto.id}"></label>
+                            </div>`, // Activo
+                            `<div class="d-flex">
+                                <a href="/compra/create/${res.producto.id}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
+                                    <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
+                                </a>
+                            </div>`, // Comprar
+                            `<div class="d-flex">
+                                <a href="/producto/${res.producto.id}/edit" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
+                                    <i class="fas fa-edit mr-1"></i> Editar
+                                </a>
+                                <a href="/producto/${res.producto.id}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
+                                    <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                </a>
+                            </div>` // Acciones
+                        ]).draw();
+            
+                        // Limpiar el formulario
+                        $('#formCrearProducto')[0].reset();
                     },
                     error: function(err) {
                         Swal.fire('Error', 'Ocurrió un problema al guardar.', 'error');
