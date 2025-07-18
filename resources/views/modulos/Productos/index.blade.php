@@ -749,7 +749,43 @@
                     {
                         extend: 'excelHtml5',
                         exportOptions: {
-                            columns: ':not(.no-exportar)'
+                            columns: ':not(.no-exportar)',
+                            format: {
+                                body: function (data, row, column, node) {
+                                    // Limpiar HTML y extraer solo el texto
+                                    let cleanData = data;
+                
+                                    // Si contiene HTML tags, extraer el texto
+                                    if (typeof data === 'string' && data.includes('<')) {
+                                        let $temp = $('<div>').html(data);
+                                        
+                                        // Casos específicos
+                                        if (data.includes('<code>')) {
+                                            // Para códigos de barras: extraer contenido del <code>
+                                            cleanData = "'" + $temp.find('code').text() || $temp.text();
+                                        } else if (data.includes('class="badge"')) {
+                                            // Para badges: extraer texto del span
+                                            cleanData = $temp.find('.badge').text() || $temp.text();
+                                        } else if (data.includes('input[type="checkbox"]') || data.includes('role="switch"')) {
+                                            // Para checkboxes/switches
+                                            return $temp.find('input').is(':checked') ? 'Sí' : 'No';
+                                        } else {
+                                            // Para cualquier otro HTML, extraer solo texto
+                                            cleanData = $temp.text();
+                                        }
+                                    }
+                
+                                    // Manejar campo activo por índice de columna si es necesario
+                                    if (column === 11) { // Ajusta según tu columna activo
+                                        if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
+                                            return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
+                                        }
+                                        return cleanData == 1 || cleanData == true || cleanData === 'true' ? 'Sí' : 'No';
+                                    }
+                
+                                    return cleanData || data;
+                                }
+                            }
                         },
                         title: 'Reporte de Productos',
                         filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
@@ -820,7 +856,23 @@
                     {
                         extend: 'pdfHtml5',
                         exportOptions: {
-                            columns: ':not(.no-exportar)' // en PDF
+                            columns: ':not(.no-exportar)', // en PDF
+                            format: {
+                                body: function (data, row, column, node) {
+                                    
+                                    // Manejar checkboxes/switches
+                                    if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
+                                        return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
+                                    }
+                                    
+                                    // Limpiar HTML si es necesario
+                                    if (typeof data === 'string' && data.includes('<')) {
+                                        return $('<div>').html(data).text();
+                                    }
+                                    
+                                    return data;
+                                }
+                            }
                         },
                         title: 'Reporte de Productos',
                         filename: 'reporte_productos_' + new Date().toISOString().slice(0,10),
@@ -829,7 +881,6 @@
                         text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
                         className: 'btn btn-danger btn-sm',
                         customize: function (doc) {
-
                             // Insertar el logo al principio
                             doc.content.unshift({
                                 image: logoBase64,
@@ -860,7 +911,6 @@
                             objLayout.hAlign = 'center';
                             doc.content[2].layout = objLayout;
 
-
                             // Pie de página
                             doc.footer = function (currentPage, pageCount) {
                                 return {
@@ -870,7 +920,6 @@
                                     margin: [0, 10, 0, 0]
                                 };
                             };
-
                         }
                     },
                     {
