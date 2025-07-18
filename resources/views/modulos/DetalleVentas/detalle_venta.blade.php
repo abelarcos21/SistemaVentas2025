@@ -208,9 +208,12 @@
                         </div>
                         <div class="card-body">
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-danger" onclick="exportToPDF()">
-                                    <i class="fas fa-file-pdf mr-1"></i> Exportar PDF
-                                </button>
+                                {{-- <button type="button" class="btn btn-danger" onclick="exportToPDF()">
+                                    <i class="fas fa-file-pdf mr-1"></i> Ver PDF
+                                </button> --}}
+                                <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-file-pdf mr-1"></i> Ver PDF
+                                </a>
                                 <a href="{{ route('detalleventas.index') }}" class="btn btn-secondary">
                                     <i class="fas fa-list mr-1"></i> Ver Todas las Ventas
                                 </a>
