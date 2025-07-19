@@ -30,6 +30,7 @@
         .qr {
             margin-top: 15px;
         }
+
     </style>
 </head>
 <body>
@@ -74,22 +75,40 @@
     </table>
 
     <div class="totales">
-        <p>===========</p>
+        <p>=================</p>
         <p><strong>TOTAL: ${{ number_format($venta->total_venta, 2) }}</strong></p>
         <p><strong>({{ ucfirst($totalLetras)}})</strong></p>
-        <p><strong>Impuestos:</strong> 0.00</p>
+        <p><strong>IVA(16.0%):</strong> 0.00</p>
         <p><strong>Descuento:</strong> 0.00</p>
+        {{-- <p><strong>Formas de Pago:</strong></p>
         @foreach ($pagos as $pago)
-            <p><strong>Forma de Pago:</strong> {{ ucfirst($pago->metodo_pago) }}</p>
-        @endforeach
-        <p>===========</p>
+            <p>
+                {{ ucfirst($pago->metodo_pago) }}:
+                ${{ number_format($pago->monto, 2) }}
+            </p>
+        @endforeach --}}
+        {{-- Resumen por método de pago --}}
+        @if($pagos->count() >= 1)
+            <p><strong> Formas de Pagos:</strong></p>
+            @foreach($pagos->groupBy('metodo_pago') as $metodo => $pagosPorMetodo)
+                <p>
+                    <strong>{{ ucfirst($metodo) }}:</strong>
+                    ${{ number_format($pagosPorMetodo->sum('monto'), 2) }}
+                    @if($pagosPorMetodo->count() > 1)
+                        ({{ $pagosPorMetodo->count() }} pagos)
+                    @endif
+                </p>
+            @endforeach
+        @endif
+        <p>=================</p>
         <p><strong>Total Pagado:</strong> ${{ number_format($efectivoTotal, 2) }}</p>
         <p><strong>Cambio:</strong> ${{ number_format($cambio, 2) }}</p>
-        <p><strong>Total de Articulos:</strong> {{ $totalArticulos}}</p>
+        <p><strong>Articulos Vendidos:</strong> {{ $totalArticulos}}</p>
+
     </div>
     <p>===================================</p>
     <p>¡Gracias por su compra! | Este ticket es su comprobante de pago</p>
-    <p>Devoluciones aceptadas dentro de los 15 días con ticket original</p>
+    {{-- <p>Devoluciones aceptadas dentro de los 15 días con ticket original</p> --}}
     <p>Visítenos de nuevo en ClickVenta </p>
     <p>* Este ticket no es factura fiscal *</p>
 
