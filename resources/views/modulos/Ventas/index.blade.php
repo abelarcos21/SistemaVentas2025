@@ -193,7 +193,7 @@
                             @csrf
 
                             {{-- Cliente --}}
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-4">
                                 <label for="cliente_id"><i class="fa fa-user mr-1"></i> Cliente</label>
                                 <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
                                     <option value="" disabled selected>Selecciona un cliente</option>
@@ -206,7 +206,7 @@
                                 @enderror
                             </div>
 
-                            <div id="pagos-container">
+                            {{-- <div id="pagos-container">
 
                                 <div class="form-group">
                                     <label for="metodo_pago">
@@ -222,9 +222,42 @@
                                     <input type="number" name="monto[]" class="form-control" placeholder="Monto">
                                 </div>
 
+                            </div> --}}
+{{--
+                            <button type="button" class="btn btn-block btn-info bg-gradient-info mb-3" onclick="agregarPago()">
+                                <i class="fa fa-plus"></i> Agregar otro Pago
+                            </button> --}}
+
+                            <div id="pagos-container">
+                                <div class="row mb-2 pago-item">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="metodo_pago">
+                                                <i class="fa fa-credit-card mr-1"></i> Metodo Pago
+                                            </label>
+                                            <select name="metodo_pago[]" class="form-control">
+                                                <option value="efectivo">Efectivo</option>
+                                                <option value="tarjeta">Tarjeta</option>
+                                                <option value="transferencia">Transferencia</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Monto</label>
+                                            <input type="number" step="0.01" name="monto[]" class="form-control" placeholder="Monto">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 32px;" onclick="eliminarPago(this)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
-                            <button type="button" class="btn btn-block btn-info bg-gradient-info mb-3" onclick="agregarPago()">
+                            <!-- Botón para agregar más pagos -->
+                            <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-1" onclick="agregarPago()">
                                 <i class="fa fa-plus"></i> Agregar otro Pago
                             </button>
 
@@ -644,7 +677,7 @@
     </script>
 
     {{--SCRIPT PARA AGREGAR EL METODO DE PAGO--}}
-    <script>
+   {{--  <script>
         function agregarPago() {
             const html = `
             <div class="row mb-2">
@@ -660,6 +693,33 @@
                 </div>
             </div>`;
             document.getElementById('pagos-container').insertAdjacentHTML('beforeend', html);
+        }
+    </script> --}}
+    <script>
+        function agregarPago() {
+            const html = `
+            <div class="row mb-2 pago-item">
+                <div class="col-md-6">
+                    <select name="metodo_pago[]" class="form-control">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input type="number" step="0.01" name="monto[]" class="form-control" placeholder="Monto">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarPago(this)">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>`;
+            document.getElementById('pagos-container').insertAdjacentHTML('beforeend', html);
+        }
+
+        function eliminarPago(button) {
+            button.closest('.pago-item').remove();
         }
     </script>
 
