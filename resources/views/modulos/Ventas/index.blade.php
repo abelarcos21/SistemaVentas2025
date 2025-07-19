@@ -41,14 +41,65 @@
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
-                    <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1" data-id="todos">Todos ({{$totalProductos}})</button>
+
+                    <div class="d-flex flex-wrap align-items-center mb-2">
+                        <h6 class="text-muted me-3 mb-0">
+                            <i class="fas fa-filter me-1"></i>Filtrar por categoría:
+                        </h6>
+
+                    </div>
+
+                    <!-- Botón Todos -->
+                    <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1 active"
+                            data-id="todos"
+                            data-count="{{ $totalProductos }}">
+                        <i class="fas fa-th-large me-1"></i>
+                        Todos
+                        <span class="badge bg-primary  ms-1">{{ $totalProductos }}</span>
+                    </button>
                     @foreach($categorias as $cat)
-                        <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1" data-id="{{ $cat->id }}">
-                            <i class="fas fa-boxes "></i> {{ $cat->nombre }}  ({{ $cat->productos_count }})
+                        <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1"
+                                data-id="{{ $cat->id }}"
+                                data-count="{{$cat->productos_count}}">
+                            {{-- <i class="fas fa-laptop me-1"></i> {{ $cat->nombre }}  ({{ $cat->productos_count }}) --}}
+                            <!-- Iconos específicos por categoría -->
+                            @switch($cat->nombre)
+
+                                @case('Electrónica')
+                                    <i class="fas fa-laptop me-1"></i>
+                                    @break
+
+                                @case('Carnes y Embutidos')
+                                    <i class="fas fa-heart me-1"></i>
+                                    @break
+
+                                @case('Ferretería')
+                                    <i class="fas fa-home me-1"></i>
+                                    @break
+                                @case('Lácteos')
+                                    <i class="fas fa-dumbbell me-1"></i>
+                                    @break
+                                @case('Bebidas Alcohólicas')
+                                    <i class="fas fa-book me-1"></i>
+                                    @break
+
+                                @case('Ropa y Accesorios')
+                                    <i class="fas fa-tshirt me-1"></i>
+                                    @break
+
+                                @case('Cuidado Personal')
+                                    <i class="fas fa-heart me-1"></i>
+                                    @break
+                                @default
+                                    <i class="fas fa-boxes me-1"></i>
+                            @endswitch
+
+                            {{ $cat->nombre }}
+                            <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
                         </button>
                     @endforeach
+
                 </div>
-                <!-- Main content -->
 
                 <!-- Carrito de Compras -->
                 <div class="card card-outline card-primary">
