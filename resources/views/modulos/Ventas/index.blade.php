@@ -224,7 +224,9 @@
 
                             </div>
 
-                            <button type="button" class="btn btn-block btn-info bg-gradient-info mb-3" onclick="agregarPago()">Agregar otro pago</button>
+                            <button type="button" class="btn btn-block btn-info bg-gradient-info mb-3" onclick="agregarPago()">
+                                <i class="fa fa-plus"></i> Agregar otro Pago
+                            </button>
 
                             {{-- Nota adicional --}}
                             <div class="form-group mb-3">
@@ -243,7 +245,7 @@
 
                             {{-- Botón de Pagar --}}
                             <button type="submit" class="btn btn-primary bg-gradient-primary btn-block rounded-pill" style="border: none;">
-                                <i class="fa fa-credit-card mr-1"></i> Pagar
+                                <i class="fa fa-credit-card mr-1"></i> Procesar Venta
                             </button>
                         </form>
                     </div>
