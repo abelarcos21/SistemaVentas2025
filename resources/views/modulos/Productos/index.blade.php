@@ -268,13 +268,13 @@
     </div>
 
 
-    !-- Modal para crear nuevo producto -->
+    <!-- Modal para crear nuevo producto -->
     <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <form id="formCrearProducto" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-gradient-info">
                         <h5 class="modal-title">Crear nuevo producto</h5>
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
@@ -561,46 +561,76 @@
 
     {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES,CATEGORIAS y MARCAS--}}
     <script>
-
         $(document).ready(function() {
-            // Función para inicializar Select2
-            function initializeSelect2() {
-                $('.selectcategoria').select2({
+            // Configuraciones específicas para cada select
+            const selectConfigs = {
+                '.selectcategoria': {
+                    placeholder: "Selecciona o Busca una Categoria",
+                    dropdownParent: $('#modalCrearProducto')
+                },
+                '.selectproveedor': {
+                    placeholder: "Selecciona o Busca un Proveedor",
+                    dropdownParent: $('#modalCrearProducto')
+                },
+                '.selectmarca': {
+                    placeholder: "Selecciona o Busca una Marca",
+                    dropdownParent: $('#modalCrearProducto')
+                }
+            };
+
+            // Función genérica para inicializar Select2
+            function initializeSelect2(selector, config) {
+                $(selector).select2({
                     language: 'es',
                     theme: 'bootstrap4',
-                    placeholder: "Selecciona o Busca una Categoria",
+                    placeholder: config.placeholder,
                     allowClear: true,
-                    minimumResultsForSearch: 0, // Fuerza siempre el buscador
+                    minimumResultsForSearch: 0,
                     dropdownAutoWidth: true,
-                    // CONFIGURACIÓN CLAVE PARA MODALES
-                    dropdownParent: $('#modalCrearProducto'), //el ID real de tu modal
-                    width: '100%' // Asegura que ocupe todo el ancho disponible
+                    dropdownParent: config.dropdownParent,
+                    width: '100%'
+                });
+            }
+
+            // Función para inicializar todos los selects
+            function initializeAllSelects() {
+                Object.keys(selectConfigs).forEach(selector => {
+                    if ($(selector).length > 0) {
+                        initializeSelect2(selector, selectConfigs[selector]);
+                    }
+                });
+            }
+
+            // Función para destruir todos los selects
+            function destroyAllSelects() {
+                Object.keys(selectConfigs).forEach(selector => {
+                    if ($(selector).length > 0) {
+                        $(selector).val('').trigger('change');
+                        $(selector).select2('destroy');
+                    }
                 });
             }
 
             // Inicializar Select2 cuando se abre el modal
             $('#modalCrearProducto').on('shown.bs.modal', function() {
-                initializeSelect2();
+                initializeAllSelects();
             });
 
             // Limpiar Select2 y resetear valores cuando se cierra el modal
             $('#modalCrearProducto').on('hidden.bs.modal', function() {
-                // Resetear el valor del select
-                $('.selectcategoria').val('').trigger('change');
-                // Destruir Select2 para mejor rendimiento
-                $('.selectcategoria').select2('destroy');
-
-                // Si tienes un formulario, también puedes resetearlo completamente
-                $('#formCrearProducto')[0].reset(); // Descomenta esta línea si quieres resetear todo el formulario
+                destroyAllSelects();
+                // Resetear el formulario completo
+                $('#formCrearProducto')[0].reset();
             });
 
-            // Si el select también se usa fuera del modal, inicialízalo normalmente
-            if ($('.selectcategoria').closest('.modal').length === 0) {
-                initializeSelect2();
-            }
+            // Si los selects también se usan fuera del modal, inicializarlos normalmente
+            Object.keys(selectConfigs).forEach(selector => {
+                if ($(selector).closest('.modal').length === 0) {
+                    initializeSelect2(selector, selectConfigs[selector]);
+                }
+            });
         });
     </script>
-
 
 
     {{--ESCANEAR EL PRODUCTO O ESCRIBIRLO PARA VERIFICAR SI EXISTE SI NO SE CREA UN NUEVO PRODUCTO--}}
