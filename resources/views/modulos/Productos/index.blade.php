@@ -478,8 +478,43 @@
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
+
+    {{-- Este estilo limita la altura del dropdown a 300px y agrega una barra de desplazamiento si hay muchos elementos. --}}
+    <style>
+        .select2-container .select2-dropdown {
+            max-height: 300px !important; /* Altura máxima */
+            overflow-y: auto !important;  /* Scroll vertical */
+        }
+    </style>
+
+    <style>
+
+        /* Estilo del texto seleccionado */
+        .select2-container--bootstrap4 .select2-selection__rendered {
+            color: #343a40; /* texto gris oscuro */
+            font-weight: 500;
+        }
+
+        /* Estilo del dropdown */
+        .select2-container--bootstrap4 .select2-dropdown {
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Hover sobre opciones */
+        .select2-container--bootstrap4 .select2-results__option--highlighted {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Estilo del campo de búsqueda */
+        .select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+
+            border-radius: 0.25rem;
+        }
+    </style>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -490,6 +525,9 @@
 
     <!-- Carga logo base64 -->
     <script src="{{ asset('js/logoBase64.js') }}"></script>
+
+    {{--INCLUIR PLUGIN SELECT2 ESPAÑOL--}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
     {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
@@ -520,6 +558,50 @@
             });
         @endif
     </script>
+
+    {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES,CATEGORIAS y MARCAS--}}
+    <script>
+
+        $(document).ready(function() {
+            // Función para inicializar Select2
+            function initializeSelect2() {
+                $('.selectcategoria').select2({
+                    language: 'es',
+                    theme: 'bootstrap4',
+                    placeholder: "Selecciona o Busca una Categoria",
+                    allowClear: true,
+                    minimumResultsForSearch: 0, // Fuerza siempre el buscador
+                    dropdownAutoWidth: true,
+                    // CONFIGURACIÓN CLAVE PARA MODALES
+                    dropdownParent: $('#modalCrearProducto'), //el ID real de tu modal
+                    width: '100%' // Asegura que ocupe todo el ancho disponible
+                });
+            }
+
+            // Inicializar Select2 cuando se abre el modal
+            $('#modalCrearProducto').on('shown.bs.modal', function() {
+                initializeSelect2();
+            });
+
+            // Limpiar Select2 y resetear valores cuando se cierra el modal
+            $('#modalCrearProducto').on('hidden.bs.modal', function() {
+                // Resetear el valor del select
+                $('.selectcategoria').val('').trigger('change');
+                // Destruir Select2 para mejor rendimiento
+                $('.selectcategoria').select2('destroy');
+
+                // Si tienes un formulario, también puedes resetearlo completamente
+                $('#formCrearProducto')[0].reset(); // Descomenta esta línea si quieres resetear todo el formulario
+            });
+
+            // Si el select también se usa fuera del modal, inicialízalo normalmente
+            if ($('.selectcategoria').closest('.modal').length === 0) {
+                initializeSelect2();
+            }
+        });
+    </script>
+
+
 
     {{--ESCANEAR EL PRODUCTO O ESCRIBIRLO PARA VERIFICAR SI EXISTE SI NO SE CREA UN NUEVO PRODUCTO--}}
     <script>
@@ -592,7 +674,7 @@
                         $('#example1').DataTable().row.add([
                             res.producto.id, // Nro
                             `<a href="#" data-toggle="modal" data-target="#modalImagen${res.producto.id}">
-                                <img src="/storage/${res.producto.imagen ? res.producto.imagen.ruta : 'images/placeholder-caja.png'}" 
+                                <img src="/storage/${res.producto.imagen ? res.producto.imagen.ruta : 'images/placeholder-caja.png'}"
                                     width="50" height="50" class="img-thumbnail rounded shadow" style="object-fit: cover;">
                             </a>`, // Imagen
                             `<code>${res.producto.codigo || ''}</code>`, // Código de Barras
@@ -601,18 +683,18 @@
                             res.producto.marca_id || '', // Marca
                             res.producto.descripcion || '', // Descripción
                             res.producto.proveedor_id || '', // Proveedor
-                            res.producto.cantidad == 0 ? 
-                                '<span class="badge bg-warning">Sin stock</span>' : 
+                            res.producto.cantidad == 0 ?
+                                '<span class="badge bg-warning">Sin stock</span>' :
                                 `<span class="badge bg-success">${res.producto.cantidad || 0}</span>`, // Stock
-                            res.producto.precio_venta ? 
-                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_venta).toFixed(2)}</strong>` : 
+                            res.producto.precio_venta ?
+                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_venta).toFixed(2)}</strong>` :
                                 '<span class="text-muted">No definido</span>', // Precio Venta
-                            res.producto.precio_compra ? 
-                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_compra).toFixed(2)}</strong>` : 
+                            res.producto.precio_compra ?
+                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_compra).toFixed(2)}</strong>` :
                                 '<span class="text-muted">No definido</span>', // Precio Compra
-                            new Date().toLocaleDateString('es-ES', { 
-                                day: '2-digit', 
-                                month: '2-digit', 
+                            new Date().toLocaleDateString('es-ES', {
+                                day: '2-digit',
+                                month: '2-digit',
                                 year: 'numeric',
                                 hour: '2-digit',
                                 minute: '2-digit',
@@ -637,7 +719,7 @@
                                 </a>
                             </div>` // Acciones
                         ]).draw();
-            
+
                         // Limpiar el formulario
                         $('#formCrearProducto')[0].reset();
                     },
@@ -754,11 +836,11 @@
                                 body: function (data, row, column, node) {
                                     // Limpiar HTML y extraer solo el texto
                                     let cleanData = data;
-                
+
                                     // Si contiene HTML tags, extraer el texto
                                     if (typeof data === 'string' && data.includes('<')) {
                                         let $temp = $('<div>').html(data);
-                                        
+
                                         // Casos específicos
                                         if (data.includes('<code>')) {
                                             // Para códigos de barras: extraer contenido del <code>
@@ -774,7 +856,7 @@
                                             cleanData = $temp.text();
                                         }
                                     }
-                
+
                                     // Manejar campo activo por índice de columna si es necesario
                                     if (column === 11) { // Ajusta según tu columna activo
                                         if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
@@ -782,7 +864,7 @@
                                         }
                                         return cleanData == 1 || cleanData == true || cleanData === 'true' ? 'Sí' : 'No';
                                     }
-                
+
                                     return cleanData || data;
                                 }
                             }
@@ -859,17 +941,17 @@
                             columns: ':not(.no-exportar)', // en PDF
                             format: {
                                 body: function (data, row, column, node) {
-                                    
+
                                     // Manejar checkboxes/switches
                                     if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
                                         return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
                                     }
-                                    
+
                                     // Limpiar HTML si es necesario
                                     if (typeof data === 'string' && data.includes('<')) {
                                         return $('<div>').html(data).text();
                                     }
-                                    
+
                                     return data;
                                 }
                             }
