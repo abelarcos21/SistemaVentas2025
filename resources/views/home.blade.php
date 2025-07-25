@@ -26,7 +26,7 @@
                     <span class="info-box-icon"><i class="fas fa-cash-register"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-number">$4,500.00</span>
-                        <span class="small info-box-text">Ventas Totales</span>
+                        <span class="info-box-text">Ventas Totales</span>
                         <span class="small info-box-text">45 transacciones</span>
                     </div>
                 </div>
