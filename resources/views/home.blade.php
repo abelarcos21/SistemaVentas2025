@@ -3,11 +3,33 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    <button type="button" class="btn btn-primary bg-gradient-primary btn-lg btn-block" disabled>
+    {{-- <button type="button" class="btn btn-primary bg-gradient-primary btn-lg btn-block" disabled>
         <h1>¡Bienvenido a ClickVenta!</h1>
         <h6>Tu Sistema de ventas rápido, simple y confiable.</h6>
         <span class="badge badge-lg bg-light">V1.0</span>
-    </button>
+    </button> --}}
+
+    <div class="welcome-header">
+        <div class="welcome-content">
+            <div class="welcome-text">
+                <h1 class="welcome-title">¡Bienvenido a ClickVenta!</h1>
+                <p class="welcome-subtitle">Tu sistema de ventas rápido, simple y confiable</p>
+                <div class="welcome-version">
+                    <span class="version-badge">V1.0</span>
+                </div>
+            </div>
+            <div class="welcome-actions">
+                <a  href="/ventas/crear-venta" class="btn-action btn-primary-action">
+                    <i class="fas fa-plus"></i>
+                    Nueva Venta
+                </a>
+                <a href="/reporte-productos" class="btn-action btn-secondary-action">
+                    <i class="fas fa-chart-line"></i>
+                    Reportes
+                </a>
+            </div>
+        </div>
+    </div>
 
 @stop
 
@@ -207,6 +229,99 @@
 
 @section('css')
     {{-- Add here extra stylesheets --}}
+
+    <style>
+
+        /* Variables CSS para temas */
+        :root {
+            --primary-color: #667eea;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-color: #f093fb;
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-color: #4facfe;
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-color: #f6d365;
+            --warning-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --danger-color: #ff6b6b;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --card-hover-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            --border-radius: 16px;
+            --spacing: 1.5rem;
+        }
+
+        /* Header de Bienvenida */
+        .welcome-header {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: var(--card-shadow);
+        }
+
+        .welcome-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            margin: 0.5rem 0;
+            opacity: 0.9;
+        }
+
+        .version-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-action {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary-action {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-secondary-action {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+
     <style>
         .info-box {
             min-height: 110px;
