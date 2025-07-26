@@ -736,15 +736,15 @@
                                 <label class="custom-control-label" for="activoSwitch${res.producto.id}"></label>
                             </div>`, // Activo
                             `<div class="d-flex">
-                                <a href="/compra/create/${res.producto.id}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
+                                <a href="/compras/create/${res.producto.id}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
                                     <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
                                 </a>
                             </div>`, // Comprar
                             `<div class="d-flex">
-                                <a href="/producto/${res.producto.id}/edit" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
+                                <a href="/productos/${res.producto.id}/edit" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
                                     <i class="fas fa-edit mr-1"></i> Editar
                                 </a>
-                                <a href="/producto/${res.producto.id}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
+                                <a href="/productos/${res.producto.id}/show" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
                                     <i class="fas fa-trash-alt mr-1"></i> Eliminar
                                 </a>
                             </div>` // Acciones
