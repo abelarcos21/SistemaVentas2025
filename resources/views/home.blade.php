@@ -47,7 +47,8 @@
                 <div class="info-box bg-info text-white bg-gradient shadow">
                     <span class="info-box-icon"><i class="fas fa-cash-register"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-number">$4,500.00</span>
+                        {{-- <span class="info-box-number">$4,500.00</span> --}}
+                        <h3>$4,500.00</h3>
                         <span class="info-box-text">Ventas Totales</span>
                         <span class="small info-box-text">45 transacciones</span>
                     </div>
@@ -59,7 +60,8 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-boxes"></i></span>
 
                     <div class="info-box-content">
-                      <span class="info-box-number">34</span>
+                      {{-- <span class="info-box-number">34</span> --}}
+                      <h3>34</h3>
                       <span class="small info-box-text">Productos</span>
                     </div>
                     <!-- /.info-box-content -->
@@ -71,7 +73,8 @@
                 <div class="info-box shadow">
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
                     <div class="info-box-content">
-                      <span class="info-box-number">5</span>
+                     {{--  <span class="info-box-number">5</span> --}}
+                      <h3>5</h3>
                       <span class="small info-box-text">Clientes Registrados</span>
                     </div>
                     <!-- /.info-box-content -->
@@ -84,7 +87,8 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-exclamation-triangle"></i></span>
 
                     <div class="info-box-content">
-                      <span class="info-box-number">45</span>
+                     {{--  <span class="info-box-number">45</span> --}}
+                      <h3>45</h3>
                       <span class="small info-box-text">Stock Minimo</span>
                       <span class=" small info-box-text">Requiere atención</span>
                     </div>
@@ -104,7 +108,8 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-user-shield"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Usuarios</span>
-                        <span class="info-box-number">7</span>
+                        {{-- <span class="info-box-number">7</span> --}}
+                        <h3>7</h3>
                         <span class="small info-box-text">usuarios activos</span>
                     </div>
                 </div>
@@ -115,7 +120,8 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Proveedores</span>
-                        <span class="info-box-number">3</span>
+                       {{--  <span class="info-box-number">3</span> --}}
+                        <h3>3</h3>
                         <span class="small info-box-text">proveedores</span>
                     </div>
                 </div>
@@ -126,7 +132,8 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-tags"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Categorías</span>
-                        <span class="info-box-number">12</span>
+                        {{-- <span class="info-box-number">12</span> --}}
+                        <h3>12</h3>
                         <span class="small info-box-text">categorías</span>
                     </div>
                 </div>
@@ -137,7 +144,9 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Ganancias</span>
-                        <span class="info-box-number">$3,000</span>
+                        {{-- <span class="info-box-number">$3,000</span> --}}
+                        <h3>$3,000</h3>
+                        <span class="small info-box-text">Ganancias</span>
                     </div>
                 </div>
             </div>

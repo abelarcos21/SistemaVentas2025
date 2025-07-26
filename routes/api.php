@@ -6,11 +6,18 @@ use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\AuthController;
 
 
+/* Route::prefix('productos')->group(function () { //rutas para vuejs3
+    Route::get('/', [ProductoController::class, 'index']);
+    Route::get('/form-data', [ProductoController::class, 'getFormData']);
+    Route::patch('/{id}/toggle-estado', [ProductoController::class, 'toggleEstado']);
+}); */
+
+
 // Rutas públicas
 Route::post('/login', [AuthController::class, 'login']);
 
 
-// Rutas protegidas
+// Rutas protegidas para movile con autenticacion para movil flutter
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('categorias', CategoriaController::class);
@@ -22,11 +29,3 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request){
     return $request->user();
 });
-
-
-
-
-//proteger rutas con laravel sanctum para la API
-/* Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('products', ProductController::class);
-}); */
