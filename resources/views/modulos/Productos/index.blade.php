@@ -697,7 +697,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Producto creado',
-                            text: 'Se ha guardado correctamente.',
+                            text: 'Puedes realizar la compra más tarde usando el botón Comprar.',
                         });
 
                         // Agregar nueva fila al DataTable con todas las columnas
