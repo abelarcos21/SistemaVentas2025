@@ -167,8 +167,8 @@
 
                         {{-- Total --}}
                         <div class="text-center mb-4 alert alert-info fade show alert-translucido" role="alert">
-                            <h5 class="text-secondary">Total a Pagar</h5>
-                            <h2 class="font-weight-bold text-primary">
+                            <h5 class="text-light">Total a Pagar</h5>
+                            <h2 class="font-weight-bold text-light">
 
                                 {{--  MXN${{ number_format($totalGeneral, 2) }} --}}
                                 <div id="carrito-total-container" class="text-center mt-3" style="display: none;">
