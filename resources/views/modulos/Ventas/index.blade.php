@@ -41,64 +41,49 @@
 
                 {{-- Filtros de categoría --}}
                 <div class="mb-3" id="filtros">
-
                     <div class="d-flex flex-wrap align-items-center mb-2">
                         <h6 class="text-muted me-3 mb-0">
                             <i class="fas fa-filter me-1"></i>Filtrar por categoría:
                         </h6>
-
                     </div>
 
                     <!-- Botón Todos -->
-                    <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1 active"
+                    <button class="btn btn-outline-primary filtro-categoria mb-2 active"
                             data-id="todos"
                             data-count="{{ $totalProductos }}">
-                        <i class="fas fa-th-large me-1"></i>
-                        Todos
-                        <span class="badge bg-primary  ms-1">{{ $totalProductos }}</span>
+                        <i class="fas fa-th-large"></i>
+                        <span>Todos</span>
+                        <span class="badge bg-primary ms-1">{{ $totalProductos }}</span>
                     </button>
+
+                    {{--Arreglo asociativo con el nombre de la categoría como clave y el ícono de FontAwesome como valor.--}}
+                    @php
+                        $iconosCategorias = [
+                            'Electrónica' => 'fas fa-laptop',
+                            'Carnes y Embutidos' => 'fas fa-drumstick-bite',
+                            'Ferretería' => 'fas fa-tools',
+                            'Lácteos' => 'fas fa-cheese',
+                            'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
+                            'Ropa y Accesorios' => 'fas fa-tshirt',
+                            'Cuidado Personal' => 'fas fa-spa',
+                        ];
+                    @endphp
+
                     @foreach($categorias as $cat)
-                        <button class="btn btn-outline-primary btn-sm filtro-categoria mb-1"
-                                data-id="{{ $cat->id }}"
-                                data-count="{{$cat->productos_count}}">
-                            {{-- <i class="fas fa-laptop me-1"></i> {{ $cat->nombre }}  ({{ $cat->productos_count }}) --}}
-                            <!-- Iconos específicos por categoría -->
-                            @switch($cat->nombre)
 
-                                @case('Electrónica')
-                                    <i class="fas fa-laptop me-1"></i>
-                                    @break
+                        {{--USO DINAMICAMENTE DEL ICONO--}}
+                        @php
+                            $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes';
+                        @endphp
 
-                                @case('Carnes y Embutidos')
-                                    <i class="fas fa-heart me-1"></i>
-                                    @break
-
-                                @case('Ferretería')
-                                    <i class="fas fa-home me-1"></i>
-                                    @break
-                                @case('Lácteos')
-                                    <i class="fas fa-dumbbell me-1"></i>
-                                    @break
-                                @case('Bebidas Alcohólicas')
-                                    <i class="fas fa-book me-1"></i>
-                                    @break
-
-                                @case('Ropa y Accesorios')
-                                    <i class="fas fa-tshirt me-1"></i>
-                                    @break
-
-                                @case('Cuidado Personal')
-                                    <i class="fas fa-heart me-1"></i>
-                                    @break
-                                @default
-                                    <i class="fas fa-boxes me-1"></i>
-                            @endswitch
-
-                            {{ $cat->nombre }}
+                        <button class="btn btn-outline-primary filtro-categoria mb-2"
+                            data-id="{{ $cat->id }}"
+                            data-count="{{ $cat->productos_count }}">
+                            <i class="{{ $icono }}"></i>
+                            <span>{{ $cat->nombre }}</span>
                             <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
                         </button>
                     @endforeach
-
                 </div>
 
                 <!-- Carrito de Compras -->
@@ -293,6 +278,29 @@
 @stop
 
 @section('css')
+    {{-- ESTILOS PARA EL FILTRO DE CATEGORIAS BOTONES Y ICONS--}}
+    <style>
+        .filtro-categoria {
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            border-radius: 1.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .filtro-categoria i {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            #filtros button.filtro-categoria {
+                flex: 1 1 100%;
+                width: 100%;
+            }
+        }
+    </style>
 
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
