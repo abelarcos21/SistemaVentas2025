@@ -23,6 +23,15 @@
                     <i class="fas fa-plus"></i>
                     Nueva Venta
                 </a>
+                <a  href="/productos" class="btn-action btn-primary-action">
+                     <i class="fas fa-warehouse"></i>
+                    Inventario
+                </a>
+                <a  href="#" class="btn-action btn-primary-action">
+                    <i class="fas fa-calculator"></i>
+                    Corte de Caja
+                </a>
+
                 <a href="/reporte-productos" class="btn-action btn-secondary-action">
                     <i class="fas fa-chart-line"></i>
                     Reportes
@@ -50,7 +59,7 @@
                         {{-- <span class="info-box-number">$4,500.00</span> --}}
                         <h3>${{ number_format($totalVentas, 2) }}</h3>
                         <span class="info-box-text">Ventas Totales</span>
-                       <span class="small info-box-text">{{ $cantidadVentas }} transacciones</span> 
+                       <span class="small info-box-text">{{ $cantidadVentas }} transacciones</span>
                     </div>
                 </div>
             </div>
@@ -96,17 +105,45 @@
                 </div>
                 <!-- /.info-box -->
             </div>
-            <h5 class="mb-3">Últimas Ventas</h5>
-            <ul class="list-group">
-              @forelse ($ventasRecientes as $item)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  Venta #{{ $item->id }}
-                  <span class="badge bg-secondary">${{ number_format($item->total_venta, 2) }}</span>
-                </li>
-              @empty
-                <li class="list-group-item text-muted">No hay ventas recientes</li>
-              @endforelse
-            </ul>
+
+        </div>
+
+        <hr>
+
+        <div class="row-mb-5">
+            <div class="col-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-gradient-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i> Últimas Ventas</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        @forelse ($ventasRecientes as $item)
+                            <div class="sales-card card border-0 m-3">
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="card-title mb-1">Venta #{{ $item->id }}</h6>
+                                            <p class="sales-meta mb-2">
+                                                <i class="fas fa-user me-1"></i>{{ $item->cliente->nombre ?? 'Cliente' }}<br>
+                                                <i class="fas fa-clock me-1"></i>{{ $item->created_at->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-success sales-badge">${{ number_format($item->total_venta, 2) }}</span>
+                                            <br><small class="text-muted">{{ $item->estado ?? 'Completada' }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-center py-4">
+                                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No hay ventas recientes</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
         </div>
 
         <h4 class="section-title">Centro de Gestión</h4>
@@ -164,91 +201,40 @@
 
         </div>
 
-        <h4 class="section-title">Accesos Rápidos</h4>
-        <hr>
-
-        <div class="row">
+        {{-- <h4 class="section-title">Accesos Rápidos</h4>
+        <hr> --}}
 
 
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-                    <a href="/ventas/crear-venta" class="small-box-footer">
-                        <span class="info-box-icon bg-gradient-primary text-center">
-                         <i class="fas fa-shopping-cart"></i>
-                        </span>
-                    </a>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Nueva Venta</span>
-                        {{-- <span class="info-box-number">20 productos</span> --}}
-                    </div>
-                    <a href="/ventas/crear-venta" class="small-box-footer">
-                        <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-
-                    <a href="/productos" class="small-box-footer">
-                        <span class="info-box-icon bg-gradient-primary">
-                            <i class="fas fa-warehouse"></i>
-                        </span>
-                    </a>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Inventario</span>
-                        {{-- <span class="info-box-number">15 ventas</span> --}}
-                    </div>
-                    <a href="/productos" class="small-box-footer">
-                        <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-
-                    <a href="#" class="small-box-footer">
-                        <span class="info-box-icon bg-gradient-primary">
-                            <i class="fas fa-calculator"></i>
-                        </span>
-                    </a>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Corte de Caja</span>
-                        {{-- <span class="info-box-number">$3,000</span> --}}
-                    </div>
-                    <a href="#" class="small-box-footer">
-                        <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-
-                    <a href="/reporte-productos" class="small-box-footer">
-                        <span class="info-box-icon bg-gradient-primary">
-                            <i class="fas fa-chart-bar"></i>
-                        </span>
-                    </a>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Reportes</span>
-                        {{-- <span class="info-box-number">$3,000</span> --}}
-                    </div>
-                    <a href="/reporte-productos" class="small-box-footer">
-                        <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </div>
-
-        </div>
     </div>
 
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
+    {{-- ESTILOS PARA LA TABLA DE ULTIMAS VENTAS --}}
+    <style>
+        .sales-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 4px solid #007bff;
+        }
+        .sales-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .sales-badge {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .sales-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .compact-table {
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            font-size: 0.75rem;
+        }
+    </style>
 
     <style>
 
