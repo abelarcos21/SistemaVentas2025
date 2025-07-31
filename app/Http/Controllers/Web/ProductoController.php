@@ -117,6 +117,19 @@ class ProductoController extends Controller
         return response()->json([
             'existe' => $producto !== null
         ]);
+
+        /* $producto = Producto::where('codigo', $request->codigo)->first();
+
+        if ($producto) {
+            return response()->json($producto);
+        } else {
+            return response()->json(['error' => 'Producto no encontrado'], 404);
+        } */
+    }
+
+    //MOSTRAR LA VISTA DE ESCANER PARA MOSTRAR LA CAMARA DEL PC O LAPTOP
+    public function escanerQuagga(){
+        return view('modulos.productos.escaner-quagga');
     }
 
     //CAMBIAR ESTADO DE PRODUCTO DE ACTIVO

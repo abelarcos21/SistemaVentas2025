@@ -46,7 +46,8 @@ Route::group(['middleware' => ['auth']], function() {
 
 
 
-//BUSCAR PRODUCTO POR EL CODIGO
+//BUSCAR PRODUCTO POR EL CODIGO Y MOSTRAR LA VISTA PARA LA CAMARA DEL PC O LAPTOP PARA ESCANEAR PRODUCTO Escanea códigos de barras EAN13 o CODE128 en productos
+Route::get('productos/escaner-barcode', [ProductoController::class, 'escanerQuagga'])->name('productos.quagga');
 Route::post('/productos/buscar', [ProductoController::class, 'buscar'])->name('productos.buscar');
 
 
