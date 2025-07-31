@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Producto;
+use App\Models\Venta;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $totalVentas = Venta::sum('total_venta');
+        $cantidadVentas = Venta::count();
+        $productosBajoStock = Producto::where('cantidad', '<', 5)->get();
+        $ventasRecientes = Venta::orderBy('created_at','desc')->take(5)->get();
+        return view('home', compact('totalVentas', 'cantidadVentas','productosBajoStock','ventasRecientes'));
     }
 }

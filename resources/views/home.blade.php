@@ -48,9 +48,9 @@
                     <span class="info-box-icon"><i class="fas fa-cash-register"></i></span>
                     <div class="info-box-content">
                         {{-- <span class="info-box-number">$4,500.00</span> --}}
-                        <h3>$4,500.00</h3>
+                        <h3>${{ number_format($totalVentas, 2) }}</h3>
                         <span class="info-box-text">Ventas Totales</span>
-                        <span class="small info-box-text">45 transacciones</span>
+                       <span class="small info-box-text">{{ $cantidadVentas }} transacciones</span> 
                     </div>
                 </div>
             </div>
@@ -88,7 +88,7 @@
 
                     <div class="info-box-content">
                      {{--  <span class="info-box-number">45</span> --}}
-                      <h3>45</h3>
+                      <h3>{{ count($productosBajoStock) }}</h3>
                       <span class="small info-box-text">Stock Minimo</span>
                       <span class=" small info-box-text">Requiere atención</span>
                     </div>
@@ -96,6 +96,17 @@
                 </div>
                 <!-- /.info-box -->
             </div>
+            <h5 class="mb-3">Últimas Ventas</h5>
+            <ul class="list-group">
+              @forelse ($ventasRecientes as $item)
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  Venta #{{ $item->id }}
+                  <span class="badge bg-secondary">${{ number_format($item->total_venta, 2) }}</span>
+                </li>
+              @empty
+                <li class="list-group-item text-muted">No hay ventas recientes</li>
+              @endforelse
+            </ul>
         </div>
 
         <h4 class="section-title">Centro de Gestión</h4>
