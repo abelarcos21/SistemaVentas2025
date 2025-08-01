@@ -35,7 +35,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Total Vendido</th>
@@ -52,13 +52,13 @@
                                     <tbody>
                                         @forelse($ventas as $venta)
                                             <tr>
-                                                <td>{{ $venta->id }}</td>
-                                                <td class="text-primary">MXN ${{ $venta->total_venta }}</td>
+                                                <td class="text-center align-middle">{{ $venta->id }}</td>
+                                                <td class="text-center align-middle text-primary">MXN ${{ $venta->total_venta }}</td>
                                                 <td>{{ $venta->folio }}</td>
-                                                <td>{{ $venta->created_at->format('d/m/Y h:i a') }}</td>
+                                                <td class="text-center align-middle">{{ $venta->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td class="text-primary">{{ $venta->nombre_usuario ?? 'Sin Usuario' }}</td>
 
-                                                <td>
+                                                <td class="text-center align-middle">
                                                     <span class="badge
                                                         {{ $venta->estado === 'completada' ? 'bg-success' :
                                                         ($venta->estado === 'cancelada' ? 'bg-danger' : 'bg-secondary') }}">
@@ -88,7 +88,7 @@
                                                         <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST" class="formulario-eliminar">
                                                             @csrf
                                                             @method('POST')
-                                                            <button class="btn btn-sm btn-danger">
+                                                            <button class="btn btn-danger bg-gradient-danger btn-sm ">
                                                                 <i class="fas fa-trash-alt"></i> Cancelar
                                                             </button>
                                                         </form>

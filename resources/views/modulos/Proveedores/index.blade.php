@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro#</th>
                                             <th>Nombre</th>
@@ -54,7 +54,7 @@
                                     <tbody>
                                         @forelse($proveedores as $proveedor)
                                             <tr>
-                                                <td>{{ $proveedor->id }}</td>
+                                                <td class="text-center align-middle">{{ $proveedor->id }}</td>
                                                 <td>{{ $proveedor->nombre }}</td>
                                                 <td>{{ $proveedor->telefono }}</td>
                                                 <td>{{ $proveedor->email }}</td>
@@ -62,6 +62,7 @@
                                                 <td>{{ $proveedor->sitio_web }}</td>
                                                 <td>{{ $proveedor->notas }}</td>
                                                 <td>
+
                                                     <div class="d-flex">
                                                         <a href="{{ route('proveedor.show', $proveedor) }}" class="btn btn-info btn-sm mr-1">
                                                             <i class="fas fa-eye"></i> Ver

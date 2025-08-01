@@ -39,7 +39,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Nombre</th>
@@ -52,11 +52,11 @@
                                     <tbody>
                                         @forelse($marcas as $marca)
                                             <tr>
-                                                <td>{{ $marca->id }}</td>
-                                                <td>{{ $marca->nombre }}</td>
-                                                <td>{{ $marca->descripcion }}</td>
-                                                <td>{{ $marca->created_at->format('d/m/Y h:i a') }}</td>
-                                                <td>
+                                                <td class="text-center align-middle">{{ $marca->id }}</td>
+                                                <td class="text-start align-middle">{{ $marca->nombre }}</td>
+                                                <td class="text-start align-middle">{{ $marca->descripcion }}</td>
+                                                <td class="text-center align-middle">{{ $marca->created_at->format('d/m/Y h:i a') }}</td>
+                                                <td class="text-center align-middle">
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $marca->id }}" {{ $marca->activo ? 'checked' : '' }} data-id="{{ $marca->id }}">
                                                         <label class="custom-control-label" for="activoSwitch{{ $marca->id }}"></label>

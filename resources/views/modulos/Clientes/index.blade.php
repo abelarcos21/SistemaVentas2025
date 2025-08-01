@@ -40,7 +40,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro#</th>
                                             <th>Nombres</th>
@@ -48,27 +48,27 @@
                                             <th>RFC</th>
                                             <th>Telefono</th>
                                             <th>Correo</th>
-                                            <th>Activo</th>
                                             <th>Fecha Registro</th>
+                                             <th>Activo</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse($clientes as $cliente)
                                             <tr>
-                                                <td>{{ $cliente->id }}</td>
+                                                <td class="text-center align-middle">{{ $cliente->id }}</td>
                                                 <td>{{ $cliente->nombre }}</td>
                                                 <td>{{ $cliente->apellido }}</td>
                                                 <td>{{ $cliente->rfc }}</td>
                                                 <td>{{ $cliente->telefono }}</td>
                                                 <td>{{ $cliente->correo }}</td>
-                                                <td>
+                                                <td class="text-center align-middle">{{ $cliente->created_at->format('d/m/Y') }}</td>
+                                                <td class="text-center align-middle">
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $cliente->id }}" {{ $cliente->activo ? 'checked' : '' }} data-id="{{ $cliente->id }}">
                                                         <label class="custom-control-label" for="activoSwitch{{ $cliente->id }}"></label>
                                                     </div>
                                                 </td>
-                                                <td>{{ $cliente->created_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('cliente.show', $cliente) }}" class="btn btn-info btn-sm mr-1">

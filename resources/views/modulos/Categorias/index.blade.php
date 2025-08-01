@@ -39,33 +39,33 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class=" text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Usuario</th>
                                             <th>Nombre</th>
                                             <th>Descripcion</th>
                                             <th>Medida</th>
-                                            <th>Activo</th>
                                             <th>Fecha Registro</th>
+                                            <th>Activo</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse($categorias as $categoria)
                                             <tr>
-                                                <td>{{ $categoria->id }}</td>
-                                                <td>{{ $categoria->user_id }}</td>
-                                                <td>{{ $categoria->nombre }}</td>
-                                                <td>{{ $categoria->descripcion }}</td>
-                                                <td>{{ $categoria->medida }}</td>
-                                                <td>
+                                                <td class="text-center align-middle">{{ $categoria->id }}</td>
+                                                <td class="text-center align-middle">{{ $categoria->user_id }}</td>
+                                                <td class="text-start align-middle">{{ $categoria->nombre }}</td>
+                                                <td class="text-start align-middle">{{ $categoria->descripcion }}</td>
+                                                <td class="text-center align-middle">{{ $categoria->medida }}</td>
+                                                <td class="text-center align-middle">{{ $categoria->created_at->format('d/m/Y h:i a') }}</td>
+                                                <td class="text-center align-middle">
                                                     <div class="custom-control custom-switch toggle-estado">
                                                         <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $categoria->id }}" {{ $categoria->activo ? 'checked' : '' }} data-id="{{ $categoria->id }}">
                                                         <label class="custom-control-label" for="activoSwitch{{ $categoria->id }}"></label>
                                                     </div>
                                                 </td>
-                                                <td>{{ $categoria->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">

@@ -40,7 +40,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Nombre</th>
@@ -51,9 +51,9 @@
                                     <tbody>
                                         @forelse($roles as $key => $role)
                                             <tr>
-                                                <td>{{ $role->id }}</td>
+                                                <td class="text-center align-middle">{{ $role->id }}</td>
                                                 <td><span class="badge bg-success">{{ $role->name }}</span></td>
-                                                <td>{{ $role->created_at->format('d/m/Y') }}</td>
+                                                <td class="text-center align-middle">{{ $role->created_at->format('d/m/Y') }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('roles.show', $role->id) }}" class="btn btn-info btn-sm mr-1">

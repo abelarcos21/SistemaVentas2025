@@ -36,7 +36,7 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
-                                    <thead class="bg-gradient-info">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
                                             <th>Usuario</th>
@@ -51,20 +51,20 @@
                                     <tbody>
                                         @forelse($compras as $compra)
                                             <tr>
-                                                <td>{{ $compra->id }}</td>
+                                                <td class="text-center align-middle">{{ $compra->id }}</td>
                                                 <td>{{ $compra->nombre_usuario }}</td>
                                                 <td>{{ $compra->nombre_producto }}</td>
-                                                <td>{{ $compra->cantidad }}</td>
-                                                <td>${{ $compra->precio_compra }}</td>
-                                                <td>${{ $compra->precio_compra * $compra->cantidad }}</td>
-                                                <td>{{ $compra->created_at }}</td>
+                                                <td class="text-center align-middle"><span class="badge bg-primary">{{ $compra->cantidad }}</span></td>
+                                                <td class="text-center text-blue align-middle">${{ $compra->precio_compra }}</td>
+                                                <td class="text-center text-blue align-middle">${{ $compra->precio_compra * $compra->cantidad }}</td>
+                                                <td class="text-center align-middle">{{ $compra->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
                                                     <div class="d-flex">
-                                                        <a href="{{ route('compra.edit', $compra) }}" class="btn btn-warning btn-sm mr-1">
+                                                        <a href="{{ route('compra.edit', $compra) }}" class="btn btn-info bg-gradient-info btn-sm mr-1">
                                                             <i class="fas fa-edit"></i> Editar
                                                         </a>
 
-                                                        <a href="{{ route('compra.show', $compra) }}" class="btn btn-danger btn-sm mr-1">
+                                                        <a href="{{ route('compra.show', $compra) }}" class="btn btn-danger bg-gradient-danger btn-sm mr-1">
                                                             <i class="fas fa-trash-alt"></i> Eliminar
                                                         </a>
 
