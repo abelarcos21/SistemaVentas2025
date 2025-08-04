@@ -18,11 +18,11 @@ class UsuarioController extends Controller
     //index
     public function index(Request $request): View {
 
-        $usuarios = User::latest()->paginate(5);
+       /*  $usuarios = User::latest()->paginate(5);
 
-        return view('modulos.usuarios.index',compact('usuarios'))->with('i', ($request->input('page', 1) - 1) * 5);
-        /* $usuarios = User::all();
-        return view('modulos.usuarios.index', compact('usuarios')); */
+        return view('modulos.usuarios.index',compact('usuarios'))->with('i', ($request->input('page', 1) - 1) * 5); */
+        $usuarios = User::all();
+        return view('modulos.usuarios.index', compact('usuarios'));
     }
 
     public function create(): View {
