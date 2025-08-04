@@ -27,7 +27,7 @@ class ProductoSeeder extends Seeder
         //crear físicamente el código de barras PNG en la ruta
         //crear 10 productos
         //asignar un usuario/proveedor/categoría ya existentes:
-        Producto::factory()->count(10)->withSpecificIds([
+        Producto::factory()->count(30)->withSpecificIds([
             'user_id' => 1,
             'categoria_id' => 2,
             'proveedor_id' => 3,
