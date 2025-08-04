@@ -70,7 +70,7 @@
 
                     <div class="info-box-content">
                       {{-- <span class="info-box-number">34</span> --}}
-                      <h3>34</h3>
+                      <h3>{{ $cantidadProductos }}</h3>
                       <span class="small info-box-text">Productos</span>
                     </div>
                     <!-- /.info-box-content -->
@@ -83,7 +83,7 @@
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
                     <div class="info-box-content">
                      {{--  <span class="info-box-number">5</span> --}}
-                      <h3>5</h3>
+                      <h3>{{ $cantidadClientes }}</h3>
                       <span class="small info-box-text">Clientes Registrados</span>
                     </div>
                     <!-- /.info-box-content -->
@@ -157,7 +157,7 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Usuarios</span>
                         {{-- <span class="info-box-number">7</span> --}}
-                        <h3>7</h3>
+                        <h3>{{ $cantidadUsuarios }}</h3>
                         <span class="small info-box-text">usuarios activos</span>
                     </div>
                 </div>
@@ -169,7 +169,7 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Proveedores</span>
                        {{--  <span class="info-box-number">3</span> --}}
-                        <h3>3</h3>
+                        <h3>{{ $cantidadProveedores }}</h3>
                         <span class="small info-box-text">proveedores</span>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Categorías</span>
                         {{-- <span class="info-box-number">12</span> --}}
-                        <h3>12</h3>
+                        <h3>{{ $cantidadCategorias }}</h3>
                         <span class="small info-box-text">categorías</span>
                     </div>
                 </div>
