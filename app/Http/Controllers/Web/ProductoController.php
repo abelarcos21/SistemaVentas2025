@@ -15,6 +15,7 @@ use App\Models\Proveedor;
 use App\Models\Marca;
 use Exception;
 use Storage;
+use Illuminate\Http\JsonResponse;
 
 
 class ProductoController extends Controller
@@ -111,20 +112,30 @@ class ProductoController extends Controller
     }
 
     //BUSCAR PRODUCTO POR CODIGO PARA VERIFICAR SI EXISTE CUANDO SE ESCANEA UN PRODUCTO EN LA VISTA INDEX DE PRODUCTOS
-    public function buscar(Request $request){
-        $producto = Producto::where('codigo', $request->codigo)->first();
+    public function buscar(Request $request): JsonResponse{
 
-        return response()->json([
-            'existe' => $producto !== null
+        $request->validate([
+            'codigo' => 'required|string'
         ]);
 
-        /* $producto = Producto::where('codigo', $request->codigo)->first();
+        $codigo = $request->codigo;
+
+        $producto = Producto::where('codigo', $codigo)->first();
 
         if ($producto) {
-            return response()->json($producto);
-        } else {
-            return response()->json(['error' => 'Producto no encontrado'], 404);
-        } */
+            return response()->json([
+                'nombre' => $producto->nombre,
+                'precio_venta' => $producto->precio_venta,
+                'codigo' => $producto->codigo,
+                'cantidad' => $producto->cantidad,
+                'existe' => $producto !== null //para el filtrado de categorias si existe se filtran los productos  si no son null
+            ]);
+        }
+
+        return response()->json([
+            'error' => 'Producto no encontrado'
+        ], 404);
+
     }
 
     //MOSTRAR LA VISTA DE ESCANER PARA MOSTRAR LA CAMARA DEL PC O LAPTOP
