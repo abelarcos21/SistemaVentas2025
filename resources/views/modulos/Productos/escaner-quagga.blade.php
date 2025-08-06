@@ -235,7 +235,7 @@
                 console.log("Código detectado:", code);
                 $('#result').text('Código detectado: ' + code).addClass('success');
 
-                // Aquí iría tu llamada AJAX a Laravel
+                // Aquí la llamada AJAX a Laravel
                 $.ajax({
                     url: '{{ route("productos.buscar") }}',
                     method: 'POST',
@@ -263,27 +263,6 @@
                         <em>Nota: Integra con tu backend Laravel aquí</em>
                     `).addClass('success');
                 }, 1000); */
-
-                // Ejemplo de integración con Laravel (descomenta cuando uses en tu proyecto):
-                /*
-                $.ajax({
-                    url: '{{ route("productos.buscar") }}',
-                    method: 'POST',
-                    data: {
-                        codigo: code,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(producto) {
-                        $('#result').html(`
-                            <strong>Producto:</strong> ${producto.nombre}<br>
-                            <strong>Precio:</strong> $${producto.precio}
-                        `).addClass('success');
-                    },
-                    error: function () {
-                        $('#result').text('Producto no encontrado').addClass('error');
-                    }
-                });
-                */
             }
         });
 
