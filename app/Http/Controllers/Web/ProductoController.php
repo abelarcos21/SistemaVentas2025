@@ -277,26 +277,9 @@ class ProductoController extends Controller
             // Generar código si no se envía
             //$codigo = $request->input('codigo') ?? str_pad((Producto::max('id') ?? 0) + 1, 8, '0', STR_PAD_LEFT);
 
-            // Crear directorio si no existe
-            $barcodeDir = public_path('barcodes');
-            if (!file_exists($barcodeDir)) {
-                mkdir($barcodeDir, 0777, true);
-            }
 
             // Generar imagen de código de barras
-            try {
-                $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13');
-                $barcodePath = 'barcodes/' . $codigo . '.png';
-                $fullBarcodePath = public_path($barcodePath);
-
-                if(!file_put_contents($fullBarcodePath, base64_decode($barcode))) {
-                    throw new Exception('No se pudo generar el código de barras');
-                }
-
-            } catch (Exception $barcodeError) {
-                Log::error('Error al generar código de barras: ' . $barcodeError->getMessage());
-                $barcodePath = null; // Continuar sin código de barras
-            }
+            $barcodePath = $this->generarCodigoBarras($codigo);
 
             // Crear el producto
             $producto = Producto::create([
@@ -434,6 +417,7 @@ class ProductoController extends Controller
 
         // Verificar si el producto puede ser editado
         $codigoEsEditable = $producto->codigoEsEditable();
+        $codigoCambio = false; // Flag para saber si cambió el código
 
         if ($codigoEsEditable) {
             $rules['codigo'] = 'required|string|max:255|unique:productos,codigo,' . $producto->id;
@@ -451,6 +435,11 @@ class ProductoController extends Controller
         DB::beginTransaction();
 
         try{
+
+            // Verificar si el código cambió
+            if ($codigoEsEditable && isset($validated['codigo']) && $validated['codigo'] !== $producto->codigo) {
+                $codigoCambio = true;
+            }
 
             // Preparar datos para actualizar
             $updateData = [
@@ -472,14 +461,24 @@ class ProductoController extends Controller
             // Actualizar el producto
             $producto->update($updateData);
 
-            // Si se sube una nueva imagen, puedes opcionalmente eliminar la anterior aquí
+
+            // Si cambió el código, regenerar el código de barras
+            if ($codigoCambio) {
+                $this->regenerarCodigoBarras($producto);
+            }
+
+            // Si se sube una nueva imagen, puedes opcionalmente eliminar la anterior
             if ($request->hasFile('imagen')) {
                 $this->subir_imagen($request, $producto->id);
             }
 
             DB::commit();
 
-            return redirect()->route('producto.index')->with('success', 'Producto Actualizado exitosamente!');
+            $mensaje = $codigoCambio ?
+                'Producto actualizado exitosamente! Se ha generado un nuevo código de barras.' :
+                'Producto actualizado exitosamente!';
+
+            return redirect()->route('producto.index')->with('success', $mensaje);
 
         }catch(Exception $e){
 
@@ -490,21 +489,73 @@ class ProductoController extends Controller
         }
 
 
-
-
         /* $producto->fill($validated); // metodo fill es igual que el método save() pero sin crear un nuevo registro
-
-        $producto->save();
-
-
-        return redirect()->route('producto.index')->with('success', 'Producto Actualizado Correctamente');
-
-
 
         return redirect()->route('producto.index')->with('error', 'Error al Guardar!' . $e->getMessage()); */
 
-
     }
+
+
+    /* Genera un código de barras para un código dado
+    @param string $codigo - El código para generar el barcode
+    @return string|null - Retorna la ruta del barcode o null si falla */
+    private function generarCodigoBarras($codigo){
+        try {
+            // Generar código de barras usando DNS1D
+            $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13');
+            $barcodePath = 'barcodes/' . $codigo . '.png';
+            $fullBarcodePath = public_path($barcodePath);
+
+            // Crear directorio si no existe
+            $barcodeDir = public_path('barcodes');
+            if (!file_exists($barcodeDir)) {
+                mkdir($barcodeDir, 0755, true);
+            }
+
+            // Guardar el archivo
+            if (!file_put_contents($fullBarcodePath, base64_decode($barcode))) {
+                throw new Exception('No se pudo generar el código de barras');
+            }
+
+            Log::info("Código de barras generado para código: {$codigo}");
+            return $barcodePath;
+
+        } catch (Exception $e) {
+            Log::error("Error al generar código de barras para código {$codigo}: " . $e->getMessage());
+            return null;
+        }
+    }
+
+
+    //Regenera el código de barras para un producto
+    private function regenerarCodigoBarras(Producto $producto){
+        try {
+            // Eliminar el código de barras anterior si existe
+            if ($producto->barcode_path && file_exists(public_path($producto->barcode_path))) {
+                unlink(public_path($producto->barcode_path));
+                Log::info("Código de barras anterior eliminado: {$producto->barcode_path}");
+            }
+
+            // Generar nuevo código de barras
+            $nuevaRuta = $this->generarCodigoBarras($producto->codigo);
+
+            // Actualizar la ruta en la base de datos
+            $producto->update(['barcode_path' => $nuevaRuta]);
+
+            if ($nuevaRuta) {
+                Log::info("Código de barras regenerado exitosamente para producto ID: {$producto->id}");
+            } else {
+                Log::warning("No se pudo regenerar el código de barras para producto ID: {$producto->id}");
+            }
+
+        } catch (Exception $e) {
+            Log::error("Error al regenerar código de barras para producto ID {$producto->id}: " . $e->getMessage());
+            // Establecer ruta como null si falla
+            $producto->update(['barcode_path' => null]);
+        }
+    }
+
+
 
     public function destroy(Producto $producto){
 
