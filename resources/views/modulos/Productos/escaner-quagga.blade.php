@@ -247,7 +247,7 @@
                         $('#result').html(`
                             <strong>Producto:</strong> ${producto.nombre}<br>
                             <strong>Precio:</strong> $${producto.precio}
-                            <strong>Codigo:</strong> $${producto.codigo}
+                            <strong>Codigo:</strong> ${producto.codigo}
                             <strong>Stock:</strong> ${producto.cantidad}
                         `).addClass('success');
                     },
