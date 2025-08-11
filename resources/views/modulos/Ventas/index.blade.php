@@ -414,7 +414,7 @@
                 $totalPagado = number_format(session('total_pagado'), 2);
             @endphp
 
-            Swal.fire({
+            /* Swal.fire({
                 icon: 'success',
                 title: 'Venta Realizada',
                 html: `
@@ -429,14 +429,78 @@
                 confirmButtonText: 'Perfecto',
                 confirmButtonColor: '#28a745',
                 width: '400px'
+            }); */
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Venta Realizada',
+                html: `
+                    <div style="text-align: left; margin: 20px 0;">
+                        <p><strong>Nro Venta:</strong> {{ session("folio_generado") }}</p>
+                        <p><strong>Total de la venta:</strong> ${{ $totalVenta }}</p>
+                        <p><strong>Total pagado:</strong> ${{ $totalPagado }}</p>
+                        <hr style="margin: 15px 0;">
+                        <p style="color: #28a745; font-size: 18px;"><strong>Cambio a entregar: ${{ $cambio }}</strong></p>
+                    </div>
+                `,
+                showConfirmButton: true,
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-print"></i> Imprimir Ticket',
+                denyButtonText: '<i class="fas fa-file-pdf"></i> Ver PDF/Boleta',
+                cancelButtonText: '<i class="fas fa-plus"></i> Nueva Venta',
+                confirmButtonColor: '#28a745',
+                denyButtonColor: '#6c757d',
+                cancelButtonColor: '#007bff',
+                width: '450px',
+                allowOutsideClick: false, // No permitir cerrar haciendo clic fuera
+                allowEscapeKey: false     // No permitir cerrar con ESC
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Botón "Imprimir Ticket"
+                    window.open('{{ route("detalle.ticket", session("venta_id")) }}', '_blank');
+
+                } else if (result.isDenied) {
+                    // Botón "Ver PDF/Boleta"
+                    window.open('{{ route("detalle.boleta", session("venta_id")) }}', '_blank');
+
+                } else if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                    // Botón "Nueva Venta" - recargar página para limpiar todo
+                    window.location.href = '{{ route("venta.index") }}'; // ruta que uso para ventas
+                }
             });
         @elseif(session('folio_generado'))
             Swal.fire({
                 icon: 'success',
                 title: 'Venta Realizada',
-                text: 'Venta completada exitosamente. Nro Venta: {{ session("folio_generado") }}',
-                confirmButtonText: 'Perfecto',
-                confirmButtonColor: '#28a745'
+                text: 'Nro Venta: {{ session("folio_generado") }}',
+                showConfirmButton: true,
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-print"></i> Imprimir Ticket',
+                denyButtonText: '<i class="fas fa-file-pdf"></i> Ver PDF/Boleta',
+                cancelButtonText: '<i class="fas fa-plus"></i> Nueva Venta',
+                confirmButtonColor: '#28a745',
+                denyButtonColor: '#6c757d',
+                cancelButtonColor: '#007bff',
+                width: '450px',
+                allowOutsideClick: false, // No permitir cerrar haciendo clic fuera
+                allowEscapeKey: false     // No permitir cerrar con ESC
+            }).then((result) => {
+
+                 if (result.isConfirmed) {
+                    // Botón "Imprimir Ticket"
+                    window.open('{{ route("detalle.ticket", session("venta_id")) }}', '_blank');
+
+                } else if (result.isDenied) {
+                    // Botón "Ver PDF/Boleta"
+                    window.open('{{ route("detalle.boleta", session("venta_id")) }}', '_blank');
+
+                } else if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                    // Botón "Nueva Venta" - recargar página para limpiar todo
+                    window.location.href = '{{ route("venta.index") }}'; // ruta que uso para ventas
+                }
+
             });
         @endif
 

@@ -160,16 +160,21 @@ class VentaController extends Controller
 
             DB::commit();
 
-            // Si hay cambio, enviarlo en la sesión
+            // Si hay cambio, enviarlo en la sesión las variables
             if ($cambio > 0) {
                 return to_route('venta.index')->with([
                     'folio_generado' => $venta->folio,
+                    'venta_id' => $venta->id, //para manejar los botones de ticket/boletapdf en la vista de vender al generar una venta
                     'cambio' => $cambio,
                     'total_venta' => $totalVenta,
                     'total_pagado' => $totalPagos
                 ]);
             } else {
-                return to_route('venta.index')->with('folio_generado', $venta->folio);
+                return to_route('venta.index')->with([
+
+                    'folio_generado' => $venta->folio,
+                    'venta_id' => $venta->id, //para manejar los botones de ticket/boletapdf en la vista de vender al generar una venta sin cambio
+                ]);
             }
             return to_route('venta.index')->with('folio_generado', $venta->folio);;
         } catch (\Throwable $th) {
