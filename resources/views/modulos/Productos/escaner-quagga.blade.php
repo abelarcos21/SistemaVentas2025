@@ -224,16 +224,45 @@
         $('#startBtn').on('click', startScanner);
         $('#stopBtn').on('click', stopScanner);
 
+        // Función para validar código EAN-13
+        function validarEAN13(codigo) {
+            // Verificar que sea exactamente 13 dígitos
+            if (!/^\d{13}$/.test(codigo)) {
+                return false;
+            }
+
+            // Calcular dígito de control EAN-13
+            let suma = 0;
+            for (let i = 0; i < 12; i++) {
+                let digito = parseInt(codigo[i]);
+                // Multiplicar por 1 si la posición es par, por 3 si es impar
+                suma += (i % 2 === 0) ? digito : digito * 3;
+            }
+
+            // El dígito de control es el complemento a 10 del módulo 10 de la suma
+            let digitoControl = (10 - (suma % 10)) % 10;
+            let ultimoDigito = parseInt(codigo[12]);
+
+            return digitoControl === ultimoDigito;
+        }
+
         // Función para manejar códigos detectados
         Quagga.onDetected(function(data) {
             if (!isScanning) return;
 
             let code = data.codeResult.code;
 
+            // Validar que sea un EAN-13 válido
+            if (!validarEAN13(code)) {
+                console.log("Código inválido (no es EAN-13):", code);
+                $('#result').text('Código inválido - debe ser EAN-13').addClass('error');
+                return; // No procesar códigos inválidos
+            }
+
             if (code !== lastResult) {
                 lastResult = code;
-                console.log("Código detectado:", code);
-                $('#result').text('Código detectado: ' + code).addClass('success');
+                console.log("Código EAN-13 válido detectado:", code);
+                $('#result').text('Código EAN-13 detectado: ' + code).addClass('success');
 
                 // Aquí la llamada AJAX a Laravel
                 $.ajax({
@@ -246,23 +275,29 @@
                     success: function(producto) {
                         $('#result').html(`
                             <strong>Producto:</strong> ${producto.nombre}<br>
-                            <strong>Precio:</strong> $${producto.precio}
-                            <strong>Codigo:</strong> ${producto.codigo}
+                            <strong>Precio:</strong> $${producto.precio_venta}<br>
+                            <strong>Código:</strong> ${producto.codigo}<br>
                             <strong>Stock:</strong> ${producto.cantidad}
                         `).addClass('success');
+
+                        // Opcional: Detener el scanner después de encontrar un producto válido
+                        // Quagga.stop();
+                        // isScanning = false;
                     },
-                    error: function () {
-                        $('#result').text('Producto no encontrado').addClass('error');
+                    error: function(xhr) {
+                        if (xhr.status === 404) {
+                            $('#result').text('Producto no encontrado - ¿Crear nuevo producto?').addClass('error');
+
+                            // Opcional: Mostrar modal para crear producto
+                            // $('#codigo').val(code);
+                            // $('#modalCrearProducto').modal('show');
+                            // Quagga.stop();
+                            // isScanning = false;
+                        } else {
+                            $('#result').text('Error al buscar producto').addClass('error');
+                        }
                     }
                 });
-                // Como estamos en un ejemplo HTML estático, simularemos la búsqueda
-                /* setTimeout(() => {
-                    $('#result').html(`
-                        <strong>Código:</strong> ${code}<br>
-                        <strong>Status:</strong> Código procesado correctamente<br>
-                        <em>Nota: Integra con tu backend Laravel aquí</em>
-                    `).addClass('success');
-                }, 1000); */
             }
         });
 

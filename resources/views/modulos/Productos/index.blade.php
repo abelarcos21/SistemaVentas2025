@@ -42,7 +42,7 @@
                                     <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
                                 <button class="btn btn-light bg-gradient-light text-primary btn-sm" data-toggle="modal" data-target="#scannerModal">
-                                    <i class="fas fa-boxes"></i> Escanear producto
+                                    <i class="fas fa-barcode"></i> Escanear producto para Crear Nuevo
                                 </button>
                             </div>
                         </div>
@@ -663,16 +663,34 @@
                             codigo: codigo
                         },
                         success: function(res) {
-                            if (res.existe) {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: 'Producto ya registrado',
-                                    text: 'Este código ya está en el sistema.',
-                                });
-                            } else {
-                                $('#codigo').val(codigo); // Prellenar en el modal
+
+                            // Si llega aquí es porque encontró el producto
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Producto ya registrado',
+                                text: `Producto: ${res.nombre}\nPrecio: $${res.precio_venta}\nStock: ${res.cantidad}`,
+                            });
+
+
+                        },
+                        error: function(xhr){
+
+                            // Si llega aquí es porque NO encontró el producto (error 404)
+                            if (xhr.status === 404) {
+                                // Cerrar modal del scanner
+                                //$('#scannerModal').modal('hide');
+
+                                // Prellenar código y mostrar modal crear producto
+                                $('#codigo').val(codigo);
                                 $('#modalCrearProducto').modal('show');
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error al buscar el producto. Intente nuevamente.'
+                                });
                             }
+
                         }
                     });
 
