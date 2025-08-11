@@ -426,7 +426,7 @@ return [
             ],
         ],
 
-        [
+        /* [
             'text' => 'Facturación',
             'icon' => 'fas fa-file-alt',
             'submenu' => [
@@ -462,7 +462,7 @@ return [
                     ],
                 ],
             ],
-        ],
+        ], */
         [
             'text' => 'Configuracion Negocio',
             'url' => 'negocio/configuracion',
