@@ -94,7 +94,7 @@
     <div class="cliente-info">
         <p><strong>Cliente:</strong> {{ $venta->cliente->nombre  ?? '----' }} {{ $venta->cliente->apellido ?? '----' }}</p>
         <p><strong>RFC / CURP:</strong> {{ $venta->cliente->rfc ?? '----'}}</p>
-        <p><strong>Domicilio:</strong> {{ $cliente['direccion'] ?? '----' }}</p>
+        <p><strong>Correo:</strong> {{ $venta->cliente->correo ?? '----' }}</p>
         <p><strong>Teléfono:</strong> {{ $venta->cliente->telefono ?? '----' }}</p>
     </div>
 
@@ -127,7 +127,7 @@
     </div>
 
     <div class="nota">
-        <strong>Nota:</strong> {{ $nota ?? '----' }}
+        <strong>Nota:</strong> {{ $nota ?? '-----' }}
     </div>
 
     <div class="footer">
