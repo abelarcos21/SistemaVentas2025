@@ -335,7 +335,13 @@ return [
             'icon' => 'fas fa-shopping-cart',
             'submenu' => [
                 [
-                    'text' => 'Vender Producto',
+                    'text' => 'Punto de Venta (POS)',
+                    'url' => 'ventas/crear-venta',
+                    'icon' => 'fas fa-cash-register',
+                ],
+
+                [
+                    'text' => 'Vender Manual',
                     'url' => 'ventas/crear-venta',
                     'icon' => 'fas fa-cash-register',
                 ],

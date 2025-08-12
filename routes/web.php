@@ -18,6 +18,7 @@ use App\Http\Controllers\Web\ComprasController;
 use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
 use App\Http\Controllers\Web\PagoController;
+use App\Http\Controllers\Web\POSController;
 
 
 use App\Http\Controllers\Facturacion\FacturaController;
@@ -47,7 +48,7 @@ Route::group(['middleware' => ['auth']], function() {
 
 
 //BUSCAR PRODUCTO POR EL CODIGO Y MOSTRAR LA VISTA PARA LA CAMARA DEL PC O LAPTOP PARA ESCANEAR PRODUCTO Escanea códigos de barras EAN13 o CODE128 en productos
-Route::get('productos/escaner-barcode', [ProductoController::class, 'escanerQuagga'])->name('productos.quagga');
+Route::get('/pos', [POSController::class, 'index'])->name('pos.index');// POS con scanner
 Route::post('/productos/buscar', [ProductoController::class, 'buscar'])->name('productos.buscar');
 
 

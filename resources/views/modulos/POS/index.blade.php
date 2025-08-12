@@ -1,3 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Códigos de Barras Mejorado</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        #scanner-container {
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto 30px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            position: relative;
+            min-height: 300px;
+            background: #f8f9fa;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #scanner-container.active {
+            border-color: #28a745;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.3);
+        }
+
+        #scanner-container canvas,
+        #scanner-container video {
+            width: 100% !important;
+            height: auto !important;
+            border-radius: 12px;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 100px;
+            border: 3px solid #ff4757;
+            border-radius: 10px;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .scanner-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 300px;
+            color: #6c757d;
+        }
+
+        .scanner-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #dee2e6;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .manual-search {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .manual-search h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+        }
+
+        #result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+
+        .result-waiting {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            color: #6c757d;
+            border-color: #dee2e6;
+        }
+
+        .result-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border-color: #28a745;
+            animation: slideIn 0.5s ease;
+        }
+
+        .result-error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border-color: #dc3545;
+            animation: shake 0.5s ease;
+        }
+
+        .result-loading {
+            background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+            color: #0c5460;
+            border-color: #17a2b8;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .product-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border: 1px solid #28a745;
+        }
+
+        .product-info h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .product-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .detail-value {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .floating-scanner {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4757, #ff3742);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-scanner:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .search-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-barcode"></i>
+                Scanner de Códigos
+            </h1>
+            <p>Escanea códigos EAN-13 con tu cámara</p>
+        </div>
+
+        <div class="content">
+            <!-- Scanner Container -->
+            <div id="scanner-container">
+                <div class="scanner-placeholder">
+                    <i class="fas fa-camera"></i>
+                    <h3>Cámara Inactiva</h3>
+                    <p>Haz clic en "Activar Cámara" para comenzar</p>
+                </div>
+                <div class="scanner-overlay" style="display: none;"></div>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button id="startBtn" class="btn btn-primary">
+                    <i class="fas fa-camera"></i>
+                    Activar Cámara
+                </button>
+                <button id="stopBtn" class="btn btn-secondary" disabled>
+                    <i class="fas fa-stop"></i>
+                    Detener Cámara
+                </button>
+            </div>
+
+            <!-- Manual Search -->
+            <div class="manual-search">
+                <h3>
+                    <i class="fas fa-keyboard"></i>
+                    Búsqueda Manual
+                </h3>
+                <div class="search-group">
+                    <input type="text" id="codigo-manual" class="search-input"
+                           placeholder="Ingresa código EAN-13 manualmente" maxlength="13">
+                    <button id="btn-buscar-manual" class="btn-search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <small style="color: #6c757d;">
+                    <i class="fas fa-info-circle"></i>
+                    Presiona Enter para buscar rápidamente
+                </small>
+            </div>
+
+            <!-- Result Display -->
+            <div id="result" class="result-waiting">
+                <i class="fas fa-qrcode" style="margin-right: 10px;"></i>
+                Esperando escaneo o búsqueda manual...
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Scanner Button -->
+    <button id="floating-scanner" class="floating-scanner">
+        <i class="fas fa-barcode"></i>
+    </button>
+
+    <script>
+        class ScannerController {
+            constructor() {
+                this.isScanning = false;
+                this.lastResult = null;
+                this.scanTimeout = null;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateUI();
+            }
+
+            bindEvents() {
+                $('#startBtn').on('click', () => this.startScanner());
+                $('#stopBtn').on('click', () => this.stopScanner());
+                $('#floating-scanner').on('click', () => this.toggleScanner());
+
+                $('#btn-buscar-manual').on('click', () => this.buscarManual());
+                $('#codigo-manual').on('keypress', (e) => {
+                    if (e.which === 13) this.buscarManual();
+                });
+
+                // Solo permitir números en input manual
+                $('#codigo-manual').on('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+
+                // Limpiar recursos al cerrar
+                window.addEventListener('beforeunload', () => {
+                    if (this.isScanning) {
+                        Quagga.stop();
+                    }
+                });
+            }
+
+            async checkCameraPermission() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "environment" }
+                    });
+                    stream.getTracks().forEach(track => track.stop());
+                    return true;
+                } catch (err) {
+                    console.error("Error de permisos de cámara:", err);
+                    return false;
+                }
+            }
+
+            async startScanner() {
+                try {
+                    this.showResult('Verificando permisos de cámara...', 'loading');
+
+                    const hasPermission = await this.checkCameraPermission();
+                    if (!hasPermission) {
+                        throw new Error('No se pudieron obtener los permisos de cámara');
+                    }
+
+                    this.showResult('Inicializando escáner...', 'loading');
+
+                    await this.initQuagga();
+
+                    this.showResult('¡Cámara lista! Apunta al código de barras...', 'success');
+
+                    $('#scanner-container').addClass('active');
+                    $('.scanner-overlay').show();
+                    $('.scanner-placeholder').hide();
+
+                    this.isScanning = true;
+                    this.updateUI();
+
+                    Quagga.start();
+
+                } catch (error) {
+                    console.error('Error al iniciar el escáner:', error);
+                    this.handleScannerError(error);
+                }
+            }
+
+            initQuagga() {
+                return new Promise((resolve, reject) => {
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: document.querySelector('#scanner-container'),
+                            constraints: {
+                                width: { min: 320, ideal: 640, max: 1920 },
+                                height: { min: 240, ideal: 480, max: 1080 },
+                                facingMode: "environment",
+                                aspectRatio: { min: 1, max: 2 }
+                            },
+                        },
+                        decoder: {
+                            readers: [
+                                "ean_reader",
+                                "ean_8_reader",
+                                "code_128_reader",
+                                "code_39_reader",
+                                "codabar_reader"
+                            ],
+                            multiple: false
+                        },
+                        locate: true,
+                        locator: {
+                            patchSize: "medium",
+                            halfSample: true
+                        },
+                        numOfWorkers: navigator.hardwareConcurrency || 4,
+                        frequency: 10,
+                    }, (err) => {
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
+
+                        // Configurar detector de códigos
+                        Quagga.onDetected((data) => this.handleDetection(data));
+                        resolve();
+                    });
+                });
+            }
+
+            stopScanner() {
+                if (this.isScanning) {
+                    Quagga.stop();
+                    this.isScanning = false;
+
+                    $('#scanner-container').removeClass('active');
+                    $('.scanner-overlay').hide();
+                    $('.scanner-placeholder').show();
+
+                    this.showResult('Escáner detenido', 'waiting');
+                    this.updateUI();
+                }
+            }
+
+            toggleScanner() {
+                if (this.isScanning) {
+                    this.stopScanner();
+                } else {
+                    this.startScanner();
+                }
+            }
+
+            handleDetection(data) {
+                if (!this.isScanning) return;
+
+                const code = data.codeResult.code;
+
+                if (!this.validarEAN13(code)) {
+                    return;
+                }
+
+                if (code !== this.lastResult) {
+                    this.lastResult = code;
+                    console.log("Código EAN-13 válido detectado:", code);
+
+                    // Prevenir múltiples detecciones
+                    clearTimeout(this.scanTimeout);
+                    this.scanTimeout = setTimeout(() => {
+                        this.lastResult = null;
+                    }, 3000);
+
+                    this.buscarProducto(code);
+                }
+            }
+
+            buscarManual() {
+                const codigo = $('#codigo-manual').val().trim();
+                if (!codigo) {
+                    this.showResult('Por favor ingresa un código', 'error');
+                    return;
+                }
+
+                if (!this.validarEAN13(codigo)) {
+                    this.showResult('Código EAN-13 inválido. Debe tener 13 dígitos.', 'error');
+                    return;
+                }
+
+                this.buscarProducto(codigo);
+                $('#codigo-manual').val('');
+            }
+
+            validarEAN13(codigo) {
+                if (!/^\d{13}$/.test(codigo)) return false;
+
+                let suma = 0;
+                for (let i = 0; i < 12; i++) {
+                    let digito = parseInt(codigo[i]);
+                    suma += (i % 2 === 0) ? digito : digito * 3;
+                }
+
+                let digitoControl = (10 - (suma % 10)) % 10;
+                return digitoControl === parseInt(codigo[12]);
+            }
+
+            buscarProducto(codigo) {
+                this.showResult('Buscando producto...', 'loading');
+
+                // Simular búsqueda AJAX - Reemplaza con tu endpoint real
+                $.ajax({
+                    url: '{{ route("productos.buscar") }}', // Ajustar según tu ruta
+                    method: 'POST',
+                    data: {
+                        codigo: codigo,
+                        _token: '{{ csrf_token() }}' // Si usas Laravel
+                    },
+                    success: (producto) => {
+                        this.mostrarProductoEncontrado(producto);
+                    },
+                    error: (xhr) => {
+                        if (xhr.status === 404) {
+                            this.showResult('Producto no encontrado', 'error');
+                            this.ofrecerCrearProducto(codigo);
+                        } else {
+                            this.showResult('Error al buscar producto', 'error');
+                        }
+                    }
+                });
+            }
+
+            mostrarProductoEncontrado(producto) {
+                const html = `
+                    <div class="product-info">
+                        <h4><i class="fas fa-check-circle" style="color: #28a745;"></i> Producto Encontrado</h4>
+                        <div class="product-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Nombre:</span>
+                                <span class="detail-value">${producto.nombre}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Código:</span>
+                                <span class="detail-value">${producto.codigo}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Precio:</span>
+                                <span class="detail-value">$${parseFloat(producto.precio_venta).toFixed(2)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Stock:</span>
+                                <span class="detail-value">${producto.cantidad} unidades</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $('#result').removeClass('result-waiting result-loading result-error')
+                           .addClass('result-success')
+                           .html(html);
+            }
+
+            ofrecerCrearProducto(codigo) {
+                setTimeout(() => {
+                    const confirmacion = confirm(`¿Deseas crear un nuevo producto con código ${codigo}?`);
+                    if (confirmacion) {
+                        // Redirigir a formulario de creación
+                        window.location.href = `/productos/crear?codigo=${codigo}`;
+                    }
+                }, 2000);
+            }
+
+            showResult(message, type = 'waiting') {
+                const icons = {
+                    waiting: 'fas fa-qrcode',
+                    loading: 'fas fa-spinner fa-spin',
+                    success: 'fas fa-check-circle',
+                    error: 'fas fa-exclamation-triangle'
+                };
+
+                $('#result').removeClass('result-waiting result-loading result-success result-error')
+                           .addClass(`result-${type}`)
+                           .html(`<i class="${icons[type]}" style="margin-right: 10px;"></i>${message}`);
+            }
+
+            handleScannerError(error) {
+                let errorMsg = 'Error al iniciar la cámara: ';
+
+                if (error.name === 'NotAllowedError') {
+                    errorMsg += 'Permisos de cámara denegados. Por favor, permite el acceso a la cámara.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMsg += 'No se encontró ninguna cámara en el dispositivo.';
+                } else if (error.name === 'NotReadableError') {
+                    errorMsg += 'La cámara está siendo utilizada por otra aplicación.';
+                } else {
+                    errorMsg += error.message || 'Error desconocido';
+                }
+
+                this.showResult(errorMsg, 'error');
+                this.updateUI();
+            }
+
+            updateUI() {
+                $('#startBtn').prop('disabled', this.isScanning);
+                $('#stopBtn').prop('disabled', !this.isScanning);
+
+                const floatingIcon = this.isScanning ? 'fa-stop' : 'fa-barcode';
+                $('#floating-scanner i').attr('class', `fas ${floatingIcon}`);
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        $(document).ready(() => {
+            new ScannerController();
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
 {{-- <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -309,10 +1053,10 @@
         });
     </script>
 </body>
-</html>
- --}}
+</html> --}}
 
 
+{{--
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -415,6 +1159,7 @@
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
+                            <small class="text-muted">Presiona Enter para buscar</small>
                         </div>
 
                         <!-- Resultado del scanner -->
@@ -902,3 +1647,4 @@
     </script>
 </body>
 </html>
+ --}}
