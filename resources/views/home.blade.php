@@ -27,10 +27,10 @@
                      <i class="fas fa-warehouse"></i>
                     Inventario
                 </a>
-                <a  href="#" class="btn-action btn-primary-action">
+                {{-- <a  href="#" class="btn-action btn-primary-action">
                     <i class="fas fa-calculator"></i>
                     Corte de Caja
-                </a>
+                </a> --}}
 
                 <a href="/reporte-productos" class="btn-action btn-secondary-action">
                     <i class="fas fa-chart-line"></i>
@@ -110,7 +110,7 @@
 
         <hr>
 
-        <div class="row-mb-5">
+        {{-- <div class="row-mb-5">
             <div class="col-6">
                 <div class="card shadow-sm">
                     <div class="card-header bg-gradient-info text-white">
@@ -141,6 +141,72 @@
                                 <p class="text-muted">No hay ventas recientes</p>
                             </div>
                         @endforelse
+                    </div>
+                </div>
+            </div>
+        </div> --}}
+
+        <!-- Opción 2: Tabla Compacta -->
+        <div class="row mb-5">
+            <div class="col-6">
+                {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-gradient-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Ventas</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover compact-table mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>#001235</strong></td>
+                                        <td>Juan Pérez</td>
+                                        <td>31/07/2025 14:30</td>
+                                        <td><span class="badge bg-success">$1,250.00</span></td>
+                                        <td><span class="badge bg-success status-badge">Completada</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>#001234</strong></td>
+                                        <td>María González</td>
+                                        <td>31/07/2025 11:15</td>
+                                        <td><span class="badge bg-success">$875.50</span></td>
+                                        <td><span class="badge bg-success status-badge">Completada</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>#001233</strong></td>
+                                        <td>Roberto Silva</td>
+                                        <td>30/07/2025 16:45</td>
+                                        <td><span class="badge bg-warning">$2,100.00</span></td>
+                                        <td><span class="badge bg-warning status-badge">Pendiente</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -328,14 +394,15 @@
         }
     </style>
 
+    {{-- card sea un poco más alta y el ícono más grande. --}}
     <style>
         .info-box {
-            min-height: 110px;
+            min-height: 90px;
             font-size: 1.05rem;
         }
         .info-box .info-box-icon {
-            height: 110px;
-            line-height: 110px;
+            height: 90px;
+            line-height: 90px;
             font-size: 2rem;
         }
     </style>
