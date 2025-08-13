@@ -199,13 +199,70 @@
             </div>
         </div> --}}
 
-        <!-- Opción 2: Tabla Compacta -->
+        <!-- Tabla Compacta -->
         <div class="row mb-5">
             <div class="col-6">
                 {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
                 <div class="card shadow-sm">
                     <div class="card-header bg-gradient-info text-white">
                         <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Ventas</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover compact-table mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @forelse($ventasRecientes as $item)
+
+                                        <tr>
+                                            <td><strong>{{ $item->id}}</strong></td>
+                                            <td>{{$item->cliente->nombre ?? 'Cliente'}}</td>
+                                            <td>{{ $item->created_at->format('d/m/Y h:i a') }}</td>
+                                            <td>
+                                                <span class="badge status-badge bg-success">${{ number_format($item->total_venta, 2)}}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge status-badge
+                                                    {{ $item->estado === 'completada' ? 'bg-success' :
+                                                    ($item->estado === 'cancelada' ? 'bg-danger' : 'bg-secondary') }}">
+                                                    {{ ucfirst($item->estado) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                    @empty
+
+                                    @endforelse
+
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
+                <div class="card shadow-sm">
+                    <div class="card-header bg-gradient-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Compras</h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -264,6 +321,8 @@
                 </div>
             </div>
         </div>
+
+
 
 
 
