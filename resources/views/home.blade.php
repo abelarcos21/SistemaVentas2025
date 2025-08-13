@@ -108,7 +108,60 @@
 
         </div>
 
+        <h4 class="section-title">Centro de Gestión</h4>
         <hr>
+
+        <div class="row">
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-user-shield"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Usuarios</span>
+                        {{-- <span class="info-box-number">7</span> --}}
+                        <h3>{{ $cantidadUsuarios }}</h3>
+                        <span class="small info-box-text">usuarios activos</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Proveedores</span>
+                       {{--  <span class="info-box-number">3</span> --}}
+                        <h3>{{ $cantidadProveedores }}</h3>
+                        <span class="small info-box-text">proveedores</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-tags"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Categorías</span>
+                        {{-- <span class="info-box-number">12</span> --}}
+                        <h3>{{ $cantidadCategorias }}</h3>
+                        <span class="small info-box-text">categorías</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Ganancias</span>
+                        {{-- <span class="info-box-number">$3,000</span> --}}
+                        <h3>$3,000</h3>
+                        <span class="small info-box-text">Ganancias</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
         {{-- <div class="row-mb-5">
             <div class="col-6">
@@ -212,60 +265,7 @@
             </div>
         </div>
 
-        <h4 class="section-title">Centro de Gestión</h4>
-        <hr>
 
-        <div class="row">
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-user-shield"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Usuarios</span>
-                        {{-- <span class="info-box-number">7</span> --}}
-                        <h3>{{ $cantidadUsuarios }}</h3>
-                        <span class="small info-box-text">usuarios activos</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Proveedores</span>
-                       {{--  <span class="info-box-number">3</span> --}}
-                        <h3>{{ $cantidadProveedores }}</h3>
-                        <span class="small info-box-text">proveedores</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-tags"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Categorías</span>
-                        {{-- <span class="info-box-number">12</span> --}}
-                        <h3>{{ $cantidadCategorias }}</h3>
-                        <span class="small info-box-text">categorías</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box shadow">
-                    <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Ganancias</span>
-                        {{-- <span class="info-box-number">$3,000</span> --}}
-                        <h3>$3,000</h3>
-                        <span class="small info-box-text">Ganancias</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
 
         {{-- <h4 class="section-title">Accesos Rápidos</h4>
         <hr> --}}
