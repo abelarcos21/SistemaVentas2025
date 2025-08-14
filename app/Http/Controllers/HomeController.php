@@ -9,6 +9,7 @@ use App\Models\Cliente;
 use App\Models\User;
 use App\Models\Proveedor;
 use App\Models\Categoria;
+use App\Models\Compra;
 
 class HomeController extends Controller
 {
@@ -39,12 +40,14 @@ class HomeController extends Controller
 
         $productosBajoStock = Producto::where('cantidad', '<', 5)->get();
         $ventasRecientes = Venta::orderBy('created_at','desc')->take(5)->get();
+        $comprasRecientes = Compra::orderBy('created_at', 'desc')->take(5)->get();
         return view('home', compact([
 
-            'totalVentas', 
+            'totalVentas',
             'cantidadVentas',
             'productosBajoStock',
             'ventasRecientes',
+            'comprasRecientes',
             'cantidadClientes',
             'cantidadProductos',
             'cantidadUsuarios',

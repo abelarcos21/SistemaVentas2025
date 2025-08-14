@@ -12,4 +12,12 @@ class Compra extends Model
     use HasFactory;
 
     protected $table = 'compras';
+
+    public function user(){ //para acceder al campo user_id
+        return $this->belongsTo(User::class);
+    }
+
+    public function producto(){ //para acceder al campo producto_id
+        return $this->belongsTo(Producto::class);
+    }
 }
