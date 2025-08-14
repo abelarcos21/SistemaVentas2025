@@ -200,44 +200,107 @@
         </div> --}}
 
         <!-- Tabla Compacta -->
-        <div class="row mb-5">
-            <div class="col-6">
-                {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
-                <div class="card shadow-sm">
-                    <div class="card-header bg-gradient-info text-white">
-                        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Ventas</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover compact-table mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Usuario</th>
-                                        <th>Cliente</th>
-                                        <th>Fecha</th>
-                                        <th>Total</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+        <div class="container-fluid">
+            <div class="row mb-5">
+                <div class="col-sm-6">
+                    {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-gradient-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Ventas</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover compact-table mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Cliente</th>
+                                            <th>Fecha</th>
+                                            <th>Total</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                                    @forelse($ventasRecientes as $item)
+                                        @forelse($ventasRecientes as $item)
+
+                                            <tr>
+                                                <td><strong>{{ $item->user->name}}</strong></td>
+                                                <td>{{$item->cliente->nombre ?? 'Cliente'}}</td>
+
+                                                <td>{{ $item->created_at->format('d/m/Y h:i a') }}</td>
+                                                <td>
+                                                    <span class="badge status-badge bg-success">${{ number_format($item->total_venta, 2)}}</span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge status-badge
+                                                        {{ $item->estado === 'completada' ? 'bg-success' :
+                                                        ($item->estado === 'cancelada' ? 'bg-danger' : 'bg-secondary') }}">
+                                                        {{ ucfirst($item->estado) }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+
+                                        @empty
+
+                                            <div class="text-center py-4">
+                                                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted">No hay ventas recientes</p>
+                                            </div>
+
+                                        @endforelse
+
+
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-gradient-info text-white">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Compras</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover compact-table mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Precio Compra</th>
+                                            <th>Producto</th>
+                                            <th>Fecha</th>
+                                            <th>Cantidad</th>
+                                            <th>Total Compra</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @forelse($comprasRecientes as $item)
 
                                         <tr>
-                                            <td><strong>{{ $item->user->name}}</strong></td>
-                                            <td>{{$item->cliente->nombre ?? 'Cliente'}}</td>
-
-                                            <td>{{ $item->created_at->format('d/m/Y h:i a') }}</td>
+                                            <td><strong>{{$item->user->name}}</strong></td>
                                             <td>
-                                                <span class="badge status-badge bg-success">${{ number_format($item->total_venta, 2)}}</span>
+                                                <span class="badge bg-success status-badge">${{number_format($item->precio_compra, 2)}}</span>
+                                            </td>
+                                            <td>{{$item->producto->nombre}}</td>
+                                            <td>{{$item->created_at->format('d/m/Y h:i a')}}</td>
+                                            <td>
+                                                <span class="badge bg-success status-badge">{{$item->cantidad}}</span>
                                             </td>
                                             <td>
-                                                <span class="badge status-badge
-                                                    {{ $item->estado === 'completada' ? 'bg-success' :
-                                                    ($item->estado === 'cancelada' ? 'bg-danger' : 'bg-secondary') }}">
-                                                    {{ ucfirst($item->estado) }}
-                                                </span>
+                                                <span class="badge bg-success status-badge">${{ number_format($item->precio_compra * $item->cantidad, 2 )}}</span>
                                             </td>
                                             <td>
                                                 <button class="btn btn-sm btn-outline-primary">
@@ -246,84 +309,24 @@
                                             </td>
                                         </tr>
 
-                                    @empty
+                                        @empty
 
-                                        <div class="text-center py-4">
-                                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                                            <p class="text-muted">No hay ventas recientes</p>
-                                        </div>
+                                            <div class="text-center py-4">
+                                                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted">No hay compras recientes</p>
+                                            </div>
 
-                                    @endforelse
+                                        @endforelse
 
-
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-6">
-                {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
-                <div class="card shadow-sm">
-                    <div class="card-header bg-gradient-info text-white">
-                        <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Compras</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover compact-table mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Usuario</th>
-                                        <th>Precio Compra</th>
-                                        <th>Producto</th>
-                                        <th>Fecha</th>
-                                        <th>Cantidad</th>
-                                        <th>Total Compra</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-                                    @forelse($comprasRecientes as $item)
-
-                                    <tr>
-                                        <td><strong>{{$item->user->name}}</strong></td>
-                                        <td>
-                                            <span class="badge bg-success status-badge">${{number_format($item->precio_compra, 2)}}</span>
-                                        </td>
-                                        <td>{{$item->producto->nombre}}</td>
-                                        <td>{{$item->created_at->format('d/m/Y h:i a')}}</td>
-                                        <td>
-                                            <span class="badge bg-success status-badge">{{$item->cantidad}}</span>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-success status-badge">${{ number_format($item->precio_compra * $item->cantidad, 2 )}}</span>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-
-                                    @empty
-
-                                        <div class="text-center py-4">
-                                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                                            <p class="text-muted">No hay compras recientes</p>
-                                        </div>
-
-                                    @endforelse
-
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
 
 
