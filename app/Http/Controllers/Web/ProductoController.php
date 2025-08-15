@@ -447,7 +447,19 @@ class ProductoController extends Controller
             }
         }
 
-        $validated = $request->validate($rules);
+
+        try {
+            $validated = $request->validate($rules);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Errores de validación',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
+        }
 
         DB::beginTransaction();
 
@@ -495,12 +507,36 @@ class ProductoController extends Controller
                 'Producto actualizado exitosamente! Se ha generado un nuevo código de barras.' :
                 'Producto actualizado exitosamente!';
 
+           // Respuesta para AJAX
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $mensaje,
+                    'data' => [
+                        'producto' => $producto->load(['categoria', 'proveedor', 'marca', 'imagen']),
+                        'codigo_cambio' => $codigoCambio
+                    ]
+                ], 200);
+            }
+
+            // Respuesta para formulario tradicional
             return redirect()->route('producto.index')->with('success', $mensaje);
 
         }catch(Exception $e){
 
             DB::rollBack();
             Log::error('Error al Actualizar el producto: ' . $e->getMessage());
+
+            // Respuesta para AJAX
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al actualizar el producto: ' . $e->getMessage(),
+                    'error_details' => config('app.debug') ? $e->getTraceAsString() : null
+                ], 500);
+            }
+
+            // Respuesta para formulario tradicional
             return redirect()->route('producto.index')->with('error', 'Error al Actualizar el producto.');
 
         }
