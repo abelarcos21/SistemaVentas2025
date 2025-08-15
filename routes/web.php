@@ -148,6 +148,9 @@ Route::prefix('productos')->group(function(){
     Route::put('{producto}', [ProductoController::class, 'update'])->name('producto.update');
     Route::delete('{producto}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
+    // Nueva ruta para modal de edición
+    Route::get('/{producto}/edit-modal', [ProductoController::class, 'editModal'])->name('edit.modal');
+
 
 });
 

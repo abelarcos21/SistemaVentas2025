@@ -111,6 +111,16 @@ class ProductoController extends Controller
 
     }
 
+    // Para manejar el modal de editar
+    public function editModal($id){
+        $producto = Producto::with(['imagen'])->findOrFail($id);
+        $categorias = Categoria::where('activo', true)->orderBy('nombre')->get();
+        $proveedores = Proveedor::where('activo', true)->orderBy('nombre')->get();
+        $marcas = Marca::where('activo', true)->orderBy('nombre')->get();
+
+        return view('modulos.productos.partials.edit-modal', compact('producto', 'categorias', 'proveedores', 'marcas'));
+    }
+
     //BUSCAR PRODUCTO POR CODIGO PARA VERIFICAR SI EXISTE CUANDO SE ESCANEA UN PRODUCTO EN LA VISTA INDEX DE PRODUCTOS
     public function buscar(Request $request): JsonResponse{
 
@@ -138,10 +148,6 @@ class ProductoController extends Controller
 
     }
 
-    //MOSTRAR LA VISTA DE ESCANER PARA MOSTRAR LA CAMARA DEL PC O LAPTOP
-    public function escanerQuagga(){
-        return view('modulos.productos.escaner-quagga');
-    }
 
     //CAMBIAR ESTADO DE PRODUCTO DE ACTIVO
     public function cambiarEstado(Request $request, $id){

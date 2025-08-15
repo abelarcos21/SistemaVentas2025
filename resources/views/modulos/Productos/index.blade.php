@@ -181,9 +181,9 @@
                                                 <td>
                                                    <div class="d-flex">
                                                         @can('product-edit')
-                                                            <a href="{{ route('producto.edit', $producto) }}" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
+                                                            <button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center" data-id="{{ $producto->id }}">
                                                                 <i class="fas fa-edit mr-1"></i> Editar
-                                                            </a>
+                                                            </button>
                                                         @endcan
 
                                                         @can('product-delete')
@@ -474,6 +474,7 @@
         </div>
     </div>
 
+    <div id="modal-container"></div>{{-- mostar loading spinne --}}
 
 @stop
 
@@ -519,9 +520,62 @@
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
+
 @stop
 
 @section('js')
+
+    <script>
+        // JavaScript para manejar el modal de edición
+        $(document).ready(function() {
+
+            // Función para abrir modal de editar
+            window.editProduct = function(productId) {
+                $.ajax({
+                    url: `/productos/${productId}/edit-modal`,
+                    method: 'GET',
+                    beforeSend: function() {
+                        // Mostrar loading
+                        $('#modal-container').html(`
+                            <div class="modal fade show" id="loadingModal" style="display: block;">
+                                <div class="modal-dialog modal-sm">
+                                    <div class="modal-content">
+                                        <div class="modal-body text-center p-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="sr-only">Cargando...</span>
+                                            </div>
+                                            <p class="mt-2 mb-0">Cargando...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    },
+                    success: function(data) {
+                        $('#modal-container').html(data);
+                        $('#editModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        $('#modal-container').empty();
+                        toastr.error('Error al cargar el formulario de edición');
+                    }
+                });
+            };
+
+            // Si usas botones con clase, puedes usar esto en lugar de la función global:
+            $(document).on('click', '.btn-edit', function(e) {
+                e.preventDefault();
+                const productId = $(this).data('id');
+                editProduct(productId);
+            });
+
+            // Limpiar modal al cerrarse
+            $(document).on('hidden.bs.modal', '#editModal', function() {
+                $('#modal-container').empty();
+            });
+        });
+
+    </script>
 
     <!-- Carga logo base64 -->
     <script src="{{ asset('js/logoBase64.js') }}"></script>

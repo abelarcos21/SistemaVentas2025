@@ -296,16 +296,6 @@
     {{--INCLUIR PLUGIN SELECT2 ESPAÑOL--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
-    {{-- JavaScript para actualizar imagen en tiempo real --}}
-    {{-- <script>
-        document.getElementById('codigo_barras')?.addEventListener('input', function(e) {
-            const codigo = e.target.value;
-            if (codigo.length >= 8) { // Mínimo para código válido
-                const img = document.querySelector('#barcode-container img');
-                img.src = `{{ route('barcode.generate', '') }}/${codigo}`;
-            }
-        });
-    </script> --}}
 
 
     {{--INCLUIR PLUGIN SELECT2 EN LA VISTA PARA PROVEEDORES Y CATEGORIAS--}}

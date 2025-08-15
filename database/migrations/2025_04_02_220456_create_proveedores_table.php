@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('codigo_postal');
             $table->string('sitio_web');
             $table->string('notas');
+            $table->boolean('activo')->default(true);
             $table->timestamps();
         });
     }
