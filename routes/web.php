@@ -145,14 +145,15 @@ Route::prefix('productos')->group(function(){
     Route::post('store', [ProductoController::class, 'store'])->name('producto.store');
     Route::get('{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
     Route::get('{producto}/show', [ProductoController::class, 'show'])->name('producto.show');
-    Route::put('{producto}', [ProductoController::class, 'update'])->name('producto.update');
+    Route::put('{id}', [ProductoController::class, 'update'])->name('producto.update');
     Route::delete('{producto}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
     // Nueva ruta para modal de edición
-    Route::get('/{producto}/edit-modal', [ProductoController::class, 'editModal'])->name('edit.modal');
-
+    Route::get('/{id}/edit-modal', [ProductoController::class, 'editModal'])->name('producto.edit.modal');
 
 });
+
+
 
 //FILTRAR PRODUCTOS Y CATEGORIAS
 Route::get('/productos-filtrados', [ProductoController::class, 'filtrar'])->name('productos.filtrar');

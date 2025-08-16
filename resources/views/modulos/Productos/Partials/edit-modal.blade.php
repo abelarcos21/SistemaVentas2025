@@ -10,7 +10,7 @@
                 </button>
             </div>
 
-            <form id="editProductForm" action="{{ route('producto.update', $producto) }}" method="POST" enctype="multipart/form-data">
+            <form id="editProductForm" action="{{ route('producto.update', $producto->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -284,8 +284,13 @@ $(document).ready(function() {
             processData: false,
             success: function(response) {
                 $('#editModal').modal('hide');
-                // Aquí puedes agregar notificación de éxito
-                toastr.success('Producto actualizado correctamente');
+                // agregar notificación de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Producto Actualizado Correctamente.',
+                    text: 'Puedes realizar la compra más tarde usando el botón Comprar.',
+                });
+
                 // Recargar tabla o actualizar vista
                 if (typeof table !== 'undefined') {
                     table.ajax.reload();

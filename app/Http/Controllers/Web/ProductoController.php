@@ -113,6 +113,9 @@ class ProductoController extends Controller
 
     // Para manejar el modal de editar
     public function editModal($id){
+        // Debug temporal
+        //\Log::info('ID recibido en editModal: ' . $id);
+
         $producto = Producto::with(['imagen'])->findOrFail($id);
         $categorias = Categoria::where('activo', true)->orderBy('nombre')->get();
         $proveedores = Proveedor::where('activo', true)->orderBy('nombre')->get();

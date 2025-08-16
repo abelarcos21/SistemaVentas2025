@@ -531,23 +531,28 @@
 
             // Función para abrir modal de editar
             window.editProduct = function(productId) {
+                // Validar que el ID no sea undefined o null
+                if (!productId || productId === 'undefined') {
+                    console.error('ID del producto no válido:', productId);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'ID del producto no válido.'
+                    });
+                    return;
+                }
+
                 $.ajax({
-                    url: `/productos/${productId}/edit-modal`,
+                    url: `{{ route('producto.edit.modal', ':id') }}`.replace(':id', productId),
                     method: 'GET',
                     beforeSend: function() {
                         // Mostrar loading
                         $('#modal-container').html(`
-                            <div class="modal fade show" id="loadingModal" style="display: block;">
-                                <div class="modal-dialog modal-sm">
-                                    <div class="modal-content">
-                                        <div class="modal-body text-center p-4">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="sr-only">Cargando...</span>
-                                            </div>
-                                            <p class="mt-2 mb-0">Cargando...</p>
-                                        </div>
-                                    </div>
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Cargando...</span>
                                 </div>
+                                <p class="mt-2 mb-0">Cargando...</p>
                             </div>
                         `);
                     },
@@ -557,24 +562,55 @@
                     },
                     error: function(xhr) {
                         $('#modal-container').empty();
-                        toastr.error('Error al cargar el formulario de edición');
+                        console.error('Error al cargar modal:', xhr);
+
+                        let errorMessage = 'Error al cargar el formulario de edición.';
+                        if (xhr.status === 404) {
+                            errorMessage = 'Producto no encontrado.';
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage
+                        });
                     }
                 });
             };
 
-            // Si usas botones con clase, puedes usar esto en lugar de la función global:
+            // Manejar click en botones de editar
             $(document).on('click', '.btn-edit', function(e) {
                 e.preventDefault();
                 const productId = $(this).data('id');
+
+                // Debug: mostrar el ID que se está enviando
+                console.log('ID del producto a editar:', productId);
+
+                // Validar ID antes de enviar
+                if (!productId || productId === 'undefined') {
+                    console.error('ID del producto no válido en el botón:', productId);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo obtener el ID del producto.'
+                    });
+                    return;
+                }
+
                 editProduct(productId);
             });
 
             // Limpiar modal al cerrarse
             $(document).on('hidden.bs.modal', '#editModal', function() {
                 $('#modal-container').empty();
+                // Limpiar Select2 si existe
+                if ($.fn.select2) {
+                    $('.select2-modal').select2('destroy');
+                }
             });
         });
-
     </script>
 
     <!-- Carga logo base64 -->
@@ -853,40 +889,44 @@
 
     {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL PRODUCTO --}}
     <script>
-        $(document).ready(function () {
-            // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
-            $(document).on('change', '.custom-control-input', function () {
-                let activo = $(this).prop('checked') ? 1 : 0;
-                let productoId = $(this).data('id');
+        // OPCIÓN 2: Excluir específicamente los del modal
+        $(document).on('change', '.custom-control-input:not(#activoSwitch_edit)', function () {
+            // Solo procesar si tiene data-id
+            let productoId = $(this).data('id');
+            if (!productoId) {
+                return; // No hacer nada si no tiene ID
+            }
 
-                $.ajax({
-                    url: '/productos/cambiar-estado/' + productoId,
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        id: productoId,
-                        activo: activo
-                    },
-                    success: function (response) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: response.message,
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
-                    },
-                    error: function (xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: '¡Error!',
-                            text: xhr.responseText || 'Ocurrió un problema al cambiar el estado.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                });
+            let activo = $(this).prop('checked') ? 1 : 0;
+
+            $.ajax({
+                url: '/productos/cambiar-estado/' + productoId,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: productoId,
+                    activo: activo
+                },
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: response.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '¡Error!',
+                        text: xhr.responseJSON?.message || 'Ocurrió un problema al cambiar el estado.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
             });
         });
+
     </script>
 
     {{--ALERTA PARA ELIMINAR UN PRODUCTO--}}
