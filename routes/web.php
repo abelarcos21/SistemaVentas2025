@@ -145,7 +145,7 @@ Route::prefix('productos')->group(function(){
     Route::post('store', [ProductoController::class, 'store'])->name('producto.store');
     Route::get('{producto}/edit', [ProductoController::class, 'edit'])->name('producto.edit');
     Route::get('{producto}/show', [ProductoController::class, 'show'])->name('producto.show');
-    Route::put('{id}', [ProductoController::class, 'update'])->name('producto.update');
+    Route::put('{producto}', [ProductoController::class, 'update'])->name('producto.update');
     Route::delete('{producto}', [ProductoController::class, 'destroy'])->name('producto.destroy');
 
     // Nueva ruta para modal de edición

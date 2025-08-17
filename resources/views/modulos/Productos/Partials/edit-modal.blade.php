@@ -1,7 +1,7 @@
 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-gradient-primary">
+            <div class="modal-header bg-gradient-info">
                 <h4 class="modal-title" id="editModalLabel">
                     <i class="fas fa-edit"></i> Editar Producto
                 </h4>
@@ -130,7 +130,7 @@
                                             </label>
                                             <div class="input-group">
                                                 <div class="input-group-prepend">
-                                                    <span class="input-group-text">$</span>
+                                                    <span class="input-group-text bg-gradient-info">$</span>
                                                 </div>
                                                 <input type="number" step="0.01" name="precio_venta" id="precio_venta_edit" class="form-control" value="{{ $producto->precio_venta }}" required>
                                             </div>
@@ -221,7 +221,7 @@
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">
                         <i class="fas fa-times"></i> Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-info">
                         <i class="fas fa-save"></i> Actualizar Producto
                     </button>
                 </div>
@@ -288,7 +288,7 @@ $(document).ready(function() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Producto Actualizado Correctamente.',
-                    text: 'Puedes realizar la compra más tarde usando el botón Comprar.',
+
                 });
 
                 // Recargar tabla o actualizar vista
