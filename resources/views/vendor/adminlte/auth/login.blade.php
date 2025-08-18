@@ -1,50 +1,110 @@
-@extends('adminlte::auth.auth-page', ['auth_type' => 'login'])
+@extends('adminlte::auth.auth-page', ['authType' => 'login'])
 
-@section('auth_header', 'Iniciar sesión')
-
-@push('css')
+@section('adminlte_css')
     <link rel="stylesheet" href="{{ asset('css/custom-login.css') }}">
-@endpush
+@stop
+
+@section('adminlte_css')
+    <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+@stop
+
+@php
+    $loginUrl = View::getSection('login_url') ?? config('adminlte.login_url', 'login');
+    $registerUrl = View::getSection('register_url') ?? config('adminlte.register_url', 'register');
+    $passResetUrl = View::getSection('password_reset_url') ?? config('adminlte.password_reset_url', 'password/reset');
+
+    if (config('adminlte.use_route_url', false)) {
+        $loginUrl = $loginUrl ? route($loginUrl) : '';
+        $registerUrl = $registerUrl ? route($registerUrl) : '';
+        $passResetUrl = $passResetUrl ? route($passResetUrl) : '';
+    } else {
+        $loginUrl = $loginUrl ? url($loginUrl) : '';
+        $registerUrl = $registerUrl ? url($registerUrl) : '';
+        $passResetUrl = $passResetUrl ? url($passResetUrl) : '';
+    }
+@endphp
+
+@section('auth_header', __('adminlte::adminlte.login_message'))
+
 
 @section('auth_body')
-    <form action="{{ route('login') }}" method="post">
+    <form action="{{ $loginUrl }}" method="post">
         @csrf
 
-        {{-- Email --}}
+        {{-- Email field --}}
         <div class="input-group mb-3">
-            <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required autofocus>
-            <div class="input-group-append">
-                <div class="input-group-text"><span class="fas fa-envelope"></span></div>
-            </div>
-        </div>
+            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
 
-        {{-- Password --}}
-        <div class="input-group mb-3">
-            <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
             <div class="input-group-append">
-                <div class="input-group-text"><span class="fas fa-lock"></span></div>
-            </div>
-        </div>
-
-        {{-- Remember Me --}}
-        <div class="row">
-            <div class="col-8">
-                <div class="icheck-primary">
-                    <input type="checkbox" id="remember" name="remember">
-                    <label for="remember">Recordarme</label>
+                <div class="input-group-text">
+                    <span class="fas fa-envelope {{ config('adminlte.classes_auth_icon', '') }}"></span>
                 </div>
             </div>
-            <div class="col-4">
-                <x-adminlte-button class="btn-sm" type="submit" label="Acceder" icon="fas fa-sign-in-alt"/>
+
+            @error('email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+
+        {{-- Password field --}}
+        <div class="input-group mb-3">
+            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
+                placeholder="{{ __('adminlte::adminlte.password') }}">
+
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
+                </div>
+            </div>
+
+            @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+
+        {{-- Login field --}}
+        <div class="row">
+            <div class="col-7">
+                <div class="icheck-primary" title="{{ __('adminlte::adminlte.remember_me_hint') }}">
+                    <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
+
+                    <label for="remember">
+                        {{ __('adminlte::adminlte.remember_me') }}
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-5">
+                <button type=submit class="btn btn-block {{ config('adminlte.classes_auth_btn', 'btn-flat btn-primary') }}">
+                    <span class="fas fa-sign-in-alt"></span>
+                    {{ __('adminlte::adminlte.sign_in') }}
+                </button>
             </div>
         </div>
     </form>
-@endsection
+@stop
 
 @section('auth_footer')
-    <p class="my-0 text-blank"><a href="{{ route('password.request') }}" class="text-white">¿Olvidaste tu contraseña?</a></p>
-    <p class="my-0"><a href="{{ route('register') }}" class="text-white">Registrarse</a></p>
-@endsection
+    {{-- Password reset link --}}
+    @if($passResetUrl)
+        <p class="my-0">
+            <a href="{{ $passResetUrl }}">
+                {{ __('adminlte::adminlte.i_forgot_my_password') }}
+            </a>
+        </p>
+    @endif
 
-
-
+    {{-- Register link --}}
+    @if($registerUrl)
+        <p class="my-0">
+            <a href="{{ $registerUrl }}">
+                {{ __('adminlte::adminlte.register_a_new_membership') }}
+            </a>
+        </p>
+    @endif
+@stop
