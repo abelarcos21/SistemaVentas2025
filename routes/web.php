@@ -236,7 +236,8 @@ Route::prefix('compras')->group(function(){
     Route::put('{compra}', [ComprasController::class, 'update'])->name('compra.update');
     Route::delete('{compra}', [ComprasController::class, 'destroy'])->name('compra.destroy');
 
-
+    // Nueva ruta para modal de creacion de compra
+    Route::get('/compra/modal/{id}', [ComprasController::class, 'createModal'])->name('compra.create.modal');
 
 });
 

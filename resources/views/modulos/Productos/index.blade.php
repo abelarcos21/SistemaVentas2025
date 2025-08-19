@@ -160,21 +160,18 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-flex">
-                                                         @if($producto->cantidad == 0)
-                                                        {{--  <button class="btn btn-success btn-sm" onclick="firstPurchase({{ $producto->id }})">
-                                                                <i class="fas fa-shopping-cart"></i> Primera Compra
-                                                            </button> --}}
-                                                            <a href="{{ route('compra.create', $producto) }}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
+                                                        @if($producto->cantidad == 0)
+                                                            <button type="button" class="btn btn-success btn-sm mr-1 btn-compra d-flex align-items-center"
+                                                                    data-id="{{ $producto->id }}">
                                                                 <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
-                                                            </a>
+                                                            </button>
                                                         @else
-                                                            {{-- <button class="btn btn-primary btn-sm" onclick="addStock({{ $producto->id }})">
-                                                                <i class="fas fa-plus"></i> Reabastecer
-                                                            </button> --}}
-                                                            <a href="{{ route('compra.create', $producto) }}" class="btn btn-primary btn-sm mr-1 d-flex align-items-center">
+                                                            <button type="button" class="btn btn-primary btn-sm mr-1 btn-compra d-flex align-items-center"
+                                                                    data-id="{{ $producto->id }}">
                                                                 <i class="fas fa-plus mr-1"></i> Reabastecer
-                                                            </a>
+                                                            </button>
                                                         @endif
+
                                                     </div>
 
                                                 </td>
@@ -526,9 +523,84 @@
 @section('js')
 
     <script>
-        // JavaScript para manejar el modal de edición
+
         $(document).ready(function() {
 
+            // ========== MODAL DE COMPRAS (Producto) ==========
+            // Función para abrir modal de compra
+            window.createPurchase = function(productId) {
+                // Validar que el ID no sea undefined o null
+                if (!productId || productId === 'undefined') {
+                    console.error('ID del producto no válido:', productId);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'ID del producto no válido.'
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: `{{ route('compra.create.modal', ':id') }}`.replace(':id', productId),
+                    method: 'GET',
+                    beforeSend: function() {
+                        // Mostrar loading (igual que tu modal de edición)
+                        $('#modal-container').html(`
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Cargando...</span>
+                                </div>
+                                <p class="mt-2 mb-0">Cargando formulario de compra...</p>
+                            </div>
+                        `);
+                    },
+                    success: function(data) {
+                        $('#modal-container').html(data);
+                        $('#compraModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        $('#modal-container').empty();
+                        console.error('Error al cargar modal de compra:', xhr);
+
+                        let errorMessage = 'Error al cargar el formulario de compra.';
+                        if (xhr.status === 404) {
+                            errorMessage = 'Producto no encontrado.';
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON.message;
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage
+                        });
+                    }
+                });
+            };
+
+            // Manejar click en botones de compra
+            $(document).on('click', '.btn-compra', function(e) {
+                e.preventDefault();
+                const productId = $(this).data('id');
+
+                // Debug: mostrar el ID que se está enviando
+                //console.log('ID del producto para compra:', productId);
+
+                // Validar ID antes de enviar
+                if (!productId || productId === 'undefined') {
+                    console.error('ID del producto no válido en el botón de compra:', productId);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo obtener el ID del producto.'
+                    });
+                    return;
+                }
+
+                createPurchase(productId);
+            });
+
+            // ========== MODAL DE EDICIÓN (Producto) ==========
             // Función para abrir modal de editar
             window.editProduct = function(productId) {
                 // Validar que el ID no sea undefined o null
@@ -586,7 +658,7 @@
                 const productId = $(this).data('id');
 
                 // Debug: mostrar el ID que se está enviando
-                console.log('ID del producto a editar:', productId);
+                //console.log('ID del producto a editar:', productId);
 
                 // Validar ID antes de enviar
                 if (!productId || productId === 'undefined') {
@@ -602,8 +674,9 @@
                 editProduct(productId);
             });
 
-            // Limpiar modal al cerrarse
-            $(document).on('hidden.bs.modal', '#editModal', function() {
+            // ========== LIMPIEZA DE MODALES ==========
+            // Limpiar modales al cerrarse
+            $(document).on('hidden.bs.modal', '#editModal, #compraModal', function() {
                 $('#modal-container').empty();
                 // Limpiar Select2 si existe
                 if ($.fn.select2) {
@@ -611,6 +684,238 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        // Variables globales
+        let modalCompraAbierto = false;
+
+        // Función para abrir el modal de compra
+        function abrirModalCompra(productoId) {
+            // Mostrar loading
+            $('#modal-container').html(`
+                <div class="modal fade show" style="display: block; background: rgba(0,0,0,0.5);">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body text-center">
+                                <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                <p class="mt-2">Cargando formulario de compra...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            // Cargar el modal via AJAX
+            $.get(`{{ url('/compra/modal') }}/${productoId}`)
+                .done(function(data) {
+                    $('#modal-container').html(data);
+                    $('#compraModal').modal('show');
+                    modalCompraAbierto = true;
+                    initializeModalEvents();
+                })
+                .fail(function() {
+                    $('#modal-container').html('');
+                    mostrarNotificacion('Error al cargar el formulario', 'error');
+                });
+        }
+
+        // Inicializar eventos del modal
+        function initializeModalEvents() {
+            // Calcular total en tiempo real
+            $('#cantidad, #precio_compra').on('input', function() {
+                calcularTotal();
+            });
+
+            // Manejar envío del formulario
+            $('#compraAjaxForm').on('submit', function(e) {
+                e.preventDefault();
+                procesarCompraAjax();
+            });
+
+            // Limpiar al cerrar modal
+            $('#compraModal').on('hidden.bs.modal', function() {
+                $('#modal-container').html('');
+                modalCompraAbierto = false;
+            });
+        }
+
+        // Calcular total de la compra
+        function calcularTotal() {
+            const cantidad = parseFloat($('#cantidad').val()) || 0;
+            const precio = parseFloat($('#precio_compra').val()) || 0;
+            const total = cantidad * precio;
+
+            if (cantidad > 0 && precio > 0) {
+                $('#resumen-cantidad').text(cantidad);
+                $('#resumen-precio').text(precio.toFixed(2));
+                $('#resumen-total').text(total.toFixed(2));
+                $('#resumen-compra').show();
+            } else {
+                $('#resumen-compra').hide();
+            }
+        }
+
+        // Procesar compra via AJAX
+        function procesarCompraAjax() {
+            // Limpiar errores previos
+            $('.is-invalid').removeClass('is-invalid');
+            $('.invalid-feedback').hide();
+            $('#error-message').hide();
+
+            // Mostrar loading
+            $('#loading-message').show();
+            $('#btn-comprar').prop('disabled', true);
+
+            // Preparar datos
+            const formData = {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                id: $('input[name="id"]').val(),
+                cantidad: $('#cantidad').val(),
+                precio_compra: $('#precio_compra').val()
+            };
+
+            // Enviar petición AJAX
+            $.ajax({
+                url: '{{ route("compra.store") }}',
+                method: 'POST',
+                data: formData,
+                dataType: 'json'
+            })
+            .done(function(response) {
+                if (response.success) {
+                    // Éxito
+                    mostrarNotificacion(response.message, 'success');
+
+                    // Actualizar la fila del producto en la tabla
+                    actualizarFilaProducto(response.data.producto_id, response.data.nueva_cantidad);
+
+                    // Cerrar modal
+                    $('#compraModal').modal('hide');
+
+                    // Mostrar resumen de compra
+                    mostrarResumenCompra(response.data);
+                } else {
+                    mostrarError(response.message);
+                }
+            })
+            .fail(function(xhr) {
+                if (xhr.status === 422) {
+                    // Errores de validación
+                    const errors = xhr.responseJSON.errors;
+                    mostrarErroresValidacion(errors);
+                } else {
+                    // Error del servidor
+                    const message = xhr.responseJSON?.message || 'Error interno del servidor';
+                    mostrarError(message);
+                }
+            })
+            .always(function() {
+                $('#loading-message').hide();
+                $('#btn-comprar').prop('disabled', false);
+            });
+        }
+
+        // Mostrar errores de validación
+        function mostrarErroresValidacion(errors) {
+            Object.keys(errors).forEach(field => {
+                $(`#${field}`).addClass('is-invalid');
+                $(`#${field}-error`).text(errors[field][0]).show();
+            });
+        }
+
+        // Mostrar error general
+        function mostrarError(message) {
+            $('#error-text').text(message);
+            $('#error-message').show();
+        }
+
+        // Actualizar fila del producto en la tabla
+        function actualizarFilaProducto(productoId, nuevaCantidad) {
+            const fila = $(`[data-producto-id="${productoId}"]`).closest('tr');
+            if (fila.length) {
+                // Actualizar cantidad en la tabla
+                fila.find('.cantidad-producto').text(nuevaCantidad);
+
+                // Cambiar botón si era primera compra
+                if (nuevaCantidad > 0) {
+                    const boton = fila.find('button[onclick*="abrirModalCompra"]');
+                    if (boton.hasClass('btn-success')) {
+                        boton.removeClass('btn-success').addClass('btn-primary');
+                        boton.html('<i class="fas fa-plus mr-1"></i> Reabastecer');
+                    }
+                }
+            }
+        }
+
+        // Mostrar notificación Toast
+        function mostrarNotificacion(mensaje, tipo) {
+            const iconos = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+
+            const colores = {
+                success: 'success',
+                error: 'danger',
+                info: 'info'
+            };
+
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                timeOut: 5000
+            };
+
+            toastr[tipo === 'error' ? 'error' : tipo](mensaje);
+        }
+
+        // Mostrar resumen de compra exitosa
+        function mostrarResumenCompra(data) {
+            const html = `
+                <div class="modal fade" id="resumenCompraModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-success">
+                                <h4 class="modal-title">
+                                    <i class="fas fa-check-circle"></i> ¡Compra Realizada!
+                                </h4>
+                            </div>
+                            <div class="modal-body text-center">
+                                <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                                <h4 class="mt-3">Compra procesada exitosamente</h4>
+                                <p><strong>Total pagado:</strong> $${data.compra_total}</p>
+                                <p><strong>Nuevo stock:</strong> ${data.nueva_cantidad} unidades</p>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <button type="button" class="btn btn-success" data-dismiss="modal">
+                                    <i class="fas fa-thumbs-up"></i> ¡Perfecto!
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            $('body').append(html);
+            $('#resumenCompraModal').modal('show');
+
+            // Eliminar modal después de cerrarlo
+            $('#resumenCompraModal').on('hidden.bs.modal', function() {
+                $(this).remove();
+            });
+        }
+
+        // Cargar Toastr si no está disponible
+        if (typeof toastr === 'undefined') {
+            $('<link>')
+                .appendTo('head')
+                .attr({type : 'text/css', rel : 'stylesheet'})
+                .attr('href', 'https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css');
+
+            $.getScript('https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js');
+        }
     </script>
 
     <!-- Carga logo base64 -->

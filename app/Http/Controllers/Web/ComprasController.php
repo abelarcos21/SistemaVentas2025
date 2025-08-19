@@ -34,6 +34,25 @@ class ComprasController extends Controller
         return view('modulos.compras.create', compact('producto'));
     }
 
+    // Método para mostrar el modal (vista parcial)
+    public function createModal($id){
+        try {
+            $producto = Producto::findOrFail($id);
+
+            // Obtener el último precio de compra si existe
+            $ultimaCompra = Compra::where('producto_id', $id)
+                                 ->orderBy('created_at', 'desc')
+                                 ->first();
+
+            return view('modulos.compras.partials.compra-modal', compact('producto', 'ultimaCompra'));
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Producto no encontrado: ' . $th->getMessage()
+            ], 404);
+        }
+    }
+
     public function show(Compra $compra){
 
         $compra = Compra::select(
@@ -118,7 +137,6 @@ class ComprasController extends Controller
     }
 
 
-
     public function store(Request $request){
 
         $request->validate([
@@ -128,7 +146,6 @@ class ComprasController extends Controller
         ]);
 
         try {
-
             $producto = Producto::findOrFail($request->id);
 
             $compra = new Compra();
@@ -142,13 +159,51 @@ class ComprasController extends Controller
                 $producto->cantidad += $request->cantidad;
                 $producto->precio_compra = $request->precio_compra;
                 $producto->save();
+
+                // Verificar si es una petición AJAX
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Compra exitosa!',
+                        'data' => [
+                            'total_compra' => number_format($compra->cantidad * $compra->precio_compra, 2),
+                            'nuevo_stock' => $producto->cantidad,
+                            'compra_id' => $compra->id
+                        ]
+                    ]);
+                }
+
+                // Si no es AJAX, redirigir normalmente
+                return to_route('producto.index')->with('success', 'Compra exitosa!');
             }
 
-            return to_route('producto.index')->with('success', 'Compra exitosa!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Errores de validación
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error de validación',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+
+            return to_route('producto.index')->with('error', 'Error de validación');
+
         } catch (\Throwable $th) {
+            // Error general
+            \Log::error('Error al procesar compra: ' . $th->getMessage());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No pudo comprar! ' . $th->getMessage()
+                ], 500);
+            }
+
             return to_route('producto.index')->with('error', 'No pudo comprar! ' . $th->getMessage());
         }
     }
+
 
     public function destroy ($id, Request $request){
 
