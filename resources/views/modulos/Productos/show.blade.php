@@ -35,7 +35,7 @@
               <div class="card-body">
 
                 <table class="table table-bordered table-striped">
-                    <thead class="bg-gradient-info">
+                    <thead class="text-center align-middle bg-gradient-info">
                     <tr>
                       <th>Nro#</th>
                       <th>Categoria</th>
@@ -44,35 +44,41 @@
                       <th>Imagen</th>
                       <th>Descripcion</th>
                       <th>Cantidad</th>
-                      <th>Venta</th>
-                      <th>Compra</th>
+                      <th>Precio Venta</th>
+                      <th>Precio Compra</th>
                       <th>Activo</th>
                     </tr>
                     </thead>
                     <tbody>
 
                         <tr>
-                            <td>{{$producto->id}}</td>
+                            <td class="text-center align-middle">{{$producto->id}}</td>
                             <td>{{$producto->nombre_categoria}}</td>
                             <td>{{$producto->nombre_proveedor}}</td>
                             <td>{{$producto->nombre}}</td>
-                            <td>
+                            <td class="text-center">
                                 @if($producto->imagen)
-                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="80" height="80" style="object-fit: cover;">
+                                    <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50"
+                                    class="img-thumbnail rounded shadow"
+                                    style="object-fit: cover;">
                                 @else
                                     <span>Sin imagen</span>
                                 @endif
                             </td>
                             <td>{{$producto->descripcion}}</td>
                             @if($producto->cantidad > 5)
-                              <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
+                                <td class="text-center align-middle">
+                                    <span class="badge bg-success">{{ $producto->cantidad }}</span>
+                                </td>
                             @else
-                              <td><span class="badge bg-danger">{{ $producto->cantidad }}</span></td>
+                                <td class="text-center align-middle">
+                                    <span class="badge bg-danger">{{ $producto->cantidad }}</span>
+                                </td>
                             @endif
-                            <td class="text-primary">MXN ${{$producto->precio_compra}}</td>
-                            <td class="text-primary">MXN ${{$producto->precio_venta}}</td>
+                            <td class="text-primary text-center align-middle">MXN ${{$producto->precio_compra}}</td>
+                            <td class="text-primary text-center align-middle">MXN ${{$producto->precio_venta}}</td>
 
-                            <td>
+                            <td class="text-center align-middle">
                                 <div class="custom-control custom-switch toggle-estado">
                                     <input  role="switch" type="checkbox" class="custom-control-input" id="activoSwitch{{ $producto->id }}" {{ $producto->activo ? 'checked' : '' }} data-id="{{ $producto->id }}" disabled>
                                     <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>

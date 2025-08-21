@@ -154,6 +154,9 @@ Route::prefix('productos')->group(function(){
     // Nueva ruta para modal de creacion
     Route::get('/create-modal', [ProductoController::class, 'createModal'])->name('producto.create.modal');
 
+    // Nueva ruta para modal de eliminacion
+    Route::get('/{id}/delete-modal', [ProductoController::class, 'deleteModal'])->name('producto.delete.modal');
+
 });
 
 

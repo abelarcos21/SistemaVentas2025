@@ -653,9 +653,15 @@ class ProductoController extends Controller
         }
     }
 
+    // Para manejar el modal de eliminar
+    public function deleteModal($id){
+        $producto = Producto::with(['categoria', 'proveedor', 'marca', 'imagen'])
+            ->findOrFail($id);
 
+        return view('modulos.productos.partials.delete-modal', compact('producto'));
+    }
 
-    public function destroy(Producto $producto){
+    public function destroy(Producto $producto, Request $request){
 
         DB::beginTransaction();
 
@@ -673,10 +679,29 @@ class ProductoController extends Controller
             $producto->delete();//elimina el producto
 
             DB::commit();
+
+            // Si es una petición AJAX, devolver JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Producto '{$nombreProducto}' eliminado correctamente."
+                ]);
+            }
+
             return redirect()->route('producto.index')->with('success','Producto  '.$nombreProducto.' Eliminado Correctamente');
+
         }catch(Exception $e){
             DB::rollBack();
             Log::error('Error al eliminar producto: ' . $e->getMessage());
+
+            // Si es una petición AJAX, devolver error JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ocurrió un error al eliminar el producto.'
+                ], 500);
+            }
+
             return redirect()->route('producto.index')->with('error', 'Ocurrió un error al eliminar el producto.');
 
         }

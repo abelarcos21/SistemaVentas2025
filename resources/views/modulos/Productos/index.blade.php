@@ -184,9 +184,9 @@
                                                         @endcan
 
                                                         @can('product-delete')
-                                                            <a href="{{ route('producto.show', $producto) }}" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
+                                                            <button data-id="{{ $producto->id }}" class="btn btn-danger btn-delete btn-sm mr-1 d-flex align-items-center">
                                                                 <i class="fas fa-trash-alt mr-1"></i> Eliminar
-                                                            </a>
+                                                            </button>
                                                         @endcan
                                                     </div>
                                                 </td>
@@ -712,6 +712,62 @@
 
                 editProduct(productId);
             });
+
+            // ========== MODAL DE ELIMINACIÓN (Producto) ==========
+            // Función para abrir modal de eliminar
+            window.deleteProduct = function(productId) {
+                // Validar ID
+                if (!productId || productId === 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'ID del producto no válido.'
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: `{{ route('producto.delete.modal', ':id') }}`.replace(':id', productId),
+                    method: 'GET',
+                    beforeSend: function() {
+                        $('#modal-container').html(`
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-danger" role="status">
+                                    <span class="sr-only">Cargando...</span>
+                                </div>
+                                <p class="mt-2 mb-0">Cargando información...</p>
+                            </div>
+                        `);
+                    },
+                    success: function(data) {
+                        $('#modal-container').html(data);
+                        $('#deleteModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        $('#modal-container').empty();
+                        console.error('Error al cargar modal:', xhr);
+
+                        let errorMessage = 'Error al cargar el formulario de eliminación.';
+                        if (xhr.status === 404) {
+                            errorMessage = 'Producto no encontrado.';
+                        }
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errorMessage
+                        });
+                    }
+                });
+            };
+
+            // Manejar click en botones de eliminar
+            $(document).on('click', '.btn-delete', function(e) {
+                e.preventDefault();
+                const productId = $(this).data('id');
+                deleteProduct(productId);
+            });
+
 
             // ========== LIMPIEZA DE MODALES ==========
             // Limpiar modales al cerrarse
