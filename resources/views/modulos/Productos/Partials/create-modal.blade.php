@@ -350,14 +350,10 @@ function initializeCreateModal() {
                     text: 'El producto se ha creado exitosamente.',
                     showConfirmButton: false,
                     timer: 1500
+                }).then(() => {
+                    location.reload();  // Recargar o actualizar vista
                 });
 
-                // Recargar tabla o actualizar vista
-                if (typeof table !== 'undefined') {
-                    table.ajax.reload();
-                } else {
-                    location.reload();
-                }
             },
             error: function(xhr) {
                 console.error('Error al crear producto:', xhr);
