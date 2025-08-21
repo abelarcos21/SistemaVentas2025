@@ -81,6 +81,14 @@ class ProductoController extends Controller
 
     }
 
+    public function createModal(){
+        $categorias = Categoria::where('activo', 1)->orderBy('nombre')->get();
+        $proveedores = Proveedor::where('activo', 1)->orderBy('nombre')->get();
+        $marcas = Marca::where('activo', 1)->orderBy('nombre')->get();
+
+        return view('modulos.productos.partials.create-modal', compact('categorias', 'proveedores', 'marcas'));
+    }
+
     public function show(Producto $producto){
 
 
@@ -363,16 +371,50 @@ class ProductoController extends Controller
 
             }
 
+            // Respuesta para AJAX
+            if($request->ajax()){
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Producto creado exitosamente',
+                    'producto' => [
+                        'id' => $producto->id,
+                        'nombre' => $producto->nombre,
+                        'codigo' => $producto->codigo,
+                        'descripcion' => $producto->descripcion,
+                        'categoria' => $producto->categoria->nombre ?? '',
+                        'marca' => $producto->marca->nombre ?? '',
+                        'proveedor' => $producto->proveedor->nombre ?? '',
+                        'activo' => $producto->activo,
+                        'imagen' => $producto->imagen ? asset('storage/' . $producto->imagen->ruta) : null,
+                        'created_at' => $producto->created_at->format('d/m/Y H:i')
+                    ]
+                ]);
+            }
+
             return redirect()->route('producto.index')->with('success', 'Producto creado exitosamente. Puedes realizar la compra más tarde usando el botón Comprar.!');
 
         }catch (Exception $e){
             DB::rollBack();
             Log::error('Error al guardar el producto: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            // Respuesta para AJAX
+            if($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al crear el producto: ' . $e->getMessage(),
+                    'error_details' => config('app.debug') ? $e->getTraceAsString() : null
+                ], 500);
+            }
+
+
             //return back()->with('error', 'Error: ' . $e->getMessage());//mostrar error completo
             //return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
+
+            // Respuesta para formulario tradicional
             return back()->withErrors(['error' => 'Error al guardar el producto: ' . $e->getMessage()])
                     ->withInput();
+
         }
     }
 

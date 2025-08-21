@@ -151,6 +151,9 @@ Route::prefix('productos')->group(function(){
     // Nueva ruta para modal de edición
     Route::get('/{id}/edit-modal', [ProductoController::class, 'editModal'])->name('producto.edit.modal');
 
+    // Nueva ruta para modal de creacion
+    Route::get('/create-modal', [ProductoController::class, 'createModal'])->name('producto.create.modal');
+
 });
 
 

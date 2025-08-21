@@ -32,9 +32,9 @@
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Productos registrados</h3>
                             <div>
-                                <a href="{{ route('producto.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
+                                <button class="btn btn-light btn-create bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-plus"></i> Agregar Nuevo
-                                </a>
+                                </button>
                                 <a href="{{ route('reporte.falta_stock') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-boxes"></i> Productos con Stock 1 y 0
                                 </a>
@@ -598,6 +598,45 @@
                 }
 
                 createPurchase(productId);
+            });
+
+            // ========== MODAL DE CREACIÓN (Producto) ==========
+            // Función para abrir modal de crear
+            window.createProduct = function() {
+                $.ajax({
+                    url: "{{ route('producto.create.modal') }}",
+                    method: 'GET',
+                    beforeSend: function() {
+                        $('#modal-container').html(`
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="sr-only">Cargando...</span>
+                                </div>
+                                <p class="mt-2 mb-0">Cargando formulario...</p>
+                            </div>
+                        `);
+                    },
+                    success: function(data) {
+                        $('#modal-container').html(data);
+                        $('#createModal').modal('show');
+                    },
+                    error: function(xhr) {
+                        $('#modal-container').empty();
+                        console.error('Error al cargar modal:', xhr);
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error al cargar el formulario de creación.'
+                        });
+                    }
+                });
+            };
+
+            // Manejar click en botón de crear/agregar nuevo
+            $(document).on('click', '.btn-create', function(e) {
+                e.preventDefault();
+                createProduct();
             });
 
             // ========== MODAL DE EDICIÓN (Producto) ==========
