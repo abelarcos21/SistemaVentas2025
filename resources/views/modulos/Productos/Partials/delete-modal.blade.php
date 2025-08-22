@@ -235,8 +235,15 @@ function initializeDeleteModal() {
                             timer: 2000
                         }).then(() => {
                             // Recargar tabla o página
-                            if ($.fn.DataTable.isDataTable('#example1')) {
+                           /*  if ($.fn.DataTable.isDataTable('#example1')) {
                                 location.reload();
+                            } else {
+                                location.reload();
+                            } */
+
+                            // Recargar tabla o actualizar vista
+                            if (typeof table !== 'undefined') {
+                                table.ajax.reload();
                             } else {
                                 location.reload();
                             }
