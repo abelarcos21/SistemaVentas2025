@@ -233,21 +233,10 @@ function initializeDeleteModal() {
                             text: 'El producto ha sido eliminado exitosamente.',
                             showConfirmButton: false,
                             timer: 2000
-                        }).then(() => {
-                            // Recargar tabla o página
-                           /*  if ($.fn.DataTable.isDataTable('#example1')) {
-                                location.reload();
-                            } else {
-                                location.reload();
-                            } */
-
-                            // Recargar tabla o actualizar vista
-                            if (typeof table !== 'undefined') {
-                                table.ajax.reload();
-                            } else {
-                                location.reload();
-                            }
                         });
+
+                        //  recargar tabla
+                        table.ajax.reload(null, false);
                     },
                     error: function(xhr) {
                         console.error('Error al eliminar producto:', xhr);

@@ -70,138 +70,6 @@
                                             <th class="no-exportar">Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @forelse($productos as $producto)
-                                            <tr class="{{ $producto->cantidad == 0 ? 'table-warning' : '' }}">
-                                                <td>{{ $producto->id }}</td>
-                                                <td>
-                                                    @php
-                                                        $ruta = $producto->imagen && $producto->imagen->ruta
-                                                        ? asset('storage/' . $producto->imagen->ruta)
-                                                        : asset('images/placeholder-caja.png');
-                                                    @endphp
-
-                                                    <!-- Imagen miniatura con enlace al modal -->
-                                                    <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                                                        <img src="{{ $ruta }}"
-                                                            width="50" height="50"
-                                                            class="img-thumbnail rounded shadow"
-                                                            style="object-fit: cover;">
-                                                    </a>
-
-                                                    <!-- Modal Bootstrap 4 -->
-                                                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
-                                                        tabindex="-1"
-                                                        role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
-                                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                                            <div class="modal-content bg-white">
-                                                                <div class="modal-header bg-gradient-info">
-                                                                    <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body text-center">
-                                                                    <img src="{{ $ruta }}" class="img-fluid rounded shadow">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {{-- @if($producto->imagen)
-                                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}" width="50" height="50"  class="img-thumbnail rounded shadow" style="object-fit: cover;">
-                                                    @else
-                                                        <img src="{{ asset('images/placeholder-caja.png') }}" width="50" height="50"  class="img-thumbnail rounded shadow" style="object-fit: cover;">
-                                                    @endif --}}
-                                                </td>
-                                                <td> <code>{{ $producto->codigo }}</code> </td>
-                                                {{-- <td>
-                                                    @if ($producto->barcode_path)
-                                                        <img src="{{ asset($producto->barcode_path) }}" alt="Código de barras de {{ $producto->codigo }}">
-                                                    @endif
-                                                </td> --}}
-                                                <td>{{ $producto->nombre }}</td>
-                                                <td><span class="badge bg-primary">{{ $producto->nombre_categoria }}</span></td>
-                                                <td>{{ $producto->nombre_marca}}</td>
-                                                <td>{{ $producto->descripcion }}</td>
-                                                <td>{{ $producto->nombre_proveedor }}</td>
-                                                @if($producto->cantidad == 0)
-                                                    <td><span class="badge bg-warning">Sin stock</span></td>
-                                                @else
-                                                    <td><span class="badge bg-success">{{ $producto->cantidad }}</span></td>
-                                                @endif
-
-                                                <td class="text-blue">
-                                                    @if($producto->precio_venta)
-                                                        <strong>{{ $producto->monedas->codigo ?? 'Sin codigo' }} ${{ number_format($producto->precio_venta, 2) }}</strong>
-                                                    @else
-                                                        <span class="text-muted">No definido</span>
-                                                    @endif
-                                                </td>
-
-
-                                                <td class="text-blue">
-                                                    @if($producto->precio_compra)
-                                                        <strong>{{ $producto->monedas->codigo ?? 'Sin codigo' }} ${{ number_format($producto->precio_compra, 2) }}</strong>
-                                                    @else
-                                                        <span class="text-muted">No definido</span>
-                                                    @endif
-                                                </td>
-
-                                                <td>{{ $producto->created_at->format('d/m/Y h:i a') }}</td>
-                                                <td>
-                                                    <div class="custom-control custom-switch toggle-estado">
-                                                        <input type="checkbox" role="switch" class="custom-control-input"
-                                                            id="activoSwitch{{ $producto->id }}"
-                                                            {{ $producto->activo ? 'checked' : '' }}
-                                                            data-id="{{ $producto->id }}">
-                                                        <label class="custom-control-label" for="activoSwitch{{ $producto->id }}"></label>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        @if($producto->cantidad == 0)
-                                                            <button type="button" class="btn btn-success btn-sm mr-1 btn-compra d-flex align-items-center"
-                                                                    data-id="{{ $producto->id }}">
-                                                                <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
-                                                            </button>
-                                                        @else
-                                                            <button type="button" class="btn btn-primary btn-sm mr-1 btn-compra d-flex align-items-center"
-                                                                    data-id="{{ $producto->id }}">
-                                                                <i class="fas fa-plus mr-1"></i> Reabastecer
-                                                            </button>
-                                                        @endif
-
-                                                    </div>
-
-                                                </td>
-                                                <td>
-                                                   <div class="d-flex">
-                                                        @can('product-edit')
-                                                            <button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center" data-id="{{ $producto->id }}">
-                                                                <i class="fas fa-edit mr-1"></i> Editar
-                                                            </button>
-                                                        @endcan
-
-                                                        @can('product-delete')
-                                                            <button data-id="{{ $producto->id }}" class="btn btn-danger btn-delete btn-sm mr-1 d-flex align-items-center">
-                                                                <i class="fas fa-trash-alt mr-1"></i> Eliminar
-                                                            </button>
-                                                        @endcan
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @empty
-
-                                            <tr>
-                                                <td colspan="16" class="text-center py-4">
-                                                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                                    <p class="text-muted">No hay productos registrados</p>
-
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -477,6 +345,11 @@
 
 @section('css')
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap4.min.css">
+
     {{-- Este estilo limita la altura del dropdown a 300px y agrega una barra de desplazamiento si hay muchos elementos. --}}
     <style>
         .select2-container .select2-dropdown {
@@ -522,7 +395,21 @@
 
 @section('js')
 
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+
     <script>
+
 
         $(document).ready(function() {
 
@@ -1020,13 +907,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
     {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+   {{--  <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script> --}}
 
     {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
@@ -1355,7 +1242,7 @@
     </script>
 
     {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
-    <script>
+    {{-- <script>
         $(document).ready(function() {
 
             var fecha = new Date().toLocaleDateString('es-MX', {
@@ -1588,6 +1475,274 @@
 
             });
         });
-    </script>
+    </script> --}}
+
+    <script>
+        // Logo en base64 para PDF (debes agregar tu logo aquí)
+        var logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+
+        $(document).ready(function() {
+            var fecha = new Date().toLocaleDateString('es-MX', {
+                timeZone: 'America/Mexico_City'
+            });
+
+            // Configuración de DataTable
+            var table = $('#example1').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('producto.index') }}",
+                    type: 'GET'
+                },
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    {data: 'imagen', name: 'imagen', orderable: false, searchable: false, className: 'no-exportar'},
+                    {data: 'codigo', name: 'productos.codigo'},
+                    {data: 'nombre', name: 'productos.nombre'},
+                    {data: 'nombre_categoria', name: 'categorias.nombre'},
+                    {data: 'nombre_marca', name: 'marcas.nombre'},
+                    {data: 'descripcion', name: 'productos.descripcion'},
+                    {data: 'nombre_proveedor', name: 'proveedores.nombre'},
+                    {data: 'cantidad', name: 'productos.cantidad', orderable: true, searchable: false},
+                    {data: 'precio_venta', name: 'productos.precio_venta', orderable: true, searchable: false},
+                    {data: 'precio_compra', name: 'productos.precio_compra', orderable: true, searchable: false},
+                    {data: 'created_at', name: 'productos.created_at'},
+                    {data: 'activo', name: 'productos.activo', orderable: false, searchable: false},
+                    { data: 'boton_compra', name: 'boton_compra', orderable: false, searchable: false },
+                    {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'no-exportar'}
+                ],
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)',
+                            format: {
+                                body: function (data, row, column, node) {
+                                    // Limpiar HTML y extraer solo el texto
+                                    let cleanData = data;
+
+                                    // Si contiene HTML tags, extraer el texto
+                                    if (typeof data === 'string' && data.includes('<')) {
+                                        let $temp = $('<div>').html(data);
+
+                                        // Casos específicos
+                                        if (data.includes('<code>')) {
+                                            // Para códigos de barras: extraer contenido del <code>
+                                            cleanData = "'" + $temp.find('code').text() || $temp.text();
+                                        } else if (data.includes('class="badge"')) {
+                                            // Para badges: extraer texto del span
+                                            cleanData = $temp.find('.badge').text() || $temp.text();
+                                        } else if (data.includes('input[type="checkbox"]') || data.includes('role="switch"')) {
+                                            // Para checkboxes/switches
+                                            return $temp.find('input').is(':checked') ? 'Sí' : 'No';
+                                        } else {
+                                            // Para cualquier otro HTML, extraer solo texto
+                                            cleanData = $temp.text();
+                                        }
+                                    }
+
+                                    // Manejar campo activo por índice de columna
+                                    if (column === 12) { // Columna activo
+                                        if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
+                                            return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
+                                        }
+                                        return cleanData == 1 || cleanData == true || cleanData === 'true' ? 'Sí' : 'No';
+                                    }
+
+                                    return cleanData || data;
+                                }
+                            }
+                        },
+                        title: 'Reporte de Productos',
+                        filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
+                        className: 'btn btn-success btn-sm',
+                        customize: function (xlsx) {
+                            let sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                            // Crear nuevo estilo personalizado para el encabezado
+                            let styles = xlsx.xl['styles.xml'];
+
+                            // Agregar un nuevo estilo con fondo #17a2b8 y texto blanco
+                            let newFill = '<fill><patternFill patternType="solid"><fgColor rgb="FF17A2B8"/></patternFill></fill>';
+                            let newFont = '<font><color rgb="FFFFFFFF"/><b/></font>';
+
+                            // Buscar las secciones de fills y fonts
+                            let fillsSection = styles.getElementsByTagName('fills')[0];
+                            let fontsSection = styles.getElementsByTagName('fonts')[0];
+
+                            // Agregar el nuevo fill
+                            $(fillsSection).append(newFill);
+                            let fillCount = fillsSection.childNodes.length;
+                            fillsSection.setAttribute('count', fillCount);
+
+                            // Agregar la nueva fuente
+                            $(fontsSection).append(newFont);
+                            let fontCount = fontsSection.childNodes.length;
+                            fontsSection.setAttribute('count', fontCount);
+
+                            // Crear el nuevo estilo que combine fill, font y alineación
+                            let newCellXf = '<xf numFmtId="0" fontId="' + (fontCount - 1) + '" fillId="' + (fillCount - 1) + '" borderId="0" applyFont="1" applyFill="1" applyAlignment="1">' +
+                                        '<alignment horizontal="center" vertical="center"/>' +
+                                        '</xf>';
+
+                            let cellXfsSection = styles.getElementsByTagName('cellXfs')[0];
+                            $(cellXfsSection).append(newCellXf);
+                            let xfCount = cellXfsSection.childNodes.length;
+                            cellXfsSection.setAttribute('count', xfCount);
+
+                            // ID del nuevo estilo será xfCount - 1
+                            let customStyleId = xfCount - 1;
+
+                            // Centrar y combinar el título
+                            let mergeCells = sheet.getElementsByTagName('mergeCells')[0];
+                            if (!mergeCells) {
+                                mergeCells = sheet.createElement('mergeCells');
+                                sheet.documentElement.appendChild(mergeCells);
+                            }
+                            let mergeCell = sheet.createElement('mergeCell');
+                            mergeCell.setAttribute('ref', 'A1:L1'); // Ajusta a tu cantidad de columnas
+                            mergeCells.appendChild(mergeCell);
+                            mergeCells.setAttribute('count', mergeCells.childNodes.length);
+
+                            // Centrar título (A1)
+                            $('row c[r^="A1"]', sheet).attr('s', '51');
+
+                            // Aplicar el estilo personalizado al encabezado (segunda fila = thead)
+                            $('row[r="2"] c', sheet).attr('s', customStyleId);
+
+                            // Centrar todo el contenido (desde la tercera fila)
+                            $('row:gt(1)', sheet).each(function () {
+                                if ($(this).attr('r') !== '2') {
+                                    $('c', this).attr('s', '51');
+                                }
+                            });
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)',
+                            format: {
+                                body: function (data, row, column, node) {
+                                    // Manejar checkboxes/switches
+                                    if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
+                                        return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
+                                    }
+
+                                    // Limpiar HTML si es necesario
+                                    if (typeof data === 'string' && data.includes('<')) {
+                                        return $('<div>').html(data).text();
+                                    }
+
+                                    return data;
+                                }
+                            }
+                        },
+                        title: 'Reporte de Productos',
+                        filename: 'reporte_productos_' + new Date().toISOString().slice(0,10),
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
+                        className: 'btn btn-danger btn-sm',
+                        customize: function (doc) {
+                            // Insertar el logo al principio
+                            doc.content.unshift({
+                                image: logoBase64,
+                                width: 100,
+                                alignment: 'left',
+                                margin: [0, 0, 0, 10]
+                            });
+
+                            // Centrar título, bg-secondary header, texto blanco
+                            doc.styles.tableHeader.fillColor = '#17a2b8';
+                            doc.styles.tableHeader.color = 'white';
+                            doc.styles.title = {
+                                alignment: 'center',
+                                fontSize: 16,
+                                bold: true,
+                            };
+
+                            // Agregar fecha debajo del título
+                            doc.content.splice(2, 0, {
+                                text: 'Fecha: ' + fecha,
+                                margin: [0, 0, 0, 12],
+                                alignment: 'center',
+                                fontSize: 10
+                            });
+
+                            // Centrar contenido de las celdas
+                            var objLayout = {};
+                            objLayout.hAlign = 'center';
+                            doc.content[2].layout = objLayout;
+
+                            // Pie de página
+                            doc.footer = function (currentPage, pageCount) {
+                                return {
+                                    text: 'Página ' + currentPage + ' de ' + pageCount,
+                                    alignment: 'center',
+                                    fontSize: 8,
+                                    margin: [0, 10, 0, 0]
+                                };
+                            };
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)'
+                        },
+                        title: 'Reporte de Productos',
+                        text: '<i class="fas fa-print"></i> Imprimir',
+                        className: 'btn btn-secondary btn-sm'
+                    },
+                    {
+                        extend: 'csvHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)'
+                        },
+                        title: 'Reporte de Productos',
+                        filename: 'reporte_productos_' + new Date().toISOString().slice(0, 10),
+                        text: '<i class="fas fa-file-csv"></i> Exportar a CSV',
+                        className: 'btn btn-success btn-sm'
+                    }
+                ],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50],
+                order: [[11, 'desc']], // Ordenar por fecha descendente
+                paging: true,
+                lengthChange: true,
+                searching: true,
+                ordering: true,
+                info: true,
+                responsive: true,
+                autoWidth: false,
+                scrollX: false
+            });
+
+            // Refrescar tabla
+            $('#refreshTable').on('click', function() {
+                table.ajax.reload();
+            });
+
+            // Aplicar clase de fila para productos sin stock
+            table.on('draw', function() {
+                table.rows().every(function() {
+                    var data = this.data();
+                    var node = this.node();
+
+                    // Si el stock es 0, agregar clase table-warning
+                    if (data.cantidad && data.cantidad.includes('Sin stock')) {
+                        $(node).addClass('table-warning');
+                    }
+                });
+            });
+        });
+</script>
+
 @stop
 

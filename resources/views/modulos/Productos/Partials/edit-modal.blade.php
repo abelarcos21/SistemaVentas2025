@@ -291,12 +291,8 @@ $(document).ready(function() {
 
                 });
 
-                // Recargar tabla o actualizar vista
-                if (typeof table !== 'undefined') {
-                    table.ajax.reload();
-                } else {
-                    location.reload();
-                }
+                // Refrescar solo la tabla
+                table.ajax.reload(null, false);
             },
             error: function(xhr) {
                 const errors = xhr.responseJSON?.errors;

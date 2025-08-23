@@ -268,12 +268,9 @@
                         text: `Total: $${response.data.total_compra}`
                     });
 
-                    // Actualizar tabla si existe
-                    if (typeof table !== 'undefined') {
-                        table.ajax.reload();
-                    } else {
-                        location.reload();
-                    }
+                    // Refrescar solo la tabla
+                    table.ajax.reload(null, false);
+
                 } else {
                     mostrarError(response.message);
                 }

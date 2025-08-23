@@ -16,6 +16,7 @@ use App\Models\Marca;
 use Exception;
 use Storage;
 use Illuminate\Http\JsonResponse;
+use Yajra\DataTables\DataTables;
 
 
 class ProductoController extends Controller
@@ -31,10 +32,19 @@ class ProductoController extends Controller
     //index
     public function index(){
 
+        // Si es una petición AJAX (DataTables), devolver JSON
+        if(request()->ajax()) {
+            return $this->getDataTableData();
+        }
+        // Si es una petición normal, devolver la vista
         $categorias = Categoria::all();
         $proveedores = Proveedor::all();
         $marcas = Marca::all();
 
+        return view('modulos.productos.index', compact('categorias', 'proveedores', 'marcas'));
+    }
+
+    private function getDataTableData(){
         $productos = Producto::select(
             'productos.id',
             'productos.nombre',
@@ -50,26 +60,109 @@ class ProductoController extends Controller
             'productos.marca_id',
             'productos.created_at',
             'productos.activo',
-            // otros campos que necesites de productos
-
             'categorias.nombre as nombre_categoria',
             'proveedores.nombre as nombre_proveedor',
             'marcas.nombre as nombre_marca',
             'imagens.ruta as imagen_producto',
             'imagens.id as imagen_id'
         )
-        ->join('categorias', 'productos.categoria_id', '=' , 'categorias.id')
-        ->join('proveedores', 'productos.proveedor_id', '=' , 'proveedores.id')
+        ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
+        ->join('proveedores', 'productos.proveedor_id', '=', 'proveedores.id')
         ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
-        ->with('monedas') // 👈 importante: carga el modelo relacionado correctamente
-        ->get();
+        ->with('monedas');
 
-        return view('modulos.productos.index', compact('productos', 'categorias', 'proveedores', 'marcas'));
+        return DataTables::of($productos)
+            ->addIndexColumn()
+            ->addColumn('boton_compra', function ($producto) {
+                if ($producto->cantidad == 0) {
+                    return '<button type="button" class="btn btn-success btn-sm mr-1 btn-compra d-flex align-items-center"
+                                data-id="'.$producto->id.'">
+                                <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
+                            </button>';
+                } else {
+                    return '<button type="button" class="btn btn-primary btn-sm mr-1 btn-compra d-flex align-items-center"
+                                data-id="'.$producto->id.'">
+                                <i class="fas fa-plus mr-1"></i> Reabastecer
+                            </button>';
+                }
+            })
+            ->addColumn('imagen', function($producto){
+                $ruta = $producto->imagen && $producto->imagen->ruta
+                ? asset('storage/' . $producto->imagen->ruta)
+                : asset('images/placeholder-caja.png');
 
-        /* $productos = Producto::with(['imagen', 'categoria', 'proveedor'])->get();
+                return '
+                    <a href="#" data-toggle="modal" data-target="#modalImagen'.$producto->id.'">
+                        <img src="'.$ruta.'" width="50" height="50"
+                            class="img-thumbnail rounded shadow"
+                            style="object-fit: cover;">
+                    </a>
 
-        return view('producto.index', compact('productos')); */
+                    <div class="modal fade" id="modalImagen'.$producto->id.'"
+                        tabindex="-1"
+                        role="dialog" aria-labelledby="modalLabel'.$producto->id.'" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content bg-white">
+                                <div class="modal-header bg-gradient-info">
+                                    <h5 class="modal-title" id="modalLabel'.$producto->id.'">Imagen de '.$producto->nombre.'</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="'.$ruta.'" class="img-fluid rounded shadow">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ';
+            })
+            ->addColumn('precio_formatted', function ($producto) {
+                return number_format($producto->precio_venta, 2) . ' ' . ($producto->monedas->simbolo ?? '');
+            })
+            ->addColumn('cantidad', function ($producto) {
+                $class = $producto->cantidad > 10 ? 'success' : ($producto->cantidad > 0 ? 'warning' : 'danger');
+                $text = $producto->cantidad > 10 ? 'En stock' : ($producto->cantidad > 0 ? 'Poco stock' : 'Sin stock');
+                return '<span class="badge badge-' . $class . '">' . $text . ' (' . $producto->cantidad . ')</span>';
+            })
+            ->addColumn('activo', function ($producto) {
+                $checked = $producto->activo ? 'checked' : '';
+                return '<div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input toggle-status"
+                                id="status' . $producto->id . '"
+                                data-id="' . $producto->id . '" ' . $checked . '>
+                        <label class="custom-control-label" for="status' . $producto->id . '"></label>
+                        </div>';
+            })
+            ->addColumn('acciones', function ($producto) {
+                $buttons = '<div class="d-flex">';
+
+                if(auth()->user()->can('product-edit')) {
+                    $buttons .= '<button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center"
+                                    data-id="'.$producto->id.'">
+                                    <i class="fas fa-edit mr-1"></i> Editar
+                                </button>';
+                }
+
+                if(auth()->user()->can('product-delete')) {
+                    $buttons .= '<button data-id="'.$producto->id.'"
+                                    class="btn btn-danger btn-delete btn-sm mr-1 d-flex align-items-center">
+                                    <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                </button>';
+                }
+
+                $buttons .= '</div>';
+                return $buttons;
+            })
+            ->editColumn('created_at', function ($producto) {
+                return $producto->created_at->format('d/m/Y H:i');
+            })
+            ->editColumn('nombre', function ($producto) {
+                return '<strong>' . $producto->nombre . '</strong><br>';
+            })
+            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra',])
+            ->make(true);
     }
 
     public function create(){
@@ -167,6 +260,7 @@ class ProductoController extends Controller
         $producto->save();
         return response()->json(['message' => 'Estado Actualizado Correctamente']);
     }
+
 
     //FILTRAR LOS PRODUCTOS Y LAS CATEGORIAS
     public function filtrar(Request $request){
@@ -665,22 +759,23 @@ class ProductoController extends Controller
 
         DB::beginTransaction();
 
-        try{
-
-            //eliminar la imagen si existe
+        try {
+            // eliminar la imagen si existe
             $imagen = $producto->imagen;
 
-            if($imagen){
-                Storage::disk('public')->delete($imagen->ruta);//elimina del disco
-                $imagen->delete();//eliminar de la BD
+            if ($imagen && $imagen->ruta) {
+                if (Storage::disk('public')->exists($imagen->ruta)) {
+                    Storage::disk('public')->delete($imagen->ruta); // elimina del disco
+                }
+                $imagen->delete(); // eliminar de la BD
             }
 
-            $nombreProducto = $producto->nombre;//nombre del producto
-            $producto->delete();//elimina el producto
+            $nombreProducto = $producto->nombre;
+
+            $producto->delete(); // 👈 aquí puede fallar si tiene compras
 
             DB::commit();
 
-            // Si es una petición AJAX, devolver JSON
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -688,13 +783,28 @@ class ProductoController extends Controller
                 ]);
             }
 
-            return redirect()->route('producto.index')->with('success','Producto  '.$nombreProducto.' Eliminado Correctamente');
+            return redirect()->route('producto.index')
+                ->with('success', "Producto {$nombreProducto} Eliminado Correctamente");
 
-        }catch(Exception $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
-            Log::error('Error al eliminar producto: ' . $e->getMessage());
 
-            // Si es una petición AJAX, devolver error JSON
+            // Error de clave foránea (código 23000)
+            if ($e->getCode() == "23000") {
+                $mensaje = "No puedes eliminar el producto '{$producto->nombre}' porque tiene compras registradas.";
+
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $mensaje
+                    ], 400);
+                }
+
+                return redirect()->route('producto.index')
+                    ->with('error', $mensaje);
+            }
+
+            // Otros errores de SQL
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -702,8 +812,23 @@ class ProductoController extends Controller
                 ], 500);
             }
 
-            return redirect()->route('producto.index')->with('error', 'Ocurrió un error al eliminar el producto.');
+            return redirect()->route('producto.index')
+                ->with('error', 'Ocurrió un error al eliminar el producto.');
 
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ocurrió un error inesperado: '.$e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->route('producto.index')
+                ->with('error', 'Ocurrió un error inesperado.');
         }
     }
+
+
 }
