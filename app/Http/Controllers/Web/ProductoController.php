@@ -760,75 +760,48 @@ class ProductoController extends Controller
         DB::beginTransaction();
 
         try {
-            // eliminar la imagen si existe
-            $imagen = $producto->imagen;
-
-            if ($imagen && $imagen->ruta) {
-                if (Storage::disk('public')->exists($imagen->ruta)) {
-                    Storage::disk('public')->delete($imagen->ruta); // elimina del disco
-                }
-                $imagen->delete(); // eliminar de la BD
-            }
-
             $nombreProducto = $producto->nombre;
 
-            $producto->delete(); // 👈 aquí puede fallar si tiene compras
+            if ($producto->tieneCompras()) {
+                // Marcar como inactivo
+                $producto->activo = false;
+                $producto->save();
+
+                DB::commit();
+
+                $mensaje = "El producto '{$nombreProducto}' fue marcado como inactivo porque tiene compras registradas.";
+
+                return $request->ajax()
+                    ? response()->json(['success' => true, 'message' => $mensaje])
+                    : redirect()->route('producto.index')->with('info', $mensaje);
+            }
+
+            // Eliminar normal
+            if ($producto->imagen && $producto->imagen->ruta) {
+                if (Storage::disk('public')->exists($producto->imagen->ruta)) {
+                    Storage::disk('public')->delete($producto->imagen->ruta);
+                }
+                $producto->imagen->delete();
+            }
+
+            $producto->delete();
 
             DB::commit();
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => "Producto '{$nombreProducto}' eliminado correctamente."
-                ]);
-            }
+            $mensaje = "Producto '{$nombreProducto}' eliminado correctamente.";
 
-            return redirect()->route('producto.index')
-                ->with('success', "Producto {$nombreProducto} Eliminado Correctamente");
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            DB::rollBack();
-
-            // Error de clave foránea (código 23000)
-            if ($e->getCode() == "23000") {
-                $mensaje = "No puedes eliminar el producto '{$producto->nombre}' porque tiene compras registradas.";
-
-                if ($request->ajax()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => $mensaje
-                    ], 400);
-                }
-
-                return redirect()->route('producto.index')
-                    ->with('error', $mensaje);
-            }
-
-            // Otros errores de SQL
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ocurrió un error al eliminar el producto.'
-                ], 500);
-            }
-
-            return redirect()->route('producto.index')
-                ->with('error', 'Ocurrió un error al eliminar el producto.');
+            return $request->ajax()
+                ? response()->json(['success' => true, 'message' => $mensaje])
+                : redirect()->route('producto.index')->with('success', $mensaje);
 
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Error al eliminar producto: ' . $e->getMessage());
 
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Ocurrió un error inesperado: '.$e->getMessage()
-                ], 500);
-            }
-
-            return redirect()->route('producto.index')
-                ->with('error', 'Ocurrió un error inesperado.');
+            return $request->ajax()
+                ? response()->json(['success' => false, 'message' => 'Ocurrió un error al eliminar el producto.'], 500)
+                : redirect()->route('producto.index')->with('error', 'Ocurrió un error al eliminar el producto.');
         }
     }
-
 
 }

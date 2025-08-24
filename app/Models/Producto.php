@@ -52,10 +52,31 @@ class Producto extends Model
     }
 
     /**
-     * Verifica si el producto tiene ventas registradas
+     * Verifica si el producto tiene Ventas registradas
      */
     public function tieneVentas(){
         return $this->detalleVentas()->exists();
+    }
+
+    /**
+     * Verifica si el producto tiene Compras registradas
+     */
+    public function tieneCompras(){
+        return $this->compras()->exists();
+    }
+
+    /**
+     * Filtrar productos activos en las consultas
+     */
+    public function scopeActivos($query){
+        return $query->where('activo', true);
+    }
+
+    /**
+     * Filtrar productos inactivos en las consultas
+     */
+    public function scopeInactivos($query){
+        return $query->where('activo', false);
     }
 
     /**
@@ -73,6 +94,11 @@ class Producto extends Model
     }
 
     // Relaciones
+
+    public function compras(){
+        return $this->hasMany(Compra::class, 'producto_id');
+    }
+
     public function usuario() {
         return $this->belongsTo(User::class, 'user_id');
     }
