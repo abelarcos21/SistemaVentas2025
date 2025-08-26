@@ -1520,32 +1520,69 @@
                                     // Limpiar HTML y extraer solo el texto
                                     let cleanData = data;
 
-                                    // Si contiene HTML tags, extraer el texto
+                                    // Manejar campo activo por índice de columna PRIMERO
+                                    if (column === 11) { // Columna activo
+                                        console.log('Procesando columna activo:', data, node); // Debug
+
+                                        // Verificar si hay checkbox o switch en el nodo
+                                        let $node = $(node);
+                                        let checkbox = $node.find('input[type="checkbox"], input[role="switch"], [role="switch"]');
+
+                                        if (checkbox.length > 0) {
+                                            let isChecked = checkbox.is(':checked') || checkbox.prop('checked');
+                                            console.log('Checkbox encontrado, checked:', isChecked); // Debug
+                                            return isChecked ? 'Sí' : 'No';
+                                        }
+
+                                        // Verificar por clases comunes de switches/toggles
+                                        if ($node.find('.custom-switch, .form-switch, .switch').length > 0) {
+                                            let switchElement = $node.find('.custom-switch input, .form-switch input, .switch input');
+                                            if (switchElement.length > 0) {
+                                                return switchElement.is(':checked') ? 'Sí' : 'No';
+                                            }
+                                        }
+
+                                        // Verificar si el HTML contiene indicadores de estado activo
+                                        if (typeof data === 'string') {
+                                            if (data.includes('checked') || data.includes('active') || data.includes('enabled')) {
+                                                return 'Sí';
+                                            }
+                                            if (data.includes('unchecked') || data.includes('inactive') || data.includes('disabled')) {
+                                                return 'No';
+                                            }
+                                        }
+
+                                        // Verificar valores booleanos o numéricos
+                                        if (cleanData === 1 || cleanData === '1' || cleanData === true || cleanData === 'true' || cleanData === 'Sí' || cleanData === 'Si') {
+                                            return 'Sí';
+                                        }
+                                        if (cleanData === 0 || cleanData === '0' || cleanData === false || cleanData === 'false' || cleanData === 'No') {
+                                            return 'No';
+                                        }
+
+                                        // Si llegamos aquí, valor por defecto
+                                        console.log('Valor por defecto para activo:', cleanData); // Debug
+                                        return cleanData ? 'Sí' : 'No';
+                                    }
+
+                                    // Procesar otros tipos de contenido HTML
                                     if (typeof data === 'string' && data.includes('<')) {
                                         let $temp = $('<div>').html(data);
 
                                         // Casos específicos
                                         if (data.includes('<code>')) {
                                             // Para códigos de barras: extraer contenido del <code>
-                                            cleanData = "'" + $temp.find('code').text() || $temp.text();
+                                            cleanData = "'" + ($temp.find('code').text() || $temp.text());
                                         } else if (data.includes('class="badge"')) {
                                             // Para badges: extraer texto del span
                                             cleanData = $temp.find('.badge').text() || $temp.text();
                                         } else if (data.includes('input[type="checkbox"]') || data.includes('role="switch"')) {
-                                            // Para checkboxes/switches
+                                            // Para checkboxes/switches generales
                                             return $temp.find('input').is(':checked') ? 'Sí' : 'No';
                                         } else {
                                             // Para cualquier otro HTML, extraer solo texto
                                             cleanData = $temp.text();
                                         }
-                                    }
-
-                                    // Manejar campo activo por índice de columna
-                                    if (column === 12) { // Columna activo
-                                        if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
-                                            return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
-                                        }
-                                        return cleanData == 1 || cleanData == true || cleanData === 'true' ? 'Sí' : 'No';
                                     }
 
                                     return cleanData || data;
