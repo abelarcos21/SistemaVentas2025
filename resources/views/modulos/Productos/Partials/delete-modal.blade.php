@@ -235,8 +235,8 @@ function initializeDeleteModal() {
                             timer: 2000
                         });
 
-                        //  recargar tabla
-                        table.ajax.reload(null, false);
+                        // Refrescar manteniendo la página actual y posición
+                        $('#example1').DataTable().ajax.reload(null, false);
                     },
                     error: function(xhr) {
                         console.error('Error al eliminar producto:', xhr);

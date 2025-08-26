@@ -291,8 +291,8 @@ $(document).ready(function() {
 
                 });
 
-                // Refrescar solo la tabla
-                table.ajax.reload(null, false);
+                // Refrescar manteniendo la página actual y posición
+                $('#example1').DataTable().ajax.reload(null, false);
             },
             error: function(xhr) {
                 const errors = xhr.responseJSON?.errors;

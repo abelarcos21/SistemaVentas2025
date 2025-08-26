@@ -161,7 +161,10 @@ class ProductoController extends Controller
             ->editColumn('nombre', function ($producto) {
                 return '<strong>' . $producto->nombre . '</strong><br>';
             })
-            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra',])
+            ->editColumn('codigo', function ($producto) {
+                return '<code>' . $producto->codigo . '</code><br>';
+            })
+            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo',])
             ->make(true);
     }
 

@@ -268,8 +268,8 @@
                         text: `Total: $${response.data.total_compra}`
                     });
 
-                    // Refrescar solo la tabla
-                    table.ajax.reload(null, false);
+                    // Refrescar manteniendo la página actual y posición
+                    $('#example1').DataTable().ajax.reload(null, false);
 
                 } else {
                     mostrarError(response.message);

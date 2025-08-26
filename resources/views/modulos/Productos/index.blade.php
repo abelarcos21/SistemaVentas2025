@@ -1478,8 +1478,6 @@
     </script> --}}
 
     <script>
-        // Logo en base64 para PDF (debes agregar tu logo aquí)
-        var logoBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
 
         $(document).ready(function() {
             var fecha = new Date().toLocaleDateString('es-MX', {

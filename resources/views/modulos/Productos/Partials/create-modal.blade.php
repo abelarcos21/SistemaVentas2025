@@ -350,9 +350,10 @@ function initializeCreateModal() {
                     text: 'El producto se ha creado exitosamente.',
                     showConfirmButton: false,
                     timer: 1500
-                }).then(() => {
-                    location.reload();  // Recargar o actualizar vista
                 });
+
+                // Refrescar manteniendo la página actual y posición
+                $('#example1').DataTable().ajax.reload(null, false);
 
             },
             error: function(xhr) {
