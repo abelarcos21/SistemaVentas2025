@@ -7400,10 +7400,6 @@
                 "jquery",
                 "laravel"
             ],
-            "support": {
-                "issues": "https://github.com/yajra/datatables/issues",
-                "source": "https://github.com/yajra/datatables/tree/v11.0.0"
-            },
             "funding": [
                 {
                     "url": "https://github.com/sponsors/yajra",
