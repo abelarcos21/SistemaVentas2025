@@ -119,7 +119,7 @@ class ProductoController extends Controller
                 ';
             })
             ->addColumn('precio_formatted', function ($producto) {
-                return number_format($producto->precio_venta, 2) . ' ' . ($producto->monedas->simbolo ?? '');
+                return number_format($producto->precio_venta, 2) . ' ' . ($producto->monedas->codigo ?? '');
             })
             ->addColumn('cantidad', function ($producto) {
                 $class = $producto->cantidad > 10 ? 'success' : ($producto->cantidad > 0 ? 'warning' : 'danger');

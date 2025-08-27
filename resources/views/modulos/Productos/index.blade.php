@@ -906,15 +906,6 @@
     {{--INCLUIR PLUGIN SELECT2 ESPAÑOL--}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
-    {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
-   {{--  <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script> --}}
-
     {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>
         @if(session('success'))
@@ -1666,61 +1657,245 @@
                                         return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
                                     }
 
+                                    // Manejar badges/etiquetas de estado
+                                    if ($(node).find('.badge').length > 0) {
+                                        return $(node).find('.badge').text().trim();
+                                    }
+
+                                    // Formatear números con separadores de miles
+                                    if ($(node).hasClass('currency') || $(node).data('type') === 'currency') {
+                                        let number = parseFloat(data.replace(/[^0-9.-]+/g,""));
+                                        if (!isNaN(number)) {
+                                            return new Intl.NumberFormat('es-MX', {
+                                                style: 'currency',
+                                                currency: 'MXN'
+                                            }).format(number);
+                                        }
+                                    }
+
                                     // Limpiar HTML si es necesario
                                     if (typeof data === 'string' && data.includes('<')) {
-                                        return $('<div>').html(data).text();
+                                        return $('<div>').html(data).text().trim();
                                     }
 
                                     return data;
+                                },
+                                header: function (data, column) {
+                                    // Limpiar encabezados de HTML
+                                    return $('<div>').html(data).text().trim();
                                 }
                             }
                         },
                         title: 'Reporte de Productos',
-                        filename: 'reporte_productos_' + new Date().toISOString().slice(0,10),
+                        filename: function() {
+                            const now = new Date();
+                            const timestamp = now.toISOString().slice(0,19).replace(/:/g, '-');
+                            return `reporte_productos_${timestamp}`;
+                        },
                         orientation: 'landscape',
                         pageSize: 'A4',
                         text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
-                        className: 'btn btn-danger btn-sm',
+                        className: 'btn btn-danger btn-sm shadow-sm',
                         customize: function (doc) {
-                            // Insertar el logo al principio
+                            const fecha = new Date().toLocaleDateString('es-MX', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            // === ENCABEZADO MEJORADO ===
                             doc.content.unshift({
-                                image: logoBase64,
-                                width: 100,
-                                alignment: 'left',
-                                margin: [0, 0, 0, 10]
+                                stack: [
+                                    {
+                                        columns: [
+                                            {
+                                                image: logoBase64,
+                                                width: 80,
+                                                alignment: 'left'
+                                            },
+                                            {
+                                                stack: [
+                                                    {
+                                                        text: 'NOMBRE DE TU EMPRESA',
+                                                        style: 'companyName',
+                                                        alignment: 'right'
+                                                    },
+                                                    {
+                                                        text: 'Sistema de Gestión',
+                                                        style: 'companySubtitle',
+                                                        alignment: 'right'
+                                                    }
+                                                ],
+                                                width: '*'
+                                            }
+                                        ],
+                                        margin: [0, 0, 0, 20]
+                                    },
+                                    {
+                                        canvas: [
+                                            {
+                                                type: 'line',
+                                                x1: 0, y1: 0,
+                                                x2: 515, y2: 0,
+                                                lineWidth: 2,
+                                                lineColor: '#17a2b8'
+                                            }
+                                        ],
+                                        margin: [0, 0, 0, 15]
+                                    }
+                                ]
                             });
 
-                            // Centrar título, bg-secondary header, texto blanco
-                            doc.styles.tableHeader.fillColor = '#17a2b8';
-                            doc.styles.tableHeader.color = 'white';
-                            doc.styles.title = {
-                                alignment: 'center',
-                                fontSize: 16,
-                                bold: true,
-                            };
-
-                            // Agregar fecha debajo del título
-                            doc.content.splice(2, 0, {
-                                text: 'Fecha: ' + fecha,
-                                margin: [0, 0, 0, 12],
-                                alignment: 'center',
-                                fontSize: 10
-                            });
-
-                            // Centrar contenido de las celdas
-                            var objLayout = {};
-                            objLayout.hAlign = 'center';
-                            doc.content[2].layout = objLayout;
-
-                            // Pie de página
-                            doc.footer = function (currentPage, pageCount) {
-                                return {
-                                    text: 'Página ' + currentPage + ' de ' + pageCount,
+                            // === ESTILOS MEJORADOS ===
+                            doc.styles = Object.assign(doc.styles || {}, {
+                                companyName: {
+                                    fontSize: 16,
+                                    bold: true,
+                                    color: '#2c3e50'
+                                },
+                                companySubtitle: {
+                                    fontSize: 10,
+                                    color: '#7f8c8d',
+                                    italics: true
+                                },
+                                title: {
+                                    fontSize: 18,
+                                    bold: true,
                                     alignment: 'center',
-                                    fontSize: 8,
-                                    margin: [0, 10, 0, 0]
+                                    color: '#2c3e50',
+                                    margin: [0, 15, 0, 5]
+                                },
+                                subtitle: {
+                                    fontSize: 11,
+                                    alignment: 'center',
+                                    color: '#7f8c8d',
+                                    margin: [0, 0, 0, 15]
+                                },
+                                tableHeader: {
+                                    bold: true,
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fillColor: '#17a2b8',
+                                    alignment: 'center'
+                                },
+                                tableCell: {
+                                    fontSize: 9,
+                                    alignment: 'center'
+                                }
+                            });
+
+                            // === INFORMACIÓN DEL REPORTE ===
+                            doc.content.splice(2, 0, {
+                                columns: [
+                                    {
+                                        text: [
+                                            { text: 'Fecha de generación: ', bold: true },
+                                            fecha
+                                        ],
+                                        fontSize: 10,
+                                        alignment: 'left'
+                                    },
+                                    {
+                                        text: [
+                                            { text: 'Total de registros: ', bold: true },
+                                            doc.content[doc.content.length - 1].table.body.length - 1
+                                        ],
+                                        fontSize: 10,
+                                        alignment: 'right'
+                                    }
+                                ],
+                                margin: [0, 0, 0, 15]
+                            });
+
+                            // === MEJORAR TABLA ===
+                            if (doc.content && doc.content.length > 0) {
+                                // Encontrar la tabla
+                                const tableIndex = doc.content.findIndex(item => item.table);
+                                if (tableIndex > -1) {
+                                    const table = doc.content[tableIndex];
+
+                                    // Aplicar estilos a todas las celdas
+                                    table.table.body.forEach((row, rowIndex) => {
+                                        row.forEach((cell, cellIndex) => {
+                                            if (rowIndex === 0) {
+                                                // Encabezados
+                                                if (typeof cell === 'object') {
+                                                    cell.style = 'tableHeader';
+                                                } else {
+                                                    row[cellIndex] = { text: cell, style: 'tableHeader' };
+                                                }
+                                            } else {
+                                                // Celdas de datos
+                                                if (typeof cell === 'object') {
+                                                    cell.style = 'tableCell';
+                                                } else {
+                                                    row[cellIndex] = { text: cell, style: 'tableCell' };
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    // Layout de tabla mejorado
+                                    table.layout = {
+                                        hLineWidth: function(i, node) {
+                                            return (i === 0 || i === node.table.body.length) ? 2 : 1;
+                                        },
+                                        vLineWidth: function(i, node) {
+                                            return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+                                        },
+                                        hLineColor: function(i, node) {
+                                            return (i === 0 || i === node.table.body.length) ? '#17a2b8' : '#ecf0f1';
+                                        },
+                                        vLineColor: function(i, node) {
+                                            return (i === 0 || i === node.table.widths.length) ? '#17a2b8' : '#ecf0f1';
+                                        },
+                                        paddingLeft: function(i, node) { return 8; },
+                                        paddingRight: function(i, node) { return 8; },
+                                        paddingTop: function(i, node) { return 6; },
+                                        paddingBottom: function(i, node) { return 6; },
+                                        fillColor: function(i, node) {
+                                            return (i % 2 === 0) ? null : '#f8f9fa';
+                                        }
+                                    };
+                                }
+                            }
+
+                            // === PIE DE PÁGINA MEJORADO ===
+                            doc.footer = function(currentPage, pageCount) {
+                                return {
+                                    columns: [
+                                        {
+                                            text: 'Generado automáticamente por el sistema',
+                                            alignment: 'left',
+                                            fontSize: 8,
+                                            color: '#95a5a6'
+                                        },
+                                        {
+                                            text: `Página ${currentPage} de ${pageCount}`,
+                                            alignment: 'right',
+                                            fontSize: 8,
+                                            color: '#95a5a6'
+                                        }
+                                    ],
+                                    margin: [40, 10, 40, 0]
                                 };
                             };
+
+                            // === MARCA DE AGUA (OPCIONAL) ===
+                            /*
+                            doc.watermark = {
+                                text: 'CONFIDENCIAL',
+                                color: 'rgba(200, 200, 200, 0.3)',
+                                bold: true,
+                                italics: false,
+                                fontSize: 40
+                            };
+                            */
+
+                            // === MÁRGENES DEL DOCUMENTO ===
+                            doc.pageMargins = [20, 40, 20, 60];
                         }
                     },
                     {
