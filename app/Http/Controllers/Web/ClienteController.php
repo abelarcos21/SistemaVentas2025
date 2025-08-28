@@ -22,6 +22,13 @@ class ClienteController extends Controller
         return view('modulos.clientes.create');
     }
 
+    /**
+    * Mostrar modal de creación de cliente
+    */
+    public function createModal(){
+        return view('modulos.clientes.partials.create-modal');
+    }
+
     public function edit(Cliente $cliente){
 
         return view('modulos.clientes.edit', compact('cliente'));

@@ -190,6 +190,11 @@ Route::prefix('clientes')->group(function(){
     Route::put('{cliente}', [ClienteController::class, 'update'])->name('cliente.update');
     Route::delete('{cliente}', [ClienteController::class, 'destroy'])->name('cliente.destroy');
 
+    // Rutas adicionales para AJAX y modales
+    Route::get('/create-modal', [ClienteController::class, 'createModal'])->name('cliente.create.modal');
+    Route::get('/search', [ClienteController::class, 'search'])->name('search');
+    Route::get('/stats', [ClienteController::class, 'stats'])->name('cliente.stats');
+
 });
 
 //RUTA PARA REGISTRAR LOS METODOS DE PAGOS
