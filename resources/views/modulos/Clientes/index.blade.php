@@ -74,15 +74,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header bg-gradient-primary">
                             <h3 class="card-title">
                                 <i class="fas fa-list"></i> Lista de Clientes
                             </h3>
                             <div class="card-tools">
-                                <button type="button" class="btn btn-primary btn-sm btn-create" title="Agregar nuevo cliente">
+                                <button type="button" class="btn btn-light btn-create bg-gradient-light text-primary btn-sm" title="Agregar nuevo cliente">
                                     <i class="fas fa-user-plus"></i> Nuevo Cliente
                                 </button>
-                                <button type="button" class="btn btn-info btn-sm" onclick="recargarEstadisticas()" title="Actualizar estadísticas">
+                                <button type="button" class="btn btn-light bg-gradient-light text-primary btn-sm" onclick="recargarEstadisticas()" title="Actualizar estadísticas">
                                     <i class="fas fa-sync-alt"></i> Actualizar
                                 </button>
                             </div>
@@ -90,8 +90,8 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="tabla-clientes" class="table table-bordered table-striped table-hover">
-                                    <thead class="thead-dark">
+                                <table id="example1" class="table table-bordered table-striped table-hover">
+                                    <thead class="bg-gradient-info">
                                         <tr>
                                             <th width="5%">#</th>
                                             <th width="20%">Nombre Completo</th>
@@ -198,12 +198,7 @@
             transform: translateY(-2px);
         }
 
-        .table th {
-            vertical-align: middle;
-            background-color: #343a40;
-            color: white;
-            border-color: #454d55;
-        }
+       
 
         .table td {
             vertical-align: middle;
@@ -250,20 +245,54 @@
     <script>
         $(document).ready(function() {
             // Inicializar DataTables
-            $('#tabla-clientes').DataTable({
-                responsive: true,
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
-                },
-                pageLength: 10,
-                order: [[0, 'desc']], // Ordenar por ID descendente
-                columnDefs: [
+             $('#example1').DataTable({
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
+                buttons: [
+                    /* {
+                        extend: 'copy',
+                        text: '<i class="fas fa-copy"></i> COPIAR',
+                        className: 'btn btn-primary btn-sm'
+                    }, */
                     {
-                        targets: [6], // Columna de acciones
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
+                        extend: 'excel',
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
+                        className: 'btn btn-success btn-sm'
+                    },
+                    {
+                        extend: 'pdf',
+                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
+                        className: 'btn btn-danger btn-sm'
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Visualizar PDF',
+                        className: 'btn btn-warning btn-sm'
+                    },
+                    /* {
+                        extend: 'csv',
+                        text: '<i class="fas fa-upload"></i> CSV',
+                        className: 'btn btn-info btn-sm'
+                    } */
+                ],
+
+                "language": {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+
+                // Opcional: Personalizaciones
+                "pageLength": 10,
+                "lengthMenu": [5, 10, 25, 50],
+                "order": [[2, 'desc']], // Ordenar por fecha descendente
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "responsive": true,
+                "autoWidth": false,
+                "scrollX": false,
+
+
             });
 
             // Cargar estadísticas iniciales
