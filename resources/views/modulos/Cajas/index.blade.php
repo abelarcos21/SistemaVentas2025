@@ -6,7 +6,6 @@
     <h1>Módulo de Caja</h1>
 @stop
 
-
 @section('content')
 
     {{-- Mensajes con SweetAlert2 --}}
@@ -31,11 +30,11 @@
         </script>
     @endif
 
-    {{-- Caja abierta o botón para abrir --}}
     @php
         $cajaAbierta = \App\Models\Caja::where('user_id', Auth::id())->where('estado', 'abierta')->first();
     @endphp
 
+    {{-- Caja abierta o abrir --}}
     @if(!$cajaAbierta)
         <div class="card">
             <div class="card-header bg-gradient-primary text-white">Abrir Caja</div>
@@ -65,7 +64,7 @@
                 <p><strong>Total Egresos:</strong> ${{ number_format($cajaAbierta->total_egresos,2) }}</p>
                 <hr>
 
-                {{-- Registrar movimiento --}}
+                {{-- Movimiento --}}
                 <form id="formMovimiento" action="{{ route('cajas.movimiento', $cajaAbierta) }}" method="POST" class="mb-3">
                     @csrf
                     <div class="form-row">
@@ -101,11 +100,11 @@
         </div>
     @endif
 
-    {{-- Historial de cajas --}}
+    {{-- Historial con DataTable --}}
     <div class="card mt-4">
         <div class="card-header bg-gradient-info text-white">Historial de Cajas</div>
         <div class="card-body table-responsive">
-            <table class="table table-bordered table-striped">
+            <table id="tablaCajas" class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -148,51 +147,77 @@
 
 @stop
 
+@section('css')
+    {{-- DataTables CSS --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
+@stop
+
 @section('js')
-<script>
-    // Confirmación abrir caja
-    document.getElementById('formAbrirCaja')?.addEventListener('submit', function(e){
-        e.preventDefault();
-        Swal.fire({
-            title: '¿Abrir Caja?',
-            text: "Se registrará el monto inicial.",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, abrir',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) this.submit();
-        });
-    });
+    {{-- DataTables JS --}}
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
-    // Confirmación registrar movimiento
-    document.getElementById('formMovimiento')?.addEventListener('submit', function(e){
-        e.preventDefault();
-        Swal.fire({
-            title: '¿Registrar movimiento?',
-            text: "Se guardará en la caja actual.",
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, registrar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) this.submit();
+    <script>
+        // Historial con DataTable
+        $(function () {
+            $('#tablaCajas').DataTable({
+                responsive: true,
+                autoWidth: false,
+                dom: '<"d-flex justify-content-between align-items-center mb-2"Bf>rt<"d-flex justify-content-between align-items-center mt-2"lip>',
+                buttons: [
+                    { extend: 'excelHtml5', text: '📊 Excel', className: 'btn btn-success btn-sm' },
+                    { extend: 'pdfHtml5', text: '📄 PDF', className: 'btn btn-danger btn-sm' },
+                    { extend: 'print', text: '🖨️ Imprimir', className: 'btn btn-info btn-sm' }
+                ],
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json"
+                }
+            });
         });
-    });
 
-    // Confirmación cerrar caja
-    document.getElementById('formCerrarCaja')?.addEventListener('submit', function(e){
-        e.preventDefault();
-        Swal.fire({
-            title: '¿Cerrar Caja?',
-            text: "No podrás volver a modificarla.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, cerrar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) this.submit();
+        // Confirmaciones SweetAlert2
+        document.getElementById('formAbrirCaja')?.addEventListener('submit', function(e){
+            e.preventDefault();
+            Swal.fire({
+                title: '¿Abrir Caja?',
+                text: "Se registrará el monto inicial.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, abrir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) this.submit(); });
         });
-    });
-</script>
+
+        document.getElementById('formMovimiento')?.addEventListener('submit', function(e){
+            e.preventDefault();
+            Swal.fire({
+                title: '¿Registrar movimiento?',
+                text: "Se guardará en la caja actual.",
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, registrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) this.submit(); });
+        });
+
+        document.getElementById('formCerrarCaja')?.addEventListener('submit', function(e){
+            e.preventDefault();
+            Swal.fire({
+                title: '¿Cerrar Caja?',
+                text: "No podrás volver a modificarla.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cerrar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => { if (result.isConfirmed) this.submit(); });
+        });
+    </script>
 @stop
