@@ -39,6 +39,63 @@ class ClienteController extends Controller
         return view('modulos.clientes.show', compact('cliente'));
     }
 
+    /**
+    * Buscar clientes para select2 o autocomplete
+    */
+    public function search(Request $request){
+        $term = $request->get('q', '');
+
+        $clientes = Cliente::where('activo', 1)
+            ->where(function($query) use ($term) {
+                $query->where('nombre', 'LIKE', "%{$term}%")
+                    ->orWhere('apellido', 'LIKE', "%{$term}%")
+                    ->orWhere('rfc', 'LIKE', "%{$term}%")
+                    ->orWhere('correo', 'LIKE', "%{$term}%");
+            })
+            ->limit(10)
+            ->get()
+            ->map(function($cliente) {
+                return [
+                    'id' => $cliente->id,
+                    'text' => $cliente->nombre . ' ' . $cliente->apellido . ($cliente->rfc ? " ({$cliente->rfc})" : ''),
+                    'nombre_completo' => $cliente->nombre . ' ' . $cliente->apellido,
+                    'rfc' => $cliente->rfc,
+                    'telefono' => $cliente->telefono,
+                    'correo' => $cliente->correo
+                ];
+            });
+
+        return response()->json([
+            'results' => $clientes
+        ]);
+    }
+
+    /**
+    * Obtener estadísticas de clientes
+    */
+    public function stats(){
+        $stats = [
+            'total' => Cliente::count(),
+            'activos' => Cliente::where('activo', 1)->count(),
+            'inactivos' => Cliente::where('activo', 0)->count(),
+            'con_rfc' => Cliente::whereNotNull('rfc')->count(),
+            'con_correo' => Cliente::whereNotNull('correo')->count(),
+            'registrados_hoy' => Cliente::whereDate('created_at', today())->count(),
+            'registrados_este_mes' => Cliente::whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count()
+        ];
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'stats' => $stats
+            ]);
+        }
+
+        return $stats;
+    }
+
     public function store(Request $request){
 
         // Validar datos

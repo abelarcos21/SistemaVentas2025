@@ -19,6 +19,7 @@ use App\Http\Controllers\Web\CarritoController;
 use App\Http\Controllers\Web\NegocioController;
 use App\Http\Controllers\Web\PagoController;
 use App\Http\Controllers\Web\POSController;
+use App\Http\Controllers\Web\CajaController;
 
 
 use App\Http\Controllers\Facturacion\FacturaController;
@@ -124,6 +125,14 @@ Route::prefix('categorias')->group(function(){
     Route::put('{categoria}', [CategoriaController::class, 'update'])->name('categoria.update');
     Route::delete('{categoria}', [CategoriaController::class, 'destroy'])->name('categoria.destroy');
 
+});
+
+///////////////////RUTA CAJAS
+Route::prefix('cajas')->group(function () {
+    Route::get('/', [CajaController::class, 'index'])->name('cajas.index');
+    Route::post('/abrir', [CajaController::class, 'abrir'])->name('cajas.abrir');
+    Route::post('/{caja}/cerrar', [CajaController::class, 'cerrar'])->name('cajas.cerrar');
+    Route::post('/{caja}/movimiento', [CajaController::class, 'movimiento'])->name('cajas.movimiento');
 });
 
 ///////////////////RUTA MARCAS

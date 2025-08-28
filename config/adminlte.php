@@ -360,9 +360,11 @@ return [
             'icon' => 'fas fa-store',
         ],
 
-
-
-
+        [
+            'text' => 'Caja',
+            'url' => 'cajas/',
+            'icon' => 'fas fa-cash-register',
+        ],
 
         [
             'text' => 'Inventario',
