@@ -16,6 +16,7 @@ use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Categoria;
+use App\Models\Caja;
 
 class VentaController extends Controller
 {
@@ -97,8 +98,17 @@ class VentaController extends Controller
                 ]);
             }
 
-            //crear la venta
+            // 1. Buscar la caja abierta del usuario actual
+            $caja = Caja::getCajaActivaByUser(auth()->id());
+
+            if (!$caja) {
+                DB::rollBack();
+                return to_route('venta.index')->with('error', 'No tienes una caja abierta. Abre una antes de registrar ventas.');
+            }
+
+            //Crear la venta con la caja asociada
             $venta = new Venta();
+            $venta->caja_id = $caja->id; // aquí se liga la venta con la caja
             $venta->user_id = Auth::id(); // ← asignas aquí el usuario
             $venta->cliente_id  = $request->cliente_id;   // ← asignas aquí el cliente
             $venta->empresa_id = 1;
@@ -118,6 +128,9 @@ class VentaController extends Controller
 
             // Generar el folio formateado y asignamos el folio ala venta
             $venta->folio = sprintf('%s-%06d', $folio->serie, $folio->ultimo_numero);
+
+            // Actualizar el total de ventas en la caja
+            $caja->increment('total_ventas', $venta->total_venta);
 
             $venta->save();//guardamos la venta
 
