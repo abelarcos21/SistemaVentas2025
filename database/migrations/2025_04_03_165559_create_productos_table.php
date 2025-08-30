@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
+
+            //LLAVES FORANEAS
             $table->foreignId('user_id')->constrained('users');//LLAVES FORANEA
             $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEA
             $table->foreignId('proveedor_id')->constrained('proveedores');//LLAVES FORANEA
             $table->foreignId('marca_id')->constrained('marcas');//LLAVES FORANEA
             $table->foreignId('impuesto_id')->nullable()->constrained('impuestos');// 002 para IVA. Si en un futuro los productos pueden tener más de un impuesto (IVA + IEPS), deberías tener una tabla pivote impuesto_producto.
+
+            // CLAVE FORÁNEA A MONEDAS
+            $table->foreignId('moneda_id')->default(1)->constrained('monedas');
+            //asumo que en la tabla `monedas` tienes un registro con id=1 para MXN
+
+            //CAMPOS
             $table->string('codigo', 13)->unique()->nullable();
             $table->string('barcode_path')->nullable(); // Imagen del código de barras
             $table->string('nombre', 50);
@@ -37,6 +45,7 @@ return new class extends Migration
             $table->enum('tipo_factor', ['Tasa', 'Cuota', 'Exento'])->nullable();// Tasa, Exento, Cuota
             $table->string('objeto_imp', 2)->default('02');//01: No objeto, 02: Sí objeto, 03: Exento
             $table->string('numero_identificacion')->nullable();
+
             $table->timestamps();
         });
     }

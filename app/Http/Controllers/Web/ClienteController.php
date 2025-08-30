@@ -8,13 +8,52 @@ use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Yajra\DataTables\DataTables;
 
 class ClienteController extends Controller
 {
     //index
-    public function index(){
+    /* public function index(){
         $clientes = Cliente::all();
         return view('modulos.clientes.index', compact('clientes'));
+    } */
+
+    public function index(Request $request){
+        if ($request->ajax()) {
+            $data = Cliente::select('*');
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('acciones', function($row) {
+                    $actionBtn = '<div class="d-flex">';
+                    $actionBtn .= '<a href="'.route('cliente.show', $row->id).'" class="btn btn-info btn-sm mr-1" title="Ver"><i class="fas fa-eye"></i></a>';
+                    $actionBtn .= '<a href="'.route('cliente.edit', $row->id).'" class="btn btn-warning btn-sm mr-1" title="Editar"><i class="fas fa-edit"></i></a>';
+                    $actionBtn .= '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'" title="Eliminar"><i class="fas fa-trash-alt"></i></button>';
+                    $actionBtn .= '</div>';
+                    return $actionBtn;
+                })
+                ->addColumn('activo', function($row) {
+                    $checked = $row->activo ? 'checked' : '';
+                    return '<div class="custom-control custom-switch toggle-estado">
+                                <input role="switch" type="checkbox" class="custom-control-input toggle-activo"
+                                       id="activoSwitch'.$row->id.'" '.$checked.' data-id="'.$row->id.'">
+                                <label class="custom-control-label" for="activoSwitch'.$row->id.'"></label>
+                            </div>';
+                })
+                ->addColumn('fecha_registro', function($row) {
+                    return $row->created_at->format('d/m/Y');
+                })
+                ->addColumn('nombre_completo', function($row) {
+                    return $row->nombre . ' ' . $row->apellido;
+                })
+                ->editColumn('activo_text', function($row) {
+                    return $row->activo ? 'Activo' : 'Inactivo';
+                })
+                ->rawColumns(['acciones', 'activo'])
+                ->make(true);
+        }
+
+        return view('modulos.clientes.index');
     }
 
     public function create(){
@@ -96,6 +135,25 @@ class ClienteController extends Controller
         return $stats;
     }
 
+    // Método para actualizar el estado activo via AJAX
+    public function toggleActivo(Request $request){
+        try {
+            $cliente = Cliente::findOrFail($request->id);
+            $cliente->activo = $request->activo;
+            $cliente->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado actualizado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado'
+            ], 500);
+        }
+    }
+
     public function store(Request $request){
 
         // Validar datos
@@ -159,7 +217,7 @@ class ClienteController extends Controller
 
     }
 
-    public function destroy(Cliente $cliente){
+    /* public function destroy(Cliente $cliente){
 
         DB::beginTransaction();
 
@@ -182,5 +240,31 @@ class ClienteController extends Controller
 
         }
 
+    } */
+
+    // Método para eliminar via AJAX
+    public function destroy(Request $request, $id){
+        try {
+            $cliente = Cliente::findOrFail($id);
+            $cliente->delete();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Cliente eliminado correctamente'
+                ]);
+            }
+
+            return redirect()->route('cliente.index')->with('success', 'Cliente eliminado correctamente');
+        } catch (\Exception $e) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar el cliente'
+                ], 500);
+            }
+
+            return redirect()->route('cliente.index')->with('error', 'Error al eliminar el cliente');
+        }
     }
 }

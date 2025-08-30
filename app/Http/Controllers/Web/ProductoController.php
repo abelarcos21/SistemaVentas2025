@@ -52,6 +52,7 @@ class ProductoController extends Controller
             'productos.precio_compra',
             'productos.precio_venta',
             'productos.cantidad',
+            'productos.moneda_id',
             'productos.moneda',
             'productos.codigo',
             'productos.barcode_path',
@@ -70,7 +71,7 @@ class ProductoController extends Controller
         ->join('proveedores', 'productos.proveedor_id', '=', 'proveedores.id')
         ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
-        ->with('monedas');
+        ->with('moneda');
 
         return DataTables::of($productos)
             ->addIndexColumn()
@@ -119,7 +120,7 @@ class ProductoController extends Controller
                 ';
             })
             ->addColumn('precio_formatted', function ($producto) {
-                return number_format($producto->precio_venta, 2) . ' ' . ($producto->monedas->codigo ?? '');
+                return number_format($producto->precio_venta, 2) . ' ' . ($producto->moneda->codigo ?? '');
             })
             ->addColumn('cantidad', function ($producto) {
                 $class = $producto->cantidad > 10 ? 'success' : ($producto->cantidad > 0 ? 'warning' : 'danger');

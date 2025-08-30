@@ -29,8 +29,6 @@ use App\Http\Controllers\Facturacion\ClaveUnidadController;
 use App\Http\Controllers\Facturacion\ProductoController as FacturaProductoController;
 use App\Http\Controllers\Facturacion\ClienteController as FacturaClienteController;
 
-
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -204,7 +202,12 @@ Route::prefix('clientes')->group(function(){
     Route::get('/search', [ClienteController::class, 'search'])->name('search');
     Route::get('/stats', [ClienteController::class, 'stats'])->name('cliente.stats');
 
+    // Rutas adicionales para AJAX cambio de estado
+    Route::post('/cliente/toggle-activo', [ClienteController::class, 'toggleActivo'])->name('cliente.toggle-activo');
+
 });
+
+
 
 //RUTA PARA REGISTRAR LOS METODOS DE PAGOS
 Route::post('/pagos', [PagoController::class, 'store'])->name('pagos.store');

@@ -1258,7 +1258,7 @@
                     {data: 'descripcion', name: 'productos.descripcion'},
                     {data: 'nombre_proveedor', name: 'proveedores.nombre'},
                     {data: 'cantidad', name: 'productos.cantidad', orderable: true, searchable: false},
-                    {data: 'precio_venta', name: 'productos.precio_venta', orderable: true, searchable: false},
+                    {data: 'precio_formatted', name: 'productos.precio_venta', orderable: true, searchable: false},
                     {data: 'precio_compra', name: 'productos.precio_compra', orderable: true, searchable: false},
                     {data: 'created_at', name: 'productos.created_at'},
                     {data: 'activo', name: 'productos.activo', orderable: false, searchable: false},

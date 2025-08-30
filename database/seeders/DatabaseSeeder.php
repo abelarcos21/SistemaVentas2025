@@ -19,11 +19,11 @@ class DatabaseSeeder extends Seeder
             CategoriaSeeder::class,
             ProveedorSeeder::class,
             MarcaSeeder::class,
+            MonedaSeeder::class,//primero el de moneda para no dar error en productoseeder
             ProductoSeeder::class,
             UsuarioSeeder::class,
             ImagenSeeder::class,
             ClienteSeeder::class,
-            MonedaSeeder::class,
             EmpresaSeeder::class,
             CatalogosSatSeeder::class,
             PermissionTableSeeder::class,

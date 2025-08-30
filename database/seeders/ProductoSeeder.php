@@ -29,6 +29,7 @@ class ProductoSeeder extends Seeder
         //asignar un usuario/proveedor/categoría ya existentes:
         Producto::factory()->count(30)->withSpecificIds([
             'user_id' => 1,
+            'moneda_id'=> 1,
             'categoria_id' => 2,
             'proveedor_id' => 3,
         ])->create()->each(function ($producto) {

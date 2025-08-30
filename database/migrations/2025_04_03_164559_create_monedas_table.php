@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('monedas', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // BIGINT UNSIGNED AUTO_INCREMENT
             $table->string('codigo', 3)->unique(); // Ej: MXN, USD, EUR
             $table->string('nombre');              // Ej: Peso Mexicano
-            $table->string('simbolo', 5);          // Ej: $, €, ₲
+            $table->string('simbolo', 5)->nullable();          // Ej: $, €, ₲
             $table->timestamps();
         });
     }

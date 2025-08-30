@@ -1,3 +1,4 @@
+
 @extends('adminlte::page')
 
 @section('title', 'Clientes')
@@ -5,17 +6,17 @@
 @section('content_header')
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+           <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1><i class="fas fa-users"></i> Gestión de Clientes</h1>
+                    <h1><i class="fas fa-users"></i> Listado de Clientes</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('home')}}">Home</a></li>
                         <li class="breadcrumb-item active">Clientes</li>
                     </ol>
                 </div>
-            </div>
+          </div>
         </div>
     </section>
 @stop
@@ -23,151 +24,32 @@
 @section('content')
     <section class="content">
         <div class="container-fluid">
-            <!-- Tarjetas de estadísticas -->
-            <div class="row mb-3">
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-info">
-                        <div class="inner">
-                            <h3 id="total-clientes">{{ $clientes->count() }}</h3>
-                            <p>Total Clientes</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-success">
-                        <div class="inner">
-                            <h3 id="clientes-activos">{{ $clientes->where('activo', 1)->count() }}</h3>
-                            <p>Activos</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-warning">
-                        <div class="inner">
-                            <h3 id="clientes-inactivos">{{ $clientes->where('activo', 0)->count() }}</h3>
-                            <p>Inactivos</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-user-times"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-danger">
-                        <div class="inner">
-                            <h3 id="nuevos-hoy">0</h3>
-                            <p>Nuevos Hoy</p>
-                        </div>
-                        <div class="icon">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header bg-gradient-primary">
-                            <h3 class="card-title">
-                                <i class="fas fa-list"></i> Lista de Clientes
-                            </h3>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-light btn-create bg-gradient-light text-primary btn-sm" title="Agregar nuevo cliente">
-                                    <i class="fas fa-user-plus"></i> Nuevo Cliente
-                                </button>
-                                <button type="button" class="btn btn-light bg-gradient-light text-primary btn-sm" onclick="recargarEstadisticas()" title="Actualizar estadísticas">
-                                    <i class="fas fa-sync-alt"></i> Actualizar
-                                </button>
-                            </div>
+                        <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
+                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Clientes registrados</h3>
+                            <a href="{{ route('cliente.create') }}" class="btn btn-light bg-gradient-light text-primary btn-sm">
+                                <i class="fas fa-plus"></i> Agregar Nuevo
+                            </a>
                         </div>
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="example1" class="table table-bordered table-striped table-hover">
-                                    <thead class="bg-gradient-info">
+                                <table id="clientes-table" class="table table-bordered table-striped">
+                                    <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
-                                            <th width="5%">#</th>
-                                            <th width="20%">Nombre Completo</th>
-                                            <th width="15%">RFC</th>
-                                            <th width="15%">Teléfono</th>
-                                            <th width="20%">Correo</th>
-                                            <th width="10%">Estado</th>
-                                            <th width="15%">Acciones</th>
+                                            <th>Nro</th>
+                                            <th>Nombre</th>
+                                            <th>Apellido</th>
+                                            <th>RFC</th>
+                                            <th>Teléfono</th>
+                                            <th>Correo</th>
+                                            <th>Fecha Registro</th>
+                                            <th>Activo</th>
+                                            <th class="no-exportar">Acciones</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @foreach($clientes as $cliente)
-                                            <tr>
-                                                <td>{{ $cliente->id }}</td>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="fas fa-user-circle text-primary mr-2"></i>
-                                                        <div>
-                                                            <strong>{{ $cliente->nombre }} {{ $cliente->apellido }}</strong>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @if($cliente->rfc)
-                                                        <span class="badge badge-secondary">{{ $cliente->rfc }}</span>
-                                                    @else
-                                                        <span class="text-muted"><em>Sin RFC</em></span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($cliente->telefono)
-                                                        <i class="fas fa-phone text-info"></i> {{ $cliente->telefono }}
-                                                    @else
-                                                        <span class="text-muted"><em>Sin teléfono</em></span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($cliente->correo)
-                                                        <i class="fas fa-envelope text-success"></i> {{ $cliente->correo }}
-                                                    @else
-                                                        <span class="text-muted"><em>Sin correo</em></span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($cliente->activo)
-                                                        <span class="badge badge-success">
-                                                            <i class="fas fa-check"></i> Activo
-                                                        </span>
-                                                    @else
-                                                        <span class="badge badge-secondary">
-                                                            <i class="fas fa-times"></i> Inactivo
-                                                        </span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm" role="group">
-                                                        <button type="button" class="btn btn-info btn-sm"
-                                                                onclick="verCliente({{ $cliente->id }})"
-                                                                title="Ver detalles">
-                                                            <i class="fas fa-eye"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-warning btn-sm"
-                                                                onclick="editarCliente({{ $cliente->id }})"
-                                                                title="Editar">
-                                                            <i class="fas fa-edit"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-danger btn-sm"
-                                                                onclick="eliminarCliente({{ $cliente->id }}, '{{ $cliente->nombre }} {{ $cliente->apellido }}')"
-                                                                title="Eliminar">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -176,298 +58,708 @@
             </div>
         </div>
     </section>
-
-    <!-- Container para modales dinámicos -->
-    <div id="modal-container"></div>
 @stop
 
 @section('css')
-    <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css">
+    {{-- <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap4.min.css"> --}}
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.bootstrap4.min.css">
 
     <style>
-        .small-box {
+        .custom-switch {
+            padding-left: 2.25rem;
+        }
+
+        .custom-switch .custom-control-label::before {
+            left: -2.25rem;
+            width: 1.75rem;
+            pointer-events: all;
             border-radius: 0.5rem;
-            transition: transform 0.2s;
         }
 
-        .small-box:hover {
-            transform: translateY(-2px);
+        .custom-switch .custom-control-label::after {
+            top: calc(0.25rem + 2px);
+            left: calc(-2.25rem + 2px);
+            width: calc(1rem - 4px);
+            height: calc(1rem - 4px);
+            background-color: #adb5bd;
+            border-radius: 0.5rem;
+            transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
 
-       
-
-        .table td {
-            vertical-align: middle;
+        .custom-switch .custom-control-input:checked~.custom-control-label::after {
+            background-color: #fff;
+            transform: translateX(0.75rem);
         }
 
-        .btn-group .btn {
-            margin-right: 2px;
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 10px;
         }
 
-        .btn-group .btn:last-child {
-            margin-right: 0;
-        }
-
-        .badge {
-            font-size: 0.875em;
-        }
-
-        @media (max-width: 768px) {
-            .card-tools .btn {
-                margin-bottom: 0.25rem;
-            }
-
-            .btn-group {
-                flex-direction: column;
-            }
-
-            .btn-group .btn {
-                margin-bottom: 2px;
-                margin-right: 0;
-            }
+        .dataTables_wrapper .dataTables_length {
+            margin-bottom: 10px;
         }
     </style>
 @stop
 
 @section('js')
-    <!-- SweetAlert2 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.js"></script>
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables JS -->
+    {{-- <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap4.min.js"></script> --}}
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
 
     <script>
-        $(document).ready(function() {
-            // Inicializar DataTables
-             $('#example1').DataTable({
-                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
-                buttons: [
-                    /* {
-                        extend: 'copy',
-                        text: '<i class="fas fa-copy"></i> COPIAR',
-                        className: 'btn btn-primary btn-sm'
-                    }, */
-                    {
-                        extend: 'excel',
-                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
-                        className: 'btn btn-success btn-sm'
-                    },
-                    {
-                        extend: 'pdf',
-                        text: '<i class="fas fa-file-pdf"></i> Descargar PDF',
-                        className: 'btn btn-danger btn-sm'
-                    },
-                    {
-                        extend: 'print',
-                        text: '<i class="fas fa-print"></i> Visualizar PDF',
-                        className: 'btn btn-warning btn-sm'
-                    },
-                    /* {
-                        extend: 'csv',
-                        text: '<i class="fas fa-upload"></i> CSV',
-                        className: 'btn btn-info btn-sm'
-                    } */
-                ],
-
-                "language": {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-                },
-
-                // Opcional: Personalizaciones
-                "pageLength": 10,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[2, 'desc']], // Ordenar por fecha descendente
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "responsive": true,
-                "autoWidth": false,
-                "scrollX": false,
-
-
-            });
-
-            // Cargar estadísticas iniciales
-            recargarEstadisticas();
-        });
-
-        // ========== MODAL DE CREACIÓN (Cliente) ==========
-        // Función para abrir modal de crear
-        window.createClient = function() {
-            $.ajax({
-                url: "{{ route('cliente.create.modal') }}",
-                method: 'GET',
-                beforeSend: function() {
-                    $('#modal-container').html(`
-                        <div class="text-center p-4">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="sr-only">Cargando...</span>
-                            </div>
-                            <p class="mt-2 mb-0">Cargando formulario...</p>
-                        </div>
-                    `);
-                },
-                success: function(data) {
-                    $('#modal-container').html(data);
-                    $('#createModal').modal('show');
-                },
-                error: function(xhr) {
-                    $('#modal-container').empty();
-                    console.error('Error al cargar modal:', xhr);
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al cargar el formulario de creación.'
-                    });
-                }
-            });
-        };
-
-        // Manejar click en botón de crear/agregar nuevo
-        $(document).on('click', '.btn-create', function(e) {
-            e.preventDefault();
-            createClient();
-        });
-
-        // ========== FUNCIONES DE GESTIÓN ==========
-
-        // Ver cliente
-        function verCliente(id) {
-            $.ajax({
-                url: "{{ route('cliente.show', ':id') }}".replace(':id', id),
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        const cliente = response.cliente;
-                        Swal.fire({
-                            title: 'Detalles del Cliente',
-                            html: `
-                                <div class="text-left">
-                                    <p><strong><i class="fas fa-user"></i> Nombre:</strong> ${cliente.nombre} ${cliente.apellido}</p>
-                                    <p><strong><i class="fas fa-id-card"></i> RFC:</strong> ${cliente.rfc || 'No registrado'}</p>
-                                    <p><strong><i class="fas fa-phone"></i> Teléfono:</strong> ${cliente.telefono || 'No registrado'}</p>
-                                    <p><strong><i class="fas fa-envelope"></i> Correo:</strong> ${cliente.correo || 'No registrado'}</p>
-                                    <p><strong><i class="fas fa-toggle-on"></i> Estado:</strong>
-                                        <span class="badge badge-${cliente.activo ? 'success' : 'secondary'}">
-                                            ${cliente.activo ? 'Activo' : 'Inactivo'}
-                                        </span>
-                                    </p>
-                                    <p><strong><i class="fas fa-calendar"></i> Registrado:</strong> ${new Date(cliente.created_at).toLocaleDateString('es-ES')}</p>
-                                </div>
-                            `,
-                            icon: 'info',
-                            confirmButtonText: 'Cerrar'
-                        });
-                    }
-                },
-                error: function(xhr) {
-                    console.error('Error al obtener cliente:', xhr);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'No se pudo cargar la información del cliente.'
-                    });
-                }
-            });
-        }
-
-        // Editar cliente (placeholder - implementar según necesidades)
-        function editarCliente(id) {
-            // Aquí puedes implementar la lógica para editar
-            // Similar a createClient() pero para edición
+        // Alertas para mensajes de sesión
+        @if(session('success'))
             Swal.fire({
-                icon: 'info',
-                title: 'Función en desarrollo',
-                text: 'La función de edición estará disponible próximamente.'
+                icon: 'success',
+                title: 'Éxito',
+                text: "{{ session('success') }}",
+                timer: 3000,
+                showConfirmButton: false
             });
-        }
+        @endif
 
-        // Eliminar cliente
-        function eliminarCliente(id, nombre) {
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: "{{ session('error') }}"
+            });
+        @endif
+    </script>
+
+    <!-- Carga logo base64 -->
+    <script src="{{ asset('js/logoBase64.js') }}"></script>
+
+    <script>
+        // Manejar eliminación del cliente
+        $('#clientes-table').on('click', '.delete-btn', function() {
+            var clienteId = $(this).data('id');
+
             Swal.fire({
                 title: '¿Estás seguro?',
-                html: `¿Deseas eliminar al cliente <strong>"${nombre}"</strong>?<br><small class="text-muted">Esta acción no se puede deshacer.</small>`,
+                text: "¡Esta acción no se puede deshacer!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
                 confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: "{{ route('cliente.destroy', ':id') }}".replace(':id', id),
+                        url: "{{ route('cliente.destroy', '') }}/" + clienteId,
                         method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            'X-Requested-With': 'XMLHttpRequest'
+                        data: {
+                            _token: '{{ csrf_token() }}'
                         },
                         success: function(response) {
                             if (response.success) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Eliminado',
-                                    text: 'El cliente ha sido eliminado exitosamente.',
+                                    text: response.message,
                                     timer: 1500,
                                     showConfirmButton: false
                                 });
 
-                                // Recargar página o actualizar tabla
-                                location.reload();
+                                // Refrescar la tabla manteniendo la página actual y posición
+                                $('#clientes-table').DataTable().ajax.reload(null, false);
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message
+                                });
                             }
                         },
-                        error: function(xhr) {
-                            console.error('Error al eliminar cliente:', xhr);
+                        error: function() {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: 'No se pudo eliminar el cliente.'
+                                text: 'No se pudo eliminar el cliente'
                             });
                         }
                     });
                 }
             });
-        }
+        });
+    </script>
 
-        // Recargar estadísticas
-        function recargarEstadisticas() {
+    <script>
+        // Manejar toggle de estado activo
+        $('#clientes-table').on('change', '.toggle-activo', function() {
+            var clienteId = $(this).data('id');
+            var isActive = $(this).is(':checked');
+            var switchElement = $(this);
+
             $.ajax({
-                url: "{{ route('cliente.stats') }}",
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                url: "{{ route('cliente.toggle-activo') }}",
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: clienteId,
+                    activo: isActive ? 1 : 0  // Enviar como 1 o 0
                 },
                 success: function(response) {
                     if (response.success) {
-                        const stats = response.stats;
-                        $('#total-clientes').text(stats.total);
-                        $('#clientes-activos').text(stats.activos);
-                        $('#clientes-inactivos').text(stats.inactivos);
-                        $('#nuevos-hoy').text(stats.registrados_hoy);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        // Revertir el switch si hay error
+                        switchElement.prop('checked', !isActive);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
                     }
                 },
-                error: function(xhr) {
-                    console.error('Error al cargar estadísticas:', xhr);
+                error: function() {
+                    // Revertir el switch si hay error
+                    switchElement.prop('checked', !isActive);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo actualizar el estado'
+                    });
                 }
             });
-        }
+        });
+    </script>
 
-        // Recargar estadísticas cada 5 minutos
-        setInterval(recargarEstadisticas, 300000);
+    <script>
+        $(document).ready(function() {
+            // Inicializar DataTable
+            var table = $('#clientes-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: "{{ route('cliente.index') }}",
+                    type: 'GET',
+                },
+                columns: [
+                    {data: 'id', name: 'id', className: 'text-center'},
+                    {data: 'nombre', name: 'nombre'},
+                    {data: 'apellido', name: 'apellido'},
+                    {data: 'rfc', name: 'rfc'},
+                    {data: 'telefono', name: 'telefono'},
+                    {data: 'correo', name: 'correo'},
+                    {data: 'fecha_registro', name: 'created_at', className: 'text-center'},
+                    {data: 'activo', name: 'activo', orderable: false, searchable: false, className: 'text-center'},
+                    {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'text-center', className: 'text-center no-exportar'}
+                ],
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)',
+                            format: {
+                                body: function (data, row, column, node) {
+                                    // Limpiar HTML y extraer solo el texto
+                                    let cleanData = data;
+
+                                    // Manejar campo activo por índice de columna PRIMERO
+                                    if (column === 11) { // Columna activo
+                                        console.log('Procesando columna activo:', data, node); // Debug
+
+                                        // Verificar si hay checkbox o switch en el nodo
+                                        let $node = $(node);
+                                        let checkbox = $node.find('input[type="checkbox"], input[role="switch"], [role="switch"]');
+
+                                        if (checkbox.length > 0) {
+                                            let isChecked = checkbox.is(':checked') || checkbox.prop('checked');
+                                            console.log('Checkbox encontrado, checked:', isChecked); // Debug
+                                            return isChecked ? 'Sí' : 'No';
+                                        }
+
+                                        // Verificar por clases comunes de switches/toggles
+                                        if ($node.find('.custom-switch, .form-switch, .switch').length > 0) {
+                                            let switchElement = $node.find('.custom-switch input, .form-switch input, .switch input');
+                                            if (switchElement.length > 0) {
+                                                return switchElement.is(':checked') ? 'Sí' : 'No';
+                                            }
+                                        }
+
+                                        // Verificar si el HTML contiene indicadores de estado activo
+                                        if (typeof data === 'string') {
+                                            if (data.includes('checked') || data.includes('active') || data.includes('enabled')) {
+                                                return 'Sí';
+                                            }
+                                            if (data.includes('unchecked') || data.includes('inactive') || data.includes('disabled')) {
+                                                return 'No';
+                                            }
+                                        }
+
+                                        // Verificar valores booleanos o numéricos
+                                        if (cleanData === 1 || cleanData === '1' || cleanData === true || cleanData === 'true' || cleanData === 'Sí' || cleanData === 'Si') {
+                                            return 'Sí';
+                                        }
+                                        if (cleanData === 0 || cleanData === '0' || cleanData === false || cleanData === 'false' || cleanData === 'No') {
+                                            return 'No';
+                                        }
+
+                                        // Si llegamos aquí, valor por defecto
+                                        console.log('Valor por defecto para activo:', cleanData); // Debug
+                                        return cleanData ? 'Sí' : 'No';
+                                    }
+
+                                    // Procesar otros tipos de contenido HTML
+                                    if (typeof data === 'string' && data.includes('<')) {
+                                        let $temp = $('<div>').html(data);
+
+                                        // Casos específicos
+                                        if (data.includes('<code>')) {
+                                            // Para códigos de barras: extraer contenido del <code>
+                                            cleanData = "'" + ($temp.find('code').text() || $temp.text());
+                                        } else if (data.includes('class="badge"')) {
+                                            // Para badges: extraer texto del span
+                                            cleanData = $temp.find('.badge').text() || $temp.text();
+                                        } else if (data.includes('input[type="checkbox"]') || data.includes('role="switch"')) {
+                                            // Para checkboxes/switches generales
+                                            return $temp.find('input').is(':checked') ? 'Sí' : 'No';
+                                        } else {
+                                            // Para cualquier otro HTML, extraer solo texto
+                                            cleanData = $temp.text();
+                                        }
+                                    }
+
+                                    return cleanData || data;
+                                }
+                            }
+                        },
+                        title: 'Reporte de Clientes',
+                        filename: 'reporte_clientes_' + new Date().toISOString().slice(0, 10),
+                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
+                        className: 'btn btn-success btn-sm',
+                        customize: function (xlsx) {
+                            let sheet = xlsx.xl.worksheets['sheet1.xml'];
+
+                            // Crear nuevo estilo personalizado para el encabezado
+                            let styles = xlsx.xl['styles.xml'];
+
+                            // Agregar un nuevo estilo con fondo #17a2b8 y texto blanco
+                            let newFill = '<fill><patternFill patternType="solid"><fgColor rgb="FF17A2B8"/></patternFill></fill>';
+                            let newFont = '<font><color rgb="FFFFFFFF"/><b/></font>';
+
+                            // Buscar las secciones de fills y fonts
+                            let fillsSection = styles.getElementsByTagName('fills')[0];
+                            let fontsSection = styles.getElementsByTagName('fonts')[0];
+
+                            // Agregar el nuevo fill
+                            $(fillsSection).append(newFill);
+                            let fillCount = fillsSection.childNodes.length;
+                            fillsSection.setAttribute('count', fillCount);
+
+                            // Agregar la nueva fuente
+                            $(fontsSection).append(newFont);
+                            let fontCount = fontsSection.childNodes.length;
+                            fontsSection.setAttribute('count', fontCount);
+
+                            // Crear el nuevo estilo que combine fill, font y alineación
+                            let newCellXf = '<xf numFmtId="0" fontId="' + (fontCount - 1) + '" fillId="' + (fillCount - 1) + '" borderId="0" applyFont="1" applyFill="1" applyAlignment="1">' +
+                                        '<alignment horizontal="center" vertical="center"/>' +
+                                        '</xf>';
+
+                            let cellXfsSection = styles.getElementsByTagName('cellXfs')[0];
+                            $(cellXfsSection).append(newCellXf);
+                            let xfCount = cellXfsSection.childNodes.length;
+                            cellXfsSection.setAttribute('count', xfCount);
+
+                            // ID del nuevo estilo será xfCount - 1
+                            let customStyleId = xfCount - 1;
+
+                            // Centrar y combinar el título
+                            let mergeCells = sheet.getElementsByTagName('mergeCells')[0];
+                            if (!mergeCells) {
+                                mergeCells = sheet.createElement('mergeCells');
+                                sheet.documentElement.appendChild(mergeCells);
+                            }
+                            let mergeCell = sheet.createElement('mergeCell');
+                            mergeCell.setAttribute('ref', 'A1:L1'); // Ajusta a tu cantidad de columnas
+                            mergeCells.appendChild(mergeCell);
+                            mergeCells.setAttribute('count', mergeCells.childNodes.length);
+
+                            // Centrar título (A1)
+                            $('row c[r^="A1"]', sheet).attr('s', '51');
+
+                            // Aplicar el estilo personalizado al encabezado (segunda fila = thead)
+                            $('row[r="2"] c', sheet).attr('s', customStyleId);
+
+                            // Centrar todo el contenido (desde la tercera fila)
+                            $('row:gt(1)', sheet).each(function () {
+                                if ($(this).attr('r') !== '2') {
+                                    $('c', this).attr('s', '51');
+                                }
+                            });
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: ':not(.no-exportar)',
+                            format: {
+                                body: function (data, row, column, node) {
+                                    // Manejar checkboxes/switches
+                                    if ($(node).find('input[type="checkbox"], input[role="switch"]').length > 0) {
+                                        return $(node).find('input[type="checkbox"], input[role="switch"]').is(':checked') ? 'Sí' : 'No';
+                                    }
+
+                                    // Manejar badges/etiquetas de estado
+                                    if ($(node).find('.badge').length > 0) {
+                                        return $(node).find('.badge').text().trim();
+                                    }
+
+                                    // Formatear números con separadores de miles
+                                    if ($(node).hasClass('currency') || $(node).data('type') === 'currency') {
+                                        let number = parseFloat(data.replace(/[^0-9.-]+/g,""));
+                                        if (!isNaN(number)) {
+                                            return new Intl.NumberFormat('es-MX', {
+                                                style: 'currency',
+                                                currency: 'MXN'
+                                            }).format(number);
+                                        }
+                                    }
+
+                                    // Limpiar HTML si es necesario
+                                    if (typeof data === 'string' && data.includes('<')) {
+                                        return $('<div>').html(data).text().trim();
+                                    }
+
+                                    return data;
+                                },
+                                header: function (data, column) {
+                                    // Limpiar encabezados de HTML
+                                    return $('<div>').html(data).text().trim();
+                                }
+                            }
+                        },
+                        title: 'Reporte de Clientes',
+                        filename: function() {
+                            const now = new Date();
+                            const timestamp = now.toISOString().slice(0,19).replace(/:/g, '-');
+                            return `reporte_clientes_${timestamp}`;
+                        },
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
+                        className: 'btn btn-danger btn-sm shadow-sm',
+                        customize: function (doc) {
+                            const fecha = new Date().toLocaleDateString('es-MX', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            // === ENCABEZADO MEJORADO ===
+                            doc.content.unshift({
+                                stack: [
+                                    {
+                                        columns: [
+                                            {
+                                                image: logoBase64,
+                                                width: 80,
+                                                alignment: 'left'
+                                            },
+                                            {
+                                                stack: [
+                                                    {
+                                                        text: 'NOMBRE DE TU EMPRESA',
+                                                        style: 'companyName',
+                                                        alignment: 'right'
+                                                    },
+                                                    {
+                                                        text: 'Sistema de Gestión',
+                                                        style: 'companySubtitle',
+                                                        alignment: 'right'
+                                                    }
+                                                ],
+                                                width: '*'
+                                            }
+                                        ],
+                                        margin: [0, 0, 0, 20]
+                                    },
+                                    {
+                                        canvas: [
+                                            {
+                                                type: 'line',
+                                                x1: 0, y1: 0,
+                                                x2: 515, y2: 0,
+                                                lineWidth: 2,
+                                                lineColor: '#17a2b8'
+                                            }
+                                        ],
+                                        margin: [0, 0, 0, 15]
+                                    }
+                                ]
+                            });
+
+                            // === ESTILOS MEJORADOS ===
+                            doc.styles = Object.assign(doc.styles || {}, {
+                                companyName: {
+                                    fontSize: 16,
+                                    bold: true,
+                                    color: '#2c3e50'
+                                },
+                                companySubtitle: {
+                                    fontSize: 10,
+                                    color: '#7f8c8d',
+                                    italics: true
+                                },
+                                title: {
+                                    fontSize: 18,
+                                    bold: true,
+                                    alignment: 'center',
+                                    color: '#2c3e50',
+                                    margin: [0, 15, 0, 5]
+                                },
+                                subtitle: {
+                                    fontSize: 11,
+                                    alignment: 'center',
+                                    color: '#7f8c8d',
+                                    margin: [0, 0, 0, 15]
+                                },
+                                tableHeader: {
+                                    bold: true,
+                                    fontSize: 10,
+                                    color: 'white',
+                                    fillColor: '#17a2b8',
+                                    alignment: 'center'
+                                },
+                                tableCell: {
+                                    fontSize: 9,
+                                    alignment: 'center'
+                                }
+                            });
+
+                            // === INFORMACIÓN DEL REPORTE ===
+                            doc.content.splice(2, 0, {
+                                columns: [
+                                    {
+                                        text: [
+                                            { text: 'Fecha de generación: ', bold: true },
+                                            fecha
+                                        ],
+                                        fontSize: 10,
+                                        alignment: 'left'
+                                    },
+                                    {
+                                        text: [
+                                            { text: 'Total de registros: ', bold: true },
+                                            doc.content[doc.content.length - 1].table.body.length - 1
+                                        ],
+                                        fontSize: 10,
+                                        alignment: 'right'
+                                    }
+                                ],
+                                margin: [0, 0, 0, 15]
+                            });
+
+                            // === MEJORAR TABLA ===
+                            if (doc.content && doc.content.length > 0) {
+                                // Encontrar la tabla
+                                const tableIndex = doc.content.findIndex(item => item.table);
+                                if (tableIndex > -1) {
+                                    const table = doc.content[tableIndex];
+
+                                    // Aplicar estilos a todas las celdas
+                                    table.table.body.forEach((row, rowIndex) => {
+                                        row.forEach((cell, cellIndex) => {
+                                            if (rowIndex === 0) {
+                                                // Encabezados
+                                                if (typeof cell === 'object') {
+                                                    cell.style = 'tableHeader';
+                                                } else {
+                                                    row[cellIndex] = { text: cell, style: 'tableHeader' };
+                                                }
+                                            } else {
+                                                // Celdas de datos
+                                                if (typeof cell === 'object') {
+                                                    cell.style = 'tableCell';
+                                                } else {
+                                                    row[cellIndex] = { text: cell, style: 'tableCell' };
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    // Layout de tabla mejorado
+                                    table.layout = {
+                                        hLineWidth: function(i, node) {
+                                            return (i === 0 || i === node.table.body.length) ? 2 : 1;
+                                        },
+                                        vLineWidth: function(i, node) {
+                                            return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+                                        },
+                                        hLineColor: function(i, node) {
+                                            return (i === 0 || i === node.table.body.length) ? '#17a2b8' : '#ecf0f1';
+                                        },
+                                        vLineColor: function(i, node) {
+                                            return (i === 0 || i === node.table.widths.length) ? '#17a2b8' : '#ecf0f1';
+                                        },
+                                        paddingLeft: function(i, node) { return 8; },
+                                        paddingRight: function(i, node) { return 8; },
+                                        paddingTop: function(i, node) { return 6; },
+                                        paddingBottom: function(i, node) { return 6; },
+                                        fillColor: function(i, node) {
+                                            return (i % 2 === 0) ? null : '#f8f9fa';
+                                        }
+                                    };
+                                }
+                            }
+
+                            // === PIE DE PÁGINA MEJORADO ===
+                            doc.footer = function(currentPage, pageCount) {
+                                return {
+                                    columns: [
+                                        {
+                                            text: 'Generado automáticamente por el sistema',
+                                            alignment: 'left',
+                                            fontSize: 8,
+                                            color: '#95a5a6'
+                                        },
+                                        {
+                                            text: `Página ${currentPage} de ${pageCount}`,
+                                            alignment: 'right',
+                                            fontSize: 8,
+                                            color: '#95a5a6'
+                                        }
+                                    ],
+                                    margin: [40, 10, 40, 0]
+                                };
+                            };
+
+                            // === MARCA DE AGUA (OPCIONAL) ===
+                            /*
+                            doc.watermark = {
+                                text: 'CONFIDENCIAL',
+                                color: 'rgba(200, 200, 200, 0.3)',
+                                bold: true,
+                                italics: false,
+                                fontSize: 40
+                            };
+                            */
+
+                            // === MÁRGENES DEL DOCUMENTO ===
+                            doc.pageMargins = [20, 40, 20, 60];
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        text: '<i class="fas fa-print"></i> Imprimir',
+                        className: 'btn btn-info btn-sm',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                        }
+                    }
+                ],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+                pageLength: 10,
+                lengthMenu: [[5,10, 25, 50, 100, -1], [5,10, 25, 50, 100, "Todos"]],
+                order: [[0, 'desc']],
+                responsive: true,
+                autoWidth: false,
+                stateSave: true,
+                columnDefs: [
+                    {
+                        targets: [7, 8], // Columnas Activo y Acciones
+                        className: 'text-center align-middle'
+                    }
+                ]
+            });
+
+        });
     </script>
 @stop
+
+
+
+<!-- Tarjetas de estadísticas -->
+{{-- <div class="row mb-3">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3 id="total-clientes">{{ $clientes->count() }}</h3>
+                <p>Total Clientes</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3 id="clientes-activos">{{ $clientes->where('activo', 1)->count() }}</h3>
+                <p>Activos</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3 id="clientes-inactivos">{{ $clientes->where('activo', 0)->count() }}</h3>
+                <p>Inactivos</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-times"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3 id="nuevos-hoy">0</h3>
+                <p>Nuevos Hoy</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
 
 
 
