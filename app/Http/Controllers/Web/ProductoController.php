@@ -53,7 +53,6 @@ class ProductoController extends Controller
             'productos.precio_venta',
             'productos.cantidad',
             'productos.moneda_id',
-            'productos.moneda',
             'productos.codigo',
             'productos.barcode_path',
             'productos.categoria_id',

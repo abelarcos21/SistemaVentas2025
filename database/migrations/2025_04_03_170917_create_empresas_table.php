@@ -26,8 +26,8 @@ return new class extends Migration
             // Correo electrónico
             $table->string('correo')->unique();
 
-            // Moneda predeterminada, puede ser mejor con un código ISO como "MXN", "USD", etc.
-            $table->string('moneda', 3)->default('MXN'); // Estándar ISO 4217
+            $table->unsignedBigInteger('moneda_id')->nullable();
+            $table->foreign('moneda_id')->references('id')->on('monedas');
 
             // Logo o imagen de la empresa
             $table->string('imagen')->nullable();

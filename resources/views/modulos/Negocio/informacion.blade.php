@@ -227,11 +227,11 @@
                                                 <i class="fas fa-dollar-sign"></i>
                                             </span>
                                         </div>
-                                        <select id="moneda" name="moneda" class="form-control @error('moneda') is-invalid @enderror select2" required>
+                                        <select id="moneda_id" name="moneda_id" class="form-control @error('moneda_id') is-invalid @enderror select2" required>
                                             <option value="">Seleccione una moneda</option>
                                             @foreach($monedas as $moneda)
-                                                <option value="{{ $moneda->codigo }}"
-                                                    {{ old('moneda', $empresa->moneda ?? '') == $moneda->codigo ? 'selected' : '' }}>
+                                                <option value="{{ $moneda->id }}"
+                                                    {{ old('moneda_id', $empresa->moneda_id ?? '') == $moneda->id ? 'selected' : '' }}>
                                                     {{ $moneda->nombre }} ({{ $moneda->codigo }})
                                                 </option>
                                             @endforeach
@@ -375,10 +375,10 @@
             const placeholder = document.getElementById('placeholder-preview');
             const imagePreview = document.getElementById('img-preview');
             const label = document.getElementById('imagen-label');
-            
+
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     // Si ya existe una imagen de vista previa, la actualizamos
                     if (imagePreview) {
@@ -388,7 +388,7 @@
                         if (placeholder) {
                             placeholder.style.display = 'none';
                         }
-                        
+
                         const newImg = document.createElement('img');
                         newImg.src = e.target.result;
                         newImg.alt = 'Vista previa del logo';
@@ -397,14 +397,14 @@
                         newImg.style.maxWidth = '100%';
                         newImg.style.objectFit = 'contain';
                         newImg.id = 'img-preview';
-                        
+
                         previewContainer.appendChild(newImg);
                     }
-                    
+
                     // Actualizar el label del input file
                     label.textContent = input.files[0].name;
                 };
-                
+
                 reader.readAsDataURL(input.files[0]);
             } else {
                 // Si no hay archivo seleccionado, mostrar placeholder
@@ -421,11 +421,12 @@
 
     <script>
         $(document).ready(function() {
-            $('#moneda').select2({
+            $('#moneda_id').select2({
                 language: 'es',
                 theme: 'bootstrap4',
                 placeholder: "Selecciona o Busca Moneda",
                 allowClear: true,
+                width: '100%',
                 minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
 
             });
