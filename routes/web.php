@@ -20,6 +20,8 @@ use App\Http\Controllers\Web\NegocioController;
 use App\Http\Controllers\Web\PagoController;
 use App\Http\Controllers\Web\POSController;
 use App\Http\Controllers\Web\CajaController;
+use App\Http\Controllers\Web\CotizacionController;
+
 
 
 use App\Http\Controllers\Facturacion\FacturaController;
@@ -206,6 +208,30 @@ Route::prefix('clientes')->group(function(){
     Route::post('/cliente/toggle-activo', [ClienteController::class, 'toggleActivo'])->name('cliente.toggle-activo');
 
 });
+
+///////////////////RUTA COTIZACIONES
+Route::middleware(['auth'])->group(function () {
+    Route::get('cotizaciones', [CotizacionController::class, 'index'])->name('cotizaciones.index');
+    Route::get('cotizaciones/create', [CotizacionController::class, 'create'])->name('cotizaciones.create');
+    Route::post('cotizaciones', [CotizacionController::class, 'store'])->name('cotizaciones.store');
+    Route::get('cotizaciones/{cotizacion}', [CotizacionController::class, 'show'])->name('cotizaciones.show');
+    Route::get('cotizaciones/{cotizacion}/edit', [CotizacionController::class, 'edit'])->name('cotizaciones.edit');
+    Route::put('cotizaciones/{cotizacion}', [CotizacionController::class, 'update'])->name('cotizaciones.update');
+    Route::delete('cotizaciones/{cotizacion}', [CotizacionController::class, 'destroy'])->name('cotizaciones.destroy');
+
+    // convertir cotización a venta
+    Route::post('cotizaciones/{cotizacion}/convertir', [CotizacionController::class, 'convertirEnVenta'])->name('cotizaciones.convertir');
+
+    // Cancelar cotización
+    Route::post('cotizaciones/{cotizacion}/cancelar', [CotizacionController::class, 'cancelar'])->name('cotizaciones.cancelar');
+
+    //RUTA PARA DESCARGAR PDF COTIZACION
+    Route::get('/cotizaciones/{id}/pdf', [CotizacionController::class, 'descargarPdf'])->name('cotizaciones.pdf');
+
+
+});
+
+
 
 
 
