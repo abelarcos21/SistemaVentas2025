@@ -367,6 +367,12 @@ return [
         ],
 
         [
+            'text' => 'Cotizaciones',
+            'url' => 'cotizaciones/',
+            'icon' => 'fas fa-file-alt',
+        ],
+
+        [
             'text' => 'Inventario',
             'icon' => 'fas fa-boxes',
             'submenu' => [

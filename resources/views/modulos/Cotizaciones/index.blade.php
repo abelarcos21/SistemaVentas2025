@@ -47,6 +47,12 @@
                                 <a href="{{ route('cotizaciones.edit', $cotizacion) }}" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i>
                                 </a>
+
+
+                                <a target="_blank" href="{{ route('cotizaciones.pdf', $cotizacion->id) }}" class="btn btn-secondary bg-gradient-secondary btn-sm">
+                                    <i class="fas fa-print"></i> PDF
+                                </a>
+
                                 <form action="{{ route('cotizaciones.destroy', $cotizacion) }}" method="POST" class="d-inline">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar cotización?')">

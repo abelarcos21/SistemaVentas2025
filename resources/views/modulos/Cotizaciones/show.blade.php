@@ -10,7 +10,7 @@
     <div class="card shadow">
         <div class="card-body">
             <p><strong>Cliente:</strong> {{ $cotizacion->cliente->nombre }}</p>
-            <p><strong>Fecha:</strong> {{ $cotizacion->fecha->format('d/m/Y') }}</p>
+            <p><strong>Fecha:</strong> {{ $cotizacion->fecha }}</p>
             <p><strong>Estado:</strong> <span class="badge badge-info">{{ ucfirst($cotizacion->estado) }}</span></p>
 
             <h4>Productos Cotizados</h4>

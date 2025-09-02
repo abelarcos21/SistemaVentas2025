@@ -12,7 +12,9 @@ use App\Models\CotizacionDetalle;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
 use App\Models\Caja;
+use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
+
 
 class CotizacionController extends Controller
 {
@@ -216,7 +218,7 @@ class CotizacionController extends Controller
     /**
      * Cancelar cotización
      */
-    public function cancelar($id){
+    public function destroy($id){
         $cotizacion = Cotizacion::findOrFail($id);
 
         if($cotizacion->estado !== 'pendiente') {
@@ -233,9 +235,9 @@ class CotizacionController extends Controller
         $cotizacion = Cotizacion::with(['cliente', 'detalles.producto'])->findOrFail($id);
         $empresa = Empresa::first(); // o datos fijos
 
-        $pdf = Pdf::loadView('cotizaciones.pdf', compact('cotizacion', 'empresa'))
+        $pdf = Pdf::loadView('modulos.cotizaciones.pdf', compact('cotizacion', 'empresa'))
                 ->setPaper('A4', 'portrait');
 
-        return $pdf->download('cotizacion_'.$cotizacion->id.'.pdf');
+        return $pdf->stream('cotizacion_'.$cotizacion->id.'.pdf');
     }
 }
