@@ -3,7 +3,21 @@
 @section('title', 'Módulo de Caja')
 
 @section('content_header')
-    <h1>Módulo de Caja</h1>
+    <section class="content-header">
+        <div class="container-fluid">
+           <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="fas fa-cash-register "></i> Gestion de Caja</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ route('home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Caja</li>
+                    </ol>
+                </div>
+          </div>
+        </div>
+    </section>
 @stop
 
 @section('content')
@@ -102,10 +116,10 @@
 
     {{-- Historial con DataTable --}}
     <div class="card mt-4">
-        <div class="card-header bg-gradient-info text-white">Historial de Cajas</div>
+        <div class="card-header bg-gradient-primary">Historial de Cajas</div>
         <div class="card-body table-responsive">
             <table id="tablaCajas" class="table table-bordered table-striped">
-                <thead>
+                <thead class="text-center align-middle bg-gradient-info">
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
@@ -148,22 +162,21 @@
 @stop
 
 @section('css')
-    {{-- DataTables CSS --}}
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
 @stop
 
 @section('js')
-    {{-- DataTables JS --}}
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    {{--<script> SCRIPTS PARA LOS BOTONES DE COPY,EXCEL,IMPRIMIR,PDF,CSV </script>--}}
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
 
     <script>
         // Historial con DataTable
@@ -171,15 +184,31 @@
             $('#tablaCajas').DataTable({
                 responsive: true,
                 autoWidth: false,
-                dom: '<"d-flex justify-content-between align-items-center mb-2"Bf>rt<"d-flex justify-content-between align-items-center mt-2"lip>',
+               /*  dom: '<"d-flex justify-content-between align-items-center mb-2"Bf>rt<"d-flex justify-content-between align-items-center mt-2"lip>', */
+                dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
                     { extend: 'excelHtml5', text: '📊 Excel', className: 'btn btn-success btn-sm' },
                     { extend: 'pdfHtml5', text: '📄 PDF', className: 'btn btn-danger btn-sm' },
                     { extend: 'print', text: '🖨️ Imprimir', className: 'btn btn-info btn-sm' }
                 ],
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-MX.json"
-                }
+
+                "language": {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                },
+
+                // Opcional: Personalizaciones
+                "pageLength": 10,
+                "lengthMenu": [5, 10, 25, 50],
+                "order": [[2, 'desc']], // Ordenar por fecha descendente
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "responsive": true,
+                "autoWidth": false,
+                "scrollX": false,
+
             });
         });
 
