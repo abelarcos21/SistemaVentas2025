@@ -10,7 +10,7 @@ use App\Models\Cliente;
 use App\Models\Producto;
 use App\Models\CotizacionDetalle;
 use App\Models\Venta;
-use App\Models\VentaDetalle;
+use App\Models\DetalleVenta;
 use App\Models\Caja;
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
@@ -46,8 +46,9 @@ class CotizacionController extends Controller
 
     /**
      * Guardar cotización en BD
-     */
-    public function store(Request $request) {
+    */
+
+    /* public function store(Request $request) {
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
             'productos' => 'required|array|min:1',
@@ -104,7 +105,66 @@ class CotizacionController extends Controller
         });
 
         return redirect()->route('cotizaciones.index')->with('success', 'Cotización creada correctamente.');
+    } */
+
+    public function store(Request $request){
+
+        $request->validate([
+            'cliente_id' => 'required|exists:clientes,id',
+            'productos'  => 'required|array',
+            'productos.*' => 'required|integer|exists:productos,id',
+            'cantidades' => 'required|array',
+            'precios'    => 'required|array',
+        ]);
+
+        DB::transaction(function () use ($request) {
+            $productos  = $request->productos;   // array de IDs
+            $cantidades = $request->cantidades;  // array de cantidades
+            $precios    = $request->precios;     // array de precios unitarios
+
+            $subtotal = 0;
+            $detalles = [];
+
+            foreach ($productos as $i => $productoId) {
+                $cantidad = (int)($cantidades[$i] ?? 1);
+                $precio   = (float)($precios[$i] ?? 0);
+                $lineaTotal = $cantidad * $precio;
+
+                $subtotal += $lineaTotal;
+
+                $detalles[] = [
+                    'producto_id'     => $productoId,
+                    'cantidad'        => $cantidad,
+                    'precio_unitario' => $precio,
+                    'total'           => $lineaTotal, // tu campo real en cotizacion_detalles
+                ];
+            }
+
+            // Ajusta según tu lógica fiscal
+            $impuestos = $subtotal * 0.16;
+            $total     = $subtotal + $impuestos;
+
+            // Crear la cotización
+            $cotizacion = Cotizacion::create([
+
+                'cliente_id' => $request->cliente_id,
+                'user_id'    => auth()->id(),
+                'fecha'      => now(),
+                'subtotal'   => $subtotal,
+                'impuestos'  => $impuestos,
+                'total'      => $total,
+                'estado'     => 'pendiente',
+            ]);
+
+            // Crear detalles
+            foreach ($detalles as $detalle) {
+                $cotizacion->detalles()->create($detalle);
+            }
+        });
+
+        return redirect()->route('cotizaciones.index')->with('success', 'Cotización creada correctamente.');
     }
+
 
     /**
      * Ver detalle de una cotización
@@ -127,43 +187,71 @@ class CotizacionController extends Controller
 
     /**
      * Actualizar cotización
-     */
+    */
     public function update(Request $request, $id){
+
         $cotizacion = Cotizacion::findOrFail($id);
 
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
             'productos'  => 'required|array',
+            'productos.*' => 'required|integer|exists:productos,id',
+            'cantidades' => 'required|array',
+            'precios'    => 'required|array',
         ]);
 
         DB::transaction(function () use ($request, $cotizacion) {
+            $productos  = $request->productos;   // array de IDs
+            $cantidades = $request->cantidades;  // array de cantidades
+            $precios    = $request->precios;     // array de precios unitarios
+
+            $subtotal = 0;
+            $detalles = [];
+
+            foreach ($productos as $i => $productoId) {
+                $cantidad = (int)($cantidades[$i] ?? 1);
+                $precio   = (float)($precios[$i] ?? 0);
+                $lineaTotal = $cantidad * $precio;
+
+                $subtotal += $lineaTotal;
+
+                $detalles[] = [
+                    'cotizacion_id'   => $cotizacion->id,
+                    'producto_id'     => $productoId,
+                    'cantidad'        => $cantidad,
+                    'precio_unitario' => $precio,
+                    'total'           => $lineaTotal, //aquí usas tu campo real
+                ];
+            }
+
+            //Ajusta el cálculo de impuestos a tu lógica real (ejemplo IVA 16%)
+            $impuestos = $subtotal * 0.16;
+            $total     = $subtotal + $impuestos;
+
+            // Actualizar la cotización
             $cotizacion->update([
                 'cliente_id' => $request->cliente_id,
-                'subtotal'   => $request->subtotal,
-                'impuestos'  => $request->impuestos,
-                'total'      => $request->total,
+                'subtotal'   => $subtotal,
+                'impuestos'  => $impuestos,
+                'total'      => $total,
             ]);
 
             // limpiar detalles previos
             $cotizacion->detalles()->delete();
 
-            foreach ($request->productos as $producto) {
-                CotizacionDetalle::create([
-                    'cotizacion_id' => $cotizacion->id,
-                    'producto_id'   => $producto['id'],
-                    'cantidad'      => $producto['cantidad'],
-                    'precio_unitario' => $producto['precio_unitario'],
-                    'total'         => $producto['cantidad'] * $producto['precio_unitario'],
-                ]);
+            // insertar nuevos
+            foreach ($detalles as $detalle) {
+                CotizacionDetalle::create($detalle);
             }
         });
 
         return redirect()->route('cotizaciones.index')->with('success', 'Cotización actualizada.');
     }
 
+
     /**
      * Convertir cotización en venta
-     */
+    */
     public function convertirEnVenta($id){
         $cotizacion = Cotizacion::with('detalles')->findOrFail($id);
 
@@ -183,21 +271,37 @@ class CotizacionController extends Controller
 
         DB::transaction(function () use ($cotizacion, $caja) {
 
+            // Generar folio consecutivo - Obtener o crear el folio actual con bloqueo
+            $folio = \App\Models\Folio::lockForUpdate()->firstOrCreate(
+                ['serie' => '001'],
+                ['ultimo_numero' => 0]
+            );
+
+            // Incrementar y guardar en la bd
+            $folio->ultimo_numero += 1;
+            $folio->save();
+
+
             // Aquí creas la venta y descuentas inventario
             $venta = Venta::create([
-                'cliente_id' => $cotizacion->cliente_id,
+
                 'user_id'    => auth()->id(),
-                'caja_id'    => Caja::getCajaActivaByUser(auth()->id())->id ?? null,
-                'total'      => $cotizacion->total,
+                'cliente_id' => $cotizacion->cliente_id,
+                'empresa_id' => 1,
+                'caja_id'    => $caja->id,
+                'total_venta'      => $cotizacion->total,
+                'folio'        => $folio->serie . '-' . str_pad($folio->ultimo_numero, 6, '0', STR_PAD_LEFT), //Usar el folio generado
 
             ]);
 
             foreach ($cotizacion->detalles as $detalle) {
-                $venta->detalles()->create([
-                    'producto_id' => $detalle->producto_id,
-                    'cantidad'    => $detalle->cantidad,
-                    'precio_unitario'      => $detalle->precio_unitario,
-                    'total'    => $detalle->total,
+
+                DetalleVenta::create([
+                    'venta_id'        => $venta->id,
+                    'producto_id'     => $detalle->producto_id,
+                    'cantidad'        => $detalle->cantidad,
+                    'precio_unitario' => $detalle->precio_unitario,
+                    'sub_total'       => $detalle->total, //$detalle->total viene de la tabla cotizaciónes
                 ]);
 
                 // descontar inventario Actualizar stock
@@ -208,11 +312,11 @@ class CotizacionController extends Controller
             $cotizacion->update(['estado' => 'convertida']);
 
             // actualizar caja
-            $caja->increment('total_ventas', $venta->total);
+            $caja->increment('total_ventas', $venta->total_venta); //$venta->total_venta viene de la tabla ventas
 
         });
 
-        return redirect()->route('ventas.index', $venta)->with('success', 'Cotización convertida en venta correctamente.');
+        return redirect()->route('detalleventas.index')->with('success', 'Cotización convertida en venta correctamente.');
     }
 
     /**

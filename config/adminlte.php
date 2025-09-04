@@ -341,12 +341,6 @@ return [
                 ],
 
                 [
-                    'text' => 'Vender Manual',
-                    'url' => 'ventas/crear-venta',
-                    'icon' => 'fas fa-cash-register',
-                ],
-
-                [
                     'text' => 'Historial Ventas',
                     'url' => 'detalles/detalle-ventas',
                     'icon' => 'fas fa-history',

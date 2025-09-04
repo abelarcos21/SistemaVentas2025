@@ -1,23 +1,26 @@
 @extends('adminlte::page')
 
-@section('title', 'Nueva Cotización')
+@section('title', 'Editar Cotización')
 
 @section('content_header')
-    <h1 class="text-primary"><i class="fas fa-plus-circle"></i> Nueva Cotización</h1>
+    <h1 class="text-primary"><i class="fas fa-edit"></i> Editar Cotización</h1>
 @stop
 
 @section('content')
     <div class="card shadow">
         <div class="card-body">
-            <form action="{{ route('cotizaciones.store') }}" method="POST">
+            <form action="{{ route('cotizaciones.update', $cotizacion->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
                 <div class="form-group">
                     <label for="cliente_id">Cliente</label>
                     <select name="cliente_id" id="cliente_id" class="form-control select2" required>
                         <option value="">Seleccione un cliente</option>
                         @foreach ($clientes as $cliente)
-                            <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                            <option value="{{ $cliente->id }}" {{ $cotizacion->cliente_id == $cliente->id ? 'selected' : '' }}>
+                                {{ $cliente->nombre }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -32,21 +35,40 @@
                             <th>Subtotal</th>
                             <th>
                                 <button type="button" class="btn btn-success btn-sm" id="btnAgregarProducto">
-                                    <i class="fas fa-plus"></i> Agregar
+                                    <i class="fas fa-plus"></i>
                                 </button>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Productos dinámicos -->
+                        @foreach ($cotizacion->detalles as $detalle)
+                            <tr>
+                                <td>
+                                    <select name="productos[]" class="form-control producto-select select2" required>
+                                        <option value="">Seleccione un producto</option>
+                                        @foreach ($productos as $producto)
+                                            <option value="{{ $producto->id }}"
+                                                data-precio="{{ $producto->precio_venta }}"
+                                                {{ $detalle->producto_id == $producto->id ? 'selected' : '' }}>
+                                                {{ $producto->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td><input type="number" name="precios[]" class="form-control precio" step="0.01" value="{{ $detalle->precio_unitario }}" readonly></td>
+                                <td><input type="number" name="cantidades[]" class="form-control cantidad" value="{{ $detalle->cantidad }}" min="1"></td>
+                                <td class="subtotal">{{ number_format($detalle->total, 2) }}</td>
+                                <td><button type="button" class="btn btn-danger btn-sm btnEliminar"><i class="fas fa-trash"></i></button></td>
+                            </tr>
+                        @endforeach
                     </tbody>
                 </table>
 
                 <div class="text-right">
-                    <h4>Total: $<span id="total">0.00</span></h4>
+                    <h4>Total: $<span id="total">{{ number_format($cotizacion->total, 2) }}</span></h4>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Guardar Cotización</button>
+                <button type="submit" class="btn btn-primary">Actualizar Cotización</button>
                 <a href="{{ route('cotizaciones.index') }}" class="btn btn-secondary">Cancelar</a>
             </form>
         </div>
@@ -55,7 +77,6 @@
 
 @section('js')
 <script>
-    // Inicializar select2
     $(document).ready(function () {
         $('.select2').select2({
             theme: 'bootstrap4',
@@ -63,10 +84,10 @@
         });
     });
 
-    let total = 0;
+    let total = parseFloat($('#total').text()) || 0;
 
     // Agregar producto dinámico
-    document.getElementById('btnAgregarProducto').addEventListener('click', function() {
+    $('#btnAgregarProducto').on('click', function () {
         let fila = `
         <tr>
             <td>
@@ -84,7 +105,7 @@
         </tr>`;
         $('#tablaProductos tbody').append(fila);
 
-        // Reaplicar select2 a los nuevos selects
+        // Reaplicar select2
         $('.producto-select').select2({
             theme: 'bootstrap4',
             width: '100%'
@@ -93,7 +114,7 @@
         recalcular();
     });
 
-    // Detectar cambios en producto o cantidad
+    // Detectar cambios
     $(document).on('change', '.producto-select', function () {
         let precio = $(this).find(':selected').data('precio') || 0;
         let fila = $(this).closest('tr');
@@ -105,13 +126,11 @@
         recalcular();
     });
 
-    // Eliminar fila
     $(document).on('click', '.btnEliminar', function () {
         $(this).closest('tr').remove();
         recalcular();
     });
 
-    // Recalcular total
     function recalcular() {
         total = 0;
         $('#tablaProductos tbody tr').each(function () {

@@ -153,10 +153,19 @@
 
                                                         @endif
                                                     </form>
-                                                    @if($cotizacion->estado == 'pendiente')
+                                                    {{--  @if($cotizacion->estado == 'pendiente')
                                                         <a href="{{ route('cotizaciones.convertir', $cotizacion) }}" class="btn btn-success btn-sm">
                                                             <i class="fas fa-cash-register"></i> Convertir a Venta
                                                         </a>
+                                                    @endif --}}
+
+                                                    @if($cotizacion->estado == 'pendiente')
+                                                        <form action="{{ route('cotizaciones.convertir', $cotizacion) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-success btn-sm">
+                                                                <i class="fas fa-cash-register"></i> Convertir a Venta
+                                                            </button>
+                                                        </form>
                                                     @endif
                                                 </td>
                                             </tr>

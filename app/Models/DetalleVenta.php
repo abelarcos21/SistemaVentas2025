@@ -9,7 +9,21 @@ class DetalleVenta extends Model
 {
     //
     use HasFactory;
+
     protected $table = 'detalle_venta';
+
+    protected $fillable = [
+        'venta_id',
+        'producto_id',
+        'cantidad',
+        'precio_unitario',
+        'sub_total',
+    ];
+
+    // Relaciones
+    public function venta(){
+        return $this->belongsTo(Venta::class);
+    }
 
     public function producto(){
         return $this->belongsTo(Producto::class);
