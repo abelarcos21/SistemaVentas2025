@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
+use App\Http\Controllers\Controller; // IMPORTANTE: esta línea importa la clase base
 use App\Models\Compra;
 use App\Models\Producto;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 use Auth;
 
 class ComprasController extends Controller
 {
     //metodo index
-    public function index(){
+   /*  public function index(){
 
         $compras = Compra::select(
             'compras.*',
@@ -25,6 +26,55 @@ class ComprasController extends Controller
 
         return view('modulos.compras.index', compact('compras'));
 
+    } */
+
+    public function index(Request $request){
+
+        if ($request->ajax()) {
+            $compras = Compra::select(
+                'compras.id',
+                'compras.cantidad',
+                'compras.precio_compra',
+                'compras.created_at',
+                'compras.user_id',
+                'compras.producto_id',
+                'users.name as nombre_usuario',
+                'productos.nombre as nombre_producto'
+            )
+            ->join('users', 'compras.user_id', '=', 'users.id')
+            ->join('productos', 'compras.producto_id', '=', 'productos.id');
+
+            return DataTables::of($compras)
+                ->addIndexColumn()
+                ->editColumn('cantidad', function ($compra) {
+                    return '<span class="badge bg-primary">' . $compra->cantidad . '</span>';
+                })
+                ->editColumn('precio_compra', function ($compra) {
+                    return '<span class="text-blue">$' . number_format($compra->precio_compra, 2) . '</span>';
+                })
+                ->addColumn('total_compra', function ($compra) {
+                    $total = $compra->precio_compra * $compra->cantidad;
+                    return '<span class="text-blue">$' . number_format($total, 2) . '</span>';
+                })
+                ->editColumn('created_at', function ($compra) {
+                    return $compra->created_at->format('d/m/Y h:i a');
+                })
+                ->addColumn('acciones', function ($compra) {
+                    $editBtn = '<a href="' . route('compra.edit', $compra->id) . '" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>';
+
+                    $deleteBtn = '<button class="btn btn-danger bg-gradient-danger btn-sm delete-btn" data-id="' . $compra->id . '">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>';
+
+                    return '<div class="d-flex">' . $editBtn . $deleteBtn . '</div>';
+                })
+                ->rawColumns(['cantidad', 'precio_compra', 'total_compra', 'acciones'])
+                ->make(true);
+        }
+
+        return view('modulos.compras.index');
     }
 
 
@@ -240,5 +290,24 @@ class ComprasController extends Controller
         }
 
     }
+
+    /* // Método para eliminar compra vía AJAX
+    public function destroy($id)
+    {
+        try {
+            $compra = Compra::findOrFail($id);
+            $compra->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Compra eliminada exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar la compra: ' . $e->getMessage()
+            ], 500);
+        }
+    } */
 
 }
