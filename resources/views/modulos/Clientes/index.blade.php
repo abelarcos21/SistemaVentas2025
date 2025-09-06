@@ -347,7 +347,7 @@
                         },
                         title: 'Reporte de Clientes',
                         filename: 'reporte_clientes_' + new Date().toISOString().slice(0, 10),
-                        text: '<i class="fas fa-file-excel"></i> Exportar EXCEL',
+                        text: '📊 Exportar Excel',
                         className: 'btn btn-success btn-sm',
                         customize: function (xlsx) {
                             let sheet = xlsx.xl.worksheets['sheet1.xml'];
@@ -459,7 +459,7 @@
                         },
                         orientation: 'landscape',
                         pageSize: 'A4',
-                        text: '<i class="fas fa-file-pdf"></i> Exportar a PDF',
+                        text: '📄 Exportar a PDF',
                         className: 'btn btn-danger btn-sm shadow-sm',
                         customize: function (doc) {
                             const fecha = new Date().toLocaleDateString('es-MX', {
@@ -665,7 +665,7 @@
                     },
                     {
                         extend: 'print',
-                        text: '<i class="fas fa-print"></i> Imprimir',
+                        text: '🖨️ Imprimir',
                         className: 'btn btn-info btn-sm',
                         exportOptions: {
                             columns: [0, 1, 2, 3, 4, 5, 6, 7]
