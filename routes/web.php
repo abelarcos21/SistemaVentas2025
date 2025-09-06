@@ -187,6 +187,9 @@ Route::prefix('proveedores')->group(function(){
     Route::put('{proveedor}', [ProveedorController::class, 'update'])->name('proveedor.update');
     Route::delete('{proveedor}', [ProveedorController::class, 'destroy'])->name('proveedor.destroy');
 
+    // Rutas adicionales para AJAX cambio de estado
+    Route::post('/proveedor/toggle-activo', [ProveedorController::class, 'toggleActivo'])->name('proveedor.toggle-activo');
+
 });
 
 ///////////////////RUTA CLIENTES

@@ -7,17 +7,86 @@ use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la 
 use App\Models\Proveedor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
+
 use Exception;
 
 class ProveedorController extends Controller
 {
     //metodo index
-    public function index(){
+     public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $proveedores = Proveedor::select('*');
 
-        $proveedores = Proveedor::all();
+            return DataTables::of($proveedores)
+                ->addIndexColumn()
+                ->editColumn('nombre', function ($proveedor) {
+                    return $proveedor->nombre;
+                })
+                ->editColumn('telefono', function ($proveedor) {
+                    return $proveedor->telefono ?? 'N/A';
+                })
+                ->editColumn('email', function ($proveedor) {
+                    return $proveedor->email ?? 'N/A';
+                })
+                ->editColumn('codigo_postal', function ($proveedor) {
+                    return $proveedor->codigo_postal ?? 'N/A';
+                })
+                ->editColumn('sitio_web', function ($proveedor) {
+                    if ($proveedor->sitio_web) {
+                        $url = $proveedor->sitio_web;
+                        // Agregar http:// si no tiene protocolo
+                        if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+                            $url = "http://" . $url;
+                        }
+                        return '<a href="' . $url . '" target="_blank" class="text-primary">' . $proveedor->sitio_web . '</a>';
+                    }
+                    return 'N/A';
+                })
+                ->editColumn('notas', function ($proveedor) {
+                    return $proveedor->notas ?
+                        '<span class="text-muted">' . Str::limit($proveedor->notas, 50) . '</span>' :
+                        'Sin notas';
+                })
+                ->editColumn('activo', function($proveedor) {
+                    $checked = $proveedor->activo ? 'checked' : '';
+                    return '<div class="custom-control custom-switch d-flex justify-content-center">
+                                <input role="switch" type="checkbox" class="custom-control-input toggle-activo"
+                                       id="activoSwitch'.$proveedor->id.'" '.$checked.' data-id="'.$proveedor->id.'">
+                                <label class="custom-control-label" for="activoSwitch'.$proveedor->id.'"></label>
+                            </div>';
+                })
+                ->addColumn('fecha_registro', function ($proveedor) {
+                    return $proveedor->created_at->format('d/m/Y H:i');
+                })
+                ->addColumn('acciones', function ($proveedor) {
+                    return '
+                        <div class="btn-group" role="group">
+                            <a href="' . route('proveedor.show', $proveedor->id) . '"
+                               class="btn btn-outline-info btn-sm"
+                               title="Ver detalles">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="' . route('proveedor.edit', $proveedor->id) . '"
+                               class="btn btn-outline-primary btn-sm"
+                               title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm delete-btn"
+                                    data-id="' . $proveedor->id . '"
+                                    title="Eliminar">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>';
+                })
+                ->rawColumns(['sitio_web', 'notas', 'activo', 'acciones'])
+                ->make(true);
+        }
 
-        return view('modulos.proveedores.index', compact('proveedores'));
-
+        return view('modulos.proveedores.index');
     }
 
     public function create(){
@@ -127,4 +196,42 @@ class ProveedorController extends Controller
 
         }
     }
+
+    // Método para actualizar el estado activo via AJAX
+    public function toggleActivo(Request $request){
+        try {
+            $proveedor = Proveedor::findOrFail($request->id);
+            $proveedor->activo = $request->activo;
+            $proveedor->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado actualizado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado'
+            ], 500);
+        }
+    }
+
+    // Método para eliminar via AJAX
+    /* public function destroy($id)
+    {
+        try {
+            $proveedor = Proveedor::findOrFail($id);
+            $proveedor->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Proveedor eliminado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al eliminar el proveedor: ' . $e->getMessage()
+            ], 500);
+        }
+    } */
 }
