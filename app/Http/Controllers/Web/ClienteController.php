@@ -26,9 +26,9 @@ class ClienteController extends Controller
                 ->addIndexColumn()
                 ->addColumn('acciones', function($row) {
                     $actionBtn = '<div class="d-flex">';
-                    $actionBtn .= '<a href="'.route('cliente.show', $row->id).'" class="btn btn-info btn-sm mr-1" title="Ver"><i class="fas fa-eye"></i></a>';
-                    $actionBtn .= '<a href="'.route('cliente.edit', $row->id).'" class="btn btn-warning btn-sm mr-1" title="Editar"><i class="fas fa-edit"></i></a>';
-                    $actionBtn .= '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'" title="Eliminar"><i class="fas fa-trash-alt"></i></button>';
+                    $actionBtn .= '<a href="'.route('cliente.show', $row->id).'" class="btn btn-info btn-sm mr-1" title="Ver"><i class="fas fa-eye"></i> Ver</a>';
+                    $actionBtn .= '<a href="'.route('cliente.edit', $row->id).'" class="btn btn-warning btn-sm mr-1" title="Editar"><i class="fas fa-edit"></i> Editar</a>';
+                    $actionBtn .= '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'" title="Eliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>';
                     $actionBtn .= '</div>';
                     return $actionBtn;
                 })
@@ -41,7 +41,7 @@ class ClienteController extends Controller
                             </div>';
                 })
                 ->addColumn('fecha_registro', function($row) {
-                    return $row->created_at->format('d/m/Y');
+                    return $row->created_at->format('d/m/Y h:i a');
                 })
                 ->addColumn('nombre_completo', function($row) {
                     return $row->nombre . ' ' . $row->apellido;

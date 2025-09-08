@@ -42,14 +42,13 @@
                                             <th>Nombre</th>
                                             <th>Teléfono</th>
                                             <th>Email</th>
-                                            <th>Código Postal</th>
-                                            <th>Sitio Web</th>
-                                            <th>Notas</th>
-                                            <th>Activo</th>
+                                            <th>Código Postal</th>  
                                             <th>Fecha Registro</th>
+                                            <th>Activo</th>
                                             <th class="no-exportar">Acciones</th>
                                         </tr>
                                     </thead>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -234,11 +233,9 @@
                     {data: 'telefono', name: 'telefono'},
                     {data: 'email', name: 'email'},
                     {data: 'codigo_postal', name: 'codigo_postal'},
-                    {data: 'sitio_web', name: 'sitio_web'},
-                    {data: 'notas', name: 'notas'},
-                    {data: 'activo', name: 'activo', orderable: false, searchable: false, className: 'text-center'},
                     {data: 'fecha_registro', name: 'created_at', className: 'text-center'},
-                    {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'text-center no-exportar'}
+                    {data: 'activo', name: 'activo', orderable: false, searchable: false, className: 'text-center'},
+                    {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'text-center no-exportar'},
                 ],
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [
@@ -572,7 +569,7 @@
                 stateSave: true,
                 columnDefs: [
                     {
-                        targets: [8], // Columna Acciones
+                        targets: [7], // Columna Acciones
                         className: 'text-center align-middle'
                     }
                 ]

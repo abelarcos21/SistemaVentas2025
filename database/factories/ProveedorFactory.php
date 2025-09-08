@@ -24,8 +24,6 @@ class ProveedorFactory extends Factory
             'telefono' => $this->faker->phoneNumber(),
             'email' => $this->faker->unique()->companyEmail(),
             'codigo_postal' => $this->faker->postcode(),
-            'sitio_web' => $this->faker->url(),
-            'notas' => $this->faker->sentence(5),
             'activo' => $this->faker->boolean(90), // 90% probabilidad de estar activo
         ];
     }

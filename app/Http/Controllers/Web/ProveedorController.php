@@ -3,28 +3,31 @@
 namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
+use App\Http\Controllers\Controller; //IMPORTANTE: esta línea importa la clase base
 use App\Models\Proveedor;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
-
 use Exception;
 
 class ProveedorController extends Controller
 {
     //metodo index
-     public function index(Request $request)
-    {
+    public function index(Request $request){
         if ($request->ajax()) {
-            $proveedores = Proveedor::select('*');
-
+            $proveedores = Proveedor::select([
+                'id', 
+                'nombre', 
+                'telefono', 
+                'email', 
+                'codigo_postal', 
+                'activo', 
+                'created_at'
+            ]);
+            
             return DataTables::of($proveedores)
-                ->addIndexColumn()
-                ->editColumn('nombre', function ($proveedor) {
-                    return $proveedor->nombre;
-                })
+                // NO uses addIndexColumn() si ya tienes el ID
                 ->editColumn('telefono', function ($proveedor) {
                     return $proveedor->telefono ?? 'N/A';
                 })
@@ -34,58 +37,34 @@ class ProveedorController extends Controller
                 ->editColumn('codigo_postal', function ($proveedor) {
                     return $proveedor->codigo_postal ?? 'N/A';
                 })
-                ->editColumn('sitio_web', function ($proveedor) {
-                    if ($proveedor->sitio_web) {
-                        $url = $proveedor->sitio_web;
-                        // Agregar http:// si no tiene protocolo
-                        if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
-                            $url = "http://" . $url;
-                        }
-                        return '<a href="' . $url . '" target="_blank" class="text-primary">' . $proveedor->sitio_web . '</a>';
-                    }
-                    return 'N/A';
-                })
-                ->editColumn('notas', function ($proveedor) {
-                    return $proveedor->notas ?
-                        '<span class="text-muted">' . Str::limit($proveedor->notas, 50) . '</span>' :
-                        'Sin notas';
+                ->addColumn('fecha_registro', function ($proveedor) {
+                    return $proveedor->created_at->format('d/m/Y h:i a');
                 })
                 ->editColumn('activo', function($proveedor) {
                     $checked = $proveedor->activo ? 'checked' : '';
                     return '<div class="custom-control custom-switch d-flex justify-content-center">
                                 <input role="switch" type="checkbox" class="custom-control-input toggle-activo"
-                                       id="activoSwitch'.$proveedor->id.'" '.$checked.' data-id="'.$proveedor->id.'">
+                                    id="activoSwitch'.$proveedor->id.'" '.$checked.' data-id="'.$proveedor->id.'">
                                 <label class="custom-control-label" for="activoSwitch'.$proveedor->id.'"></label>
                             </div>';
                 })
-                ->addColumn('fecha_registro', function ($proveedor) {
-                    return $proveedor->created_at->format('d/m/Y H:i');
+                ->addColumn('acciones', function($proveedor) {
+                    return '<div class="d-flex justify-content-center">
+                                <a href="'.route('proveedor.show', $proveedor->id).'" class="btn btn-info btn-sm mr-1" title="Ver">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                <a href="'.route('proveedor.edit', $proveedor->id).'" class="btn btn-warning btn-sm mr-1" title="Editar">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="'.$proveedor->id.'" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </div>';
                 })
-                ->addColumn('acciones', function ($proveedor) {
-                    return '
-                        <div class="btn-group" role="group">
-                            <a href="' . route('proveedor.show', $proveedor->id) . '"
-                               class="btn btn-outline-info btn-sm"
-                               title="Ver detalles">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="' . route('proveedor.edit', $proveedor->id) . '"
-                               class="btn btn-outline-primary btn-sm"
-                               title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <button type="button"
-                                    class="btn btn-outline-danger btn-sm delete-btn"
-                                    data-id="' . $proveedor->id . '"
-                                    title="Eliminar">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>';
-                })
-                ->rawColumns(['sitio_web', 'notas', 'activo', 'acciones'])
+                ->rawColumns(['acciones', 'activo'])
                 ->make(true);
         }
-
+        
         return view('modulos.proveedores.index');
     }
 
