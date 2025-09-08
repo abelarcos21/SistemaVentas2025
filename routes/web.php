@@ -125,6 +125,9 @@ Route::prefix('categorias')->group(function(){
     Route::put('{categoria}', [CategoriaController::class, 'update'])->name('categoria.update');
     Route::delete('{categoria}', [CategoriaController::class, 'destroy'])->name('categoria.destroy');
 
+    // Ruta adicional para el toggle de estado via ajax
+    Route::post('/categoria/toggle-activo', [CategoriaController::class, 'toggleActivo'])->name('categoria.toggle-activo');
+
 });
 
 ///////////////////RUTA CAJAS
@@ -144,6 +147,9 @@ Route::prefix('marcas')->group(function(){
     Route::get('{marca}/show', [MarcaController::class, 'show'])->name('marca.show');
     Route::put('{marca}', [MarcaController::class, 'update'])->name('marca.update');
     Route::delete('{marca}', [MarcaController::class, 'destroy'])->name('marca.destroy');
+
+    // Rutas adicionales para AJAX cambio de estado
+    Route::post('/marca/toggle-activo', [MarcaController::class, 'toggleActivo'])->name('marca.toggle-activo');
 
 });
 

@@ -1687,7 +1687,7 @@
                     url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
                 },
                 pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
+                lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "Todos"]],
                 order: [[11, 'desc']], // Ordenar por fecha descendente
                 paging: true,
                 lengthChange: true,

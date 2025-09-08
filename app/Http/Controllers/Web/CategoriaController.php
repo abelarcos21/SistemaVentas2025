@@ -3,23 +3,81 @@
 namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
+use App\Http\Controllers\Controller; //IMPORTANTE: esta línea importa la clase base
 use App\Models\Categoria;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Exception;
+use Yajra\DataTables\Facades\DataTables;
 
-class CategoriaController extends Controller
-{
-    //index
-    public function index(){
+class CategoriaController extends Controller{
 
-        $categorias = Categoria::all();
+    //metodo index
+    public function index(Request $request){
+        if ($request->ajax()) {
+            $categorias = Categoria::with('user')
+                ->select('categorias.*');
 
-        return view('modulos.categorias.index', compact('categorias'));
+            return DataTables::of($categorias)
+                ->addIndexColumn()
+                ->editColumn('user_id', function ($categoria) {
+                    return $categoria->user->name ?? 'N/A';
+                })
+                ->editColumn('created_at', function ($categoria) {
+                    return $categoria->created_at->format('d/m/Y h:i a');
+                })
+                ->editColumn('activo', function ($categoria) {
+                    $checked = $categoria->activo ? 'checked' : '';
+                    return '<div class="custom-control custom-switch">
+                                <input role="switch" type="checkbox" class="custom-control-input toggle-activo"
+                                       id="activoSwitch' . $categoria->id . '" ' . $checked . '
+                                       data-id="' . $categoria->id . '">
+                                <label class="custom-control-label" for="activoSwitch' . $categoria->id . '"></label>
+                            </div>';
+                })
+                ->addColumn('acciones', function ($categoria) {
+                    return '<div class="d-flex">
+                                <a href="' . route('categoria.show', $categoria) . '" class="btn bg-gradient-info btn-sm mr-1">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                                <a href="' . route('categoria.edit', $categoria) . '" class="btn bg-gradient-warning btn-sm mr-1">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <form action="' . route('categoria.destroy', $categoria) . '" method="POST" class="formulario-eliminar" style="display:inline;">
+                                    ' . csrf_field() . '
+                                    ' . method_field('DELETE') . '
+                                    <button type="submit" class="btn bg-gradient-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </form>
+                            </div>';
+                })
+                ->rawColumns(['activo', 'acciones'])
+                ->make(true);
+        }
 
+        return view('modulos.categorias.index');
+    }
+
+    // Método para actualizar el estado activo via AJAX
+    public function toggleActivo(Request $request){
+        try {
+            $categoria = Categoria::findOrFail($request->id);
+            $categoria->activo = $request->activo;
+            $categoria->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Estado actualizado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado'
+            ], 500);
+        }
     }
 
     public function create(){
