@@ -46,7 +46,6 @@ class ProductoController extends Controller
 
     private function getDataTableData(){
         $productos = Producto::select(
-            'productos.id',
             'productos.nombre',
             'productos.descripcion',
             'productos.precio_compra',
@@ -118,13 +117,21 @@ class ProductoController extends Controller
                     </div>
                 ';
             })
-            ->addColumn('precio_formatted', function ($producto) {
-                return number_format($producto->precio_venta, 2) . ' ' . ($producto->moneda->codigo ?? '');
+            ->addColumn('precio_venta_formatted', function ($producto) {
+                $precioVenta = ($producto->moneda->codigo ?? '') . ' ' . number_format($producto->precio_venta, 2);
+                return '<span class="text-primary fw-bold">' . $precioVenta . '</span>';
+            })
+            ->addColumn('precio_compra_formatted', function ($producto) {
+                $precioCompra = ($producto->moneda->codigo ?? '') . ' ' . number_format($producto->precio_compra, 2);
+                return '<span class="text-primary fw-bold">' . $precioCompra . '</span>';
             })
             ->addColumn('cantidad', function ($producto) {
                 $class = $producto->cantidad > 10 ? 'success' : ($producto->cantidad > 0 ? 'warning' : 'danger');
                 $text = $producto->cantidad > 10 ? 'En stock' : ($producto->cantidad > 0 ? 'Poco stock' : 'Sin stock');
                 return '<span class="badge badge-' . $class . '">' . $text . ' (' . $producto->cantidad . ')</span>';
+            })
+            ->addColumn('fecha_registro', function ($producto) {
+                    return $producto->created_at->format('d/m/Y h:i a');
             })
             ->addColumn('activo', function ($producto) {
                 $checked = $producto->activo ? 'checked' : '';
@@ -155,16 +162,13 @@ class ProductoController extends Controller
                 $buttons .= '</div>';
                 return $buttons;
             })
-            ->editColumn('created_at', function ($producto) {
-                return $producto->created_at->format('d/m/Y H:i');
-            })
             ->editColumn('nombre', function ($producto) {
                 return '<strong>' . $producto->nombre . '</strong><br>';
             })
             ->editColumn('codigo', function ($producto) {
                 return '<code>' . $producto->codigo . '</code><br>';
             })
-            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo',])
+            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo','precio_venta_formatted','precio_compra_formatted'])
             ->make(true);
     }
 

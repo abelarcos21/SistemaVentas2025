@@ -53,7 +53,6 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
                                         <tr>
-                                            <th>Nro</th>
                                             <th class="no-exportar">Imagen</th>
                                             <th>Codigo de Barras</th>
                                             <th>Nombre</th>
@@ -1249,7 +1248,6 @@
                     type: 'GET'
                 },
                 columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'imagen', name: 'imagen', orderable: false, searchable: false, className: 'no-exportar'},
                     {data: 'codigo', name: 'productos.codigo'},
                     {data: 'nombre', name: 'productos.nombre'},
