@@ -36,15 +36,28 @@ return new class extends Migration
             $table->string('moneda', 3)->default('MXN');
             $table->boolean('activo')->default(true);
 
+            //CAMPOS RELACIONADOS A LOS PRODUCTOS CON OFERTAS Y MAYOREO
+            $table->boolean('permite_mayoreo')->default(false);
+            $table->boolean('en_oferta')->default(false);
+            $table->decimal('precio_mayoreo', 10, 2)->nullable();
+            $table->decimal('precio_oferta', 10, 2)->nullable();
+            $table->integer('cantidad_minima_mayoreo')->default(10);
+            $table->date('fecha_inicio_oferta')->nullable();
+            $table->date('fecha_fin_oferta')->nullable();
+
+            //-- Índices para rendimiento
+            $table->index(['en_oferta', 'fecha_inicio_oferta', 'fecha_fin_oferta'], 'idx_productos_oferta');
+            $table->index('permite_mayoreo', 'idx_productos_mayoreo');
+
             // Campos relacionados al SAT
-            $table->string('clave_prod_serv', 10)->nullable();// Clave SAT ClaveProdServ (ej: 01010101)
+            /* $table->string('clave_prod_serv', 10)->nullable();// Clave SAT ClaveProdServ (ej: 01010101)
             $table->string('clave_unidad', 5)->nullable();// Clave unidad SAT ClaveUnidad (ej: H87)
             $table->string('unidad_descripcion')->nullable();//Unidad comercial Ej: "Pieza"
             $table->decimal('precio_unitario', 10, 2)->nullable();//para que pase el seeder se puso nullable
             $table->decimal('tasa_o_cuota', 5, 4)->nullable();// Ej. 0.1600
             $table->enum('tipo_factor', ['Tasa', 'Cuota', 'Exento'])->nullable();// Tasa, Exento, Cuota
             $table->string('objeto_imp', 2)->default('02');//01: No objeto, 02: Sí objeto, 03: Exento
-            $table->string('numero_identificacion')->nullable();
+            $table->string('numero_identificacion')->nullable(); */
 
             $table->timestamps();
         });

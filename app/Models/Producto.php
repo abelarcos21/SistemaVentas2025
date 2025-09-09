@@ -26,6 +26,19 @@ class Producto extends Model
         'descripcion',
         'precio_venta',
         'activo',
+
+        // Campos de mayoreo
+        'permite_mayoreo',
+        'precio_mayoreo',
+        'cantidad_minima_mayoreo',
+
+        //Campos de oferta
+        'en_oferta',
+        'precio_oferta',
+        'fecha_inicio_oferta',
+        'fecha_fin_oferta',
+
+
         /* 'clave_prod_serv',//datos fiscales del sat cfdi 4.0
         'clave_unidad',
         'unidad_descripcion',
@@ -36,6 +49,49 @@ class Producto extends Model
         'numero_identificacion', */
 
     ];
+
+    protected $casts = [
+
+        'activo' => 'boolean',
+        'permite_mayoreo' => 'boolean',
+        'en_oferta' => 'boolean',
+        'precio_venta' => 'decimal:2',
+        'precio_compra' => 'decimal:2',
+        'precio_mayoreo' => 'decimal:2',
+        'precio_oferta' => 'decimal:2',
+        'cantidad_minima_mayoreo' => 'integer',
+        'fecha_inicio_oferta' => 'date',
+        'fecha_fin_oferta' => 'date',
+    ];
+
+    //Accesor para obtener el precio vigente
+    public function getPrecioVigenteAttribute(){
+        $hoy = now()->toDateString();
+
+        if ($this->en_oferta && $this->fecha_inicio_oferta <= $hoy && $this->fecha_fin_oferta >= $hoy) {
+            return $this->precio_oferta;
+        }
+
+        return $this->precio_venta;
+    }
+
+    //Método para validar si aplica mayoreo
+    public function aplicaMayoreo($cantidad){
+        return $this->permite_mayoreo && $cantidad >= $this->cantidad_minima_mayoreo;
+    }
+
+    //Helper para mostrar precio aplicado (base, mayoreo, oferta)
+    public function getPrecioAplicadoAttribute(){
+        if ($this->en_oferta && $this->precio_oferta && now()->between($this->fecha_inicio_oferta, $this->fecha_fin_oferta)) {
+            return $this->precio_oferta;
+        }
+
+        if ($this->permite_mayoreo && $this->precio_mayoreo) {
+            return $this->precio_mayoreo;
+        }
+
+        return $this->precio_venta;
+    }
 
     //RELACION PARA ACCEDER ALA IMAGEN
     public function imagen(){

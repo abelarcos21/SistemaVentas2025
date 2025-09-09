@@ -13,13 +13,11 @@
 
             <form id="createProductForm" action="{{ route('producto.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-
                 <div class="modal-body">
                     <div class="container-fluid">
                         <div class="row">
                             {{-- Columna izquierda - Datos principales --}}
                             <div class="col-lg-8 col-md-12">
-
                                 {{-- Fila 1: Categoria y Proveedor --}}
                                 <div class="row">
                                     <div class="col-md-6 col-12">
@@ -38,7 +36,6 @@
                                             <div class="invalid-feedback" id="error-categoria_id"></div>
                                         </div>
                                     </div>
-
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
                                             <label for="proveedor_id_create">
@@ -75,17 +72,14 @@
                                             <div class="invalid-feedback" id="error-marca_id"></div>
                                         </div>
                                     </div>
-
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
                                             <label for="codigo_create">
                                                 <i class="fas fa-barcode text-info"></i> Código de Barras (EAN-13)
                                             </label>
-                                            <input type="text" name="codigo" id="codigo_create" class="form-control" value="{{ old('codigo') }}"
-                                                placeholder="Déjalo vacío para generar automáticamente">
+                                            <input type="text" name="codigo" id="codigo_create" class="form-control" value="{{ old('codigo') }}" placeholder="Déjalo vacío para generar automáticamente">
                                             <small class="text-muted">
-                                                <i class="fas fa-info-circle"></i>
-                                                Si no ingresas código, se generará uno EAN-13 válido automáticamente
+                                                <i class="fas fa-info-circle"></i> Si no ingresas código, se generará uno EAN-13 válido automáticamente
                                             </small>
                                             <div class="invalid-feedback" id="error-codigo"></div>
                                         </div>
@@ -99,8 +93,7 @@
                                             <label for="nombre_create">
                                                 <i class="fas fa-box text-info"></i> Nombre del Producto <span class="text-danger">*</span>
                                             </label>
-                                            <input type="text" name="nombre" id="nombre_create" class="form-control"
-                                                value="{{ old('nombre') }}" placeholder="Ingrese el nombre del producto" required>
+                                            <input type="text" name="nombre" id="nombre_create" class="form-control" value="{{ old('nombre') }}" placeholder="Ingrese el nombre del producto" required>
                                             <div class="invalid-feedback" id="error-nombre"></div>
                                         </div>
                                     </div>
@@ -113,9 +106,68 @@
                                             <label for="descripcion_create">
                                                 <i class="fas fa-align-left text-info"></i> Descripción <span class="text-danger">*</span>
                                             </label>
-                                            <textarea name="descripcion" id="descripcion_create" class="form-control"
-                                                rows="3" placeholder="Describe las características del producto..." required>{{ old('descripcion') }}</textarea>
+                                            <textarea name="descripcion" id="descripcion_create" class="form-control" rows="3" placeholder="Describe las características del producto..." required>{{ old('descripcion') }}</textarea>
                                             <div class="invalid-feedback" id="error-descripcion"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- ================== CAMPOS DE MAYOREO ================== --}}
+                                <hr>
+                                <h5 class="text-primary"><i class="fas fa-boxes"></i> Opciones de Mayoreo</h5>
+                                <div class="row">
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch mt-4">
+                                                <input type="hidden" name="permite_mayoreo" value="0">
+                                                <input type="checkbox" class="custom-control-input" id="permite_mayoreo_create" name="permite_mayoreo" value="1">
+                                                <label class="custom-control-label" for="permite_mayoreo_create">Permitir Mayoreo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="precio_mayoreo_create">Precio Mayoreo</label>
+                                            <input type="number" step="0.01" name="precio_mayoreo" id="precio_mayoreo_create" class="form-control" value="{{ old('precio_mayoreo') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="cantidad_minima_mayoreo_create">Cantidad mínima</label>
+                                            <input type="number" name="cantidad_minima_mayoreo" id="cantidad_minima_mayoreo_create" class="form-control" value="{{ old('cantidad_minima_mayoreo', 10) }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- ================== CAMPOS DE OFERTA ================== --}}
+                                <hr>
+                                <h5 class="text-primary"><i class="fas fa-percent"></i> Opciones de Oferta</h5>
+                                <div class="row">
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch mt-4">
+                                                <input type="hidden" name="en_oferta" value="0">
+                                                <input type="checkbox" class="custom-control-input" id="en_oferta_create" name="en_oferta" value="1">
+                                                <label class="custom-control-label" for="en_oferta_create">En oferta</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="precio_oferta_create">Precio Oferta</label>
+                                            <input type="number" step="0.01" name="precio_oferta" id="precio_oferta_create" class="form-control" value="{{ old('precio_oferta') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="fecha_inicio_oferta_create">Inicio Oferta</label>
+                                            <input type="date" name="fecha_inicio_oferta" id="fecha_inicio_oferta_create" class="form-control" value="{{ old('fecha_inicio_oferta') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="fecha_fin_oferta_create">Fin Oferta</label>
+                                            <input type="date" name="fecha_fin_oferta" id="fecha_fin_oferta_create" class="form-control" value="{{ old('fecha_fin_oferta') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -130,8 +182,7 @@
                                             <div class="mt-2">
                                                 <div class="custom-control custom-switch">
                                                     <input type="hidden" name="activo" value="0">
-                                                    <input type="checkbox" class="custom-control-input" id="activoSwitch_create"
-                                                        name="activo" value="1" {{ old('activo', '1') ? 'checked' : '' }}>
+                                                    <input type="checkbox" class="custom-control-input" id="activoSwitch_create" name="activo" value="1" {{ old('activo', '1') ? 'checked' : '' }}>
                                                     <label class="custom-control-label" for="activoSwitch_create">
                                                         <span class="badge badge-success active-text">Activo</span>
                                                         <span class="badge badge-secondary d-none active-text">Inactivo</span>
@@ -140,16 +191,13 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
                                             <label for="imagen_create">
                                                 <i class="fas fa-image text-info"></i> Imagen del Producto
                                             </label>
                                             <input type="file" name="imagen" id="imagen_create" class="form-control-file" accept="image/*">
-                                            <small class="text-muted">
-                                                Tamaño recomendado: 272 × 315 píxeles. Máximo 250 KB.
-                                            </small>
+                                            <small class="text-muted"> Tamaño recomendado: 272 × 315 píxeles. Máximo 250 KB. </small>
                                             <div class="invalid-feedback" id="error-imagen"></div>
                                         </div>
                                     </div>
@@ -170,12 +218,9 @@
                                             <i class="fas fa-image fa-3x text-muted mb-2"></i>
                                             <p class="text-muted mb-0">Selecciona una imagen</p>
                                         </div>
-                                        <img id="img_preview_create" class="img-thumbnail d-none"
-                                             style="max-width: 100%; max-height: 180px;"
-                                             alt="Vista previa de la imagen">
+                                        <img id="img_preview_create" class="img-thumbnail d-none" style="max-width: 100%; max-height: 180px;" alt="Vista previa de la imagen">
                                     </div>
                                 </div>
-
                                 {{-- Información adicional --}}
                                 <div class="card">
                                     <div class="card-header bg-light">
@@ -209,6 +254,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
 // No usar $(document).ready cuando se carga dinámicamente

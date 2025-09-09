@@ -1258,9 +1258,9 @@
                     {data: 'descripcion', name: 'productos.descripcion'},
                     {data: 'nombre_proveedor', name: 'proveedores.nombre'},
                     {data: 'cantidad', name: 'productos.cantidad', orderable: true, searchable: false},
-                    {data: 'precio_formatted', name: 'productos.precio_venta', orderable: true, searchable: false},
-                    {data: 'precio_compra', name: 'productos.precio_compra', orderable: true, searchable: false},
-                    {data: 'created_at', name: 'productos.created_at'},
+                    {data: 'precio_venta_formatted', name: 'productos.precio_venta', orderable: true, searchable: false},
+                    {data: 'precio_compra_formatted', name: 'productos.precio_compra', orderable: true, searchable: false},
+                    {data: 'fecha_registro', name: 'productos.created_at'},
                     {data: 'activo', name: 'productos.activo', orderable: false, searchable: false},
                     { data: 'boton_compra', name: 'boton_compra', orderable: false, searchable: false },
                     {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'no-exportar'}

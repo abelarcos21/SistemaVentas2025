@@ -344,7 +344,7 @@ class ProductoController extends Controller
 
     public function store(Request $request){
 
-        $validated = $request->validate([
+        /* $validated = $request->validate([
 
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
@@ -355,6 +355,31 @@ class ProductoController extends Controller
             'activo' => 'required|boolean',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',// validación opcional de imagen max en KB
 
+        ]); */
+
+        $validated = $request->validate([
+            'categoria_id' => 'required|exists:categorias,id',
+            'proveedor_id' => 'required|exists:proveedores,id',
+            'marca_id' => 'required|exists:marcas,id',
+            'codigo' => 'nullable|string|max:255|unique:productos,codigo',
+
+            // Campos de precios y promociones
+           /*  'precio_venta' => 'required|numeric|min:0', */
+            'precio_compra' => 'nullable|numeric|min:0',
+            'cantidad' => 'nullable|integer|min:0',
+
+            'permite_mayoreo' => 'boolean',
+            'en_oferta' => 'boolean',
+            'precio_mayoreo' => 'nullable|numeric|min:0',
+            'precio_oferta' => 'nullable|numeric|min:0',
+            'cantidad_minima_mayoreo' => 'nullable|integer|min:1',
+            'fecha_inicio_oferta' => 'nullable|date',
+            'fecha_fin_oferta' => 'nullable|date|after_or_equal:fecha_inicio_oferta',
+
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string|max:255',
+            'activo' => 'required|boolean',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
 
@@ -406,7 +431,7 @@ class ProductoController extends Controller
             // Generar imagen de código de barras
             $barcodePath = $this->generarCodigoBarras($codigo);
 
-            // Crear el producto
+            /* // Crear el producto
             $producto = Producto::create([
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
@@ -418,6 +443,35 @@ class ProductoController extends Controller
                 'descripcion'  => $validated['descripcion'],
                 'activo'       => $validated['activo'],
 
+            ]); */
+
+            //Crear producto con todos los campos
+            $producto = Producto::create([
+                'user_id' => Auth::id(),
+                'categoria_id' => $validated['categoria_id'],
+                'proveedor_id' => $validated['proveedor_id'],
+                'marca_id'     => $validated['marca_id'],
+                'codigo'       => $codigo,
+                'barcode_path' => $barcodePath,
+                'nombre'       => $validated['nombre'],
+                'descripcion'  => $validated['descripcion'],
+                'activo'       => $validated['activo'],
+
+                // 🔹 Campos de precios y stock
+               /*  'precio_venta' => $validated['precio_venta'], */
+                'precio_compra' => $validated['precio_compra'] ?? 0,
+                'cantidad' => $validated['cantidad'] ?? 0,
+
+                // 🔹 Mayoreo
+                'permite_mayoreo' => $request->has('permite_mayoreo') ? 1 : 0,
+                'precio_mayoreo' => $validated['precio_mayoreo'] ?? null,
+                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? null,
+
+                // 🔹 Oferta
+                'en_oferta' => $request->has('en_oferta') ? 1 : 0,
+                'precio_oferta' => $validated['precio_oferta'] ?? null,
+                'fecha_inicio_oferta' => $validated['fecha_inicio_oferta'] ?? null,
+                'fecha_fin_oferta' => $validated['fecha_fin_oferta'] ?? null,
             ]);
 
 
@@ -444,7 +498,7 @@ class ProductoController extends Controller
             DB::commit();
 
             // Devolver los datos del producto creado para cuando se crea un producto con modal con ajax
-            if($request->ajax()){
+            /* if($request->ajax()){
 
                 return response()->json([
                     'success' => true,
@@ -466,6 +520,15 @@ class ProductoController extends Controller
                     ]
                 ]);
 
+            } */
+
+            //Respuesta AJAX
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Producto creado exitosamente',
+                    'producto' => $producto
+                ]);
             }
 
             // Respuesta para AJAX
