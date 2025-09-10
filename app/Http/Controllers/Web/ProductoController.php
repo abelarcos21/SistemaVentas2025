@@ -46,6 +46,7 @@ class ProductoController extends Controller
 
     private function getDataTableData(){
         $productos = Producto::select(
+            'productos.id',
             'productos.nombre',
             'productos.descripcion',
             'productos.precio_compra',
@@ -59,6 +60,11 @@ class ProductoController extends Controller
             'productos.marca_id',
             'productos.created_at',
             'productos.activo',
+            'productos.permite_mayoreo',
+            'productos.en_oferta',
+            'productos.precio_mayoreo',
+            'productos.precio_oferta',
+            'productos.cantidad_minima_mayoreo',
             'categorias.nombre as nombre_categoria',
             'proveedores.nombre as nombre_proveedor',
             'marcas.nombre as nombre_marca',
@@ -70,6 +76,7 @@ class ProductoController extends Controller
         ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
         ->with('moneda');
+
 
         return DataTables::of($productos)
             ->addIndexColumn()
@@ -117,9 +124,57 @@ class ProductoController extends Controller
                     </div>
                 ';
             })
-            ->addColumn('precio_venta_formatted', function ($producto) {
+            // Mostrar precio base con moneda
+            ->addColumn('precio_base', function ($producto) {
                 $precioVenta = ($producto->moneda->codigo ?? '') . ' ' . number_format($producto->precio_venta, 2);
                 return '<span class="text-primary fw-bold">' . $precioVenta . '</span>';
+            })
+            // Mostrar mayoreo si aplica
+            ->addColumn('mayoreo', function ($producto) {
+                if ((int)$producto->permite_mayoreo == true && $producto->precio_mayoreo > 0) {
+                    return '<span class="badge bg-info">'
+                        . ($producto->moneda->codigo ?? '') . ' '
+                        . number_format($producto->precio_mayoreo, 2)
+                        . ' (min. ' . $producto->cantidad_minima_mayoreo . ')'
+                        . '</span>';
+                }
+                return '<span class="badge bg-secondary">N/A</span>';
+            })
+            // Mostrar oferta si aplica y está vigente
+            /* ->addColumn('oferta', function ($producto) {
+                if ((int)$producto->en_oferta == true && $producto->precio_oferta > 0) {
+                    $hoy = now();
+                    $inicio = \Carbon\Carbon::parse($producto->fecha_inicio_oferta);
+                    $fin = \Carbon\Carbon::parse($producto->fecha_fin_oferta);
+
+                    if ($hoy->between($inicio, $fin)) {
+                        return '<span class="badge bg-success">'
+                            . ($producto->moneda->codigo ?? '') . ' '
+                            . number_format($producto->precio_oferta, 2)
+                            . ' (' . $inicio->format('d/m/Y') . ' - ' . $fin->format('d/m/Y') . ')'
+                            . '</span>';
+                    }
+                    return '<span class="badge bg-warning">Programada</span>';
+                }
+                return '<span class="badge bg-secondary">N/A</span>';
+            }) */
+            // Mostrar oferta si aplica y está vigente
+            ->addColumn('oferta', function ($producto) {
+                if ($producto->en_oferta) {
+                    $hoy = now();
+                    if ($producto->fecha_inicio_oferta && $producto->fecha_fin_oferta &&
+                        $hoy->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta)) {
+                        return '<span class="badge badge-success">'
+                            . ($producto->moneda->codigo ?? '') . ' '
+                            . number_format($producto->precio_oferta, 2)
+                            . ' ('
+                            . $producto->fecha_inicio_oferta->format('d/m/Y') . ' - '
+                            . $producto->fecha_fin_oferta->format('d/m/Y') . ')'
+                            . '</span>';
+                    }
+                    return '<span class="badge badge-warning">Programada</span>';
+                }
+                return '<span class="badge badge-secondary">N/A</span>';
             })
             ->addColumn('precio_compra_formatted', function ($producto) {
                 $precioCompra = ($producto->moneda->codigo ?? '') . ' ' . number_format($producto->precio_compra, 2);
@@ -168,7 +223,7 @@ class ProductoController extends Controller
             ->editColumn('codigo', function ($producto) {
                 return '<code>' . $producto->codigo . '</code><br>';
             })
-            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo','precio_venta_formatted','precio_compra_formatted'])
+            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo','precio_base','precio_compra_formatted','oferta','mayoreo',])
             ->make(true);
     }
 

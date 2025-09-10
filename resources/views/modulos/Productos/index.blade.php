@@ -53,6 +53,7 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
                                         <tr>
+                                            <th>Nro</th>
                                             <th class="no-exportar">Imagen</th>
                                             <th>Codigo de Barras</th>
                                             <th>Nombre</th>
@@ -62,6 +63,8 @@
                                             <th>Proveedor</th>
                                             <th>Stock</th>
                                             <th>Precio Venta</th>
+                                            <th>Precio Mayoreo</th>
+                                            <th>Precio Oferta</th>
                                             <th>Precio Compra</th>
                                             <th>Fecha Registro</th>
                                             <th>Activo</th>
@@ -1248,6 +1251,7 @@
                     type: 'GET'
                 },
                 columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'imagen', name: 'imagen', orderable: false, searchable: false, className: 'no-exportar'},
                     {data: 'codigo', name: 'productos.codigo'},
                     {data: 'nombre', name: 'productos.nombre'},
@@ -1256,11 +1260,13 @@
                     {data: 'descripcion', name: 'productos.descripcion'},
                     {data: 'nombre_proveedor', name: 'proveedores.nombre'},
                     {data: 'cantidad', name: 'productos.cantidad', orderable: true, searchable: false},
-                    {data: 'precio_venta_formatted', name: 'productos.precio_venta', orderable: true, searchable: false},
+                    {data: 'precio_base', name: 'productos.precio_venta', orderable: true, searchable: false},
+                    {data: 'mayoreo', name: 'mayoreo', orderable: false, searchable: false },
+                    {data: 'oferta', name: 'oferta', orderable: false, searchable: false },
                     {data: 'precio_compra_formatted', name: 'productos.precio_compra', orderable: true, searchable: false},
                     {data: 'fecha_registro', name: 'productos.created_at'},
                     {data: 'activo', name: 'productos.activo', orderable: false, searchable: false},
-                    { data: 'boton_compra', name: 'boton_compra', orderable: false, searchable: false },
+                    {data: 'boton_compra', name: 'boton_compra', orderable: false, searchable: false },
                     {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'no-exportar'}
                 ],
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
