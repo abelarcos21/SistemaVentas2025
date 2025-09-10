@@ -65,6 +65,8 @@ class ProductoController extends Controller
             'productos.precio_mayoreo',
             'productos.precio_oferta',
             'productos.cantidad_minima_mayoreo',
+            'productos.fecha_inicio_oferta',
+            'productos.fecha_fin_oferta',
             'categorias.nombre as nombre_categoria',
             'proveedores.nombre as nombre_proveedor',
             'marcas.nombre as nombre_marca',
@@ -140,41 +142,33 @@ class ProductoController extends Controller
                 }
                 return '<span class="badge bg-secondary">N/A</span>';
             })
-            // Mostrar oferta si aplica y está vigente
-            /* ->addColumn('oferta', function ($producto) {
-                if ((int)$producto->en_oferta == true && $producto->precio_oferta > 0) {
+            // Mostrar oferta si aplica
+           ->addColumn('oferta', function ($producto) {
+                if ((int)$producto->en_oferta === 1 && $producto->precio_oferta > 0) {
                     $hoy = now();
                     $inicio = \Carbon\Carbon::parse($producto->fecha_inicio_oferta);
                     $fin = \Carbon\Carbon::parse($producto->fecha_fin_oferta);
 
                     if ($hoy->between($inicio, $fin)) {
+                        // Oferta vigente
                         return '<span class="badge bg-success">'
                             . ($producto->moneda->codigo ?? '') . ' '
                             . number_format($producto->precio_oferta, 2)
-                            . ' (' . $inicio->format('d/m/Y') . ' - ' . $fin->format('d/m/Y') . ')'
+                            . ' (Vigente: ' . $inicio->format('d/m/Y') . ' - ' . $fin->format('d/m/Y') . ')'
+                            . '</span>';
+                    } elseif ($hoy->lt($inicio)) {
+                        // Oferta programada
+                        return '<span class="badge bg-warning">'
+                            . 'Programada (inicia: ' . $inicio->format('d/m/Y') . ')'
+                            . '</span>';
+                    } elseif ($hoy->gt($fin)) {
+                        // Oferta vencida
+                        return '<span class="badge bg-danger">'
+                            . 'Vencida (terminó: ' . $fin->format('d/m/Y') . ')'
                             . '</span>';
                     }
-                    return '<span class="badge bg-warning">Programada</span>';
                 }
                 return '<span class="badge bg-secondary">N/A</span>';
-            }) */
-            // Mostrar oferta si aplica y está vigente
-            ->addColumn('oferta', function ($producto) {
-                if ($producto->en_oferta) {
-                    $hoy = now();
-                    if ($producto->fecha_inicio_oferta && $producto->fecha_fin_oferta &&
-                        $hoy->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta)) {
-                        return '<span class="badge badge-success">'
-                            . ($producto->moneda->codigo ?? '') . ' '
-                            . number_format($producto->precio_oferta, 2)
-                            . ' ('
-                            . $producto->fecha_inicio_oferta->format('d/m/Y') . ' - '
-                            . $producto->fecha_fin_oferta->format('d/m/Y') . ')'
-                            . '</span>';
-                    }
-                    return '<span class="badge badge-warning">Programada</span>';
-                }
-                return '<span class="badge badge-secondary">N/A</span>';
             })
             ->addColumn('precio_compra_formatted', function ($producto) {
                 $precioCompra = ($producto->moneda->codigo ?? '') . ' ' . number_format($producto->precio_compra, 2);
@@ -522,12 +516,12 @@ class ProductoController extends Controller
                 'cantidad' => $validated['cantidad'] ?? 0,
 
                 // 🔹 Mayoreo
-                'permite_mayoreo' => $request->has('permite_mayoreo') ? 1 : 0,
+                'permite_mayoreo' => $request->boolean('permite_mayoreo'),
                 'precio_mayoreo' => $validated['precio_mayoreo'] ?? null,
                 'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? null,
 
                 // 🔹 Oferta
-                'en_oferta' => $request->has('en_oferta') ? 1 : 0,
+                'en_oferta' => $request->boolean('en_oferta'),
                 'precio_oferta' => $validated['precio_oferta'] ?? null,
                 'fecha_inicio_oferta' => $validated['fecha_inicio_oferta'] ?? null,
                 'fecha_fin_oferta' => $validated['fecha_fin_oferta'] ?? null,
