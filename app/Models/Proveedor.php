@@ -19,8 +19,8 @@ class Proveedor extends Model
         'telefono',
         'email',
         'codigo_postal',
-        'sitio_web',
-        'notas',
+        //'sitio_web',
+        //'notas',
         'activo' //no es necesario si no se llena manualmente/si es nesesario se llena en el formulario de creacion y edit
     ];
 

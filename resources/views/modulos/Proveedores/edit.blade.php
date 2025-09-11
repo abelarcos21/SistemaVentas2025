@@ -98,7 +98,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row">
+                                   {{--  <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Sitio WEB</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
@@ -110,16 +110,16 @@
                                                 <input type="url" name="sitio_web" class="form-control" value="{{ $proveedor->sitio_web }}">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
-                                    <div class="form-group row">
+                                   {{--  <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Notas</label>
                                         <div class="col-sm-10">
                                             <div class="form-group">
                                                 <textarea name="notas" class="form-control" id="exampleFormControlTextarea1" rows="3">{{ $proveedor->notas }}</textarea>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                                 <!-- /.card-body -->

@@ -96,7 +96,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row">
+                                    {{-- <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Sitio WEB</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
@@ -108,9 +108,9 @@
                                                 <input type="url" name="sitio_web" placeholder="http://" class="form-control">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
-                                    <div class="form-group row">
+                                    {{-- <div class="form-group row">
                                         <label for="nombre" class="col-sm-2 col-form-label">Notas</label>
                                         <div class="col-sm-10">
                                             <div class="input-group">
@@ -122,7 +122,7 @@
                                                 <textarea name="notas" class="form-control" placeholder="Anota aqui..." id="exampleFormControlTextarea1" rows="3"></textarea>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
                                 <!-- /.card-body -->

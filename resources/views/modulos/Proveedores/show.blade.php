@@ -44,25 +44,25 @@
                                 <table class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
                                         <tr>
-                                            
+
                                             <th>Nombres</th>
                                             <th>Telefono</th>
                                             <th>Correo</th>
                                             <th>Codigo Postal</th>
-                                            <th>Sitio Web</th>
-                                            <th>Notas</th>
+                                            {{-- <th>Sitio Web</th>
+                                            <th>Notas</th> --}}
                                             <th>Fecha Registro</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            
+
                                             <td>{{ $proveedor->nombre }}</td>
                                             <td>{{ $proveedor->telefono }}</td>
                                             <td>{{ $proveedor->email }}</td>
                                             <td>{{ $proveedor->codigo_postal }}</td>
-                                            <td>{{ $proveedor->sitio_web }}</td>
-                                            <td>{{ $proveedor->notas }}</td>
+                                           {{--  <td>{{ $proveedor->sitio_web }}</td>
+                                            <td>{{ $proveedor->notas }}</td> --}}
                                             <td>{{ $proveedor->created_at->format('d/m/Y') }}</td>
                                         </tr>
                                     </tbody>

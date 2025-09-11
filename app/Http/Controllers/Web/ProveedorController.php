@@ -17,15 +17,15 @@ class ProveedorController extends Controller
     public function index(Request $request){
         if ($request->ajax()) {
             $proveedores = Proveedor::select([
-                'id', 
-                'nombre', 
-                'telefono', 
-                'email', 
-                'codigo_postal', 
-                'activo', 
+                'id',
+                'nombre',
+                'telefono',
+                'email',
+                'codigo_postal',
+                'activo',
                 'created_at'
             ]);
-            
+
             return DataTables::of($proveedores)
                 // NO uses addIndexColumn() si ya tienes el ID
                 ->editColumn('telefono', function ($proveedor) {
@@ -64,7 +64,7 @@ class ProveedorController extends Controller
                 ->rawColumns(['acciones', 'activo'])
                 ->make(true);
         }
-        
+
         return view('modulos.proveedores.index');
     }
 
@@ -94,8 +94,8 @@ class ProveedorController extends Controller
             'telefono'      => 'required|string|max:255',
             'email'         => 'required|string|max:255|email',
             'codigo_postal' => 'required|string|max:20',
-            'sitio_web'     => 'required|string|max:255|url',
-            'notas'         => 'nullable|string|max:1000',
+            //'sitio_web'     => 'required|string|max:255|url',
+            //'notas'         => 'nullable|string|max:1000',
         ]);
 
         DB::beginTransaction();
@@ -125,8 +125,8 @@ class ProveedorController extends Controller
             'telefono'      => 'required|string|max:255',
             'email'         => 'required|string|max:255|email',
             'codigo_postal' => 'required|string|max:20',
-            'sitio_web'     => 'required|string|max:255|url',
-            'notas'         => 'nullable|string|max:1000',
+            //'sitio_web'     => 'required|string|max:255|url',
+            //'notas'         => 'nullable|string|max:1000',
 
         ]);
 
