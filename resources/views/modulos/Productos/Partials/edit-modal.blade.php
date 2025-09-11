@@ -121,6 +121,82 @@
                                     </div>
                                 </div>
 
+                                {{-- ================== CAMPOS DE MAYOREO ================== --}}
+                                <hr>
+                                <h5 class="text-primary"><i class="fas fa-boxes"></i> Opciones de Mayoreo</h5>
+                                <div class="row">
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch mt-4">
+                                                <input type="hidden" name="permite_mayoreo" value="0">
+                                                <input type="checkbox" class="custom-control-input"
+                                                    id="permite_mayoreo_edit_{{ $producto->id }}"
+                                                    name="permite_mayoreo" value="1"
+                                                    {{ old('permite_mayoreo', $producto->permite_mayoreo) ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="permite_mayoreo_edit_{{ $producto->id }}">Permitir Mayoreo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="precio_mayoreo_edit_{{ $producto->id }}">Precio Mayoreo</label>
+                                            <input type="number" step="0.01" name="precio_mayoreo" id="precio_mayoreo_edit_{{ $producto->id }}" class="form-control"
+                                                value="{{ old('precio_mayoreo', $producto->precio_mayoreo) }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="cantidad_minima_mayoreo_edit_{{ $producto->id }}">Cantidad mínima</label>
+                                            <input type="number" name="cantidad_minima_mayoreo" id="cantidad_minima_mayoreo_edit_{{ $producto->id }}" class="form-control"
+                                                value="{{ old('cantidad_minima_mayoreo', $producto->cantidad_minima_mayoreo ?? 10) }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- ================== CAMPOS DE OFERTA ================== --}}
+                                <hr>
+                                <h5 class="text-primary"><i class="fas fa-percent"></i> Opciones de Oferta</h5>
+                                <div class="row">
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch mt-4">
+                                                <input type="hidden" name="en_oferta" value="0">
+                                                <input type="checkbox" class="custom-control-input"
+                                                    id="en_oferta_edit_{{ $producto->id }}"
+                                                    name="en_oferta" value="1"
+                                                    {{ old('en_oferta', $producto->en_oferta) ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="en_oferta_edit_{{ $producto->id }}">En oferta</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="precio_oferta_edit_{{ $producto->id }}">Precio Oferta</label>
+                                            <input type="number" step="0.01" name="precio_oferta" id="precio_oferta_edit_{{ $producto->id }}" class="form-control"
+                                                value="{{ old('precio_oferta', $producto->precio_oferta) }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="fecha_inicio_oferta_edit_{{ $producto->id }}">Inicio Oferta</label>
+                                            <input type="date" name="fecha_inicio_oferta" id="fecha_inicio_oferta_edit_{{ $producto->id }}" class="form-control"
+                                                value="{{ old('fecha_inicio_oferta', $producto->fecha_inicio_oferta ? \Carbon\Carbon::parse($producto->fecha_inicio_oferta)->format('Y-m-d') : '') }}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-12">
+                                        <div class="form-group">
+                                            <label for="fecha_fin_oferta_edit_{{ $producto->id }}">Fin Oferta</label>
+                                            <input type="date" name="fecha_fin_oferta" id="fecha_fin_oferta_edit_{{ $producto->id }}" class="form-control"
+                                                value="{{ old('fecha_fin_oferta', $producto->fecha_fin_oferta ? \Carbon\Carbon::parse($producto->fecha_fin_oferta)->format('Y-m-d') : '') }}">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {{-- Fila 5: Precio y Estado --}}
                                 <div class="row">
                                     <div class="col-md-6 col-12">

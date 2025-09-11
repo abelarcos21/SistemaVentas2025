@@ -144,7 +144,7 @@ class ProductoController extends Controller
             })
             // Mostrar oferta si aplica
            ->addColumn('oferta', function ($producto) {
-                if ((int)$producto->en_oferta === 1 && $producto->precio_oferta > 0) {
+                if ((int)$producto->en_oferta == true && $producto->precio_oferta > 0) {
                     $hoy = now();
                     $inicio = \Carbon\Carbon::parse($producto->fecha_inicio_oferta);
                     $fin = \Carbon\Carbon::parse($producto->fecha_fin_oferta);
@@ -397,19 +397,6 @@ class ProductoController extends Controller
 
     public function store(Request $request){
 
-        /* $validated = $request->validate([
-
-            'categoria_id' => 'required|exists:categorias,id',
-            'proveedor_id' => 'required|exists:proveedores,id',
-            'marca_id' => 'required|exists:marcas,id',
-            'codigo' => 'nullable|string|max:255|unique:productos,codigo',
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string|max:255',
-            'activo' => 'required|boolean',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',// validación opcional de imagen max en KB
-
-        ]); */
-
         $validated = $request->validate([
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
@@ -432,7 +419,7 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'activo' => 'required|boolean',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',// validación opcional de imagen max en KB
         ]);
 
 
@@ -484,19 +471,6 @@ class ProductoController extends Controller
             // Generar imagen de código de barras
             $barcodePath = $this->generarCodigoBarras($codigo);
 
-            /* // Crear el producto
-            $producto = Producto::create([
-                'user_id' => Auth::id(),
-                'categoria_id' => $validated['categoria_id'],
-                'proveedor_id' => $validated['proveedor_id'],
-                'marca_id'     => $validated['marca_id'],
-                'codigo'       => $codigo,
-                'barcode_path' => $barcodePath,
-                'nombre'       => $validated['nombre'],
-                'descripcion'  => $validated['descripcion'],
-                'activo'       => $validated['activo'],
-
-            ]); */
 
             //Crear producto con todos los campos
             $producto = Producto::create([
@@ -510,10 +484,10 @@ class ProductoController extends Controller
                 'descripcion'  => $validated['descripcion'],
                 'activo'       => $validated['activo'],
 
-                // 🔹 Campos de precios y stock
+                // 🔹 Campos de precios y stock los creo en la compra y en el editar del producto
                /*  'precio_venta' => $validated['precio_venta'], */
-                'precio_compra' => $validated['precio_compra'] ?? 0,
-                'cantidad' => $validated['cantidad'] ?? 0,
+                /* 'precio_compra' => $validated['precio_compra'] ?? 0, */
+               /*  'cantidad' => $validated['cantidad'] ?? 0, */
 
                 // 🔹 Mayoreo
                 'permite_mayoreo' => $request->boolean('permite_mayoreo'),
@@ -533,12 +507,7 @@ class ProductoController extends Controller
                 throw new Exception('No se pudo crear el producto');
             }
 
-            //SI HAY CONTIENE IMAGEN SUBIRLA
-            /* if($request->hasFile('imagen')){
-                $this->subir_imagen($request, $producto->id);
-            } */
-
-            // Si hay imagen, subirla
+            // Si hay imagen o contiene, subirla
             if($request->hasFile('imagen')){
                 try {
                     $this->subir_imagen($request, $producto->id);
@@ -679,7 +648,7 @@ class ProductoController extends Controller
     public function update(Request $request, Producto $producto){
 
         // Validaciones básicas
-        $rules = [
+       /*  $rules = [
             'categoria_id' => 'required|exists:categorias,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id' => 'required|exists:marcas,id',
@@ -688,6 +657,28 @@ class ProductoController extends Controller
             'activo' => 'required|boolean',
             'precio_venta' => 'required|numeric|min:0',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]; */
+
+        // Validaciones
+        $rules = [
+
+            'categoria_id' => 'required|exists:categorias,id',
+            'proveedor_id' => 'required|exists:proveedores,id',
+            'marca_id'     => 'required|exists:marcas,id',
+            'precio_venta' => 'required|numeric|min:0',
+
+            'permite_mayoreo'         => 'boolean',
+            'en_oferta'               => 'boolean',
+            'precio_mayoreo'          => 'nullable|numeric|min:0',
+            'precio_oferta'           => 'nullable|numeric|min:0',
+            'cantidad_minima_mayoreo' => 'nullable|integer|min:1',
+            'fecha_inicio_oferta'     => 'nullable|date',
+            'fecha_fin_oferta'        => 'nullable|date|after_or_equal:fecha_inicio_oferta',
+
+            'nombre'       => 'required|string|max:255',
+            'descripcion'  => 'required|string|max:255',
+            'activo'       => 'required|boolean',
+            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
 
         // Verificar si el producto puede ser editado
@@ -728,16 +719,41 @@ class ProductoController extends Controller
                 $codigoCambio = true;
             }
 
+            //Verificamos si la oferta sigue vigente
+            $enOferta = $request->boolean('en_oferta');
+            $fechaFin = $validated['fecha_fin_oferta'] ?? null;
+
+            if ($enOferta && $fechaFin) {
+                if (\Carbon\Carbon::parse($fechaFin)->isPast()) {
+                    // Si la fecha fin ya pasó, desactivar oferta
+                    $enOferta = false;
+                }
+            }
+
             // Preparar datos para actualizar
             $updateData = [
+
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'proveedor_id' => $validated['proveedor_id'],
-                'marca_id' => $validated['marca_id'],
-                'nombre' => $validated['nombre'],
-                'descripcion' => $validated['descripcion'],
-                'activo' => $validated['activo'],
-                'precio_venta' => $validated['precio_venta'],
+                'marca_id'     => $validated['marca_id'],
+                'nombre'       => $validated['nombre'],
+                'descripcion'  => $validated['descripcion'],
+                'activo'       => $validated['activo'],
+
+                //Campos de precios
+                'precio_venta' => $validated['precio_venta'] ?? 0,
+
+                // 🔹 Mayoreo
+                'permite_mayoreo'         => $request->boolean('permite_mayoreo'),
+                'precio_mayoreo'          => $validated['precio_mayoreo'] ?? null,
+                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? null,
+
+                // 🔹 Oferta (con validación de vencimiento)
+                'en_oferta'          => $enOferta,
+                'precio_oferta'      => $validated['precio_oferta'] ?? null,
+                'fecha_inicio_oferta'=> $validated['fecha_inicio_oferta'] ?? null,
+                'fecha_fin_oferta'   => $fechaFin,
             ];
 
             // Solo incluir código si es editable
