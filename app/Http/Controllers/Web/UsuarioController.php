@@ -32,6 +32,7 @@ class UsuarioController extends Controller
     */
     public function index(Request $request){
         if ($request->ajax()) {
+
             $data = User::with('roles')->select('*');
 
             return DataTables::of($data)
@@ -50,12 +51,11 @@ class UsuarioController extends Controller
                 })
                 ->addColumn('activo', function($row) {
                     $checked = $row->activo ? 'checked' : '';
-                    return '
-                        <div class="custom-control custom-switch toggle-estado">
-                            <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch' . $row->id . '" ' . $checked . ' data-id="' . $row->id . '">
-                            <label class="custom-control-label" for="activoSwitch' . $row->id . '"></label>
-                        </div>
-                    ';
+                    return '<div class="custom-control custom-switch toggle-estado">
+                                <input role="switch" type="checkbox" class="custom-control-input toggle-activo"
+                                       id="activoSwitch'.$row->id.'" '.$checked.' data-id="'.$row->id.'">
+                                <label class="custom-control-label" for="activoSwitch'.$row->id.'"></label>
+                            </div>';
                 })
                 ->addColumn('cambio_password', function($row) {
                     return '
@@ -147,29 +147,43 @@ class UsuarioController extends Controller
         }
     } */
 
-    //CAMBIAR ESTADO DE ACTIVO
-    public function cambiarEstado(Request $request, $id){
-        $usuario = User::findOrFail($id);
-        $usuario->activo = $request->activo;
-        $usuario->save();
-        return response()->json(['message' => 'Estado Actualizado Correctamente']);
+    //CAMBIAR ESTADO DE ACTIVO VIA AJAX
+    public function toggleActivo(Request $request){
+        try {
+            $cliente = User::findOrFail($request->id);
+            $cliente->activo = $request->activo;
+            $cliente->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => $request->activo ? 'Usuario activado correctamente' : 'Usuario desactivado correctamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el estado'
+            ], 500);
+        }
     }
 
     //CAMBIAR, ACTUALIZAR CONTRASEÑA
     public function cambiarPassword(Request $request){
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
 
         ]);
 
         $usuario = User::findOrFail($request->user_id);
         $usuario->password = bcrypt($request->password);
         $usuario->save();
-        return response()->json(['success' => true]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Contraseña actualizada correctamente'
+        ]);
     }
 
-     public function show($id): View {
+    public function show($id): View {
         $user = User::find($id);
 
         return view('modulos.usuarios.show',compact('user'));

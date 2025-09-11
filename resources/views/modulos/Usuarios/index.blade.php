@@ -909,7 +909,7 @@
                         $('#formCambioPassword')[0].reset();
                         Swal.fire({
                             icon: 'success',
-                            title: '¡Contraseña cambiada!',
+                            title: '¡Éxito!',
                             text: response.message,
                             timer: 1500,
                             showConfirmButton: false
@@ -928,8 +928,55 @@
         });
     </script>
 
-    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL USUARIO --}}
     <script>
+        // Manejar toggle de estado activo
+        $('#usuarios-table').on('change', '.toggle-activo', function() {
+            var usuarioId = $(this).data('id');
+            var isActive = $(this).is(':checked');
+            var switchElement = $(this);
+
+            $.ajax({
+                url: "{{ route('usuario.toggle-activo') }}",
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: usuarioId,
+                    activo: isActive ? 1 : 0  // Enviar como 1 o 0
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        // Revertir el switch si hay error
+                        switchElement.prop('checked', !isActive);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function() {
+                    // Revertir el switch si hay error
+                    switchElement.prop('checked', !isActive);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo actualizar el estado'
+                    });
+                }
+            });
+        });
+    </script>
+
+    {{-- CAMBIAR ESTADO ACTIVO E INACTIVO DEL USUARIO --}}
+    {{-- <script>
         $(document).ready(function () {
             // Delegación de eventos para checkboxes que puedan ser cargados dinámicamente
             $(document).on('change', '.custom-control-input', function () {
@@ -937,7 +984,8 @@
                 let usuarioId = $(this).data('id');
 
                 $.ajax({
-                    url: '{{ url("/usuarios/cambiar-estado") }}/' + usuarioId,
+                   /*  url: '{{ url("/usuarios/cambiar-estado") }}/' + usuarioId, */
+                    url: '{{ route("usuario.cambiarEstado")}}/' + usuarioId,
                     method: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -967,6 +1015,6 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 @stop
 

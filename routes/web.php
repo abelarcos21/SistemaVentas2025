@@ -253,8 +253,7 @@ Route::get('api/sat/clave-producto', [ClaveProdServController::class, 'search'])
 //RUTA PARA el select2 buscar de clavesUnidadproducto
 Route::get('api/sat/clave-unidad', [ClaveUnidadController::class, 'search']);
 
-//RUTA PARA CAMBIAR DE ESTADO ACTIVO AL USUARIO
-Route::post('/usuarios/cambiar-estado/{id}', [UsuarioController::class, 'cambiarEstado']);
+
 
 //RUTA PARA CAMBIAR DE ESTADO ACTIVO AL PRODUCTO
 Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambiarEstado']);
@@ -263,8 +262,7 @@ Route::post('/productos/cambiar-estado/{id}', [ProductoController::class, 'cambi
 //IMPRIMIR ETIQUETAS DE CODIGO DE BARRAS
 Route::get('/productos/imprimir-etiquetas', [ProductoController::class, 'imprimirEtiquetas'])->name('productos.imprimir.etiquetas');
 
-//RUTA PARA CAMBIAR LA CONTRASEÑA
-Route::post('/usuarios/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
+
 
 //REPORTE DE PRODUCTOS
 Route::prefix('reporte-productos')->middleware('auth')->group(function(){
@@ -281,6 +279,12 @@ Route::prefix('usuarios')->group(function(){
     Route::get('{user}/show', [UsuarioController::class, 'show'])->name('usuario.show');
     Route::put('{user}', [UsuarioController::class, 'update'])->name('usuario.update');
     Route::delete('{user}', [UsuarioController::class, 'destroy'])->name('usuario.destroy');
+
+    // Rutas adicionales para AJAX cambio de estado
+    Route::post('/usuario/toggle-activo', [UsuarioController::class, 'toggleActivo'])->name('usuario.toggle-activo');
+
+    //RUTA PARA CAMBIAR LA CONTRASEÑA
+    Route::post('/cambiar-password', [UsuarioController::class, 'cambiarPassword'])->name('usuarios.cambiarPassword');
 
 });
 
