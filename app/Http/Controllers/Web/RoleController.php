@@ -9,6 +9,7 @@ use Spatie\Permission\Models\Permission;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class RoleController extends Controller
 {
@@ -21,10 +22,58 @@ class RoleController extends Controller
     }
 
 
-    public function index(Request $request): View {
+    /* public function index(Request $request): View {
         $roles = Role::orderBy('id','DESC')->paginate(5);
         return view('modulos.rolesusuarios.index',compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * 5);
+    } */
+
+    public function index(Request $request){
+        if ($request->ajax()) {
+            $data = Role::select('*');
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('name_badge', function($row) {
+                    return '<span class="badge bg-success">' . $row->name . '</span>';
+                })
+                ->addColumn('fecha_registro', function($row) {
+                    return $row->created_at->format('d/m/Y h:i a');
+                })
+                ->addColumn('action', function($row) {
+                    $btn = '<div class="d-flex">';
+
+                    // Botón Ver
+                    $btn .= '<a href="' . route('roles.show', $row->id) . '" class="btn bg-gradient-info btn-sm mr-1">
+                                <i class="fas fa-eye"></i> Ver
+                            </a>';
+
+                    // Botón Editar (con verificación de permisos)
+                    if (auth()->user()->can('role-edit')) {
+                        $btn .= '<a class="btn bg-gradient-warning btn-sm mr-1" href="' . route('roles.edit', $row->id) . '">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>';
+                    }
+
+                    // Botón Eliminar (con verificación de permisos)
+                    if (auth()->user()->can('role-delete')) {
+                        $btn .= '<form method="POST" class="formulario-eliminar d-inline" action="' . route('roles.destroy', $row->id) . '">
+                                    ' . csrf_field() . '
+                                    ' . method_field('DELETE') . '
+                                    <button type="submit" class="btn bg-gradient-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </form>';
+                    }
+
+                    $btn .= '</div>';
+                    return $btn;
+                })
+                ->rawColumns(['name_badge', 'action'])
+                ->make(true);
+        }
+
+        return view('modulos.rolesusuarios.index');
     }
 
     public function create(): View {
