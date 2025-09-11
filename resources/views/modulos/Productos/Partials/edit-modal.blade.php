@@ -197,9 +197,9 @@
                                     </div>
                                 </div>
 
-                                {{-- Fila 5: Precio y Estado --}}
+                                {{-- Fila 5: Precio y Estado e Imagen --}}
                                 <div class="row">
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-4 col-12">
                                         <div class="form-group">
                                             <label for="precio_venta_edit">
                                                 <i class="fas fa-dollar-sign text-info"></i> Precio de Venta
@@ -213,7 +213,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6 col-12">
+                                    <div class="col-md-4 col-12">
                                         <div class="form-group">
                                             <label>
                                                 <i class="fas fa-toggle-on text-info"></i> Estado
@@ -230,11 +230,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {{-- Fila 6: Imagen --}}
-                                <div class="row">
-                                    <div class="col-12">
+                                    {{-- Fila 6: Imagen --}}
+                                    <div class="col-md-4 col-12">
                                         <div class="form-group">
                                             <label for="imagen_edit">
                                                 <i class="fas fa-image text-info"></i> Imagen del Producto
@@ -246,6 +244,8 @@
                                         </div>
                                     </div>
                                 </div>
+
+
                             </div>
 
                             {{-- Columna derecha - Imágenes --}}
