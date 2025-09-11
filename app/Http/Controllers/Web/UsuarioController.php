@@ -13,16 +13,75 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
 use Exception;
+use Yajra\DataTables\DataTables;
+
 class UsuarioController extends Controller
 {
     //index
-    public function index(Request $request): View {
+   /*  public function index(Request $request): View {
 
        /*  $usuarios = User::latest()->paginate(5);
 
         return view('modulos.usuarios.index',compact('usuarios'))->with('i', ($request->input('page', 1) - 1) * 5); */
-        $usuarios = User::all();
-        return view('modulos.usuarios.index', compact('usuarios'));
+       /*  $usuarios = User::all();
+        return view('modulos.usuarios.index', compact('usuarios')); */
+    /* }  */
+
+    /**
+     *Metodo Index.
+    */
+    public function index(Request $request){
+        if ($request->ajax()) {
+            $data = User::with('roles')->select('*');
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('roles', function($row) {
+                    $roles = '';
+                    if($row->roles->count() > 0) {
+                        foreach($row->roles as $role) {
+                            $roles .= '<span class="badge bg-success mr-1">' . $role->name . '</span>';
+                        }
+                    }
+                    return $roles;
+                })
+                ->addColumn('fecha_registro', function($row) {
+                    return $row->created_at->format('d/m/Y');
+                })
+                ->addColumn('activo', function($row) {
+                    $checked = $row->activo ? 'checked' : '';
+                    return '
+                        <div class="custom-control custom-switch toggle-estado">
+                            <input role="switch" type="checkbox" class="custom-control-input" id="activoSwitch' . $row->id . '" ' . $checked . ' data-id="' . $row->id . '">
+                            <label class="custom-control-label" for="activoSwitch' . $row->id . '"></label>
+                        </div>
+                    ';
+                })
+                ->addColumn('cambio_password', function($row) {
+                    return '
+                        <a class="btn btn-info bg-gradient-primary btnCambioPassword" data-id="' . $row->id . '">
+                            <i class="fas fa-user"></i> <i class="fas fa-lock"></i>
+                        </a>
+                    ';
+                })
+                ->addColumn('action', function($row) {
+                    $btn = '
+                        <div class="d-inline-flex justify-content-center">
+                            <a href="' . route('usuario.show', $row) . '" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                                <i class="fas fa-eye"></i> Ver
+                            </a>
+                            <a href="' . route('usuario.edit', $row) . '" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                                <i class="fas fa-user"></i> <i class="fas fa-pen"></i> Editar
+                            </a>
+                        </div>
+                    ';
+                    return $btn;
+                })
+                ->rawColumns(['roles', 'activo', 'cambio_password', 'action'])
+                ->make(true);
+        }
+
+        return view('modulos.usuarios.index');
     }
 
     public function create(): View {
