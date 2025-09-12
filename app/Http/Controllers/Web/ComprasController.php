@@ -60,11 +60,11 @@ class ComprasController extends Controller
                     return $compra->created_at->format('d/m/Y h:i a');
                 })
                 ->addColumn('acciones', function ($compra) {
-                    $editBtn = '<a href="' . route('compra.edit', $compra->id) . '" class="btn btn-info bg-gradient-info btn-sm mr-1">
+                    $editBtn = '<a href="' . route('compra.edit', $compra->id) . '" class="btn bg-gradient-info btn-sm mr-1">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>';
 
-                    $deleteBtn = '<button class="btn btn-danger bg-gradient-danger btn-sm delete-btn" data-id="' . $compra->id . '">
+                    $deleteBtn = '<button class="btn bg-gradient-danger btn-sm delete-btn" data-id="' . $compra->id . '">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>';
 
