@@ -13,11 +13,12 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use Luecano\NumeroALetras\NumeroALetras;
+use Yajra\DataTables\Facades\DataTables;
 
 class DetalleVentasController extends Controller
 {
     //index
-    public function index(){
+    /* public function index(){
 
         $ventas = Venta::select(
             'ventas.*',
@@ -29,8 +30,133 @@ class DetalleVentasController extends Controller
 
         return view('modulos.detalleventas.index', compact('ventas'));
 
+    } */
+
+    public function index(Request $request){
+
+        if ($request->ajax()) {
+            $ventas = Venta::with(['user', 'detalles.producto'])
+                ->select([
+                    'ventas.id',
+                    'ventas.folio',
+                    'ventas.total_venta',
+                    'ventas.estado',
+                    'ventas.created_at',
+                    'ventas.user_id'
+                ]);
+
+            return DataTables::of($ventas)
+                ->addIndexColumn()
+                ->addColumn('usuario', function ($venta) {
+                    return $venta->user ? $venta->user->name : 'Sin Usuario';
+                })
+                ->addColumn('total_formateado', function ($venta) {
+                    $totalVendido = 'MXN $' . number_format($venta->total_venta, 2);
+                    return '<span class="text-primary fw-bold">' . $totalVendido . '</span>';
+                })
+                ->addColumn('fecha_formateada', function ($venta) {
+                    return $venta->created_at->format('d/m/Y h:i a');
+                })
+                ->addColumn('estado_badge', function ($venta) {
+                    $badgeClass = match($venta->estado) {
+                        'completada' => 'bg-success',
+                        'cancelada' => 'bg-danger',
+                        default => 'bg-secondary'
+                    };
+                    return '<span class="badge ' . $badgeClass . '">' . ucfirst($venta->estado) . '</span>';
+                })
+                ->addColumn('ver_detalle', function ($venta) {
+                    return '<a href="' . route('detalleventas.detalle_venta', $venta->id) . '"
+                            class="btn btn-info bg-gradient-info btn-sm">
+                            <i class="fas fa-eye"></i> Ver
+                            </a>';
+                })
+                ->addColumn('imprimir_ticket', function ($venta) {
+                    return '<a target="_blank" href="' . route('detalle.ticket', $venta->id) . '"
+                            class="btn btn-success bg-gradient-success btn-sm">
+                            <i class="fas fa-print"></i> Ticket
+                            </a>';
+                })
+                ->addColumn('boleta_venta', function ($venta) {
+                    return '<a target="_blank" href="' . route('detalle.boleta', $venta->id) . '"
+                            class="btn btn-secondary bg-gradient-secondary btn-sm">
+                            <i class="fas fa-print"></i> Boleta
+                            </a>';
+                })
+                ->addColumn('acciones', function ($venta) {
+                    if ($venta->estado === 'completada') {
+                        return '<form action="' . route('detalle.revocar', $venta->id) . '"
+                                method="POST" class="formulario-eliminar">
+                                ' . csrf_field() . '
+                                <button class="btn btn-danger bg-gradient-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Cancelar
+                                </button>
+                                </form>';
+                    }
+                    return '<span class="text-muted">Sin acciones</span>';
+                })
+                ->rawColumns(['estado_badge', 'ver_detalle', 'imprimir_ticket', 'boleta_venta', 'total_formateado', 'acciones'])
+                ->make(true);
+        }
+
+        return view('modulos.detalleventas.index');
     }
 
+    // Método para mostrar detalles específicos de una venta(2 OPCION)
+    public function detalleVenta($id)
+    {
+        $venta = Venta::with(['detalles.producto', 'user'])->findOrFail($id);
+
+        return view('modulos.detalleventas.detalle_venta', compact('venta'));
+    }
+
+    // Método para DataTable de detalles de venta específica(2 OPCION)
+    public function detalleVentaData(Request $request, $ventaId)
+    {
+        if ($request->ajax()) {
+            $detalles = DetalleVenta::with('producto')
+                ->where('venta_id', $ventaId)
+                ->select([
+                    'detalle_ventas.id',
+                    'detalle_ventas.producto_id',
+                    'detalle_ventas.tipo_precio_aplicado',
+                    'detalle_ventas.precio_unitario_aplicado',
+                    'detalle_ventas.descuento_aplicado',
+                    'detalle_ventas.cantidad',
+                    'detalle_ventas.sub_total'
+                ]);
+
+            return DataTables::of($detalles)
+                ->addIndexColumn()
+                ->addColumn('producto_nombre', function ($detalle) {
+                    return $detalle->producto ? $detalle->producto->nombre : 'Producto no encontrado';
+                })
+                ->addColumn('precio_formateado', function ($detalle) {
+                    return 'MXN $' . number_format($detalle->precio_unitario_aplicado, 2);
+                })
+                ->addColumn('descuento_formateado', function ($detalle) {
+                    return 'MXN $' . number_format($detalle->descuento_aplicado, 2);
+                })
+                ->addColumn('subtotal_formateado', function ($detalle) {
+                    return 'MXN $' . number_format($detalle->sub_total, 2);
+                })
+                ->addColumn('tipo_precio_badge', function ($detalle) {
+                    $badgeClass = match($detalle->tipo_precio_aplicado) {
+                        'base' => 'bg-primary',
+                        'mayoreo' => 'bg-info',
+                        'oferta' => 'bg-warning',
+                        default => 'bg-secondary'
+                    };
+                    return '<span class="badge ' . $badgeClass . '">' . ucfirst($detalle->tipo_precio_aplicado) . '</span>';
+                })
+                ->rawColumns(['tipo_precio_badge'])
+                ->make(true);
+        }
+
+        return response()->json(['error' => 'Acceso no autorizado'], 403);
+    }
+
+    //METODO PARA EL DETALLE DE UNA VENTA
     public function vista_detalle($id){
 
         $venta = Venta::select(
@@ -56,7 +182,7 @@ class DetalleVentasController extends Controller
         $detalles = DetalleVenta::with([
             'producto.imagen',     // 👈 Trae producto e imagen en una sola consulta y acceder alos campos de tabla producto
             'producto.categoria',  // 👈 Relación con la categoría
-            'producto.marca'       // 👈 Relación con la marca
+            'producto.marca',       // 👈 Relación con la marca
         ])
         ->where('venta_id', $id)
         ->get();

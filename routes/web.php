@@ -76,6 +76,24 @@ Route::prefix('detalles')->group(function(){
     Route::get('/boleta/{id_venta}', [DetalleVentasController::class, 'generarBoleta'])->name('detalle.boleta');
 
 });
+// Rutas para el historial de ventas segunda opcion en observacion para adecuar con la ruta detalle ventas la de arriba
+/* Route::prefix('ventas')->name('ventas.')->group(function () {
+    // Ruta principal del índice
+    Route::get('/', [VentasController::class, 'index'])->name('index');
+
+    // Ruta para el detalle de una venta específica
+    Route::get('/detalle/{id}', [VentasController::class, 'detalleVenta'])->name('detalle');
+
+    // Ruta para obtener datos de detalles de venta específica (AJAX)
+    Route::get('/detalle-data/{ventaId}', [VentasController::class, 'detalleVentaData'])->name('detalle.data');
+});
+
+// Rutas existentes (mantener si ya las tienes)
+Route::get('/detalleventas/{id}', [DetalleVentasController::class, 'show'])->name('detalleventas.detalle_venta');
+Route::get('/ticket/{id}', [TicketController::class, 'show'])->name('detalle.ticket');
+Route::get('/boleta/{id}', [BoletaController::class, 'show'])->name('detalle.boleta');
+Route::post('/revocar/{id}', [VentasController::class, 'revocar'])->name('detalle.revocar'); */
+
 
 //RUTAS IMPUESTOS
 Route::get('/impuestos', [ImpuestoController::class, 'index'])->name('impuestos.index');
