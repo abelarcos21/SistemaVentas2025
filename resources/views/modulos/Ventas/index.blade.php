@@ -191,28 +191,7 @@
                                 @enderror
                             </div>
 
-                            {{-- <div id="pagos-container">
-
-                                <div class="form-group">
-                                    <label for="metodo_pago">
-                                        <i class="fa fa-credit-card mr-1"></i> Metodo Pago
-                                    </label>
-                                    <select name="metodo_pago[]" class="form-control">
-                                        <option value="efectivo">Efectivo</option>
-                                        <option value="tarjeta">Tarjeta</option>
-                                        <option value="transferencia">Transferencia</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <input type="number" name="monto[]" class="form-control" placeholder="Monto">
-                                </div>
-
-                            </div> --}}
-{{--
-                            <button type="button" class="btn btn-block btn-info bg-gradient-info mb-3" onclick="agregarPago()">
-                                <i class="fa fa-plus"></i> Agregar otro Pago
-                            </button> --}}
-
+                            <!-- seccion de pagos select y monto -->
                             <div id="pagos-container">
                                 <div class="row mb-2 pago-item">
                                     <div class="col-md-6">
@@ -558,45 +537,8 @@
     </script>
 
     <script>
-        /* function agregarProductoAlCarrito(productoId) {
-            $.ajax({
-                url: '/carrito/agregar/' + productoId,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        //alert(response.message);
 
-                       /*  Swal.fire({ //usa SweetAlert2
-                            icon: 'success',
-                            title: 'Producto',
-                            text: 'Agregado Correctamente.'
-                        }); */
-
-                       /*  Swal.fire('Agregado', response.message, 'success');
-                        renderizarTablaCarrito(response.carrito, response.total); */
-
-                        // actualizar el carrito en la vista si es necesario
-                 /*    }
-                },
-                error: function (xhr) {
-                    let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error.';
-                    //alert(errorMsg);
-
-                    /* Swal.fire({ //usa SweetAlert2
-                        icon: 'warning',
-                        title: 'Error',
-                        text: 'Al agregar producto.'
-                    }); */
-
-                    /* Swal.fire('Error', errorMsg, 'error'); */
-               /*  } */
-            /* }); */
-        /* } */
-
-        /* function agregarProductoAlCarrito(button) {
+        function agregarProductoAlCarrito(button) {
             let btn = $(button);
 
             let productoId = btn.data('id');
@@ -657,61 +599,9 @@
                     });
                 }
             });
-        } */
-
-        function agregarProductoAlCarrito(productoId) {
-            $.ajax({
-                url: '/producto/datos/' + productoId, // debes tener una ruta que devuelva info del producto (precio_base, oferta, mayoreo, etc.)
-                method: 'GET',
-                success: function (producto) {
-                    let cantidad = 1; // default, luego puedes hacer que el usuario seleccione cantidad
-                    let precioAplicado = producto.precio_base;
-                    let tipoPrecio = 'base';
-
-                    // 1️⃣ Validar si aplica oferta
-                    if (producto.en_oferta && producto.fecha_fin_oferta >= new Date().toISOString().slice(0, 10)) {
-                        precioAplicado = producto.precio_oferta;
-                        tipoPrecio = 'oferta';
-                    }
-
-                    // 2️⃣ Validar si aplica mayoreo (si no aplica oferta)
-                    else if (producto.precio_mayoreo && cantidad >= producto.cantidad_mayoreo) {
-                        precioAplicado = producto.precio_mayoreo;
-                        tipoPrecio = 'mayoreo';
-                    }
-
-                    // 3️⃣ Mandar al backend con tipo_precio incluido
-                    $.ajax({
-                        url: '/carrito/agregar/' + productoId,
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            cantidad: cantidad,
-                            precio: precioAplicado,
-                            tipo_precio: tipoPrecio // 👈 ahora lo enviamos al backend
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire('Agregado', response.message, 'success');
-                                renderizarTablaCarrito(response.carrito, response.total);
-                            }
-                        },
-                        error: function (xhr) {
-                            let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error.';
-                            Swal.fire('Error', errorMsg, 'error');
-                        }
-                    });
-                },
-                error: function () {
-                    Swal.fire('Error', 'No se pudieron obtener los datos del producto.', 'error');
-                }
-            });
         }
 
-
         function renderizarTablaCarrito(items, total) {
-
-
             const tbody = $('#carrito-items');
             const tablaContainer = $('#tabla-carrito-container');
             const mensajeVacio = $('#carrito-vacio');
@@ -720,10 +610,6 @@
             tbody.empty();
 
             if (!items.length) {
-               /*  tbody.append('<tr><td colspan="7" class="text-center">No hay productos en el carrito.</td></tr>');
-                $('#total-carrito').text('MXN$0.00');
-                return; */
-
                 tablaContainer.hide();
                 mensajeVacio.show();
                 $('#total-carrito').text('MXN$0.00');
@@ -734,23 +620,45 @@
             mensajeVacio.hide();
             totalContainer.show();
 
-
             items.forEach(item => {
                 const totalProducto = item.precio * item.cantidad;
 
+                //Etiqueta visual según el tipo de precio aplicado
+                let badgeTipo = '';
+                if (item.tipo_precio === 'oferta') {
+                    badgeTipo = `<span class="badge bg-danger ms-1">Oferta</span>`;
+                } else if (item.tipo_precio === 'mayoreo') {
+                    badgeTipo = `<span class="badge bg-warning text-dark ms-1">Mayoreo</span>`;
+                } else {
+                    badgeTipo = `<span class="badge bg-secondary ms-1">Base</span>`;
+                }
+
                 const row = `
                     <tr>
-                        <td><img src="${item.imagen || '/images/placeholder-caja.png'}" width="50" height="50" class="img-thumbnail rounded shadow" style="object-fit: cover;"></td>
+                        <td>
+                            <img src="${item.imagen || '/images/placeholder-caja.png'}"
+                                width="50" height="50"
+                                class="img-thumbnail rounded shadow"
+                                style="object-fit: cover;">
+                        </td>
                         <td class="text-center">${item.nombre}</td>
-                        <td class="text-center"><span class="badge ${item.stock > 5 ? 'bg-success' : 'bg-danger'}">${item.stock}</span></td>
+                        <td class="text-center">
+                            <span class="badge ${item.stock > 5 ? 'bg-success' : 'bg-danger'}">
+                                ${item.stock}
+                            </span>
+                        </td>
                         <td class="text-center">
                             <div class="d-inline-flex align-items-center">
                                 <button type="button" class="btn btn-sm btn-outline-info cantidad-menos" data-id="${item.id}">−</button>
-                                <input type="number" class="form-control form-control-sm text-center mx-1 cantidad-input" value="${item.cantidad}" min="1" max="${item.stock}" style="width: 60px;" readonly>
+                                <input type="number" class="form-control form-control-sm text-center mx-1 cantidad-input"
+                                    value="${item.cantidad}" min="1" max="${item.stock}"
+                                    style="width: 60px;" readonly>
                                 <button type="button" class="btn btn-sm btn-outline-info cantidad-mas" data-id="${item.id}">+</button>
                             </div>
                         </td>
-                        <td class="text-center text-primary">MXN$${item.precio}</td>
+                        <td class="text-center text-primary">
+                            MXN$${item.precio.toFixed(2)} ${badgeTipo}
+                        </td>
                         <td class="text-center text-primary">MXN$${totalProducto.toFixed(2)}</td>
                         <td class="text-center">
                             <button class="btn btn-danger btn-sm quitar-producto" data-id="${item.id}">
@@ -761,10 +669,14 @@
                 `;
 
                 tbody.append(row);
+
+                // 🔎 Debug: aseguramos que llegue tipo_precio
+                console.log(`➡️ Producto ${item.nombre}: tipo_precio = ${item.tipo_precio}, precio = ${item.precio}`);
             });
 
             $('#total-carrito').text('MXN$' + total.toFixed(2));
         }
+
 
         // IMPORTANTE: Cargar el carrito cuando la página esté lista
         $(document).ready(function() {
@@ -782,26 +694,27 @@
         $(document).on('click', '.cantidad-menos', function () {
             const id = $(this).data('id');
             const input = $(this).siblings('.cantidad-input');
-            const nuevaCantidad = parseInt(input.val()) - 1;
+            let nuevaCantidad = parseInt(input.val()) - 1;
             if (nuevaCantidad >= 1) {
-                actualizarCantidad(id, nuevaCantidad);
+                actualizarCantidad(id, nuevaCantidad); // Esta función hará la petición Ajax al backend
             }
         });
 
     </script>
 
     <script>
+
         function actualizarCantidad(id, nuevaCantidad) {
             $.ajax({
                 url: `/venta/actualizar/${id}`,
-                method: 'PUT',
+                method: 'PUT', // o POST según tu ruta
                 data: {
                     _token: '{{ csrf_token() }}',
                     cantidad: nuevaCantidad
                 },
                 success: function (response) {
                     if (response.success) {
-                        Swal.fire('Actualizado', response.message, 'success');
+                        // 🔹 Solo actualiza la tabla, sin alertas emergentes
                         renderizarTablaCarrito(response.carrito, response.total);
                     }
                 },
@@ -862,24 +775,6 @@
     </script>
 
     {{--SCRIPT PARA AGREGAR EL METODO DE PAGO--}}
-   {{--  <script>
-        function agregarPago() {
-            const html = `
-            <div class="row mb-2">
-                <div class="col-md-6">
-                    <select name="metodo_pago[]" class="form-control">
-                        <option value="efectivo">Efectivo</option>
-                        <option value="tarjeta">Tarjeta</option>
-                        <option value="transferencia">Transferencia</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <input type="number" name="monto[]" class="form-control" placeholder="Monto">
-                </div>
-            </div>`;
-            document.getElementById('pagos-container').insertAdjacentHTML('beforeend', html);
-        }
-    </script> --}}
     <script>
         function agregarPago() {
             const html = `

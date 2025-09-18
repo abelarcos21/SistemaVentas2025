@@ -36,6 +36,7 @@ class CarritoController extends Controller
                 'nombre' => $item['nombre'],
                 'cantidad' => $item['cantidad'],
                 'precio' => $item['precio'],
+                'tipo_precio' => $item['tipo_precio'], // se refleja también en respuesta, ya viene de session
                 'stock' => $prod->cantidad ?? 0,
                 'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
             ];
@@ -49,155 +50,6 @@ class CarritoController extends Controller
             'total' => $total,
         ]);
     }
-
-    //Metodo Agregar ANTES
-    /* public function agregar(Request $request, $id)
-    {
-
-        return DB::transaction(function () use ($id) {
-            $producto = Producto::findOrFail($id);
-
-            if (!$producto) {
-                //return Redirect::route('venta.index')->with('error', 'Producto no encontrado.');
-                return response()->json(['error' => 'Producto no encontrado.'], 404);
-            }
-
-            if ($producto->cantidad < 1) {
-                //return Redirect::route('venta.index')->with('error', 'Producto sin stock disponible.');
-                return response()->json(['error' => 'Producto sin stock disponible.'], 400);
-            }
-
-            $items_carrito = Session::get('items_carrito', []);
-            $productoAgregado = false;
-
-            //Obtener los productos ya almacenados
-            foreach ($items_carrito as $index => $item) {
-                if ($item['id'] == $id) {
-                    if ($item['cantidad'] >= $producto->cantidad) {
-                        //return Redirect::route('venta.index')->with('error', 'No hay stock suficiente para agregar más unidades.');
-                        return response()->json(['error' => 'No hay stock suficiente para agregar más unidades.'], 400);
-                    }
-
-                    $items_carrito[$index]['cantidad'] += 1;
-                    $productoAgregado = true;
-                    break;
-                }
-            }
-
-            //agregar el nuevo producto
-            if (!$productoAgregado) {
-                $items_carrito[] = [
-                    'id' => $producto->id,
-                    'codigo' => $producto->codigo,
-                    'nombre' => $producto->nombre,
-                    'cantidad' => 1,
-                    'precio' => $producto->precio_venta,
-                ];
-            }
-
-            //realmente creamos una sesion
-            Session::put('items_carrito', $items_carrito);
-
-            // 🔁 Generar nueva estructura para respuesta con stock e imagen
-            $carritoConInfo = collect($items_carrito)->map(function ($item) {
-                $prod = \App\Models\Producto::find($item['id']);
-                return [
-                    'id' => $item['id'],
-                    'nombre' => $item['nombre'],
-                    'cantidad' => $item['cantidad'],
-                    'precio' => $item['precio'],
-                    'stock' => $prod->cantidad ?? 0,
-                    'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
-                ];
-            });
-
-            $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
-
-            //return Redirect::route('venta.index')->with('success', 'Producto agregado correctamente.');
-            return response()->json([
-                'success' => true,
-                'message' => 'Producto agregado correctamente.',
-                'carrito' => $carritoConInfo,
-                'total' => $total,
-            ]);
-        });
-    } */
-
-    //Metodo Agregar Antes opcion 2
-    /* public function agregar(Request $request, $id){
-
-        return DB::transaction(function () use ($id, $request) {
-            $producto = Producto::findOrFail($id);
-
-            if (!$producto) {
-                return response()->json(['error' => 'Producto no encontrado.'], 404);
-            }
-
-            if ($producto->cantidad < 1) {
-                return response()->json(['error' => 'Producto sin stock disponible.'], 400);
-            }
-
-            $items_carrito = Session::get('items_carrito', []);
-            $productoAgregado = false;
-            $cantidadAgregada = 1; // por default 1
-
-            // Si el frontend manda cantidad explícita
-            if ($request->has('cantidad') && $request->input('cantidad') > 0) {
-                $cantidadAgregada = (int) $request->input('cantidad');
-            }
-
-            foreach ($items_carrito as $index => $item) {
-                if ($item['id'] == $id) {
-                    if ($item['cantidad'] + $cantidadAgregada > $producto->cantidad) {
-                        return response()->json(['error' => 'No hay stock suficiente para agregar más unidades.'], 400);
-                    }
-
-                    $items_carrito[$index]['cantidad'] += $cantidadAgregada;
-
-                    // recalcular precio aplicado según nueva cantidad
-                    $items_carrito[$index]['precio'] = $this->getPrecioAplicado($producto, $items_carrito[$index]['cantidad']);
-                    $productoAgregado = true;
-                    break;
-                }
-            }
-
-            if (!$productoAgregado) {
-                $precioAplicado = $this->getPrecioAplicado($producto, $cantidadAgregada);
-
-                $items_carrito[] = [
-                    'id' => $producto->id,
-                    'codigo' => $producto->codigo,
-                    'nombre' => $producto->nombre,
-                    'cantidad' => $cantidadAgregada,
-                    'precio' => $precioAplicado,
-                ];
-            }
-
-            Session::put('items_carrito', $items_carrito);
-
-            // 🔁 Generar respuesta con info adicional
-            $carritoConInfo = collect($items_carrito)->map(function ($item) {
-                $prod = \App\Models\Producto::find($item['id']);
-                return [
-                    'id' => $item['id'],
-                    'nombre' => $item['nombre'],
-                    'cantidad' => $item['cantidad'],
-                    'precio' => $item['precio'],
-                    'stock' => $prod->cantidad ?? 0,
-                    'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
-                ];
-            });
-
-            $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Producto agregado correctamente.',
-                'carrito' => $carritoConInfo,
-                'total' => $total,
-            ]);
-        });
-    } */
 
     //metodo agregar actual
     public function agregar(Request $request, $id){
@@ -244,6 +96,8 @@ class CarritoController extends Controller
                     'cantidad'    => $cantidadAgregada,
                     'precio'      => $precioData['precio'],
                     'tipo_precio' => $precioData['tipo'],
+                    'stock'       => $producto->cantidad,
+                    'imagen'      => $producto->imagen ? asset('storage/' . $producto->imagen->ruta) : asset('images/placeholder-caja.png'),
                 ];
             }
 
@@ -257,11 +111,11 @@ class CarritoController extends Controller
                     'nombre'      => $item['nombre'],
                     'cantidad'    => $item['cantidad'],
                     'precio'      => $item['precio'],
-                    'tipo_precio' => $item['tipo_precio'], // se refleja también en respuesta
+                    'tipo_precio' => $item['tipo_precio'], // se refleja también en respuesta, ya viene de session
                     'stock'       => $prod->cantidad ?? 0,
                     'imagen'      => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
                 ];
-            });
+            })->values();//Así Laravel lo serializa como un array plano en JSON.
 
             $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
 
@@ -274,57 +128,41 @@ class CarritoController extends Controller
         });
     }
 
-
     /**
-    *Determina el precio correcto (normal, oferta o mayoreo)
-    */
-    /* private function getPrecioAplicado($producto, $cantidad = 1){
-
-        $precio = $producto->precio_venta;
-
-        // Oferta vigente
-        if (
-            $producto->en_oferta &&
-            $producto->precio_oferta > 0 &&
-            $producto->fecha_inicio_oferta &&
-            $producto->fecha_fin_oferta &&
-            now()->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta)
-        ) {
-            $precio = $producto->precio_oferta;
-        }
-
-        // Mayoreo (si cumple cantidad mínima)
-        if (
-            $producto->permite_mayoreo &&
-            $producto->precio_mayoreo > 0 &&
-            $cantidad >= $producto->cantidad_minima_mayoreo
-        ) {
-            $precio = $producto->precio_mayoreo;
-        }
-
-        return $precio;
-    } */
-
+     * Determina el precio aplicado según oferta, mayoreo o base.
+     *
+     * @param \App\Models\Producto $producto
+     * @param int $cantidad
+     * @return array ['precio' => float, 'tipo' => string]
+     */
     private function getPrecioAplicado($producto, $cantidad){
-        // Oferta vigente
-        if ($producto->en_oferta && $producto->fecha_fin_oferta >= now()->toDateString()) {
+
+        //Verificar si hay oferta vigente
+        if ($producto->en_oferta
+            && $producto->precio_oferta !== null
+            && $producto->fecha_fin_oferta
+            && $producto->fecha_fin_oferta >= now()->toDateString()
+        ) {
             return [
-                'precio' => $producto->precio_oferta,
+                'precio' => (float) $producto->precio_oferta,
                 'tipo'   => 'oferta'
             ];
         }
 
-        // Mayoreo (si no aplica oferta)
-        if ($producto->precio_mayoreo && $cantidad >= $producto->cantidad_mayoreo) {
+        //Verificar mayoreo (si no aplica oferta)
+        if ($producto->precio_mayoreo !== null
+            && $producto->cantidad_minima_mayoreo !== null
+            && $cantidad >= $producto->cantidad_minima_mayoreo
+        ) {
             return [
-                'precio' => $producto->precio_mayoreo,
+                'precio' => (float) $producto->precio_mayoreo,
                 'tipo'   => 'mayoreo'
             ];
         }
 
-        // Base (por defecto)
+        //Precio base (por defecto)
         return [
-            'precio' => $producto->precio_venta,
+            'precio' => (float) $producto->precio_venta,
             'tipo'   => 'base'
         ];
     }
@@ -397,6 +235,7 @@ class CarritoController extends Controller
                 'nombre' => $item['nombre'],
                 'cantidad' => $item['cantidad'],
                 'precio' => $item['precio'],
+                'tipo_precio' => $item['tipo_precio'], // se refleja también en respuesta, ya viene de session
                 'stock' => $prod?->cantidad ?? 0,
                 'imagen' => $prod && $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
             ];
@@ -413,8 +252,7 @@ class CarritoController extends Controller
 
     }
 
-
-    public function update(Request $request, $id){//$id_producto
+    public function update(Request $request, $id) { //$id_producto
 
         $nuevaCantidad = max(1, (int)$request->input('cantidad'));
 
@@ -430,21 +268,30 @@ class CarritoController extends Controller
 
             foreach ($items_carrito as $index => $item) {
                 if ($item['id'] == $id) {
+                    //Actualizar cantidad
                     $items_carrito[$index]['cantidad'] = $nuevaCantidad;
+
+                    //Recalcular precio y tipo_precio usando getPrecioAplicado()
+                    $precioData = $this->getPrecioAplicado($producto, $nuevaCantidad);
+                    $items_carrito[$index]['precio'] = $precioData['precio'];
+                    $items_carrito[$index]['tipo_precio'] = $precioData['tipo'];
+
+                    // Guardar sesión
                     Session::put('items_carrito', $items_carrito);
 
                     // Preparar respuesta actualizada
                     $carritoConInfo = collect($items_carrito)->map(function ($item) {
                         $prod = \App\Models\Producto::find($item['id']);
                         return [
-                            'id' => $item['id'],
-                            'nombre' => $item['nombre'],
-                            'cantidad' => $item['cantidad'],
-                            'precio' => $item['precio'],
-                            'stock' => $prod->cantidad ?? 0,
-                            'imagen' => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
+                            'id'          => $item['id'],
+                            'nombre'      => $item['nombre'],
+                            'cantidad'    => $item['cantidad'],
+                            'precio'      => $item['precio'],
+                            'tipo_precio' => $item['tipo_precio'], //se incluye para no perder al recargar o presionar el boton menos
+                            'stock'       => $prod->cantidad ?? 0,
+                            'imagen'      => $prod->imagen ? asset('storage/' . $prod->imagen->ruta) : asset('images/placeholder-caja.png'),
                         ];
-                    });
+                    })->values();
 
                     $total = $carritoConInfo->sum(fn($item) => $item['precio'] * $item['cantidad']);
 
@@ -452,7 +299,7 @@ class CarritoController extends Controller
                         'success' => true,
                         'message' => 'Cantidad actualizada correctamente.',
                         'carrito' => $carritoConInfo,
-                        'total' => $total,
+                        'total'   => $total,
                     ]);
                 }
             }

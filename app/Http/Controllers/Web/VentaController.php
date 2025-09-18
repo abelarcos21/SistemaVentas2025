@@ -70,7 +70,22 @@ class VentaController extends Controller
         try {
             $totalVenta = 0;
             foreach ($items_carrito as $item) {
-                $totalVenta += $item['cantidad'] * $item['precio'];
+
+                $producto = Producto::find($item['id']);
+
+                $precioBase = $producto->precio_venta;
+                $tipoPrecio = 'base';
+
+                //Oferta vigente tiene prioridad
+                if ($producto->en_oferta && $producto->fecha_fin_oferta >= now()) {
+                    $precioBase = $producto->precio_oferta;
+                    $tipoPrecio = 'oferta';
+                }elseif($producto->precio_mayoreo && $item['cantidad'] >= $producto->cantidad_minima_mayoreo){//Mayoreo solo si NO hay oferta
+                    $precioBase = $producto->precio_mayoreo;
+                    $tipoPrecio = 'mayoreo';
+                }
+
+                $totalVenta += $item['cantidad'] * $precioBase;
             }
 
             // 👉 VALIDAR QUE EL MONTO TOTAL DE PAGOS SEA IGUAL AL TOTAL DE LA VENTA
@@ -140,13 +155,11 @@ class VentaController extends Controller
                 $precioBase = $producto->precio_venta;
                 $tipoPrecio = 'base';
 
-                // Si aplica oferta
+                //Oferta vigente tiene prioridad
                 if ($producto->en_oferta && $producto->fecha_fin_oferta >= now()) {
                     $precioBase = $producto->precio_oferta;
                     $tipoPrecio = 'oferta';
-                }
-                // Si aplica mayoreo
-                elseif ($producto->precio_mayoreo && $item['cantidad'] >= $producto->cantidad_minima_mayoreo) {
+                }elseif($producto->precio_mayoreo && $item['cantidad'] >= $producto->cantidad_minima_mayoreo){//Mayoreo solo si NO hay oferta
                     $precioBase = $producto->precio_mayoreo;
                     $tipoPrecio = 'mayoreo';
                 }
