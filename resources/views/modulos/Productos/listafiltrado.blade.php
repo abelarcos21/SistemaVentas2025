@@ -17,25 +17,6 @@
                         style="object-fit: cover;">
                     </a>
 
-                   {{--  <!-- Modal Bootstrap 4 -->
-                    <div class="modal fade" id="modalImagen{{ $producto->id }}"
-                        tabindex="-1"
-                        role="dialog" aria-labelledby="modalLabel{{ $producto->id }}" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                            <div class="modal-content bg-white">
-                                <div class="modal-header bg-gradient-info">
-                                    <h5 class="modal-title" id="modalLabel{{ $producto->id }}">Imagen de {{ $producto->nombre }}</h5>
-                                    <button type="button" class="close text-light" data-dismiss="modal" aria-label="Cerrar">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body text-center">
-                                    <img src="{{ $ruta }}" class="img-fluid rounded shadow">
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
-
                     <!-- Modal mejorado para imagen -->
                     <div class="modal fade" id="modalImagen{{ $producto->id }}" tabindex="-1" role="dialog">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -53,7 +34,21 @@
                                         </div>
                                         <div class="col-md-4 p-4">
                                             <h5>{{ $producto->nombre }}</h5>
-                                            <p class="price-large mb-3 text-primary">MXN ${{ number_format($producto->precio_venta, 2) }}</p>
+                                            <p class="price-large mb-3 text-primary">MXN ${{ number_format($producto->precio_aplicado, 2) }}</p>
+                                            @if($producto->en_oferta == 1
+                                                && $producto->precio_oferta > 0
+                                                && now()->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta))
+                                                <small class="badge bg-success">En oferta</small>
+                                            @endif
+
+                                            @if ($producto->permite_mayoreo == true && $producto->precio_mayoreo > 0  && $producto->cantidad_minima_mayoreo >= 10)
+                                                <span class="badge bg-info">
+                                                    Mayoreo
+                                                    {{ $producto->moneda->codigo ?? '' }}
+                                                    ${{ number_format($producto->precio_mayoreo, 2) }}
+                                                    (min. {{ $producto->cantidad_minima_mayoreo }})
+                                                </span>
+                                            @endif
                                             <p class="text-muted mb-3">{{ $producto->descripcion ?? 'Descripción no disponible' }}</p>
 
                                             @if($producto->cantidad > 0)
@@ -80,7 +75,25 @@
 
                 <div class="card-body p-2">
                     <h6 class="mb-1" style="font-size: 14px;">{{ $producto->nombre }}</h6>
-                    <p class="mb-0 text-primary font-weight-bold" style="font-size: 14px;">MXN ${{ number_format($producto->precio_venta, 2) }}</p>
+                    <p class="mb-0 text-primary font-weight-bold" style="font-size: 14px;">MXN ${{ number_format($producto->precio_aplicado, 2) }}</p>
+                    @if($producto->en_oferta == 1
+                        && $producto->precio_oferta > 0
+                        && now()->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta))
+                        <small class="badge bg-success">En oferta</small>
+                    @endif
+                    {{-- @if($producto->permite_mayoreo == 1
+                        && $producto->precio_mayoreo > 0
+                        && $producto->cantidad_minima_mayoreo >= 10)
+                        <small class="badge bg-warning">Permite Mayoreo</small>
+                    @endif --}}
+                    @if ($producto->permite_mayoreo == true && $producto->precio_mayoreo > 0  && $producto->cantidad_minima_mayoreo >= 10)
+                        <span class="badge bg-info">
+                            Mayoreo
+                            {{ $producto->moneda->codigo ?? '' }}
+                            ${{ number_format($producto->precio_mayoreo, 2) }}
+                            (min. {{ $producto->cantidad_minima_mayoreo }})
+                        </span>
+                    @endif
                     {{-- @if($producto->cantidad > 5)
                         <small class=" text-primary">Stock: {{ $producto->cantidad }}</small>
                     @else

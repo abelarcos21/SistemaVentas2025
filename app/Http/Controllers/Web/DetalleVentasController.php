@@ -111,7 +111,7 @@ class DetalleVentasController extends Controller
     }
 
     // Método para DataTable de detalles de venta específica(2 OPCION)
-    public function detalleVentaData(Request $request, $ventaId)
+    /* public function detalleVentaData(Request $request, $ventaId)
     {
         if ($request->ajax()) {
             $detalles = DetalleVenta::with('producto')
@@ -154,6 +154,70 @@ class DetalleVentasController extends Controller
         }
 
         return response()->json(['error' => 'Acceso no autorizado'], 403);
+    } */
+
+    /**
+    * Obtener datos de productos vendidos para DataTable
+    */
+    public function getProductosVendidos($ventaId)
+    {
+        $detalles = DB::table('detalle_venta as dv')
+            ->join('productos as p', 'dv.producto_id', '=', 'p.id')
+            ->leftJoin('categorias as c', 'p.categoria_id', '=', 'c.id')
+            ->leftJoin('marcas as m', 'p.marca_id', '=', 'm.id')
+            ->leftJoin('imagens as img', 'p.id', '=', 'img.producto_id')
+            ->select([
+                'dv.id',
+                'p.nombre as producto_nombre',
+                'dv.tipo_precio_aplicado',
+                'c.nombre as categoria_nombre',
+                'm.nombre as marca_nombre',
+                'dv.cantidad',
+                'dv.precio_unitario_aplicado',
+                'dv.descuento_aplicado',
+                'dv.sub_total',
+                'img.ruta as imagen_ruta'
+            ])
+            ->where('dv.venta_id', $ventaId);
+
+        return DataTables::of($detalles)
+            ->addColumn('imagen', function ($detalle) {
+                if ($detalle->imagen_ruta) {
+                    return '<img src="' . asset('storage/' . $detalle->imagen_ruta) . '"
+                            alt="' . $detalle->producto_nombre . '"
+                            width="50" height="50" class="rounded">';
+                }
+                return '<span class="text-muted">Sin imagen</span>';
+            })
+            ->addColumn('categoria', function ($detalle) {
+                return '<small class="text-muted">
+                            <i class="fas fa-tag mr-1"></i>
+                            Categoría: <span class="badge badge-secondary" style="font-size: 12px;">' .
+                            ($detalle->categoria_nombre ?? 'Sin categoría') . '</span>
+                        </small>';
+            })
+            ->addColumn('marca', function ($detalle) {
+                return '<small class="text-muted">
+                            <i class="fas fa-trademark mr-1"></i>
+                            Marca: <span class="badge badge-secondary" style="font-size: 12px;">' .
+                            ($detalle->marca_nombre ?? 'Sin marca') . '</span>
+                        </small>';
+            })
+            ->addColumn('cantidad_badge', function ($detalle) {
+                return '<span class="badge badge-primary badge-pill px-3 py-2" style="font-size: 13px;">' .
+                    $detalle->cantidad . '</span>';
+            })
+            ->addColumn('precio_formateado', function ($detalle) {
+                return '<span class="text-success">$' . number_format($detalle->precio_unitario_aplicado, 2) . '</span>';
+            })
+            ->addColumn('descuento_formateado', function ($detalle) {
+                return '<span class="text-warning">$' . number_format($detalle->descuento_aplicado, 2) . '</span>';
+            })
+            ->addColumn('subtotal_formateado', function ($detalle) {
+                return '<span class="text-primary">$' . number_format($detalle->sub_total, 2) . '</span>';
+            })
+            ->rawColumns(['imagen', 'categoria', 'marca', 'cantidad_badge', 'precio_formateado', 'descuento_formateado', 'subtotal_formateado'])
+            ->make(true);
     }
 
     //METODO PARA EL DETALLE DE UNA VENTA

@@ -26,67 +26,7 @@
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
-
-            <!-- Información Principal de la Venta (ANTES) -->
-            {{-- <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header bg-gradient-primary">
-                            <h3 class="card-title mb-0">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                Información de la Venta Nro. {{ $venta->folio}}
-                            </h3>
-                            <div class="card-tools">
-                                <a href="{{ route('detalleventas.index') }}" class="btn btn-light text-primary btn-sm">
-                                    <i class="fas fa-arrow-left mr-1"></i> Volver
-                                </a>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="info-box bg-info">
-                                        <span class="info-box-icon">
-                                            <i class="fas fa-user"></i>
-                                        </span>
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">Vendedor</span>
-                                            <span class="info-box-number">{{ $venta->nombre_usuario }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="info-box bg-success">
-                                        <span class="info-box-icon">
-                                            <i class="fas fa-dollar-sign"></i>
-                                        </span>
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">Total de Venta</span>
-                                            <span class="info-box-number">${{ number_format($venta->total_venta, 2) }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="info-box bg-warning">
-                                        <span class="info-box-icon">
-                                            <i class="fas fa-calendar-alt"></i>
-                                        </span>
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">Fecha y Hora</span>
-                                            <span class="info-box-number" style="font-size: 14px;">
-                                                {{ $venta->created_at->format('d/m/Y') }}<br>
-                                                <small>{{ $venta->created_at->format('h:i A') }}</small>
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> --}}
-
-            <!-- Información general de la venta (ACTUAL) -->
+            <!-- Información general de la venta-->
             <div class="row">
                 <div class="col-12">
                     <div class="card">
@@ -131,15 +71,12 @@
             </div>
 
 
-            <!-- Detalle de Productos -->
+            <!-- Detalle de Productos vendidos -->
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-right">
                             <h3 class="card-title"><i class="fas fa-shopping-cart mr-2"></i> Productos Vendidos</h3>
-                           {{--  <a href="{{ route('detalleventas.index') }}" class=" btn btn-light bg-gradient-light text-primary btn-sm">
-                                <i class="fas fa-arrow-left"></i> Volver
-                            </a> --}}
                             <span class="badge badge-light text-primary">
                                 {{ $detalles->count() }} producto(s)
                             </span>
@@ -148,14 +85,14 @@
 
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
+                                <table id="productos-vendidos-table" class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
                                         <tr>
                                             <th>Imagen</th>
-                                            <th>Nombre Producto</th>
+                                            <th>Nombre</th>
                                             <th>Tipo de Precio</th>
-                                            <th>Categoria Producto</th>
-                                            <th>Marca Producto</th>
+                                            <th>Categoria</th>
+                                            <th>Marca</th>
                                             <th>Cantidad</th>
                                             <th>Precio Unitario</th>
                                             <th>Descuento</th>
@@ -163,81 +100,41 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($detalles as $detalle)
-
-                                            <tr>
-                                                <td class="text-center align-middle">
-                                                    @if($detalle->producto && $detalle->producto->imagen)
-                                                        <img src="{{ asset('storage/' . $detalle->producto->imagen->ruta) }}"
-                                                        alt="{{ $detalle->producto->nombre }}"
-                                                        width="50" height="50"
-                                                        class="rounded">
-                                                    @else
-                                                        <span class="text-muted">Sin imagen</span>
-                                                    @endif
-                                                </td>
-                                                <td class="align-middle">{{ $detalle->producto->nombre}}</td>
-                                                <td class="align-middle">{{ $detalle->tipo_precio_aplicado}}</td>
-                                                <td class="align-middle">
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-tag mr-1"></i>
-                                                        Categoría: <span class="badge badge-secondary" style="font-size: 12px;">{{$detalle->producto->categoria->nombre}}</span>
-                                                    </small>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <small class="text-muted">
-                                                        <i class="fas fa-trademark mr-1"></i>
-                                                        Marca: <span class="badge badge-secondary" style="font-size: 12px;">{{$detalle->producto->marca->nombre}}</span>
-                                                    </small>
-                                                </td>
-                                                <td class="text-center align-middle">
-                                                    <span class="badge badge-primary badge-pill px-3 py-2" style="font-size: 13px;">
-                                                        {{ $detalle->cantidad }}
-                                                    </span>
-                                                </td>
-                                                <td class="text-success text-center align-middle">${{ $detalle->precio_unitario_aplicado }}</td>
-                                                <td class="text-warning text-center align-middle">${{ $detalle->descuento_aplicado }}</td>
-                                                <td class="text-primary text-center align-middle">${{ $detalle->sub_total }}</td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="5" class="text-center py-5">
-                                                    <div class="text-muted">
-                                                        <i class="fas fa-shopping-cart fa-3x mb-3"></i>
-                                                        <h5>No hay productos en esta venta</h5>
-                                                        <p>Esta venta no contiene productos registrados.</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforelse
+                                        <!-- Los datos se cargarán vía DataTables -->
                                     </tbody>
+                                    <tfoot class="bg-light">
+                                        <tr>
+                                            <th colspan="8" class="text-right">Total General:</th>
+
+                                            <!-- Aquí va el total, alineado en la columna Subtotal -->
+                                            <th class="text-primary text-right" id="total-general">
+                                                ${{ number_format($venta->total_venta, 2) }}
+                                            </th>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         </div>
                         <!-- /.card-body -->
 
-                        @if($detalles->count() > 0)
-                            <div class="card-footer bg-light">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="text-muted">
-                                            <i class="fas fa-info-circle mr-1"></i>
-                                            Total de productos: <strong>{{ $detalles->sum('cantidad') }}</strong>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 text-right">
-                                        <h4 class="mb-0">
-                                            <span class="text-muted">Total: </span>
-                                            <span class="text-primary font-weight-bold">
-                                                ${{ number_format($venta->total_venta, 2) }}
-                                            </span>
-                                        </h4>
+                        <div class="card-footer bg-light">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="text-muted">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Total de productos: <strong>{{ $detalles->sum('cantidad') }}</strong>
                                     </div>
                                 </div>
+                                <div class="col-md-6 text-right">
+                                    <h4 class="mb-0">
+                                        <span class="text-muted">Total: </span>
+                                        <span class="text-primary font-weight-bold">
+                                            ${{ number_format($venta->total_venta, 2) }}
+                                        </span>
+                                    </h4>
+                                </div>
                             </div>
-                        @endif
-
-
+                        </div>
                     </div>
                     <!-- /.card -->
                 </div>
@@ -257,28 +154,20 @@
                         </div>
                         <div class="card-body">
                             <div class="text-center">
-                                {{-- <button type="button" class="btn btn-danger" onclick="exportToPDF()">
-                                    <i class="fas fa-file-pdf mr-1"></i> Ver PDF
-                                </button> --}}
-                                {{-- <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-file-pdf mr-1"></i> Ver PDF
-                                </a>
-                                <a href="{{ route('detalleventas.index') }}" class="btn btn-secondary">
-                                    <i class="fas fa-list mr-1"></i> Ver Todas las Ventas
-                                </a> --}}
-                                <a href="{{ route('detalleventas.index') }}" class="btn btn-secondary">
+
+                                <a href="{{ route('detalleventas.index') }}" class="btn btn-sm bg-gradient-secondary">
                                     <i class="fas fa-arrow-left"></i> Volver al Historial
                                 </a>
-                                <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-success">
+                                <a target="_blank" href="{{ route('detalle.ticket', $venta->id) }}" class="btn btn-sm bg-gradient-success">
                                     <i class="fas fa-print"></i> Imprimir Ticket
                                 </a>
-                                <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-info">
-                                    <i class="fas fa-print"></i> Imprimir Boleta
+                                <a target="_blank" href="{{ route('detalle.boleta', $venta->id) }}" class="btn btn-sm bg-gradient-info">
+                                    <i class="fas fa-file-pdf mr-1"></i> Imprimir Boleta
                                 </a>
                                 @if($venta->estado === 'completada')
                                     <form action="{{ route('detalle.revocar', $venta->id) }}" method="POST" class="d-inline formulario-eliminar">
                                         @csrf
-                                        <button class="btn btn-danger">
+                                        <button class="btn btn-sm bg-gradient-danger">
                                             <i class="fas fa-ban"></i> Cancelar Venta
                                         </button>
                                     </form>
@@ -297,15 +186,117 @@
 @stop
 
 @section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
+
+    {{-- Add here extra stylesheets --}}
+    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
 @stop
 
 @section('js')
+
+    <!-- DataTables JavaScript -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
+
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Configuración del DataTable
+            let table = $('#productos-vendidos-table').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: "{{ route('detalle.productos.data', $venta->id) }}",
+                    type: 'GET',
+                    error: function(xhr, error, thrown) {
+                        console.error('Error al cargar los datos:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudieron cargar los productos vendidos',
+                            icon: 'error'
+                        });
+                    }
+                },
+                columns: [
+                    {data: 'imagen',name: 'imagen',orderable: false,searchable: false,className: 'text-center align-middle',width: '80px'},
+                    {data: 'producto_nombre',name: 'producto_nombre',className: 'align-middle'},
+                    {data: 'tipo_precio_aplicado',name: 'tipo_precio_aplicado',className: 'align-middle text-center'},
+                    {data: 'categoria',name: 'c.nombre',className: 'align-middle',orderable: false},
+                    {data: 'marca',name: 'm.nombre',className: 'align-middle',orderable: false},
+                    {data: 'cantidad_badge',name: 'cantidad',className: 'text-center align-middle',width: '100px'},
+                    {data: 'precio_formateado',name: 'precio_unitario_aplicado',className: 'text-center align-middle',width: '120px'},
+                    {data: 'descuento_formateado',name: 'descuento_aplicado',className: 'text-center align-middle',width: '120px'},
+                    {data: 'subtotal_formateado',name: 'sub_total',className: 'text-center align-middle', width: '120px'}
+                ],
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+                },
+               /*  language: {
+                    processing: '<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="sr-only">Cargando...</span></div></div>',
+                    lengthMenu: 'Mostrar _MENU_ productos por página',
+                    zeroRecords: '<div class="text-center py-4"><i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i><h5 class="text-muted">No hay productos en esta venta</h5><p class="text-muted">Esta venta no contiene productos registrados.</p></div>',
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ productos',
+                    infoEmpty: 'Mostrando 0 a 0 de 0 productos',
+                    infoFiltered: '(filtrado de _MAX_ productos totales)',
+                    search: 'Buscar producto:',
+                    paginate: {
+                        first: 'Primero',
+                        last: 'Último',
+                        next: 'Siguiente',
+                        previous: 'Anterior'
+                    }
+                }, */
+                pageLength: 10,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, 'Todos']],
+                order: [[1, 'asc']], // Ordenar por nombre del producto
+                scrollX: false,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100],
+                order: [[3, 'desc']], // Ordenar por fecha descendente
+                responsive: true,
+                autoWidth: false,
+                scrollX: false,
+                // Configuraciones adicionales para mejor rendimiento
+                deferRender: true,
+                stateSave: true,
+                // Mensaje cuando no hay datos
+                emptyTable: "No hay ventas registradas",
+                loadingRecords: "Cargando...",
+                processing: "Procesando...",
+                zeroRecords: "No se encontraron registros que coincidan"
+            });
+
+            // Manejar errores de carga
+            $('#productos-vendidos-table').on('error.dt', function(e, settings, techNote, message) {
+                console.error('DataTables error: ', message);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al cargar la tabla de productos',
+                    icon: 'error'
+                });
+            });
+        });
+    </script>
 
     {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
     <script>

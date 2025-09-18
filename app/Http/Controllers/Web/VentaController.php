@@ -136,6 +136,21 @@ class VentaController extends Controller
 
             foreach ($items_carrito as $item) {
                 $producto = Producto::find($item['id']);
+
+                $precioBase = $producto->precio_venta;
+                $tipoPrecio = 'base';
+
+                // Si aplica oferta
+                if ($producto->en_oferta && $producto->fecha_fin_oferta >= now()) {
+                    $precioBase = $producto->precio_oferta;
+                    $tipoPrecio = 'oferta';
+                }
+                // Si aplica mayoreo
+                elseif ($producto->precio_mayoreo && $item['cantidad'] >= $producto->cantidad_minima_mayoreo) {
+                    $precioBase = $producto->precio_mayoreo;
+                    $tipoPrecio = 'mayoreo';
+                }
+
                 //verificar si tenemos suficiente stock
                 if ($producto->cantidad < $item['cantidad']) {
                     DB::rollBack();
@@ -146,8 +161,9 @@ class VentaController extends Controller
                 $detalle->venta_id = $venta->id;
                 $detalle->producto_id = $item['id'];
                 $detalle->cantidad = $item['cantidad'];
-                $detalle->precio_unitario_aplicado = $item['precio'];
-                $detalle->sub_total = $item['cantidad'] * $item['precio'];
+                $detalle->precio_unitario_aplicado = $precioBase;
+                $detalle->sub_total = $item['cantidad'] * $precioBase;
+                $detalle->tipo_precio_aplicado = $tipoPrecio; //aquí guardamos TIPO PRECIO APLICADO
                 $detalle->save();
 
                 $producto->cantidad -= $item['cantidad']; //le resta el producto cantidad disminuye al vender

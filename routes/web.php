@@ -75,6 +75,10 @@ Route::prefix('detalles')->group(function(){
     Route::get('/ticket/{id_venta}', [DetalleVentasController::class, 'generarTicket'])->name('detalle.ticket');
     Route::get('/boleta/{id_venta}', [DetalleVentasController::class, 'generarBoleta'])->name('detalle.boleta');
 
+    /* Route::get('/detalle-data/{ventaId}', [VentasController::class, 'detalleVentaData'])->name('detalle.data'); */
+
+    Route::get('/detalle-venta/{venta}/productos-data', [DetalleVentasController::class, 'getProductosVendidos'])->name('detalle.productos.data');
+
 });
 // Rutas para el historial de ventas segunda opcion en observacion para adecuar con la ruta detalle ventas la de arriba
 /* Route::prefix('ventas')->name('ventas.')->group(function () {
@@ -190,9 +194,12 @@ Route::prefix('productos')->group(function(){
     // Nueva ruta para modal de eliminacion
     Route::get('/{id}/delete-modal', [ProductoController::class, 'deleteModal'])->name('producto.delete.modal');
 
+
+
 });
 
-
+//PARA OBTENER DATOS Y DEVOLVER UN JSON DE UN PRODUCTO AL MOMENTO DE AGREGAR AL CARRITO
+Route::get('/producto/datos/{id}', [ProductoController::class, 'datos'])->name('producto.datos');
 
 //FILTRAR PRODUCTOS Y CATEGORIAS
 Route::get('/productos-filtrados', [ProductoController::class, 'filtrar'])->name('productos.filtrar');

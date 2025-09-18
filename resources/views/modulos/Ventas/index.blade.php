@@ -558,7 +558,7 @@
     </script>
 
     <script>
-        function agregarProductoAlCarrito(productoId) {
+        /* function agregarProductoAlCarrito(productoId) {
             $.ajax({
                 url: '/carrito/agregar/' + productoId,
                 method: 'POST',
@@ -575,11 +575,11 @@
                             text: 'Agregado Correctamente.'
                         }); */
 
-                        Swal.fire('Agregado', response.message, 'success');
-                        renderizarTablaCarrito(response.carrito, response.total);
+                       /*  Swal.fire('Agregado', response.message, 'success');
+                        renderizarTablaCarrito(response.carrito, response.total); */
 
                         // actualizar el carrito en la vista si es necesario
-                    }
+                 /*    }
                 },
                 error: function (xhr) {
                     let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error.';
@@ -591,10 +591,123 @@
                         text: 'Al agregar producto.'
                     }); */
 
-                    Swal.fire('Error', errorMsg, 'error');
+                    /* Swal.fire('Error', errorMsg, 'error'); */
+               /*  } */
+            /* }); */
+        /* } */
+
+        /* function agregarProductoAlCarrito(button) {
+            let btn = $(button);
+
+            let productoId = btn.data('id');
+            let precioBase = parseFloat(btn.data('precio-base'));
+            let enOferta = parseInt(btn.data('en-oferta')) === 1;
+            let precioOferta = parseFloat(btn.data('precio-oferta'));
+            let fechaInicio = btn.data('fecha-inicio') ? new Date(btn.data('fecha-inicio')) : null;
+            let fechaFin = btn.data('fecha-fin') ? new Date(btn.data('fecha-fin')) : null;
+
+            let permiteMayoreo = parseInt(btn.data('permite-mayoreo')) === 1;
+            let precioMayoreo = parseFloat(btn.data('precio-mayoreo'));
+            let cantidadMinima = parseInt(btn.data('cantidad-minima')) || 0;
+
+            // Preguntar cantidad al cajero (puedes cambiar por input default = 1)
+            Swal.fire({
+                title: 'Cantidad',
+                input: 'number',
+                inputValue: 1,
+                inputAttributes: { min: 1 },
+                showCancelButton: true,
+                confirmButtonText: 'Agregar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let cantidad = parseInt(result.value) || 1;
+                    let precioAplicado = precioBase;
+
+                    // 1. Verificar oferta vigente
+                    let hoy = new Date();
+                    if (enOferta && precioOferta > 0 && fechaInicio && fechaFin &&
+                        hoy >= fechaInicio && hoy <= fechaFin) {
+                        precioAplicado = precioOferta;
+                    }
+
+                    // 2. Verificar mayoreo
+                    if (permiteMayoreo && precioMayoreo > 0 && cantidad >= cantidadMinima) {
+                        precioAplicado = precioMayoreo;
+                    }
+
+                    // Enviar al backend
+                    $.ajax({
+                        url: '/carrito/agregar/' + productoId,
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            cantidad: cantidad,
+                            precio: precioAplicado
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Agregado', response.message, 'success');
+                                renderizarTablaCarrito(response.carrito, response.total);
+                            }
+                        },
+                        error: function (xhr) {
+                            let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error.';
+                            Swal.fire('Error', errorMsg, 'error');
+                        }
+                    });
+                }
+            });
+        } */
+
+        function agregarProductoAlCarrito(productoId) {
+            $.ajax({
+                url: '/producto/datos/' + productoId, // debes tener una ruta que devuelva info del producto (precio_base, oferta, mayoreo, etc.)
+                method: 'GET',
+                success: function (producto) {
+                    let cantidad = 1; // default, luego puedes hacer que el usuario seleccione cantidad
+                    let precioAplicado = producto.precio_base;
+                    let tipoPrecio = 'base';
+
+                    // 1️⃣ Validar si aplica oferta
+                    if (producto.en_oferta && producto.fecha_fin_oferta >= new Date().toISOString().slice(0, 10)) {
+                        precioAplicado = producto.precio_oferta;
+                        tipoPrecio = 'oferta';
+                    }
+
+                    // 2️⃣ Validar si aplica mayoreo (si no aplica oferta)
+                    else if (producto.precio_mayoreo && cantidad >= producto.cantidad_mayoreo) {
+                        precioAplicado = producto.precio_mayoreo;
+                        tipoPrecio = 'mayoreo';
+                    }
+
+                    // 3️⃣ Mandar al backend con tipo_precio incluido
+                    $.ajax({
+                        url: '/carrito/agregar/' + productoId,
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            cantidad: cantidad,
+                            precio: precioAplicado,
+                            tipo_precio: tipoPrecio // 👈 ahora lo enviamos al backend
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Agregado', response.message, 'success');
+                                renderizarTablaCarrito(response.carrito, response.total);
+                            }
+                        },
+                        error: function (xhr) {
+                            let errorMsg = xhr.responseJSON?.error || 'Ocurrió un error.';
+                            Swal.fire('Error', errorMsg, 'error');
+                        }
+                    });
+                },
+                error: function () {
+                    Swal.fire('Error', 'No se pudieron obtener los datos del producto.', 'error');
                 }
             });
         }
+
 
         function renderizarTablaCarrito(items, total) {
 

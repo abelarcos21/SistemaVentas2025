@@ -221,6 +221,37 @@ class ProductoController extends Controller
             ->make(true);
     }
 
+    //para obtener datos de json de un producto al agregar al carrito
+    public function datos($id){
+        $producto = \App\Models\Producto::with('moneda')->findOrFail($id);
+
+        // Determinar si la oferta sigue vigente
+        $ofertaVigente = false;
+        if ($producto->en_oferta && $producto->fecha_inicio_oferta && $producto->fecha_fin_oferta) {
+            $hoy = now();
+            $ofertaVigente = $hoy->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta);
+        }
+
+        return response()->json([
+            'id'                 => $producto->id,
+            'nombre'             => $producto->nombre,
+            'stock'              => $producto->cantidad,
+            'precio_base'        => $producto->precio_venta,
+            'precio_mayoreo'     => $producto->precio_mayoreo,
+            'cantidad_mayoreo'   => $producto->cantidad_minima_mayoreo,
+            'en_oferta'          => $producto->en_oferta,
+            'precio_oferta'      => $producto->precio_oferta,
+            'fecha_inicio'       => $producto->fecha_inicio_oferta,
+            'fecha_fin'          => $producto->fecha_fin_oferta,
+            'oferta_vigente'     => $ofertaVigente,
+            'moneda'             => $producto->moneda->codigo ?? null,
+            'imagen'             => $producto->imagen
+                                        ? asset('storage/' . $producto->imagen->ruta)
+                                        : asset('images/placeholder-caja.png'),
+        ]);
+    }
+
+
     public function create(){
         $categorias = Categoria::all();
         $proveedores = Proveedor::all();
