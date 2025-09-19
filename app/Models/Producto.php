@@ -93,24 +93,7 @@ class Producto extends Model
         return $this->precio_venta;
     }
 
-    /* public function getPrecioAplicadoAttribute(){ //segunda opcion para acecesor
-        $hoy = now();
 
-        // 1. Oferta vigente
-        if ($this->en_oferta == 1 && $this->precio_oferta > 0
-            && $this->fecha_inicio_oferta && $this->fecha_fin_oferta) {
-
-            $inicio = \Carbon\Carbon::parse($this->fecha_inicio_oferta);
-            $fin = \Carbon\Carbon::parse($this->fecha_fin_oferta);
-
-            if ($hoy->between($inicio, $fin)) {
-                return $this->precio_oferta;
-            }
-        }
-
-        // 2. Si no aplica oferta, usar precio base
-        return $this->precio_venta;
-    } */
 
     //RELACION PARA ACCEDER ALA IMAGEN
     public function imagen(){

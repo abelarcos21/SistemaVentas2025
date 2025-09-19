@@ -23,19 +23,13 @@ class VentaController extends Controller
     //index
     public function index(Request $request){
 
-        $productos = Producto::paginate(12);
+        $productos = Producto::with('moneda')->paginate(12);//trae relacion de moneda para cada producto
 
         if($request->ajax()){
             return view('modulos.productos.ajaxproductos', compact('productos'))->render();
         }
 
-
         $clientes = Cliente::orderBy('nombre')->get();
-
-        /* $categorias = Categoria::withCount(['productos' => function ($query){
-            $query->where('cantidad', '>', 0);
-
-        }])->get(); */
 
         // NO pongas condiciones aquí para que no falle el conteo
         $categorias = Categoria::withCount('productos')->get();

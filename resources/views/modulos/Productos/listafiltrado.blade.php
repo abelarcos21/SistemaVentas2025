@@ -12,7 +12,10 @@
                 $precioBase = $producto->precio_venta;
                 $textoMayoreo = '';
 
-                //PRIORIDAD OFERTA AUNQUE TENGA MAYOREO
+                $codigoMoneda = $producto->moneda->codigo ?? 'MXN';
+                $simboloMoneda = $producto->moneda->simbolo ?? '$';
+
+                // Prioridad: oferta sobre mayoreo
                 if ($producto->en_oferta && $producto->precio_oferta > 0 && now()->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta)) {
                     $tipoPrecio = 'oferta';
                     $precioMostrar = $producto->precio_oferta;
@@ -21,8 +24,6 @@
                     $precioMostrar = $producto->precio_mayoreo;
                     $textoMayoreo = '(min. ' . $producto->cantidad_minima_mayoreo . ')';
                 }
-
-
             @endphp
 
             {{-- Badge flotante --}}
@@ -57,8 +58,11 @@
                                 </div>
                                 <div class="col-md-4 p-4">
                                     <h5>{{ $producto->nombre }}</h5>
-                                    <p class="price-large mb-3 text-primary">MXN ${{ number_format($producto->precio_aplicado, 2) }}</p>
-                                    {{--PRIORIDAD A OFERA AUNQUE TENGA MAYOREO--}}
+                                    <p class="price-large mb-3 text-primary">
+                                        {{ $codigoMoneda }} {{ $simboloMoneda }}{{ number_format($producto->precio_aplicado, 2) }}
+                                    </p>
+
+                                    {{-- Prioridad a oferta aunque tenga mayoreo --}}
                                     @if($producto->en_oferta == 1
                                         && $producto->precio_oferta > 0
                                         && now()->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta))
@@ -66,8 +70,7 @@
                                     @elseif($producto->permite_mayoreo == true && $producto->precio_mayoreo > 0  && $producto->cantidad_minima_mayoreo >= 10)
                                         <span class="badge bg-warning">
                                             Mayoreo
-                                            {{ $producto->moneda->codigo ?? '' }}
-                                            ${{ number_format($producto->precio_mayoreo, 2) }}
+                                            {{ $codigoMoneda }} {{ $simboloMoneda }}{{ number_format($producto->precio_mayoreo, 2) }}
                                             (min. {{ $producto->cantidad_minima_mayoreo }})
                                         </span>
                                     @endif
@@ -94,16 +97,21 @@
                 </div>
             </div>
 
+            {{-- Card body --}}
             <div class="card-body p-2">
                 <h6 class="mb-1" style="font-size: 14px;">{{ $producto->nombre }}</h6>
 
                 {{-- Precio con estilo tachado si hay oferta --}}
                 <p class="mb-1 text-primary font-weight-bold" style="font-size: 14px;">
                     @if($tipoPrecio === 'oferta')
-                        <span class="text-muted" style="text-decoration: line-through;">MXN ${{ number_format($precioBase, 2) }}</span>
-                        <span class="ms-1">MXN ${{ number_format($precioMostrar, 2) }}</span>
+                        <span class="text-muted" style="text-decoration: line-through;">
+                            {{ $codigoMoneda }} {{ $simboloMoneda }}{{ number_format($precioBase, 2) }}
+                        </span>
+                        <span class="ms-1">
+                            {{ $codigoMoneda }} {{ $simboloMoneda }}{{ number_format($precioMostrar, 2) }}
+                        </span>
                     @else
-                        MXN ${{ number_format($precioMostrar, 2) }}
+                        {{ $codigoMoneda }} {{ $simboloMoneda }}{{ number_format($precioMostrar, 2) }}
                     @endif
                 </p>
 
@@ -147,6 +155,7 @@
         </div>
     </div>
 @endforeach
+
 
 @if($productos->isEmpty())
     <div class="col-12 text-center text-muted">
