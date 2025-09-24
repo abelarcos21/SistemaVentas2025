@@ -67,7 +67,7 @@
                                         && $producto->precio_oferta > 0
                                         && now()->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta))
                                         <small class="badge bg-success">En oferta</small>
-                                    @elseif($producto->permite_mayoreo == true && $producto->precio_mayoreo > 0  && $producto->cantidad_minima_mayoreo >= 10)
+                                    @elseif($producto->permite_mayoreo == true && $producto->precio_mayoreo > 0  && $producto->cantidad_minima_mayoreo > 0)
                                         <span class="badge bg-warning">
                                             Mayoreo
                                             {{ $codigoMoneda }} {{ $simboloMoneda }}{{ number_format($producto->precio_mayoreo, 2) }}
