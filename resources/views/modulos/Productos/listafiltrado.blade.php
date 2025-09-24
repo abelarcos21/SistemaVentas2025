@@ -78,10 +78,20 @@
                                     <p class="text-muted mb-3">{{ $producto->descripcion ?? 'Descripción no disponible' }}</p>
 
                                     @if($producto->cantidad > 0)
-                                        <button onclick="agregarProductoAlCarrito({{ $producto->id }})"
-                                                class="btn btn-primary w-100 mb-2">
+                                        <button onclick="agregarProductoAlCarrito(this)"
+                                            data-id="{{ $producto->id }}"
+                                            data-precio-base="{{ $producto->precio_venta }}"
+                                            data-en-oferta="{{ $producto->en_oferta }}"
+                                            data-precio-oferta="{{ $producto->precio_oferta }}"
+                                            data-fecha-inicio="{{ $producto->fecha_inicio_oferta }}"
+                                            data-fecha-fin="{{ $producto->fecha_fin_oferta }}"
+                                            data-permite-mayoreo="{{ $producto->permite_mayoreo }}"
+                                            data-precio-mayoreo="{{ $producto->precio_mayoreo }}"
+                                            data-cantidad-minima="{{ $producto->cantidad_minima_mayoreo }}"
+                                            data-stock="{{ $producto->cantidad }}"
+                                            style=" color: white !important; font-size: 0.8rem;"
+                                            class="btn btn-primary bg-gradient-primary rounded-pill px-4 py-1">
                                             <i class="fas fa-cart-plus fa-lg me-2"></i>
-                                            Agregar al carrito
                                         </button>
                                     @endif
 
@@ -135,6 +145,7 @@
                         data-permite-mayoreo="{{ $producto->permite_mayoreo }}"
                         data-precio-mayoreo="{{ $producto->precio_mayoreo }}"
                         data-cantidad-minima="{{ $producto->cantidad_minima_mayoreo }}"
+                        data-stock="{{ $producto->cantidad }}"
                         style=" color: white !important; font-size: 0.8rem;"
                         class="btn btn-primary bg-gradient-primary rounded-pill px-4 py-1">
                         <i class="fas fa-cart-plus fa-lg me-2"></i>

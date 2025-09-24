@@ -196,7 +196,7 @@ class CarritoController extends Controller
     }
 
 
-    //Metodo para quitar un producto del carrito
+    //Metodo para quitar Todo el producto del carrito
     public function quitar_carrito($id_producto) {
 
         $items_carrito = Session::get('items_carrito', []);
@@ -205,20 +205,24 @@ class CarritoController extends Controller
             $items_carrito = [];
         }
 
-        $productoEncontrado = false; // 👈 IMPORTANTE
+        $productoEncontrado = false; //IMPORTANTE
 
         foreach ($items_carrito as $key => $carrito) {
             if ($carrito['id'] == $id_producto) {
                 $productoEncontrado = true;
 
-                if ($carrito['cantidad'] > 1) {
+                //En lugar de restar cantidad, lo eliminamos completamente
+                unset($items_carrito[$key]);
+                $items_carrito = array_values($items_carrito);
+                break;
+
+                /* if ($carrito['cantidad'] > 1) {//AQUI SE RESTABA CANTIDAD SOLO 1
                     $items_carrito[$key]['cantidad'] -= 1;
                 } else {
                     unset($items_carrito[$key]);
                     $items_carrito = array_values($items_carrito);
                 }
-
-                break;
+                break; */
             }
         }
 
@@ -229,7 +233,7 @@ class CarritoController extends Controller
         Session::put('items_carrito', $items_carrito);
 
         $carritoConInfo = collect($items_carrito)->map(function ($item) {
-            $prod = \App\Models\Producto::find($item['id']);
+            $prod = Producto::find($item['id']);
             return [
                 'id' => $item['id'],
                 'nombre' => $item['nombre'],

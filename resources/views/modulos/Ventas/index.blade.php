@@ -559,7 +559,17 @@
                 inputValue: 1,
                 inputAttributes: { min: 1 },
                 showCancelButton: true,
-                confirmButtonText: 'Agregar'
+                confirmButtonText: 'Agregar',
+                inputValidator: (value) => {
+                    let stock = parseInt(btn.data('stock')); // stock disponible
+                    if (!value || value <= 0) {
+                        return 'Debes ingresar una cantidad válida';
+                    }
+                    if (value > stock) {
+                        return `Solo hay ${stock} unidades disponibles`;
+                    }
+                    return null; // válido
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     let cantidad = parseInt(result.value) || 1;
@@ -732,10 +742,10 @@
 
             Swal.fire({
                 title: '¿Quitar producto?',
-                text: 'Se eliminará una unidad del producto.',
+                text: 'Se eliminará todo el producto del carrito.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, quitar',
+                confirmButtonText: 'Sí, eliminar',
                 cancelButtonText: 'Cancelar',
             }).then((result) => {
                 if (result.isConfirmed) {
