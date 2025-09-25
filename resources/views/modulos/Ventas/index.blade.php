@@ -860,11 +860,11 @@
         let categoriaSeleccionada = 'todos';
         let timerBusqueda = null;
 
-        function filtrarProductos() {
+        function filtrarProductos(page= 1) {
             const busqueda = $('#buscador').val();
 
             $.ajax({
-                url: "{{ route('productos.filtrar') }}",
+                url: "{{ route('productos.filtrar') }}?page=" + page, // page dinámico
                 data: {
                     busqueda: busqueda,
                     categoria_id: categoriaSeleccionada,
@@ -885,7 +885,15 @@
                     Swal.fire('Error', 'Error al filtrar productos', 'error');
                 }
             });
+
         }
+
+        //Capturar click en la paginación al filtrar en boton todos
+        $(document).on('click', '#pagination-wrapper a', function(e) {
+            e.preventDefault();
+            let page = $(this).attr('href').split('page=')[1]; // obtiene el número de página
+            filtrarProductos(page);
+        });
 
         // Función para detectar si es un código de barras
         function esCodigoBarras(texto) {

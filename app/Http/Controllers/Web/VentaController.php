@@ -23,7 +23,7 @@ class VentaController extends Controller
     //index
     public function index(Request $request){
 
-        $productos = Producto::with('moneda')->paginate(12);//trae relacion de moneda para cada producto
+        $productos = Producto::with('moneda')->paginate(10);//trae relacion de moneda para cada producto
 
         if($request->ajax()){
             return view('modulos.productos.ajaxproductos', compact('productos'))->render();

@@ -378,13 +378,13 @@ class ProductoController extends Controller
             $query->where('categoria_id', $request->categoria_id);
         }
 
-        $productos = $query->where('cantidad', '>=', 0)->get(); //Asegúrar de que los productos tengan cantidad > 0 en BD
+        $productos = $query->where('cantidad', '>=', 0)->paginate(10); //Asegúrar de que los productos tengan cantidad > 0 en BD
 
 
         return response()->json([
             'html' => view('modulos.productos.listafiltrado', compact('productos'))->render(),
+            'pagination' => $productos->links()->render(),
             'total' => $productos->count(),
-            /* 'paginacion' => $productos->links()->render(), */
 
         ]);
 
