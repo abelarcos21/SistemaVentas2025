@@ -6,6 +6,7 @@
     <title>Scanner de Códigos de Barras Mejorado</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -678,13 +679,25 @@
                            .html(html);
             }
 
+
+
             ofrecerCrearProducto(codigo) {
                 setTimeout(() => {
-                    const confirmacion = confirm(`¿Deseas crear un nuevo producto con código ${codigo}?`);
-                    if (confirmacion) {
-                        // Redirigir a formulario de creación
-                        window.location.href = `/productos/crear?codigo=${codigo}`;
-                    }
+                    Swal.fire({
+                        title: '¿Crear nuevo producto?',
+                        text: `¿Deseas crear un nuevo producto con código ${codigo}?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sí, crear',
+                        cancelButtonText: 'Cancelar',
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirigir usando la ruta de Laravel
+                            window.location.href = "{{ route('producto.create.modal') }}" + "?codigo=" + codigo;
+                        }
+                    });
                 }, 2000);
             }
 

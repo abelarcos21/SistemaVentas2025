@@ -30,13 +30,22 @@
             <div class="col-md-9">
 
                 {{-- Buscador --}}
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text bg-gradient-primary">
-                            <i class="fas fa-search"></i> {{-- Ícono de búsqueda --}}
-                        </span>
+                <div class="d-flex align-items-center mb-3">
+
+                    {{-- Imagen PNG como botón --}}
+                    <button type="button" class="btn btn-light p-1 me-2" onclick="abrirScanner()">
+                        <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40">
+                    </button>
+
+                    {{-- Input con ícono interno --}}
+                    <div class="position-relative flex-grow-1">
+
+                        <input type="text" id="buscador"
+                            class="form-control ps-5"
+                            placeholder="Escanear/Buscar producto por código o nombre">
+
                     </div>
-                     <input type="text" id="buscador" class="form-control" placeholder="Imgrese el código de barras o el nombre del Producto">
+
                 </div>
 
                 {{-- Filtros de categoría --}}
@@ -89,7 +98,7 @@
                 <!-- Carrito de Compras -->
                 <div class="card card-outline card-primary">
                     <div class="card-header">
-                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Resumen de carrito</h3>
+                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Orden de Venta</h3>
                         <div class="d-flex align-items-center justify-content-end">
                             <a id="btn-vaciar-carrito" class=" btn btn-info bg-gradient-info btn-sm mr-4">
                                 <i class="fas fa-boxes"></i> Vaciar Carrito
@@ -108,7 +117,7 @@
                                 <thead class="bg-gradient-info">
                                     <tr>
                                         <th>Imagen</th>
-                                        <th>Nombre</th>
+                                        <th>Producto</th>
                                         <th>Stock</th> <!-- NUEVA COLUMNA -->
                                         <th>Cantidad</th>
                                         <th>Precio Venta</th>
@@ -336,6 +345,9 @@
 
 @section('js')
 
+    {{--SONIDO PARA POS VENTAS PITIDO AL VENDER--}}
+    <audio id="sonidoCarrito" src="{{ asset('sounds/y6xg66rp7n9-beep-beep-sfx-1.mp3') }}" preload="auto"></audio>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
     {{--ALERTAS PARA EL MANEJO DE ERRORES AL REGISTRAR O CUANDO OCURRE UN ERROR EN LOS CONTROLADORES--}}
@@ -485,7 +497,11 @@
 
     </script>
 
-
+    <script>
+        function abrirScanner() {
+            window.open("{{ route('pos.index') }}", "_blank", "width=600,height=800");
+        }
+    </script>
 
     <script>
         // Función para cargar el carrito existente
@@ -538,9 +554,24 @@
 
     <script>
 
-        function agregarProductoAlCarrito(button) {
-            let btn = $(button);
+        function agregarProductoDesdeImagen(button) {
+            // Reproducir sonido
+            let audio = document.getElementById('sonidoCarrito');
+            audio.currentTime = 0;
+            audio.play();
 
+            // Reusar la lógica de agregar al carrito
+            agregarProductoAlCarrito(button);
+        }
+
+        function agregarProductoAlCarrito(button) {
+
+            // Reproducir sonido
+            let audio = document.getElementById('sonidoCarrito');
+            audio.currentTime = 0; // Reinicia por si ya se reprodujo antes
+            audio.play();
+
+            let btn = $(button);
             let productoId = btn.data('id');
             let precioBase = parseFloat(btn.data('precio-base'));
             let enOferta = parseInt(btn.data('en-oferta')) === 1;

@@ -34,11 +34,24 @@
             @endif
 
             {{-- Imagen --}}
-            <a href="#" data-toggle="modal" data-target="#modalImagen{{ $producto->id }}">
-                <img src="{{ $ruta }}"
-                     width="150" height="150"
-                     class="img-thumbnail rounded shadow mx-auto d-block"
-                     style="object-fit: cover;">
+            <a href="#"
+                data-toggle="modal"
+                data-target="#modalImagen{{ $producto->id }}"
+                onclick="agregarProductoDesdeImagen(this)"
+                data-id="{{ $producto->id }}"
+                data-precio-base="{{ $producto->precio_venta }}"
+                data-en-oferta="{{ $producto->en_oferta }}"
+                data-precio-oferta="{{ $producto->precio_oferta }}"
+                data-fecha-inicio="{{ $producto->fecha_inicio_oferta }}"
+                data-fecha-fin="{{ $producto->fecha_fin_oferta }}"
+                data-permite-mayoreo="{{ $producto->permite_mayoreo }}"
+                data-precio-mayoreo="{{ $producto->precio_mayoreo }}"
+                data-cantidad-minima="{{ $producto->cantidad_minima_mayoreo }}"
+                data-stock="{{ $producto->cantidad }}">
+                    <img src="{{ $ruta }}"
+                        width="150" height="150"
+                        class="img-thumbnail rounded shadow mx-auto d-block"
+                        style="object-fit: cover;">
             </a>
 
             <!-- Modal mejorado para imagen -->
