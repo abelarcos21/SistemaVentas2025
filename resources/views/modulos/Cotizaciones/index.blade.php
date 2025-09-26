@@ -108,7 +108,7 @@
                                             <th>Nro</th>
                                             <th>Cliente</th>
                                             <th>Fecha</th>
-                                            <th>Total</th>
+                                            <th>Gran Total</th>
                                             <th>Estado</th>
                                             <th class="no-exportar">Acciones</th>
                                         </tr>
@@ -130,7 +130,7 @@
                                                 </td>
                                                 <td class="text-center align-middle">
                                                     <a href="{{ route('cotizaciones.show', $cotizacion) }}" class="btn btn-info btn-sm">
-                                                        <i class="fas fa-eye"></i> Ver
+                                                        <i class="fas fa-eye"></i> Ver Detalle
                                                     </a>
                                                     <a href="{{ route('cotizaciones.edit', $cotizacion) }}" class="btn btn-warning btn-sm">
                                                         <i class="fas fa-edit"></i> Editar

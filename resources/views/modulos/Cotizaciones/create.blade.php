@@ -3,7 +3,22 @@
 @section('title', 'Nueva Cotización')
 
 @section('content_header')
-    <h1 class="text-primary"><i class="fas fa-plus-circle"></i> Nueva Cotización</h1>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="fas fa-plus-circle"></i> Cotizacion | Nueva Cotización</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ route('home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Nueva Cotizacion</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
 @stop
 
 @section('content')
@@ -46,8 +61,8 @@
                     <h4>Total: $<span id="total">0.00</span></h4>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Guardar Cotización</button>
-                <a href="{{ route('cotizaciones.index') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cotización</button>
+                <a href="{{ route('cotizaciones.index') }}" class="btn btn-secondary"><i class="fas fa-times"></i> Cancelar</a>
             </form>
         </div>
     </div>

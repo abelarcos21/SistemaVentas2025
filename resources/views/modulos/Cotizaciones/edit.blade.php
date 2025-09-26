@@ -3,7 +3,22 @@
 @section('title', 'Editar Cotización')
 
 @section('content_header')
-    <h1 class="text-primary"><i class="fas fa-edit"></i> Editar Cotización</h1>
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1><i class="fas fa-edit"></i> Cotizacion | Editar Cotización</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{ route('home')}}">Home</a></li>
+                        <li class="breadcrumb-item active">Editar Cotizacion</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
 @stop
 
 @section('content')
@@ -26,15 +41,15 @@
                 </div>
 
                 <h4 class="mt-4">Productos</h4>
-                <table class="table table-bordered" id="tablaProductos">
-                    <thead>
+                <table class="table table-bordered table-striped" id="tablaProductos">
+                    <thead class="bg-gradient-info">
                         <tr>
                             <th>Producto</th>
                             <th>Precio</th>
                             <th>Cantidad</th>
                             <th>Subtotal</th>
                             <th>
-                                <button type="button" class="btn btn-success btn-sm" id="btnAgregarProducto">
+                                <button type="button" class="btn bg-gradient-primary btn-sm" id="btnAgregarProducto">
                                     <i class="fas fa-plus"></i>
                                 </button>
                             </th>
@@ -68,8 +83,8 @@
                     <h4>Total: $<span id="total">{{ number_format($cotizacion->total, 2) }}</span></h4>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Actualizar Cotización</button>
-                <a href="{{ route('cotizaciones.index') }}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-history"></i> Actualizar Cotización</button>
+                <a href="{{ route('cotizaciones.index') }}" class="btn btn-secondary"> <i class="fas fa-times"></i> Cancelar</a>
             </form>
         </div>
     </div>
