@@ -171,7 +171,10 @@ class CotizacionController extends Controller
      */
     public function show($id){
         $cotizacion = Cotizacion::with(['cliente', 'detalles.producto'])->findOrFail($id);
-        return view('modulos.cotizaciones.show', compact('cotizacion'));
+
+        // Traer la empresa (siempre 1, o la que necesite)
+        $empresa = Empresa::first();
+        return view('modulos.cotizaciones.show', compact('cotizacion','empresa'));
     }
 
     /**
