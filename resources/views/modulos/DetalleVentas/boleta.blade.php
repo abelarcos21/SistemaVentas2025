@@ -114,7 +114,7 @@
                 <tr>
                     <td class="text-center">{{ $item->cantidad }}</td>
                     <td>{{ $item->nombre_producto }}</td>
-                    <td class="text-right">${{ number_format($item->precio_unitario, 2) }}</td>
+                    <td class="text-right">${{ number_format($item->precio_unitario_aplicado, 2) }}</td>
                     <td class="text-right">${{ number_format($item->sub_total, 2) }}</td>
                 </tr>
             @endforeach
