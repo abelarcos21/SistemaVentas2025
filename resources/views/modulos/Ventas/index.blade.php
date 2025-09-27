@@ -27,7 +27,7 @@
         <div class="row">
 
             {{-- Panel izquierdo --}}
-            <div class="col-md-9">
+            <div class="col-md-8">
 
                 {{-- Buscador --}}
                 <div class="d-flex align-items-center mb-3">
@@ -37,13 +37,14 @@
                         <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40">
                     </button>
 
-                    {{-- Input con ícono interno --}}
-                    <div class="position-relative flex-grow-1">
-
-                        <input type="text" id="buscador"
-                            class="form-control ps-5"
-                            placeholder="Escanear/Buscar producto por código o nombre">
-
+                    {{-- Input con ícono primero --}}
+                    <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" id="buscador" placeholder="Escanear/Buscar producto por código o nombre">
                     </div>
 
                 </div>
@@ -95,6 +96,24 @@
                     @endforeach
                 </div>
 
+                {{-- PRODUCTOS --}}
+                <p>Total encontrados: <span id="contador-filtrados">0</span></p>
+                <div class="row" id="contenedor-productos">
+
+                    @include('modulos.productos.listafiltrado', ['productos' => $productos])
+
+                </div>
+
+                {{-- PAGINACION --}}
+                <div class="d-flex justify-content-center mt-3" id="pagination-wrapper">
+                    {{ $productos->links() }} {{-- Muestra los enlaces de paginación --}}
+                </div>
+
+            </div>
+
+            {{-- Panel derecho --}}
+            <div class="col-md-4">
+
                 <!-- Carrito de Compras -->
                 <div class="card card-outline card-primary">
                     <div class="card-header">
@@ -116,7 +135,6 @@
                             <table id="productos_carrito" class="table table-bordered table-striped">
                                 <thead class="bg-gradient-info">
                                     <tr>
-                                        <th>Imagen</th>
                                         <th>Producto</th>
                                         <th>Stock</th> <!-- NUEVA COLUMNA -->
                                         <th>Cantidad</th>
@@ -137,25 +155,6 @@
                 </div>
                 <!-- /.card -->
 
-
-                {{-- PRODUCTOS --}}
-                <p>Total encontrados: <span id="contador-filtrados">0</span></p>
-                <div class="row" id="contenedor-productos">
-
-                    @include('modulos.productos.listafiltrado', ['productos' => $productos])
-
-                </div>
-
-                {{-- PAGINACION --}}
-                <div class="d-flex justify-content-center mt-3" id="pagination-wrapper">
-                    {{ $productos->links() }} {{-- Muestra los enlaces de paginación --}}
-                </div>
-
-            </div>
-
-            {{-- Panel derecho --}}
-            <!-- Total General -->
-            <div class="col-md-3">
                 <div class="card shadow-sm rounded-lg border-0" style="background-color: #f9f9f9;">
                     <div class="card-body p-4">
 
@@ -676,12 +675,7 @@
 
                 const row = `
                     <tr>
-                        <td>
-                            <img src="${item.imagen || '/images/placeholder-caja.png'}"
-                                width="50" height="50"
-                                class="img-thumbnail rounded shadow"
-                                style="object-fit: cover;">
-                        </td>
+
                         <td class="text-center">${item.nombre}</td>
                         <td class="text-center">
                             <span class="badge ${item.stock > 5 ? 'bg-success' : 'bg-danger'}">
