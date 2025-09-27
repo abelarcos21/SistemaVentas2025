@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
             ImagenSeeder::class,
             ClienteSeeder::class,
             EmpresaSeeder::class,
-            CatalogosSatSeeder::class,
             PermissionTableSeeder::class,
             CreateAdminUserSeeder::class,
         ]);

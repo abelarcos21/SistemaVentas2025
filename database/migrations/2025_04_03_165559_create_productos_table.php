@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEA
             $table->foreignId('proveedor_id')->constrained('proveedores');//LLAVES FORANEA
             $table->foreignId('marca_id')->constrained('marcas');//LLAVES FORANEA
-            $table->foreignId('impuesto_id')->nullable()->constrained('impuestos');// 002 para IVA. Si en un futuro los productos pueden tener más de un impuesto (IVA + IEPS), deberías tener una tabla pivote impuesto_producto.
 
             // CLAVE FORÁNEA A MONEDAS
             $table->foreignId('moneda_id')->default(1)->constrained('monedas');
