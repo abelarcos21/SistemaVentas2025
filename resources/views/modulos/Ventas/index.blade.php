@@ -133,7 +133,7 @@
                                             </label>
                                             <select name="metodo_pago[]" class="form-control">
                                                 <option value="efectivo">Efectivo</option>
-                                                <option value="tarjeta">Tarjeta Credito/Debito</option>
+                                                <option value="tarjeta">Tarjeta</option>
                                                 <option value="transferencia">Transferencia</option>
                                             </select>
                                         </div>
