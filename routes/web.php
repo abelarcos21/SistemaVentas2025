@@ -80,32 +80,6 @@ Route::prefix('detalles')->group(function(){
     Route::get('/detalle-venta/{venta}/productos-data', [DetalleVentasController::class, 'getProductosVendidos'])->name('detalle.productos.data');
 
 });
-// Rutas para el historial de ventas segunda opcion en observacion para adecuar con la ruta detalle ventas la de arriba
-/* Route::prefix('ventas')->name('ventas.')->group(function () {
-    // Ruta principal del índice
-    Route::get('/', [VentasController::class, 'index'])->name('index');
-
-    // Ruta para el detalle de una venta específica
-    Route::get('/detalle/{id}', [VentasController::class, 'detalleVenta'])->name('detalle');
-
-    // Ruta para obtener datos de detalles de venta específica (AJAX)
-    Route::get('/detalle-data/{ventaId}', [VentasController::class, 'detalleVentaData'])->name('detalle.data');
-});
-
-// Rutas existentes (mantener si ya las tienes)
-Route::get('/detalleventas/{id}', [DetalleVentasController::class, 'show'])->name('detalleventas.detalle_venta');
-Route::get('/ticket/{id}', [TicketController::class, 'show'])->name('detalle.ticket');
-Route::get('/boleta/{id}', [BoletaController::class, 'show'])->name('detalle.boleta');
-Route::post('/revocar/{id}', [VentasController::class, 'revocar'])->name('detalle.revocar'); */
-
-
-//RUTAS IMPUESTOS
-Route::get('/impuestos', [ImpuestoController::class, 'index'])->name('impuestos.index');
-Route::get('/impuestos/list', [ImpuestoController::class, 'list'])->name('impuestos.list');
-Route::post('/impuestos', [ImpuestoController::class, 'store'])->name('impuestos.store');
-Route::get('/impuestos/{impuesto}/edit', [ImpuestoController::class, 'edit'])->name('impuestos.edit');
-Route::put('/impuestos/{impuesto}', [ImpuestoController::class, 'update'])->name('impuestos.update');
-Route::delete('/impuestos/{impuesto}', [ImpuestoController::class, 'destroy'])->name('impuestos.destroy');
 
 ///////////////////RUTA CREAR VENTA
 Route::prefix('ventas')->group(function(){
@@ -262,22 +236,10 @@ Route::middleware(['auth'])->group(function () {
     //RUTA PARA DESCARGAR PDF COTIZACION
     Route::get('/cotizaciones/{id}/pdf', [CotizacionController::class, 'descargarPdf'])->name('cotizaciones.pdf');
 
-
 });
-
-
-
-
 
 //RUTA PARA REGISTRAR LOS METODOS DE PAGOS
 Route::post('/pagos', [PagoController::class, 'store'])->name('pagos.store');
-
-//RUTA PARA el select2 buscar de clavesproductoservicio
-Route::get('api/sat/clave-producto', [ClaveProdServController::class, 'search']);
-
-//RUTA PARA el select2 buscar de clavesUnidadproducto
-Route::get('api/sat/clave-unidad', [ClaveUnidadController::class, 'search']);
-
 
 
 //RUTA PARA CAMBIAR DE ESTADO ACTIVO AL PRODUCTO
