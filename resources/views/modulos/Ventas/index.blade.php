@@ -4,21 +4,7 @@
 
 @section('content_header')
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1> <i class="fas fa-cart-plus"></i> Ventas | Nueva Venta</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Crear Una Nueva Venta</li>
-                    </ol>
-                </div>
-          </div>
-        </div><!-- /.container-fluid -->
-    </section>
+    <h1><i class="fas fa-cash-register"></i> Punto de Venta</h1>
 @stop
 
 @section('content')
@@ -27,90 +13,63 @@
         <div class="row">
 
             {{-- Panel izquierdo --}}
-
-            <div class="col-md-4">
-                {{-- Cliente --}}
-                {{-- <div class="p-3 border-bottom">
-                    <label class="form-label text-sm">Cliente</label>
-                    <select class="form-control form-control-sm select2" id="clienteSelect" style="width: 100%;">
-                        <option value="">Cliente sin cita previa</option>
-                        @foreach($clientes ?? [] as $cliente)
-                            <option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->telefono }}</option>
-                        @endforeach
-                    </select>
-                </div> --}}
-
-                {{-- Almacén --}}
-                {{-- <div class="p-3 border-bottom">
-                    <label class="form-label text-sm">Almacén</label>
-                    <select class="form-control form-control-sm" id="almacenSelect">
-                        <option value="1">Almacén 1</option>
-                        <option value="2">Almacén 2</option>
-                        <option value="3">Almacén Principal</option>
-                    </select>
-                </div> --}}
+            <div class="col-md-4" style="height: 100%;">
 
                 <!-- Carrito de Compras -->
-                <div class="card card-outline card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title d-inline-block"><i class="fas fa-shopping-cart "></i> Orden de Venta</h3>
-                        <div class="d-flex align-items-center justify-content-end">
-                            <a id="btn-vaciar-carrito" class=" btn bg-gradient-danger btn-sm mr-4">
-                                <i class="fas fa-boxes"></i> Vaciar
-                            </a>
-
-                            {{-- Si quisieras un tercer botón independiente, por ejemplo --}}
-                            {{-- <a href="#" class="btn btn-secondary btn-sm mr-4">Otro Botón</a> --}}
-                        </div>
+                <div class="card card-outline card-primary h-100 d-flex flex-column">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="card-title m-0">
+                            <i class="fas fa-shopping-cart"></i> Orden de Venta
+                        </h3>
+                        <a id="btn-vaciar-carrito" class="btn bg-gradient-danger btn-sm ml-auto">
+                            <i class="fas fa-boxes"></i> Vaciar
+                        </a>
                     </div>
-                    <!-- /.card-header -->
+                    <form action="{{ route('ventas.vender') }}" method="POST">
+                        @csrf
 
-                    <div class="card-body">
-                        {{-- ... tabla de carrito ... --}}
-                        <div class="table-responsive" id="tabla-carrito-container" style="display: none;">
-                            <table id="productos_carrito" class="table table-bordered table-striped">
-                                <thead class="bg-gradient-info">
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Stock</th> <!-- NUEVA COLUMNA -->
-                                        <th>Cantidad</th>
-                                        <th>Precio Venta</th>
-                                        <th>Total</th>
-                                        <th>Quitar</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="carrito-items">
-                                    <!-- Aquí se renderiza dinámicamente el carrito -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <p id="carrito-vacio" class="text-center text-muted">Aún no tienes productos en tu carrito</p>
-
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-
-                <div class="card shadow-sm rounded-lg border-0" style="background-color: #f9f9f9;">
-                    <div class="card-body p-4">
-
-
-                        {{-- Fecha de Venta --}}
-                        <div class="form-group mb-3">
-                            <label for="fecha_venta"><i class="fa fa-calendar-alt mr-1"></i> Fecha de Venta</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
-                                </div>
-                                <input type="date" class="form-control" id="fecha_venta" value="{{ now()->format('Y-m-d')}}" readonly>
+                        <!--Quitamos overflow-auto del card-body -->
+                        <div class="card-body p-3">
+                            <!-- Carrito con scroll limitado -->
+                            <div id="tabla-carrito-container"
+                                style="display:none; max-height:220px; overflow-y:auto; overflow-x:hidden;">
+                                <table id="productos_carrito" class="table table-sm table-bordered mb-0 w-100">
+                                    <thead class="bg-gradient-info text-white"
+                                        style="position: sticky; top: 0; z-index: 10;">
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Stock</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio Vta.</th>
+                                            <th>Total</th>
+                                            <th>Quitar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="carrito-items">
+                                        <!-- Aquí se renderiza dinámicamente el carrito -->
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
 
-                        <form action="{{ route('ventas.vender') }}" method="POST">
-                            @csrf
+                            <p id="carrito-vacio" class="text-center text-muted my-3">
+                                Aún no tienes productos en tu carrito
+                            </p>
+
+                            <!-- Sección de datos extras -->
+                            {{-- Fecha de Venta --}}
+                            <div class="form-group mb-3 mt-2">
+                                <label for="fecha_venta"><i class="fa fa-calendar-alt mr-1"></i> Fecha de Venta</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                    <input type="date" class="form-control" id="fecha_venta"
+                                        value="{{ now()->format('Y-m-d')}}" readonly>
+                                </div>
+                            </div>
 
                             {{-- Cliente --}}
-                            <div class="form-group mb-4">
+                            <div class="form-group mb-3">
                                 <label for="cliente_id"><i class="fa fa-user mr-1"></i> Cliente</label>
                                 <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
                                     <option value="" disabled selected>Selecciona un cliente</option>
@@ -118,19 +77,14 @@
                                         <option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->correo }}</option>
                                     @endforeach
                                 </select>
-                                @error('cliente_id')
-                                    <small class="text-danger d-block">{{ $message }}</small>
-                                @enderror
                             </div>
 
-                            <!-- seccion de pagos select y monto -->
+                            <!-- pagos -->
                             <div id="pagos-container">
+                                <label for="metodo_pago"><i class="fa fa-credit-card mr-1"></i> Metodo Pago</label>
                                 <div class="row mb-2 pago-item">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="metodo_pago">
-                                                <i class="fa fa-credit-card mr-1"></i> Metodo Pago
-                                            </label>
                                             <select name="metodo_pago[]" class="form-control">
                                                 <option value="efectivo">Efectivo</option>
                                                 <option value="tarjeta">Tarjeta Credito/Debito</option>
@@ -140,204 +94,184 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
-                                            <label>Monto</label>
-                                            <input type="number" step="0.01" name="monto[]" class="form-control" placeholder="Monto">
+                                            <input type="number" step="0.01" name="monto[]" class="form-control"
+                                                placeholder="Monto">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
-                                        <button type="button" class="btn btn-danger btn-sm" style="margin-top: 32px;" onclick="eliminarPago(this)">
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarPago(this)">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Botón para agregar más pagos -->
                             <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-1" onclick="agregarPago()">
-                                <i class="fa fa-plus"></i> Agregar otro Pago
+                                <i class="fa fa-plus"></i> Agregar otra opción de pago
                             </button>
 
                             {{-- Nota adicional --}}
-                            {{-- <div class="form-group mb-3">
+                            <div class="form-group mb-3">
                                 <label for="nota_adicional"><i class="fa fa-sticky-note mr-1"></i> Nota adicional</label>
-                                <textarea class="form-control" name="nota_adicional" id="nota_adicional" rows="3" placeholder="Escribe una nota..."></textarea>
-                            </div> --}}
+                                <textarea class="form-control" name="nota_adicional" id="nota_adicional"
+                                        rows="2" placeholder="Escribe una nota..."></textarea>
+                            </div>
 
                             {{-- Enviar Comprobante --}}
-                            <div class="form-check mb-3 mt-2">
-                                <input type="checkbox" name="enviar_correo" id="enviar_correo" class="form-check-input" value="1">
+                            <div class="form-check mb-3">
+                                <input type="checkbox" name="enviar_correo" id="enviar_correo"
+                                    class="form-check-input" value="1">
                                 <label class="form-check-label" for="enviar_correo">
                                     <i class="fa fa-envelope mr-1"></i> Enviar comprobante por correo
                                 </label>
-
                             </div>
+                        </div>
 
-                            {{-- Footer con totales --}}
-                            <div class="card-footer">
-                                <div class="row mb-2">
-                                    <div class="col-6">
-                                        <label class="text-sm">Impuesto %</label>
-                                        <input type="number" class="form-control form-control-sm" id="impuesto" value="0" min="0" max="100" step="0.1">
-                                    </div>
-                                    <div class="col-6">
-                                        <label class="text-sm">Descuento $</label>
-                                        <input type="number" class="form-control form-control-sm" id="descuento" value="0" min="0" step="0.01">
-                                    </div>
-                                    {{-- <div class="col-4">
-                                        <label class="text-sm">Envío $</label>
-                                        <input type="number" class="form-control form-control-sm" id="envio" value="0" min="0" step="0.01">
-                                    </div> --}}
+                        <!-- Totales y botones siempre visibles -->
+                        <div class="card-footer bg-light" style="position: sticky; bottom: 0; z-index: 20;">
+                            <!-- totales -->
+                            <div class="row mb-2">
+                                <div class="col-4">
+                                    <label class="text-sm">Impuesto %</label>
+                                    <input type="number" class="form-control form-control-sm" id="impuesto"
+                                        value="0" min="0" max="100" step="0.1">
                                 </div>
-
-                                {{-- Total --}}
-                                <div class="text-center alert alert-info fade show alert-translucido" role="alert">
-                                    <h5 class="text-light">Total a Pagar</h5>
-                                    <h2 class="font-weight-bold text-light">
-
-                                        <div id="carrito-total-container" class="text-center mt-3" style="display: none;">
-                                            <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
-                                        </div>
-
-                                    </h2>
+                                <div class="col-4">
+                                    <label class="text-sm">Descuento $</label>
+                                    <input type="number" class="form-control form-control-sm" id="descuento"
+                                        value="0" min="0" step="0.01">
                                 </div>
-
-                                <div class="row mt-2">
-                                    <div class="col-6">
-                                        <button class="btn btn-outline-secondary btn-block" onclick="reiniciarVenta()">
-                                            <i class="fas fa-redo"></i> Reiniciar
-                                        </button>
-                                    </div>
-                                    <div class="col-6">
-                                        {{-- Botón de Pagar --}}
-                                        <button type="submit" class="btn bg-gradient-primary btn-block" style="border: none;">
-                                            <i class="fa fa-credit-card mr-1"></i> Procesar Venta
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-2">
-                                    <div class="col-3">
-                                        <button class="btn btn-outline-danger btn-sm btn-block" onclick="borrarProducto()">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                    <div class="col-9">
-                                        <div class="btn-group btn-block" role="group">
-                                            <button class="btn btn-outline-info btn-sm" onclick="pagarAhora()">
-                                                <i class="fas fa-money-bill"></i> Pagar
-                                            </button>
-                                            <button class="btn btn-outline-primary btn-sm" onclick="borrarVenta()">
-                                                <i class="fas fa-eraser"></i> Borrador
-                                            </button>
-                                            <button class="btn btn-outline-warning btn-sm" onclick="borradorRecientes()">
-                                                <i class="fas fa-history"></i> Recientes
-                                            </button>
-                                        </div>
-                                    </div>
+                                <div class="col-4">
+                                    <label class="text-sm">Envío $</label>
+                                    <input type="number" class="form-control form-control-sm" id="envio"
+                                        value="0" min="0" step="0.01">
                                 </div>
                             </div>
 
-                        </form>
-                    </div>
+                            <div class="alert alert-info text-center mb-3">
+                                <h5 class="text-light">Total a Pagar</h5>
+                                <h2 class="font-weight-bold text-light">
+                                    <div id="carrito-total-container" class="text-center mt-3" style="display:none;">
+                                        <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
+                                    </div>
+                                </h2>
+                            </div>
 
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-outline-secondary btn-block" onclick="reiniciarVenta()">
+                                        <i class="fas fa-redo"></i> Reiniciar
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="submit" class="btn bg-gradient-primary btn-block">
+                                        <i class="fa fa-credit-card mr-1"></i> Procesar Venta
+                                    </button>
+                                </div>
+                            </div>
 
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <div class="btn-group btn-block" role="group">
+                                        <button class="btn btn-outline-info btn-sm" onclick="pagarAhora()">
+                                            <i class="fas fa-money-bill"></i> Pagar
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="borrarVenta()">
+                                            <i class="fas fa-eraser"></i> Borrador
+                                        </button>
+                                        <button class="btn btn-outline-warning btn-sm" onclick="borradorRecientes()">
+                                            <i class="fas fa-history"></i> Recientes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
+
             </div>
 
+
             {{-- Panel derecho --}}
+            <div class="col-md-8 d-flex flex-column" style="height: 100%;">
 
-             <div class="col-md-8">
-
-                {{-- Buscador --}}
-                <div class="d-flex align-items-center mb-3">
-
-                    {{-- Imagen PNG como botón --}}
-                    <button type="button" class="btn btn-light p-1 me-2" onclick="abrirScanner()">
-                        <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40">
-                    </button>
-
-                    {{-- Input con ícono primero --}}
-                    <div class="input-group">
+                {{-- Buscador fijo --}}
+                <div class="mb-2">
+                    <div class="d-flex align-items-center mb-2">
+                        <button type="button" class="btn btn-light p-1 me-2" onclick="abrirScanner()">
+                            <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40">
+                        </button>
+                        <div class="input-group flex-grow-1">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">
                                     <i class="fas fa-search"></i>
                                 </span>
                             </div>
                             <input type="text" class="form-control" id="buscador" placeholder="Escanear/Buscar producto por código o nombre">
+                        </div>
                     </div>
 
-                </div>
+                    {{-- Filtros de categoría --}}
+                    <div id="filtros" class="mb-2">
+                        <div class="d-flex flex-wrap align-items-center mb-2">
+                            <h6 class="text-muted me-3 mb-0">
+                                <i class="fas fa-filter me-1"></i>Filtrar por categoría:
+                            </h6>
+                        </div>
 
-                {{-- Filtros de categoría --}}
-                <div class="mb-3" id="filtros">
-                    <div class="d-flex flex-wrap align-items-center mb-2">
-                        <h6 class="text-muted me-3 mb-0">
-                            <i class="fas fa-filter me-1"></i>Filtrar por categoría:
-                        </h6>
-                    </div>
+                        {{-- Botón Todos --}}
+                        <button class="btn btn-outline-primary filtro-categoria mb-2 active"
+                                data-id="todos"
+                                data-count="{{ $totalProductos }}">
+                            <i class="fas fa-th-large"></i> Todos
+                            <span class="badge bg-primary ms-1">{{ $totalProductos }}</span>
+                        </button>
 
-                    <!-- Botón Todos -->
-                    <button class="btn btn-outline-primary filtro-categoria mb-2 active"
-                            data-id="todos"
-                            data-count="{{ $totalProductos }}">
-                        <i class="fas fa-th-large"></i>
-                        <span>Todos</span>
-                        <span class="badge bg-primary ms-1">{{ $totalProductos }}</span>
-                    </button>
-
-                    {{--Arreglo asociativo con el nombre de la categoría como clave y el ícono de FontAwesome como valor.--}}
-                    @php
-                        $iconosCategorias = [
-                            'Electrónica' => 'fas fa-laptop',
-                            'Carnes y Embutidos' => 'fas fa-drumstick-bite',
-                            'Ferretería' => 'fas fa-tools',
-                            'Lácteos' => 'fas fa-cheese',
-                            'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
-                            'Ropa y Accesorios' => 'fas fa-tshirt',
-                            'Cuidado Personal' => 'fas fa-spa',
-                        ];
-                    @endphp
-
-                    @foreach($categorias as $cat)
-
-                        {{--USO DINAMICAMENTE DEL ICONO--}}
                         @php
-                            $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes';
+                            $iconosCategorias = [
+                                'Electrónica' => 'fas fa-laptop',
+                                'Carnes y Embutidos' => 'fas fa-drumstick-bite',
+                                'Ferretería' => 'fas fa-tools',
+                                'Lácteos' => 'fas fa-cheese',
+                                'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
+                                'Ropa y Accesorios' => 'fas fa-tshirt',
+                                'Cuidado Personal' => 'fas fa-spa',
+                            ];
                         @endphp
 
-                        <button class="btn btn-outline-primary filtro-categoria mb-2"
-                            data-id="{{ $cat->id }}"
-                            data-count="{{ $cat->productos_count }}">
-                            <i class="{{ $icono }}"></i>
-                            <span>{{ $cat->nombre }}</span>
-                            <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
-                        </button>
-                    @endforeach
+                        @foreach($categorias as $cat)
+                            @php $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes'; @endphp
+                            <button class="btn btn-outline-primary filtro-categoria mb-2"
+                                data-id="{{ $cat->id }}"
+                                data-count="{{ $cat->productos_count }}">
+                                <i class="{{ $icono }}"></i> {{ $cat->nombre }}
+                                <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
+                            </button>
+                        @endforeach
+                    </div>
                 </div>
 
-                {{-- PRODUCTOS --}}
-                <p>Total encontrados: <span id="contador-filtrados">0</span></p>
-                <div class="row" id="contenedor-productos">
+                {{-- Contenedor productos scrollable --}}
+               {{--  <div style="flex: 1 1 auto; overflow-y: auto; max-height: 100%;"> --}}
+                    <p>Total encontrados: <span id="contador-filtrados">0</span></p>
+                    <div class="row g-2" id="contenedor-productos">
+                        @include('modulos.productos.listafiltrado', ['productos' => $productos])
+                    </div>
+                {{-- </div> --}}
 
-                    @include('modulos.productos.listafiltrado', ['productos' => $productos])
-
-                </div>
-
-                {{-- PAGINACION --}}
-                <div class="d-flex justify-content-center mt-3" id="pagination-wrapper">
-                    {{ $productos->links() }} {{-- Muestra los enlaces de paginación --}}
+                {{-- Paginación fija debajo actual --}}
+                <div class="d-flex justify-content-center mt-2 flex-shrink-0"  id="pagination-wrapper">
+                    {{ $productos->links() }}{{-- Muestra los enlaces de paginación --}}
                 </div>
 
             </div>
-
         </div>
     </div>
-
-
 
 @stop
 
 @section('css')
+
     {{-- ESTILOS PARA EL FILTRO DE CATEGORIAS BOTONES Y ICONS--}}
     <style>
         .filtro-categoria {
