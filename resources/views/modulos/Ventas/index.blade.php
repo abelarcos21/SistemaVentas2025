@@ -32,7 +32,7 @@
                         <div class="card-body p-3">
                             <!-- Carrito con scroll limitado -->
                             <div id="tabla-carrito-container"
-                                style="display:none; max-height:220px; overflow-y:auto; overflow-x:hidden;">
+                                style="display:none; max-height:220px; overflow-y:auto; overflow-x:auto;">
                                 <table id="productos_carrito" class="table table-sm table-bordered mb-0 w-100">
                                     <thead class="bg-gradient-info text-white"
                                         style="position: sticky; top: 0; z-index: 10;">
@@ -212,12 +212,37 @@
                     </div>
 
                     {{-- Filtros de categoría --}}
-                    <div id="filtros" class="mb-2">
+                    <div id="filtros" class="mb-2"  id="sidebar-categorias">
                         <div class="d-flex flex-wrap align-items-center mb-2">
                             <h6 class="text-muted me-3 mb-0">
                                 <i class="fas fa-filter me-1"></i>Filtrar por categoría:
                             </h6>
                         </div>
+
+                        <!-- Botón para abrir sidebar -->
+                        <button class="btn btn-outline-primary mb-2" onclick="abrirSidebarCategorias()">
+                            <i class="fas fa-bars"></i> Categorías
+                        </button>
+
+                        <!-- Sidebar lateral derecho -->
+                        <div id="sidebar-categorias" class="sidebar-categorias bg-light border-left" 
+                            style="position:fixed; top:0; right:-250px; width:250px; height:100%; 
+                                    overflow-y:auto; transition:0.3s; z-index:1050; padding:1rem;">
+                            <h5>Categorías</h5>
+                            <button class="close btn btn-sm btn-light mb-3" onclick="cerrarSidebarCategorias()">&times;</button>
+
+                            <button class="btn btn-outline-primary btn-block mb-2 filtro-categoria active" data-id="todos">
+                                <i class="fas fa-th-large"></i> Todos
+                            </button>
+
+                            @foreach($categorias as $cat)
+                                @php $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes'; @endphp
+                                <button class="btn btn-outline-primary btn-block mb-2 filtro-categoria" data-id="{{ $cat->id }}">
+                                    <i class="{{ $icono }}"></i> {{ $cat->nombre }}
+                                </button>
+                            @endforeach
+                        </div>
+
 
                         {{-- Botón Todos --}}
                         <button class="btn btn-outline-primary filtro-categoria mb-2 active"
@@ -247,12 +272,12 @@
                                 <i class="{{ $icono }}"></i> {{ $cat->nombre }}
                                 <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
                             </button>
-                        @endforeach
+                        @endforeach 
                     </div>
                 </div>
 
                 {{-- Contenedor productos scrollable --}}
-               {{--  <div style="flex: 1 1 auto; overflow-y: auto; max-height: 100%;"> --}}
+                {{--  <div style="flex: 1 1 auto; overflow-y: auto; max-height: 100%;"> --}}
                     <p>Total encontrados: <span id="contador-filtrados">0</span></p>
                     <div class="row g-2" id="contenedor-productos">
                         @include('modulos.productos.listafiltrado', ['productos' => $productos])
@@ -350,6 +375,15 @@
 @stop
 
 @section('js')
+
+    <script>
+        function abrirSidebarCategorias(){
+            document.getElementById('sidebar-categorias').style.right = '0';
+        }
+        function cerrarSidebarCategorias(){
+            document.getElementById('sidebar-categorias').style.right = '-250px';
+        }
+    </script>
 
     {{--SONIDO PARA POS VENTAS PITIDO AL VENDER--}}
     <audio id="sonidoCarrito" src="{{ asset('sounds/y6xg66rp7n9-beep-beep-sfx-1.mp3') }}" preload="auto"></audio>
