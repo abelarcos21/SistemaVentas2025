@@ -199,7 +199,10 @@
                 <div class="mb-2">
                     <div class="d-flex align-items-center mb-2">
                         <button type="button" class="btn btn-light p-1 me-2" onclick="abrirScanner()">
-                            <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40">
+                            {{-- <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40"> --}}
+                            <span class="input-group-text btn-outline-primary" style="font-size: 1.2rem; padding: 0.6rem 0.9rem;">
+                                <i class="fas fa-barcode"></i>
+                            </span>
                         </button>
                         <div class="input-group flex-grow-1">
                             <div class="input-group-prepend">
@@ -211,68 +214,123 @@
                         </div>
                     </div>
 
-                    {{-- Filtros de categoría --}}
+                    {{-- Filtros de Categoría y Marcas --}}
                     <div id="filtros" class="mb-2"  id="sidebar-categorias">
-                        <div class="d-flex flex-wrap align-items-center mb-2">
-                            <h6 class="text-muted me-3 mb-0">
-                                <i class="fas fa-filter me-1"></i>Filtrar por categoría:
-                            </h6>
+
+                        {{-- <button class="btn btn-outline-primary mb-2 filtro-categoria active" data-id="todos">
+                            <i class="fas fa-th-large"></i> Todos
+                        </button> --}}
+
+                        <div class="row">
+                            <!-- Botón Categorías --> <!-- Botón para abrir sidebar -->
+                            <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+                                <button class="btn btn-outline-info btn-block mb-2" onclick="abrirSidebarCategorias()">
+                                    <i class="fas fa-bars"></i> Categorías
+                                </button>
+                            </div>
+
+                            <!-- Botón Marcas --> <!-- Botón para abrir sidebar -->
+                            <div class="col-6 col-sm-6 col-md-6 col-lg-6">
+                                <button class="btn btn-outline-info btn-block mb-2" onclick="abrirSidebarMarcas()">
+                                    <i class="fas fa-tags"></i> Marcas
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Botón para abrir sidebar -->
-                        <button class="btn btn-outline-primary mb-2" onclick="abrirSidebarCategorias()">
-                            <i class="fas fa-bars"></i> Categorías
-                        </button>
-
-                        <!-- Sidebar lateral derecho -->
-                        <div id="sidebar-categorias" class="sidebar-categorias bg-light border-left" 
-                            style="position:fixed; top:0; right:-250px; width:250px; height:100%; 
+                        <!-- Sidebar Categorias lateral derecho -->
+                        <div id="sidebar-categorias" class="sidebar-categorias bg-light border-left"
+                            style="position:fixed; top:0; right:-250px; width:250px; height:100%;
                                     overflow-y:auto; transition:0.3s; z-index:1050; padding:1rem;">
-                            <h5>Categorías</h5>
+                            <h5>Lista de Categorías</h5>
                             <button class="close btn btn-sm btn-light mb-3" onclick="cerrarSidebarCategorias()">&times;</button>
 
-                            <button class="btn btn-outline-primary btn-block mb-2 filtro-categoria active" data-id="todos">
+                            <div class="d-flex flex-wrap align-items-center mb-2">
+                                <h6 class="text-muted me-3 mb-0">
+                                    <i class="fas fa-filter me-1"></i>Filtrar
+                                </h6>
+                            </div>
+
+                            {{-- <button class="btn btn-outline-primary btn-block mb-2 filtro-categoria active" data-id="todos">
                                 <i class="fas fa-th-large"></i> Todos
+                            </button> --}}
+
+                            {{-- Botón Todos --}}
+                            <button class="btn btn-outline-info btn-block filtro-categoria mb-2 active"
+                                    data-id="todos"
+                                    data-count="{{ $totalProductos }}">
+                                <i class="fas fa-th-large"></i> Todas las categorías
+                                <span class="badge bg-light ms-1">{{ $totalProductos }}</span>
                             </button>
+
+                            @php
+                                $iconosCategorias = [
+                                    'Electrónica' => 'fas fa-laptop',
+                                    'Carnes y Embutidos' => 'fas fa-drumstick-bite',
+                                    'Ferretería' => 'fas fa-tools',
+                                    'Lácteos' => 'fas fa-cheese',
+                                    'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
+                                    'Ropa y Accesorios' => 'fas fa-tshirt',
+                                    'Cuidado Personal' => 'fas fa-spa',
+                                ];
+                            @endphp
 
                             @foreach($categorias as $cat)
                                 @php $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes'; @endphp
-                                <button class="btn btn-outline-primary btn-block mb-2 filtro-categoria" data-id="{{ $cat->id }}">
+                                <button class="btn btn-outline-info btn-block filtro-categoria mb-2"
+                                    data-id="{{ $cat->id }}"
+                                    data-count="{{ $cat->productos_count }}">
                                     <i class="{{ $icono }}"></i> {{ $cat->nombre }}
+                                    <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <!-- Sidebar Marcas lateral derecho -->
+                        <div id="sidebar-marcas" class="sidebar-marcas bg-light border-left"
+                            style="position:fixed; top:0; right:-250px; width:250px; height:100%;
+                                    overflow-y:auto; transition:0.3s; z-index:1050; padding:1rem;">
+                            <h5>Lista de Marcas</h5>
+                            <button class="close btn btn-sm btn-light mb-3" onclick="cerrarSidebarMarcas()">&times;</button>
+
+                            <div class="d-flex flex-wrap align-items-center mb-2">
+                                <h6 class="text-muted me-3 mb-0">
+                                    <i class="fas fa-filter me-1"></i>Filtrar:
+                                </h6>
+                            </div>
+
+
+                            {{-- Botón Todos --}}
+                            <button class="btn btn-outline-info btn-block filtro-categoria mb-2 active"
+                                    data-id="todos"
+                                    data-count="{{ $totalProductos }}">
+                                <i class="fas fa-th-large"></i> Todas las Marcas
+                                <span class="badge bg-light ms-1">{{ $totalProductos }}</span>
+                            </button>
+
+                            @php
+                                $iconosCategorias = [
+                                    'Electrónica' => 'fas fa-laptop',
+                                    'Carnes y Embutidos' => 'fas fa-drumstick-bite',
+                                    'Ferretería' => 'fas fa-tools',
+                                    'Lácteos' => 'fas fa-cheese',
+                                    'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
+                                    'Ropa y Accesorios' => 'fas fa-tshirt',
+                                    'Cuidado Personal' => 'fas fa-spa',
+                                ];
+                            @endphp
+
+                            @foreach($categorias as $cat)
+                                @php $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes'; @endphp
+                                <button class="btn btn-outline-info btn-block filtro-categoria mb-2"
+                                    data-id="{{ $cat->id }}"
+                                    data-count="{{ $cat->productos_count }}">
+                                    <i class="{{ $icono }}"></i> {{ $cat->nombre }}
+                                    <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
                                 </button>
                             @endforeach
                         </div>
 
 
-                        {{-- Botón Todos --}}
-                        <button class="btn btn-outline-primary filtro-categoria mb-2 active"
-                                data-id="todos"
-                                data-count="{{ $totalProductos }}">
-                            <i class="fas fa-th-large"></i> Todos
-                            <span class="badge bg-primary ms-1">{{ $totalProductos }}</span>
-                        </button>
-
-                        @php
-                            $iconosCategorias = [
-                                'Electrónica' => 'fas fa-laptop',
-                                'Carnes y Embutidos' => 'fas fa-drumstick-bite',
-                                'Ferretería' => 'fas fa-tools',
-                                'Lácteos' => 'fas fa-cheese',
-                                'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
-                                'Ropa y Accesorios' => 'fas fa-tshirt',
-                                'Cuidado Personal' => 'fas fa-spa',
-                            ];
-                        @endphp
-
-                        @foreach($categorias as $cat)
-                            @php $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes'; @endphp
-                            <button class="btn btn-outline-primary filtro-categoria mb-2"
-                                data-id="{{ $cat->id }}"
-                                data-count="{{ $cat->productos_count }}">
-                                <i class="{{ $icono }}"></i> {{ $cat->nombre }}
-                                <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
-                            </button>
-                        @endforeach 
                     </div>
                 </div>
 
@@ -383,10 +441,16 @@
         function cerrarSidebarCategorias(){
             document.getElementById('sidebar-categorias').style.right = '-250px';
         }
+        function abrirSidebarMarcas(){
+            document.getElementById('sidebar-marcas').style.right = '0';
+        }
+        function cerrarSidebarMarcas(){
+            document.getElementById('sidebar-marcas').style.right = '-250px';
+        }
     </script>
 
     {{--SONIDO PARA POS VENTAS PITIDO AL VENDER--}}
-    <audio id="sonidoCarrito" src="{{ asset('sounds/y6xg66rp7n9-beep-beep-sfx-1.mp3') }}" preload="auto"></audio>
+    <audio id="sonidoCarrito" src="{{ asset('sounds/Beep.wav') }}" preload="auto"></audio>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/i18n/es.min.js"></script>
 
@@ -444,23 +508,6 @@
                 $totalVenta = number_format(session('total_venta'), 2);
                 $totalPagado = number_format(session('total_pagado'), 2);
             @endphp
-
-            /* Swal.fire({
-                icon: 'success',
-                title: 'Venta Realizada',
-                html: `
-                    <div style="text-align: left; margin: 20px 0;">
-                        <p><strong>Nro Venta:</strong> {{ session("folio_generado") }}</p>
-                        <p><strong>Total de la venta:</strong> ${{ $totalVenta }}</p>
-                        <p><strong>Total pagado:</strong> ${{ $totalPagado }}</p>
-                        <hr style="margin: 15px 0;">
-                        <p style="color: #28a745; font-size: 18px;"><strong>Cambio a entregar: ${{ $cambio }}</strong></p>
-                    </div>
-                `,
-                confirmButtonText: 'Perfecto',
-                confirmButtonColor: '#28a745',
-                width: '400px'
-            }); */
 
             Swal.fire({
                 icon: 'success',
