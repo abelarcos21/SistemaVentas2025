@@ -33,7 +33,12 @@ class VentaController extends Controller
         $clientes = Cliente::orderBy('nombre')->get();
 
         // NO pongas condiciones aquí para que no falle el conteo
-        $categorias = Categoria::withCount('productos')->get();
+        // Paginar 10 categorías por página y usar un nombre de parámetro distinto
+        // para no interferir con otras paginaciones en la misma vista
+        $categorias = Categoria::withCount('productos')
+                        ->orderBy('nombre')
+                        ->paginate(10, ['*'], 'cat_page');
+
         $marcas = Marca::withCount('productos')->get();
 
         //$totalProductos = Producto::where('cantidad', '>', 0)->count();
@@ -42,6 +47,24 @@ class VentaController extends Controller
         $totalProductos = Producto::count(); // o ->where('cantidad', '>', 0)->count() si quieres filtrar
 
         return view('modulos.ventas.index', compact('totalProductos', 'productos', 'clientes','categorias','marcas'));
+    }
+
+    public function categorias(Request $request){
+        // Contar total de productos (para el botón "Todas las categorías")
+        $totalProductos = Producto::count();
+
+        // Paginamos las categorías con su conteo de productos
+        $categorias = Categoria::withCount('productos')
+            ->orderBy('nombre')
+            ->paginate(10, ['*'], 'cat_page'); // <- clave importante
+
+        // Si es AJAX devolvemos solo el HTML parcial de categorías
+        if ($request->ajax()) {
+            return view('modulos.categorias.partials.categorias', compact('categorias', 'totalProductos'))->render();
+        }
+
+        // Si es carga normal, enviamos a la vista principal
+        return view('modulos.ventas.index', compact('categorias', 'totalProductos'));
     }
 
     //Metodo para realizar una venta

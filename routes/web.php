@@ -172,6 +172,9 @@ Route::prefix('productos')->group(function(){
 
 });
 
+//RUTA DEDICADA PA LA PAGINACION DE CATEGORIAS CON AJAX EN EL POS DE VENTAS INDEX
+Route::get('/categorias/lista', [VentaController::class, 'categorias'])->name('categorias.lista');
+
 //PARA OBTENER DATOS Y DEVOLVER UN JSON DE UN PRODUCTO AL MOMENTO DE AGREGAR AL CARRITO
 Route::get('/producto/datos/{id}', [ProductoController::class, 'datos'])->name('producto.datos');
 
