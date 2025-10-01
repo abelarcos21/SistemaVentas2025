@@ -21,7 +21,7 @@
             <div class="welcome-actions">
                 <a  href="/ventas/crear-venta" class="btn-action btn-primary-action">
                     <i class="fas fa-plus"></i>
-                    Nueva Venta
+                    Punto de Venta
                 </a>
                 <a  href="/productos" class="btn-action btn-primary-action">
                      <i class="fas fa-warehouse"></i>
@@ -46,8 +46,8 @@
 @section('content')
     <div class="container-fluid">
 
-        <h4 class="section-title">Resumen del Negocio</h4>
-        <hr>
+        {{-- <h4 class="section-title">Resumen del Negocio</h4>
+        <hr> --}}
 
         <div class="row">
 
@@ -108,8 +108,8 @@
 
         </div>
 
-        <h4 class="section-title">Centro de Gestión</h4>
-        <hr>
+        {{-- <h4 class="section-title">Centro de Gestión</h4>
+        <hr> --}}
 
         <div class="row">
 
