@@ -349,7 +349,7 @@ class ProductoController extends Controller
     }
 
 
-    //FILTRAR LOS PRODUCTOS Y LAS CATEGORIAS
+    //FILTRAR LOS PRODUCTOS Y LAS CATEGORIAS y MARCAS
     public function filtrar(Request $request){
 
        $query = Producto::query();
@@ -376,6 +376,11 @@ class ProductoController extends Controller
 
         if ($request->filled('categoria_id') && $request->categoria_id !== 'todos') {
             $query->where('categoria_id', $request->categoria_id);
+        }
+
+
+        if ($request->filled('marca_id') && $request->marca_id !== 'todas') {
+            $query->where('marca_id', $request->marca_id);
         }
 
         $productos = $query->where('cantidad', '>=', 0)->paginate(10); //Asegúrar de que los productos tengan cantidad > 0 en BD

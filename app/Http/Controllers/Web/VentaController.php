@@ -16,6 +16,7 @@ use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Categoria;
+use App\Models\Marca;
 use App\Models\Caja;
 
 class VentaController extends Controller
@@ -33,13 +34,14 @@ class VentaController extends Controller
 
         // NO pongas condiciones aquí para que no falle el conteo
         $categorias = Categoria::withCount('productos')->get();
+        $marcas = Marca::withCount('productos')->get();
 
         //$totalProductos = Producto::where('cantidad', '>', 0)->count();
         //Evita poner ->where('cantidad', '>', 0) dentro del withCount, a menos que estés 100%
         //seguro de que todos los productos tienen cantidad válida. Si alguno tiene null o cantidad = 0, no lo cuenta.
         $totalProductos = Producto::count(); // o ->where('cantidad', '>', 0)->count() si quieres filtrar
 
-        return view('modulos.ventas.index', compact('totalProductos', 'productos', 'clientes','categorias'));
+        return view('modulos.ventas.index', compact('totalProductos', 'productos', 'clientes','categorias','marcas'));
     }
 
     //Metodo para realizar una venta

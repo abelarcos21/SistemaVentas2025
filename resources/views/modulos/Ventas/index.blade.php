@@ -299,35 +299,45 @@
                             </div>
 
 
-                            {{-- Botón Todos --}}
-                            <button class="btn btn-outline-info btn-block filtro-categoria mb-2 active"
-                                    data-id="todos"
-                                    data-count="{{ $totalProductos }}">
+                            {{-- Botón Todas las marcas --}}
+                            <button class="btn btn-outline-info btn-block mb-2 active"
+                                    data-count="{{ $totalProductos }}"
+                                    onclick="marcaSeleccionada = 'todas'; filtrarProductos();">
                                 <i class="fas fa-th-large"></i> Todas las Marcas
                                 <span class="badge bg-light ms-1">{{ $totalProductos }}</span>
                             </button>
 
+
                             @php
-                                $iconosCategorias = [
-                                    'Electrónica' => 'fas fa-laptop',
-                                    'Carnes y Embutidos' => 'fas fa-drumstick-bite',
-                                    'Ferretería' => 'fas fa-tools',
-                                    'Lácteos' => 'fas fa-cheese',
-                                    'Bebidas Alcohólicas' => 'fas fa-wine-glass-alt',
-                                    'Ropa y Accesorios' => 'fas fa-tshirt',
-                                    'Cuidado Personal' => 'fas fa-spa',
+                                $iconosMarcas = [
+                                    'Coca Cola'     => 'fas fa-wine-bottle',
+                                    'Pepsi'         => 'fas fa-glass-whiskey',
+                                    'Samsung'       => 'fas fa-mobile-alt',
+                                    'LG'            => 'fas fa-tv',
+                                    'Nike'          => 'fas fa-shoe-prints',
+                                    'Adidas'        => 'fas fa-running',
+                                    'Colgate'       => 'fas fa-tooth',
+                                    'HP'            => 'fas fa-laptop',
                                 ];
                             @endphp
 
-                            @foreach($categorias as $cat)
-                                @php $icono = $iconosCategorias[$cat->nombre] ?? 'fas fa-boxes'; @endphp
+                            @foreach($marcas as $marca)
+                                @php $icono = $iconosMarcas[$marca->nombre] ?? 'fas fa-tag'; @endphp
                                 <button class="btn btn-outline-info btn-block filtro-categoria mb-2"
-                                    data-id="{{ $cat->id }}"
-                                    data-count="{{ $cat->productos_count }}">
-                                    <i class="{{ $icono }}"></i> {{ $cat->nombre }}
-                                    <span class="badge bg-secondary ms-1">{{ $cat->productos_count }}</span>
+                                    data-count="{{ $marca->productos_count }}"
+                                    onclick="marcaSeleccionada = '{{ $marca->id }}'; filtrarProductos();">
+                                    <i class="{{ $icono }}"></i> {{ $marca->nombre }}
+                                    <span class="badge bg-secondary ms-1">{{ $marca->productos_count }}</span>
                                 </button>
                             @endforeach
+
+                            {{--  @foreach($marcas as $marca)
+                                <button class="btn btn-outline-primary m-1"
+                                        onclick="marcaSeleccionada = '{{ $marca->id }}'; filtrarProductos();">
+                                    <i class="{{ $iconosMarcas[$marca->nombre] ?? 'fas fa-tag' }}"></i>
+                                    {{ $marca->nombre }} ({{ $marca->productos_count }})
+                                </button>
+                            @endforeach --}}
                         </div>
 
 
@@ -972,6 +982,7 @@
     {{--FILTRAR LAS CATEGORIAS AL SELECCIONARLA Y FILTRAR LOS PRODUCTOS--}}
     <script>
         let categoriaSeleccionada = 'todos';
+        let marcaSeleccionada = 'todas';
         let timerBusqueda = null;
 
         function filtrarProductos(page= 1) {
@@ -981,7 +992,8 @@
                 url: "{{ route('productos.filtrar') }}?page=" + page, // page dinámico
                 data: {
                     busqueda: busqueda,
-                    categoria_id: categoriaSeleccionada,
+                    categoria_id: categoriaSeleccionada, //filtro categorias
+                    marca_id: marcaSeleccionada, // filtro marcas
                     buscar_codigo: true // Indicar que también busque por código
                 },
                 success: function(data) {
