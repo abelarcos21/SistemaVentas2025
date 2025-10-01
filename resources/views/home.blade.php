@@ -163,62 +163,26 @@
 
         </div>
 
-        {{-- <div class="row-mb-5">
-            <div class="col-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-gradient-info text-white">
-                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i> Últimas Ventas</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        @forelse ($ventasRecientes as $item)
-                            <div class="sales-card card border-0 m-3">
-                                <div class="card-body py-3">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="card-title mb-1">Venta #{{ $item->id }}</h6>
-                                            <p class="sales-meta mb-2">
-                                                <i class="fas fa-user me-1"></i>{{ $item->cliente->nombre ?? 'Cliente' }}<br>
-                                                <i class="fas fa-clock me-1"></i>{{ $item->created_at->diffForHumans() }}
-                                            </p>
-                                        </div>
-                                        <div class="text-end">
-                                            <span class="badge bg-success sales-badge">${{ number_format($item->total_venta, 2) }}</span>
-                                            <br><small class="text-muted">{{ $item->estado ?? 'Completada' }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="text-center py-4">
-                                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">No hay ventas recientes</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-        </div> --}}
-
         <!-- Tabla Compacta -->
         <div class="container-fluid">
             <div class="row mb-5">
                 <div class="col-sm-6">
                     {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
                     <div class="card shadow-sm">
-                        <div class="card-header bg-gradient-info text-white">
-                            <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Ventas</h5>
+                        <div class="card-header bg-gradient-info">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i> Ventas recientes</h5>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover compact-table mb-0">
-                                    <thead class="table-light">
+                                    <thead class="">
                                         <tr>
                                             <th>Usuario</th>
                                             <th>Cliente</th>
                                             <th>Fecha</th>
                                             <th>Total</th>
                                             <th>Estado</th>
-                                            <th>Acciones</th>
+                                            {{-- <th>Acciones</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -231,7 +195,7 @@
 
                                                 <td>{{ $item->created_at->format('d/m/Y h:i a') }}</td>
                                                 <td>
-                                                    <span class="badge status-badge bg-success">${{ number_format($item->total_venta, 2)}}</span>
+                                                    <span>${{ number_format($item->total_venta, 2)}}</span>
                                                 </td>
                                                 <td>
                                                     <span class="badge status-badge
@@ -240,11 +204,11 @@
                                                         {{ ucfirst($item->estado) }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     <button class="btn btn-sm btn-outline-primary">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                </td>
+                                                </td> --}}
                                             </tr>
 
                                         @empty
@@ -268,13 +232,13 @@
                 <div class="col-sm-6">
                     {{-- <h4 class="mb-4"><i class="fas fa-table me-2"></i>Opción 2: Tabla Compacta</h4> --}}
                     <div class="card shadow-sm">
-                        <div class="card-header bg-gradient-info text-white">
-                            <h5 class="mb-0"><i class="fas fa-list me-2"></i> Últimas Compras</h5>
+                        <div class="card-header bg-gradient-info">
+                            <h5 class="mb-0"><i class="fas fa-list me-2"></i> Compras recientes</h5>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-hover compact-table mb-0">
-                                    <thead class="table-light">
+                                    <thead class="">
                                         <tr>
                                             <th>Usuario</th>
                                             <th>Precio Compra</th>
@@ -282,7 +246,7 @@
                                             <th>Fecha</th>
                                             <th>Cantidad</th>
                                             <th>Total Compra</th>
-                                            <th>Acciones</th>
+                                            {{-- <th>Acciones</th> --}}
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -302,11 +266,11 @@
                                             <td>
                                                 <span class="badge bg-success status-badge">${{ number_format($item->precio_compra * $item->cantidad, 2 )}}</span>
                                             </td>
-                                            <td>
+                                           {{--  <td>
                                                 <button class="btn btn-sm btn-outline-primary">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                            </td>
+                                            </td> --}}
                                         </tr>
 
                                         @empty
@@ -326,10 +290,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
 
 
         {{-- <h4 class="section-title">Accesos Rápidos</h4>
@@ -474,35 +434,5 @@
 @stop
 
 @section('js')
-   <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const body = document.body;
-            const toggleBtn = document.getElementById('darkModeToggle');
-            const iconSpan = document.getElementById('darkModeIcon');
-            const textSpan = document.getElementById('darkModeText');
-            const darkModeClass = 'dark-mode';
 
-            function updateButtonUI() {
-                const isDark = body.classList.contains(darkModeClass);
-                iconSpan.textContent = isDark ? '🌞' : '🌙';
-                textSpan.textContent = isDark ? 'Modo Claro' : 'Modo Oscuro';
-            }
-
-            // Aplicar modo guardado
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add(darkModeClass);
-            } else {
-                body.classList.remove(darkModeClass);
-            }
-            updateButtonUI();
-
-            // Alternar modo
-            toggleBtn.addEventListener('click', () => {
-                body.classList.toggle(darkModeClass);
-                const newTheme = body.classList.contains(darkModeClass) ? 'dark' : 'light';
-                localStorage.setItem('theme', newTheme);
-                updateButtonUI();
-            });
-        });
-    </script>
 @stop

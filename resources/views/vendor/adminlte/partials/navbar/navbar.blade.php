@@ -18,6 +18,15 @@
 
     {{-- Navbar right links --}}
     <ul class="navbar-nav ml-auto">
+
+        <!-- Botón Modo Oscuro/Claro -->
+        <li class="nav-item">
+            <a class="nav-link" href="javascript:void(0);" id="darkModeToggle">
+                <span id="darkModeIcon">🌙</span>
+                <span id="darkModeText">Modo Oscuro</span>
+            </a>
+        </li>
+
         {{-- Custom right links --}}
         @yield('content_top_nav_right')
 

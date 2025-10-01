@@ -131,6 +131,39 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
+    {{-- Custom Scripts Para modo oscuro y claro --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const iconSpan = document.getElementById('darkModeIcon');
+            const textSpan = document.getElementById('darkModeText');
+            const darkModeClass = 'dark-mode';
+
+            function updateButtonUI() {
+                const isDark = body.classList.contains(darkModeClass);
+                iconSpan.textContent = isDark ? '🌞' : '🌙';
+                textSpan.textContent = isDark ? 'Modo Claro' : 'Modo Oscuro';
+            }
+
+            // Aplicar modo guardado
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add(darkModeClass);
+            } else {
+                body.classList.remove(darkModeClass);
+            }
+            updateButtonUI();
+
+            // Alternar modo
+            toggleBtn.addEventListener('click', () => {
+                body.classList.toggle(darkModeClass);
+                const newTheme = body.classList.contains(darkModeClass) ? 'dark' : 'light';
+                localStorage.setItem('theme', newTheme);
+                updateButtonUI();
+            });
+        });
+    </script>
+
 </body>
 
 </html>
