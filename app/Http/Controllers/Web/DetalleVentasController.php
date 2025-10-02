@@ -18,20 +18,6 @@ use Yajra\DataTables\Facades\DataTables;
 class DetalleVentasController extends Controller
 {
     //index
-    /* public function index(){
-
-        $ventas = Venta::select(
-            'ventas.*',
-            'users.name as nombre_usuario'
-        )
-        ->join('users', 'ventas.user_id', '=', 'users.id')
-        ->orderBy('ventas.created_at', 'desc')
-        ->get();
-
-        return view('modulos.detalleventas.index', compact('ventas'));
-
-    } */
-
     public function index(Request $request){
 
         if ($request->ajax()) {
@@ -42,7 +28,8 @@ class DetalleVentasController extends Controller
                     'ventas.total_venta',
                     'ventas.estado',
                     'ventas.created_at',
-                    'ventas.user_id'
+                    'ventas.user_id',
+                    'ventas.cliente_id'
                 ]);
 
             return DataTables::of($ventas)
@@ -50,9 +37,18 @@ class DetalleVentasController extends Controller
                 ->addColumn('usuario', function ($venta) {
                     return $venta->user ? $venta->user->name : 'Sin Usuario';
                 })
+                ->addColumn('cliente', function ($venta) {
+                    if ($venta->cliente) {
+                        return trim($venta->cliente->nombre . ' ' . ($venta->cliente->apellido ?? ''));
+                    }
+                    return 'Sin cliente';
+                })
                 ->addColumn('total_formateado', function ($venta) {
-                    $totalVendido = 'MXN $' . number_format($venta->total_venta, 2);
+                    $totalVendido = '$' . number_format($venta->total_venta, 2);
                     return '<span class="text-primary fw-bold">' . $totalVendido . '</span>';
+                })
+                ->addColumn('folio_formateado', function ($venta) {
+                    return '<span class="text-primary fw-bold">' . $venta->folio . '</span>';
                 })
                 ->addColumn('fecha_formateada', function ($venta) {
                     return $venta->created_at->format('d/m/Y h:i a');
@@ -95,7 +91,7 @@ class DetalleVentasController extends Controller
                     }
                     return '<span class="text-muted">Sin acciones</span>';
                 })
-                ->rawColumns(['estado_badge', 'ver_detalle', 'imprimir_ticket', 'boleta_venta', 'total_formateado', 'acciones'])
+                ->rawColumns(['estado_badge', 'ver_detalle', 'imprimir_ticket', 'boleta_venta', 'total_formateado','folio_formateado','acciones'])
                 ->make(true);
         }
 
@@ -287,10 +283,6 @@ class DetalleVentasController extends Controller
                 Producto::where('id', $detalle->producto_id)
                 ->increment('cantidad', $detalle->cantidad);
             }
-
-            /* //eliminar productos vendidos y la venta
-            DetalleVenta::where('venta_id', $id)->delete();
-            Venta::where('id', $id)->delete(); */
 
             //cambiar estado de la venta(puedes usar cancelada o eliminada)
             $venta->estado = 'cancelada'; // o 'eliminada' si quieres un tipo más fuerte

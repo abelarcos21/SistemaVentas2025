@@ -292,10 +292,11 @@
                                             <th>Total Vendido</th>
                                             <th>Nro de Venta</th>
                                             <th>Fecha Venta</th>
-                                            <th>Usuario</th>
+                                            <th>Añadido por</th>
+                                            <th>Cliente</th>
                                             <th>Estado</th>
                                             <th>Ver Detalle</th>
-                                            <th>Imprimir Ticket</th>
+                                            <th>Ticket De Venta</th>
                                             <th>Boleta De Venta</th>
                                             <th>Acciones</th>
                                         </tr>
@@ -404,9 +405,10 @@
                 columns: [
                     {data: 'id', name: 'id', className: 'text-center align-middle'},
                     {data: 'total_formateado', name: 'total_venta', className: 'text-center align-middle', orderable: true},
-                    {data: 'folio', name: 'folio', className: 'text-center align-middle'},
+                    {data: 'folio_formateado', name: 'folio', className: 'text-center align-middle'},
                     {data: 'fecha_formateada', name: 'created_at', className: 'text-center align-middle'},
                     {data: 'usuario', name: 'usuario', className: ''},
+                    {data: 'cliente', name: 'cliente', className: ''},
                     {data: 'estado_badge', name: 'estado', className: 'text-center align-middle', orderable: false},
                     {data: 'ver_detalle',name: 'ver_detalle',className: 'text-center',orderable: false,searchable: false },
                     {data: 'imprimir_ticket',name: 'imprimir_ticket',className: 'text-center',orderable: false,searchable: false },
