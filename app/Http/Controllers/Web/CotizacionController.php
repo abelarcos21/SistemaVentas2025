@@ -303,7 +303,7 @@ class CotizacionController extends Controller
                     'venta_id'        => $venta->id,
                     'producto_id'     => $detalle->producto_id,
                     'cantidad'        => $detalle->cantidad,
-                    'precio_unitario' => $detalle->precio_unitario,
+                    'precio_unitario_aplicado' => $detalle->precio_unitario_aplicado,
                     'sub_total'       => $detalle->total, //$detalle->total viene de la tabla cotizaciónes
                 ]);
 

@@ -23,13 +23,12 @@
 
 @section('content')
     <div class="card shadow-sm">
-        <div class="card-header bg-gradient-info">
+        <div class="card-header bg-gradient-primary">
             <h3 class="card-title"><i class="fas fa-file-invoice"></i> Datos de la Cotización</h3>
         </div>
-        <div class="card-body">
-            <form action="{{ route('cotizaciones.store') }}" method="POST" id="formCotizacion">
-                @csrf
-
+        <form action="{{ route('cotizaciones.store') }}" method="POST" id="formCotizacion">
+            @csrf
+            <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -65,7 +64,7 @@
                     </button>
                 </div>
 
-                <div class="tabla-wrapper">
+                <div class="table-responsive">
                     <table class="table table-hover table-bordered" id="tablaProductos">
                         <thead class="thead-light">
                             <tr>
@@ -114,30 +113,34 @@
                     <label for="observaciones">Observaciones</label>
                     <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="Comentarios adicionales..."></textarea>
                 </div>
+            </div>
 
-                <div class="text-right">
-                    <a href="{{ route('cotizaciones.index') }}" class="btn bg-gradient-secondary">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                    <button type="submit" class="btn bg-gradient-primary" id="btnGuardar">
-                        <i class="fas fa-save"></i> Guardar Cotización
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="card-footer">
+                <button type="submit" class="btn bg-gradient-primary" id="btnGuardar">
+                    <i class="fas fa-save"></i> Guardar Cotización
+                </button>
+                <a href="{{ route('cotizaciones.index') }}" class="btn bg-gradient-secondary float-right">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
     </div>
 @stop
 
 @section('css')
 <style>
-    /* SOLUCIÓN PARA SELECT2 - Evitar desbordamiento */
-    .table td .select2-container {
+    /* ============================================ */
+    /* ESTILOS SOLO PARA EL FORMULARIO DE COTIZACIONES */
+    /* ============================================ */
+
+    /* SOLUCIÓN PARA SELECT2 - Evitar desbordamiento SOLO en tablas de cotizaciones */
+    #formCotizacion .table td .select2-container {
         width: 100% !important;
         max-width: 100%;
     }
 
     /* Forzar que el select2 se ajuste a su contenedor */
-    .table td .select2-container .select2-selection {
+    #formCotizacion .table td .select2-container .select2-selection {
         height: calc(2.25rem + 2px) !important;
         overflow: hidden;
         display: flex !important;
@@ -145,24 +148,24 @@
     }
 
     /* CRÍTICO: El texto dentro del select2 debe verse completo */
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+    #formCotizacion .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
         display: block;
         padding-left: 12px;
         padding-right: 35px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        line-height: 2.25rem; /* Alinear verticalmente el texto */
+        line-height: 2.25rem;
     }
 
     /* Ajustar la flecha del select */
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+    #formCotizacion .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
         height: calc(2.25rem + 2px) !important;
         right: 3px;
     }
 
     /* Asegurar que el placeholder se vea bien */
-    .select2-container--bootstrap4 .select2-selection--single .select2-selection__placeholder {
+    #formCotizacion .select2-container--bootstrap4 .select2-selection--single .select2-selection__placeholder {
         color: #6c757d;
         line-height: 2.25rem;
     }
@@ -181,8 +184,8 @@
     /* SCROLL VERTICAL EN DROPDOWN DE SELECT2 */
     /* ============================================ */
     .select2-results {
-        max-height: 300px !important; /* Altura máxima del dropdown */
-        overflow-y: auto !important;  /* Scroll vertical */
+        max-height: 300px !important;
+        overflow-y: auto !important;
     }
 
     /* Personalizar el scrollbar del dropdown */
@@ -211,47 +214,42 @@
     }
     /* ============================================ */
 
-    /* Evitar overflow en la celda de la tabla */
-    #tablaProductos td:first-child {
-        overflow: visible !important;
+    /* CRÍTICO: Evitar overflow en la celda de la tabla - MUY ESPECÍFICO */
+    #formCotizacion #tablaProductos td:first-child {
+        overflow: visible;
         position: relative;
     }
 
-    /* La tabla debe permitir overflow visible */
-    .table-responsive {
-        overflow: visible !important;
-    }
-
-    /* ALTERNATIVA: Si quieres que la tabla tenga scroll horizontal */
-    .tabla-wrapper {
+    /* CRÍTICO: Wrapper de tabla con scroll controlado - SOLO para la tabla de productos */
+    #formCotizacion .tabla-wrapper {
         overflow-x: auto;
         overflow-y: visible;
         position: relative;
     }
 
-    /* Alineación vertical en tabla */
-    #tablaProductos td {
+    /* Alineación vertical en tabla de productos */
+    #formCotizacion #tablaProductos td {
         vertical-align: middle;
-        padding: 0.5rem; /* Reducir padding para mejor visualización */
+        padding: 0.5rem;
     }
 
-    /* Mejora visual de inputs en tabla */
-    #tablaProductos input.form-control {
+    /* Mejora visual de inputs en tabla de productos */
+    #formCotizacion #tablaProductos input.form-control {
         height: calc(2.25rem + 2px);
     }
 
-    /* Botón eliminar */
-    .btnEliminar {
+    /* Botón eliminar en tabla de productos */
+    #formCotizacion .btnEliminar {
         padding: 0.375rem 0.75rem;
     }
 
     /* Hacer la tabla más compacta en móviles */
     @media (max-width: 768px) {
-        .tabla-wrapper {
+        #formCotizacion .tabla-wrapper {
             font-size: 0.875rem;
         }
 
-        .table td .select2-container {
+        #formCotizacion .table td .select2-container {
             min-width: 150px;
         }
 
@@ -261,14 +259,14 @@
         }
     }
 
-    /* Animación suave para nuevas filas */
-    @keyframes fadeIn {
+    /* Animación suave para nuevas filas en tabla de productos */
+    @keyframes cotizacionFadeIn {
         from { opacity: 0; transform: translateY(-10px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
-    .nueva-fila {
-        animation: fadeIn 0.3s ease-in-out;
+    #formCotizacion #tablaProductos .nueva-fila {
+        animation: cotizacionFadeIn 0.3s ease-in-out;
     }
 </style>
 @stop
@@ -309,7 +307,7 @@
 
         let fila = `
         <tr class="nueva-fila">
-            <td>
+            <td style="padding: 0.5rem;">
                 <select name="productos[]" class="form-control producto-select" required>
                     <option value="">Seleccione un producto</option>
                     @foreach ($productos as $producto)
@@ -319,17 +317,17 @@
                     @endforeach
                 </select>
             </td>
-            <td>
+            <td style="padding: 0.5rem;">
                 <input type="number" name="precios[]" class="form-control precio text-right" step="0.01" readonly>
             </td>
-            <td>
+            <td style="padding: 0.5rem;">
                 <input type="number" name="cantidades[]" class="form-control cantidad text-center" value="1" min="1" required>
             </td>
-            <td class="text-right">
+            <td class="text-right" style="padding: 0.5rem;">
                 <strong>$<span class="subtotal">0.00</span></strong>
             </td>
-            <td class="text-center">
-                <button type="button" class="btn bg-gradient-danger btn-sm btnEliminar" title="Eliminar producto">
+            <td class="text-center" style="padding: 0.5rem;">
+                <button type="button" class="btn btn-danger btn-sm btnEliminar" title="Eliminar producto">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -340,6 +338,11 @@
         // Inicializar select2 en el nuevo select
         let nuevoSelect = $('#cuerpoTabla tr:last .producto-select');
         inicializarSelect2(nuevoSelect);
+
+        // CRÍTICO: Forzar el re-renderizado del Select2
+        setTimeout(function() {
+            nuevoSelect.select2('close');
+        }, 100);
 
         contadorFilas++;
         recalcular();
@@ -362,29 +365,52 @@
         recalcular();
     });
 
-    // Eliminar fila con confirmación
+    // Eliminar fila con confirmación usando SweetAlert2
     $(document).on('click', '.btnEliminar', function () {
-        if (confirm('¿Está seguro de eliminar este producto?')) {
-            $(this).closest('tr').fadeOut(300, function() {
-                $(this).remove();
-                contadorFilas--;
+        let fila = $(this).closest('tr'); // Guardamos la fila a eliminar
 
-                // Si no hay productos, mostrar mensaje
-                if (contadorFilas === 0) {
-                    $('#cuerpoTabla').html(`
-                        <tr class="text-center">
-                            <td colspan="5" class="text-muted py-4">
-                                <i class="fas fa-inbox fa-2x mb-2"></i>
-                                <p>No hay productos agregados. Haz clic en "Agregar Producto"</p>
-                            </td>
-                        </tr>
-                    `);
-                }
+        Swal.fire({
+            title: '¿Está seguro?',
+            text: "Se eliminará este producto de la cotización",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fila.fadeOut(300, function () {
+                    $(this).remove();
+                    contadorFilas--;
 
-                recalcular();
-            });
-        }
+                    // Si no hay productos, mostrar mensaje
+                    if (contadorFilas === 0) {
+                        $('#cuerpoTabla').html(`
+                            <tr class="text-center">
+                                <td colspan="5" class="text-muted py-4">
+                                    <i class="fas fa-inbox fa-2x mb-2"></i>
+                                    <p>No hay productos agregados. Haz clic en "Agregar Producto"</p>
+                                </td>
+                            </tr>
+                        `);
+                    }
+
+                    recalcular();
+
+                    // Mensaje de éxito
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'El producto ha sido eliminado',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                });
+            }
+        });
     });
+
 
     // Recalcular totales
     function recalcular() {
