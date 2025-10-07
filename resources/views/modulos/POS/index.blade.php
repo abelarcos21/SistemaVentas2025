@@ -1,10 +1,11 @@
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner de Códigos de Barras Mejorado</title>
+    <title>Scanner de Códigos de Barras Optimizado</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://unpkg.com/@ericblade/quagga2@1.2.6/dist/quagga.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -213,6 +214,34 @@
             transform: translateY(-2px);
         }
 
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.8rem;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
         #result {
             margin-top: 30px;
             padding: 25px;
@@ -328,6 +357,18 @@
             transform: scale(1.1);
         }
 
+        .confidence-meter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            z-index: 15;
+        }
+
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
@@ -367,12 +408,28 @@
         <div class="header">
             <h1>
                 <i class="fas fa-barcode"></i>
-                Scanner de Códigos
+                Scanner Optimizado
             </h1>
-            <p>Escanea códigos EAN-13 con tu cámara</p>
+            <p>Escaneo rápido de códigos EAN-13</p>
         </div>
 
         <div class="content">
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Escaneados</span>
+                    <span class="stat-value" id="scan-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Exitosos</span>
+                    <span class="stat-value" id="success-count">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">FPS</span>
+                    <span class="stat-value" id="fps-counter">0</span>
+                </div>
+            </div>
+
             <!-- Scanner Container -->
             <div id="scanner-container">
                 <div class="scanner-placeholder">
@@ -381,6 +438,9 @@
                     <p>Haz clic en "Activar Cámara" para comenzar</p>
                 </div>
                 <div class="scanner-overlay" style="display: none;"></div>
+                <div class="confidence-meter" style="display: none;">
+                    Confianza: <span id="confidence-value">0%</span>
+                </div>
             </div>
 
             <!-- Controls -->
@@ -428,17 +488,26 @@
     </button>
 
     <script>
-        class ScannerController {
+        class OptimizedScannerController {
             constructor() {
                 this.isScanning = false;
                 this.lastResult = null;
-                this.scanTimeout = null;
+                this.scanCount = 0;
+                this.successCount = 0;
+                this.detectionBuffer = [];
+                this.bufferSize = 3;
+                this.minConfidence = 0.75;
+                this.cooldownPeriod = 2000;
+                this.lastScanTime = 0;
+                this.requestCache = new Map();
+                this.cacheTimeout = 300000; // 5 minutos
                 this.init();
             }
 
             init() {
                 this.bindEvents();
                 this.updateUI();
+                this.startFPSCounter();
             }
 
             bindEvents() {
@@ -451,17 +520,34 @@
                     if (e.which === 13) this.buscarManual();
                 });
 
-                // Solo permitir números en input manual
                 $('#codigo-manual').on('input', function() {
                     this.value = this.value.replace(/[^0-9]/g, '');
                 });
 
-                // Limpiar recursos al cerrar
                 window.addEventListener('beforeunload', () => {
                     if (this.isScanning) {
                         Quagga.stop();
                     }
                 });
+            }
+
+            startFPSCounter() {
+                let frameCount = 0;
+                let lastTime = performance.now();
+
+                setInterval(() => {
+                    if (this.isScanning) {
+                        const now = performance.now();
+                        const fps = Math.round((frameCount * 1000) / (now - lastTime));
+                        $('#fps-counter').text(fps);
+                        frameCount = 0;
+                        lastTime = now;
+                    }
+                }, 1000);
+
+                if (this.isScanning) {
+                    Quagga.onProcessed(() => frameCount++);
+                }
             }
 
             async checkCameraPermission() {
@@ -486,14 +572,15 @@
                         throw new Error('No se pudieron obtener los permisos de cámara');
                     }
 
-                    this.showResult('Inicializando escáner...', 'loading');
+                    this.showResult('Inicializando escáner optimizado...', 'loading');
 
                     await this.initQuagga();
 
-                    this.showResult('¡Cámara lista! Apunta al código de barras...', 'success');
+                    this.showResult('¡Listo! Apunta al código de barras...', 'success');
 
                     $('#scanner-container').addClass('active');
                     $('.scanner-overlay').show();
+                    $('.confidence-meter').show();
                     $('.scanner-placeholder').hide();
 
                     this.isScanning = true;
@@ -515,36 +602,25 @@
                             type: "LiveStream",
                             target: document.querySelector('#scanner-container'),
                             constraints: {
-                                width: { min: 320, ideal: 640, max: 1920 },
-                                height: { min: 240, ideal: 480, max: 1080 },
-                                facingMode: "environment",
-                                aspectRatio: { min: 1, max: 2 }
+                                width: { ideal: 640 },
+                                height: { ideal: 480 },
+                                facingMode: "environment"
                             },
                         },
                         decoder: {
-                            readers: [
-                                "ean_reader",
-                                "ean_8_reader",
-                                "code_128_reader",
-                                "code_39_reader",
-                                "codabar_reader"
-                            ],
+                            readers: ["ean_reader"],
                             multiple: false
                         },
-                        locate: true,
-                        locator: {
-                            patchSize: "medium",
-                            halfSample: true
-                        },
-                        numOfWorkers: navigator.hardwareConcurrency || 4,
-                        frequency: 10,
+                        locate: false,
+                        numOfWorkers: 2,
+                        frequency: 20,
+                        debug: false
                     }, (err) => {
                         if (err) {
                             reject(err);
                             return;
                         }
 
-                        // Configurar detector de códigos
                         Quagga.onDetected((data) => this.handleDetection(data));
                         resolve();
                     });
@@ -555,9 +631,11 @@
                 if (this.isScanning) {
                     Quagga.stop();
                     this.isScanning = false;
+                    this.detectionBuffer = [];
 
                     $('#scanner-container').removeClass('active');
                     $('.scanner-overlay').hide();
+                    $('.confidence-meter').hide();
                     $('.scanner-placeholder').show();
 
                     this.showResult('Escáner detenido', 'waiting');
@@ -577,23 +655,55 @@
                 if (!this.isScanning) return;
 
                 const code = data.codeResult.code;
+                const confidence = data.codeResult.decodedCodes
+                    .reduce((sum, code) => sum + (code.error || 0), 0) / data.codeResult.decodedCodes.length;
 
-                if (!this.validarEAN13(code)) {
-                    return;
+                const confidencePercentage = Math.round((1 - confidence) * 100);
+                $('#confidence-value').text(confidencePercentage + '%');
+
+                if (confidence > (1 - this.minConfidence)) return;
+                if (!this.validarEAN13(code)) return;
+
+                this.detectionBuffer.push(code);
+                if (this.detectionBuffer.length > this.bufferSize) {
+                    this.detectionBuffer.shift();
                 }
 
-                if (code !== this.lastResult) {
-                    this.lastResult = code;
-                    console.log("Código EAN-13 válido detectado:", code);
+                const mostCommon = this.getMostCommonCode();
+                if (mostCommon && mostCommon !== this.lastResult) {
+                    const now = Date.now();
+                    if (now - this.lastScanTime < this.cooldownPeriod) return;
 
-                    // Prevenir múltiples detecciones
-                    clearTimeout(this.scanTimeout);
-                    this.scanTimeout = setTimeout(() => {
-                        this.lastResult = null;
-                    }, 3000);
+                    this.lastResult = mostCommon;
+                    this.lastScanTime = now;
+                    this.scanCount++;
+                    $('#scan-count').text(this.scanCount);
 
-                    this.buscarProducto(code);
+                    console.log("Código detectado:", mostCommon, "Confianza:", confidencePercentage + '%');
+
+                    navigator.vibrate && navigator.vibrate(100);
+
+                    this.buscarProducto(mostCommon);
+                    this.detectionBuffer = [];
                 }
+            }
+
+            getMostCommonCode() {
+                if (this.detectionBuffer.length < this.bufferSize) return null;
+
+                const frequency = {};
+                let maxFreq = 0;
+                let mostCommon = null;
+
+                this.detectionBuffer.forEach(code => {
+                    frequency[code] = (frequency[code] || 0) + 1;
+                    if (frequency[code] > maxFreq) {
+                        maxFreq = frequency[code];
+                        mostCommon = code;
+                    }
+                });
+
+                return maxFreq >= 2 ? mostCommon : null;
             }
 
             buscarManual() {
@@ -626,28 +736,44 @@
             }
 
             buscarProducto(codigo) {
+                if (this.requestCache.has(codigo)) {
+                    const cached = this.requestCache.get(codigo);
+                    if (Date.now() - cached.timestamp < this.cacheTimeout) {
+                        console.log("Usando caché para:", codigo);
+                        this.mostrarProductoEncontrado(cached.data);
+                        return;
+                    }
+                }
+
                 this.showResult('Buscando producto...', 'loading');
 
-                // Simular búsqueda AJAX - Reemplaza con tu endpoint real
-                $.ajax({
-                    url: '{{ route("productos.buscar") }}', // Ajustar según tu ruta
+                const searchPromise = $.ajax({
+                    url: '/api/productos/buscar',
                     method: 'POST',
-                    data: {
-                        codigo: codigo,
-                        _token: '{{ csrf_token() }}' // Si usas Laravel
-                    },
-                    success: (producto) => {
+                    data: { codigo: codigo },
+                    timeout: 5000
+                });
+
+                searchPromise
+                    .done((producto) => {
+                        this.requestCache.set(codigo, {
+                            data: producto,
+                            timestamp: Date.now()
+                        });
                         this.mostrarProductoEncontrado(producto);
-                    },
-                    error: (xhr) => {
+                        this.successCount++;
+                        $('#success-count').text(this.successCount);
+                    })
+                    .fail((xhr) => {
                         if (xhr.status === 404) {
                             this.showResult('Producto no encontrado', 'error');
                             this.ofrecerCrearProducto(codigo);
+                        } else if (xhr.statusText === 'timeout') {
+                            this.showResult('Tiempo de espera agotado. Intenta de nuevo.', 'error');
                         } else {
                             this.showResult('Error al buscar producto', 'error');
                         }
-                    }
-                });
+                    });
             }
 
             mostrarProductoEncontrado(producto) {
@@ -680,8 +806,6 @@
                            .html(html);
             }
 
-
-
             ofrecerCrearProducto(codigo) {
                 setTimeout(() => {
                     Swal.fire({
@@ -695,11 +819,10 @@
                         cancelButtonColor: '#d33'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Redirigir usando la ruta de Laravel
-                            window.location.href = "{{ route('producto.create.modal') }}" + "?codigo=" + codigo;
+                            window.location.href = "/producto/create?codigo=" + codigo;
                         }
                     });
-                }, 2000);
+                }, 1500);
             }
 
             showResult(message, type = 'waiting') {
@@ -719,9 +842,9 @@
                 let errorMsg = 'Error al iniciar la cámara: ';
 
                 if (error.name === 'NotAllowedError') {
-                    errorMsg += 'Permisos de cámara denegados. Por favor, permite el acceso a la cámara.';
+                    errorMsg += 'Permisos denegados. Permite el acceso a la cámara.';
                 } else if (error.name === 'NotFoundError') {
-                    errorMsg += 'No se encontró ninguna cámara en el dispositivo.';
+                    errorMsg += 'No se encontró ninguna cámara.';
                 } else if (error.name === 'NotReadableError') {
                     errorMsg += 'La cámara está siendo utilizada por otra aplicación.';
                 } else {
@@ -741,14 +864,12 @@
             }
         }
 
-        // Inicializar cuando el DOM esté listo
         $(document).ready(() => {
-            new ScannerController();
+            new OptimizedScannerController();
         });
     </script>
 </body>
 </html>
-
 
 
 
