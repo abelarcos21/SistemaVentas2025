@@ -1,5 +1,81 @@
 @extends('adminlte::auth.auth-page', ['authType' => 'login'])
 
+@section('adminlte_css')
+    <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
+    <style>
+        /* Fondo blanco para la vista de recuperación */
+        .login-page {
+            background-color: #fff !important;
+        }
+
+        /*aclarar el card/formulario */
+        .login-box, .register-box {
+            background-color: #ffffff !important;
+            border: 1px solid #e0e0e0 !important;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        .login-logo a, .register-logo a {
+            color: #333 !important;
+        }
+
+        /* Estilos adicionales para que se vea bien */
+        .card {
+            background-color: #2a2a40 !important;
+            border: 1px solid #1e1e2f !important;
+            color: white !important;
+        }
+
+        .card-header {
+            background-color: transparent !important;
+            border-bottom: 1px solid #444 !important;
+            color: white !important;
+        }
+
+        .form-control {
+            background-color: #3b3b3b !important;
+            border: 1px solid #555 !important;
+            color: white !important;
+        }
+
+        .form-control:focus {
+            background-color: #444 !important;
+            border-color: #667eea !important;
+            color: white !important;
+        }
+
+         .input-group-text {
+            background-color: #667eea !important;
+            border-color: #667eea !important;
+            color: white !important;
+        }
+
+        .btn-primary {
+            background-color: #667eea !important;
+            border-color: #667eea !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #5a67d8 !important;
+            border-color: #5a67d8 !important;
+        }
+
+        /* Links */
+        a {
+            color: #667eea !important;
+        }
+
+        a:hover {
+            color: #5a67d8 !important;
+        }
+
+    </style>
+@stop
+
 @php
     $passEmailUrl = View::getSection('password_email_url') ?? config('adminlte.password_email_url', 'password/email');
 

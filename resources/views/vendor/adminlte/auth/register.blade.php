@@ -7,19 +7,22 @@
 
         /* Para ambas páginas: login Y register */
         .login-page, .register-page {
-            background-color: #1e1e2f !important;
+            background-color: #fff !important;
+
         }
 
+        /* aclarar el card/formulario */
         .login-box, .register-box {
-            border: 1px solid #1e1e2f;
+            background-color: #ffffff !important;
+            border: 1px solid #e0e0e0 !important;
             border-radius: 10px;
-            padding: 20px;
-            background-color: #2a2a40;
-            color: white;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            color: #333;
         }
 
         .login-logo a, .register-logo a {
-            color: #ffffff !important;
+            color: #333 !important;
         }
 
         /* Estilos adicionales para que se vea bien */
@@ -36,13 +39,13 @@
         }
 
         .form-control {
-            background-color: #1e1e2f !important;
-            border: 1px solid #444 !important;
+            background-color: #3b3b3b !important;
+            border: 1px solid #555 !important;
             color: white !important;
         }
 
         .form-control:focus {
-            background-color: #1e1e2f !important;
+            background-color: #444 !important;
             border-color: #667eea !important;
             color: white !important;
         }
