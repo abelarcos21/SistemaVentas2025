@@ -170,7 +170,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-2">
+                            {{-- <div class="row mt-2">
                                 <div class="col-12">
                                     <div class="btn-group btn-block" role="group">
                                         <button class="btn btn-outline-info btn-sm" onclick="pagarAhora()">
@@ -184,7 +184,7 @@
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </form>
                 </div>
@@ -783,9 +783,9 @@
                             </div>
                         </td>
                         <td class="text-center text-primary">
-                            MXN$${item.precio.toFixed(2)} ${badgeTipo}
+                            $${item.precio.toFixed(2)} ${badgeTipo}
                         </td>
-                        <td class="text-center text-primary">MXN$${totalProducto.toFixed(2)}</td>
+                        <td class="text-center text-primary">$${totalProducto.toFixed(2)}</td>
                         <td class="text-center">
                             <button class="btn btn-danger btn-sm quitar-producto" data-id="${item.id}">
                                 <i class="fas fa-trash-alt"></i>

@@ -30,9 +30,9 @@
                     <div class="card">
                         <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
                             <h3 class="card-title mb-0"><i class="fas fa-list"></i> Compras registradas</h3>
-                            <a href="#" class="btn btn-light bg-gradient-light text-primary btn-sm">
+                            {{-- <a href="#" class="btn btn-light bg-gradient-light text-primary btn-sm">
                                 <i class="fas fa-plus"></i> button
-                            </a>
+                            </a> --}}
                         </div>
                         <!-- /.card-header -->
 

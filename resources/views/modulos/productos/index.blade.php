@@ -41,9 +41,7 @@
                                 <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" target="_blank">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
-                                <button class="btn btn-light bg-gradient-light text-primary btn-sm" data-toggle="modal" data-target="#scannerModal">
-                                    <i class="fas fa-barcode"></i> Escanear producto para Crear Nuevo
-                                </button>
+                                
                             </div>
                         </div>
                         <!-- /.card-header -->
@@ -86,260 +84,6 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
-    <!-- MODAL PARA ESCANEAR PRODUCTO O ESCRIBIR MANUAL -->
-    <div class="container mt-5">
-        <div class="modal fade" id="scannerModal" tabindex="-1" role="dialog" aria-labelledby="scannerModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <!-- Header -->
-                    <div class="modal-header bg-gradient-primary">
-                        <h5 class="modal-title" id="scannerModalLabel">
-                            <i class="fas fa-barcode mr-2"></i>
-                            Escanear Código de Producto
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="modal-body">
-                        <div class="container">
-                            <div class="form-group">
-                                <label for="codigo_input">Escanea o escribe el código del producto:</label>
-                                <input type="text" id="codigo_input" class="form-control" placeholder="Escanear código de barras..." autofocus>
-                                <small class="text-muted">Presiona Enter para continuar</small>
-                            </div>
-
-                            <!-- Información adicional -->
-                            <div class="alert alert-info" role="alert">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                <strong>Instrucciones:</strong> Puede escanear el código de barras con un lector o escribir manualmente el código del producto.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Footer -->
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times mr-2"></i>
-                            Cancelar
-                        </button>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Modal para crear nuevo producto -->
-    <div class="modal fade" id="modalCrearProducto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <form id="formCrearProducto" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header bg-gradient-info">
-                        <h5 class="modal-title">Crear nuevo producto</h5>
-                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <!-- Mostrar errores generales -->
-                        @if ($errors->any())
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        @endif
-                        <div class="form-group row">
-                            <label for="categoria" class="col-sm-3 col-form-label">Categoría</label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-tag"></i>
-                                        </span>
-                                    </div>
-
-                                    <select id="categoria" name="categoria_id" class="form-control selectcategoria" required>
-                                        <option value="">Selecciona una categoría</option>
-                                        @foreach($categorias as $categoria)
-                                            <option value="{{ $categoria->id }}" {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
-                                                {{ $categoria->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('categoria_id')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="proveedor_id" class="col-sm-3 col-form-label">Proveedor</label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-truck"></i>
-                                        </span>
-                                    </div>
-                                    <select name="proveedor_id" id="proveedor_id" class="form-control selectproveedor" required>
-                                        <option value="">Selecciona un proveedor</option>
-                                        @foreach ($proveedores as $proveedor)
-                                            <option value="{{ $proveedor->id }}" {{ old('proveedor_id') == $proveedor->id ? 'selected' : '' }}>
-                                                {{ $proveedor->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('proveedor_id')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="marca_id" class="col-sm-3 col-form-label">Marca</label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-tag"></i>
-                                        </span>
-                                    </div>
-                                   <select name="marca_id" id="marca_id" class="form-control selectmarca" required>
-                                        <option value="">Selecciona una Marca</option>
-                                        @foreach ($marcas as $marca)
-                                            <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
-                                                {{ $marca->nombre }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                @error('marca_id')
-                                    <div class="text-danger">{{ $message }}</div>
-                                 @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="codigo" class="col-sm-3 col-form-label">Código de Barras (EAN-13)</label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-boxes"></i>
-                                        </span>
-                                    </div>
-                                    <!-- Campo visible para mostrar el código -->
-                                    <input type="text" value="{{ old('codigo') }}" id="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control" readonly>
-                                    <!-- Campo oculto que se envía con el formulario -->
-                                    <input type="hidden" id="codigo" name="codigo" value="">
-                                    {{-- <input type="text" id="codigo" name="codigo" placeholder="Escanea o ingresa el código o déjalo vacío para generar uno automático" class="form-control" readonly> --}}
-                                </div>
-                                @error('codigo')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-
-                        <div class="form-group row">
-                            <label for="nombre" class="col-sm-3 col-form-label">Nombre del Producto</label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-boxes"></i>
-                                        </span>
-                                    </div>
-                                    <input type="text" name="nombre" value="{{ old('nombre') }}" placeholder="ingrese nombre del producto" class="form-control" required>
-                                </div>
-                                @error('nombre')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="descripcion" class="col-sm-3 col-form-label">Descripción</label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-comments"></i>
-                                        </span>
-                                    </div>
-                                    <textarea name="descripcion" class="form-control" id="exampleFormControlTextarea1" rows="3" required>{{ old('descripcion') }}</textarea>
-                                </div>
-                                @error('descripcion')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-sm-9 offset-sm-3">
-                                <div class="custom-control custom-switch toggle-estado">
-                                    <input type="hidden" name="activo" value="0">
-                                    <input role="switch" type="checkbox" class="custom-control-input"  {{ old('activo', '1') ? 'checked' : '' }} value="1" id="activoSwitch" name="activo" checked>
-                                    <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="imagen" class="col-sm-3 col-form-label">Imagen</label>
-                            <div class="col-sm-5">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-gradient-info">
-                                            <i class="fas fa-boxes"></i>
-                                        </span>
-                                    </div>
-                                    <input onchange="img.src = window.URL.createObjectURL(this.files[0])" type="file" id="imagen" name="imagen" accept="image/*" class="form-control">
-
-                                </div>
-                                @error('imagen')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-
-                            <!-- Imagen -->
-                            <div class="col-sm-4 text-center">
-                                <div class="img-thumbnail rounded shadow p-2">
-                                    <div class="mb-2"><small>IMAGEN</small></div>
-                                    <img class="img-thumbnail rounded shadow" id="img" style="max-width:100px;"><br>
-                                    <small class="text-muted">Te recomendamos usar una imagen de al menos 272 × 315 píxeles y un tamaño máximo de 250 KB.</small>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-info">
-                            <i class="fas fa-save"></i> Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <div id="modal-container"></div>{{-- mostar loading spinne --}}
 
@@ -1008,7 +752,7 @@
 
     {{--ESCANEAR EL PRODUCTO O ESCRIBIRLO PARA VERIFICAR SI EXISTE SI NO SE CREA UN NUEVO PRODUCTO--}}
     <script>
-        $(document).ready(function() {
+       /*  $(document).ready(function() {
             $('#codigo_input').on('keypress', function(e) {
                 if (e.which === 13) { // Enter
                     e.preventDefault();
@@ -1149,7 +893,7 @@
                     }
                 });
             });
-        });
+        }); */
     </script>
 
 
