@@ -143,7 +143,7 @@
             function updateButtonUI() {
                 const isDark = body.classList.contains(darkModeClass);
                 iconSpan.textContent = isDark ? '🌞' : '🌙';
-                textSpan.textContent = isDark ? 'Modo Claro' : 'Modo Oscuro';
+                textSpan.textContent = isDark ? 'Claro' : 'Oscuro';
             }
 
             // Aplicar modo guardado
