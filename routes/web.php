@@ -11,7 +11,7 @@ use App\Http\Controllers\Web\MarcaController;
 use App\Http\Controllers\Web\ProductoController;
 use App\Http\Controllers\Web\ClienteController;
 use App\Http\Controllers\Web\UsuarioController;
-use App\Http\Controllers\web\RoleController;
+use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\ProveedorController;
 use App\Http\Controllers\Web\Reporte_productosController;
 use App\Http\Controllers\Web\ComprasController;
