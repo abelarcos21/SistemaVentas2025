@@ -132,7 +132,7 @@
     <div class="footer">
         Este documento no es un comprobante fiscal digital.<br>
 
-        <img src="data:image/png;base64,{{ $qr }}" alt="Código QR" style="margin-top: 10px;">
+        <img src="data:image/svg+xml;base64,{{ $qr }}" alt="Código QR" style="margin-top: 10px;">
         <p>Escanee para validar los datos de esta venta</p>
     </div>
 

@@ -369,7 +369,7 @@ class DetalleVentasController extends Controller
             $qr = base64_encode(
                 QrCode::format('png')
                     ->size(100)
-                    ->generate('https://clickventa.alwaysdata.net/ticket/'.$venta->id)
+                    ->generate('http://sistemaventas2025.test:8080/ticket/'.$venta->id)
             );
         } catch (\Exception $e) {
             // Generar QR como SVG (compatible con AlwaysData)
@@ -447,7 +447,25 @@ class DetalleVentasController extends Controller
         $qrContenido .= "Validación: {$venta->razon_social_empresa}";
 
         // Generar QR
-        $qr = base64_encode(QrCode::format('png')->size(150)->generate($qrContenido));
+        /* $qr = base64_encode(QrCode::format('png')->size(150)->generate($qrContenido)); */
+        // Intentar generar el QR (compatibilidad local + AlwaysData)
+        try {
+            // En local: usa el método normal de Simple QrCode
+            $qr = base64_encode(
+                QrCode::format('png')
+                    ->size(150)
+                    ->generate('http://sistemaventas2025.test/boleta/'.$venta->id)
+            );
+        } catch (\Exception $e) {
+            // Generar QR como SVG (compatible con AlwaysData)
+            $renderer = new ImageRenderer(
+                new RendererStyle(150),
+                new SvgImageBackEnd()
+            );
+            $writer = new Writer($renderer);
+
+            $qr = base64_encode($writer->writeString($qrContenido));
+        }
 
         // Generar PDF
         $pdf = Pdf::loadView('modulos.detalleventas.boleta', compact(
