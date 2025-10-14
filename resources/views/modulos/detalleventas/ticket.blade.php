@@ -114,7 +114,7 @@
 
     <div class="qr">
         {{-- <img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(100)->generate('https://tutienda.mx/ticket/'.$folio)) !!} "> //opcional --}}
-        <img src="data:image/png;base64,{{$qr}}" alt="Código QR" style="margin-top: 10px;">
+        <img src="data:image/svg+xml;base64,{{$qr}}" alt="Código QR" style="margin-top: 10px;">
     </div>
 
      <!-- Código de Barras -->

@@ -14,7 +14,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use BaconQrCode\Writer;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Renderer\Image\GdImageBackEnd;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 use Illuminate\Support\Facades\Storage;
@@ -372,10 +372,10 @@ class DetalleVentasController extends Controller
                     ->generate('https://clickventa.alwaysdata.net/ticket/'.$venta->id)
             );
         } catch (\Exception $e) {
-            // En AlwaysData: forzar el motor GD para evitar el error de Imagick
+            // Generar QR como SVG (compatible con AlwaysData)
             $renderer = new ImageRenderer(
                 new RendererStyle(100),
-                new GdImageBackEnd()
+                new SvgImageBackEnd()
             );
             $writer = new Writer($renderer);
 
