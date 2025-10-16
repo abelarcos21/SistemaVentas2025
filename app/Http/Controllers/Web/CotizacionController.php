@@ -14,6 +14,7 @@ use App\Models\DetalleVenta;
 use App\Models\Caja;
 use App\Models\Empresa;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 
 class CotizacionController extends Controller
@@ -24,7 +25,7 @@ class CotizacionController extends Controller
      */
     public function index(Request $request){
 
-        $cotizaciones = Cotizacion::with('cliente')
+       /*  $cotizaciones = Cotizacion::with('cliente')
             ->when($request->cliente_id, fn($q) => $q->where('cliente_id', $request->cliente_id))
             ->when($request->estado, fn($q) => $q->where('estado', $request->estado))
             ->latest()
@@ -32,7 +33,91 @@ class CotizacionController extends Controller
 
         $clientes = Cliente::all();
 
-        return view('modulos.cotizaciones.index', compact('cotizaciones'));
+        return view('modulos.cotizaciones.index', compact('cotizaciones')); */
+
+        if ($request->ajax()) {
+
+            $cotizaciones = Cotizacion::with('cliente')->select('cotizaciones.*');
+
+            return DataTables::eloquent($cotizaciones)
+                ->addIndexColumn()
+                ->addColumn('cliente', function ($cotizacion) {
+                    return $cotizacion->cliente->nombre;
+                })
+                ->addColumn('total', function ($cotizacion) {
+                    return '$' . number_format($cotizacion->total, 2);
+                })
+                ->addColumn('estado', function ($cotizacion) {
+                    $badgeClass = match($cotizacion->estado) {
+                        'pendiente' => 'badge-warning',
+                        'convertida' => 'badge-success',
+                        'cancelada' => 'badge-danger',
+                        default => 'badge-secondary'
+                    };
+
+                    return '<span class="badge ' . $badgeClass . '">' . ucfirst($cotizacion->estado) . '</span>';
+                })
+                ->addColumn('acciones', function ($cotizacion) {
+                    $acciones = '
+                        <div class="d-flex justify-content-center gap-1" style="gap: 0.25rem;">
+                            <a href="' . route('cotizaciones.show', $cotizacion) . '" class="btn btn-info btn-sm" title="Ver Detalle">
+                                <i class="fas fa-eye"></i> Ver Detalle
+                            </a>
+                            <a href="' . route('cotizaciones.edit', $cotizacion) . '" class="btn btn-warning btn-sm" title="Editar">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                            <a target="_blank" href="' . route('cotizaciones.pdf', $cotizacion->id) . '" class="btn btn-secondary btn-sm" title="Ver PDF">
+                                <i class="fas fa-print"></i> Ver PDF
+                            </a>';
+
+                    if ($cotizacion->estado === 'pendiente') {
+                        $acciones .= '
+                            <button type="button" class="btn btn-success btn-sm btn-convertir"
+                                data-id="' . $cotizacion->id . '"
+                                data-url="' . route('cotizaciones.convertir', $cotizacion) . '"
+                                title="Convertir a Venta">
+                                <i class="fas fa-cash-register"></i> Convertir a Venta
+                            </button>';
+                    }
+
+                    if ($cotizacion->estado !== 'cancelada') {
+                        $acciones .= '
+                            <button type="button" class="btn btn-danger btn-sm btn-cancelar"
+                                data-id="' . $cotizacion->id . '"
+                                data-url="' . route('cotizaciones.destroy', $cotizacion) . '"
+                                title="Cancelar">
+                                <i class="fas fa-trash"></i> Cancelar
+                            </button>';
+                    }
+
+                    $acciones .= '</div>';
+
+                    return $acciones;
+                })
+                ->filter(function ($query) use ($request) {
+                    if ($request->has('cliente_id') && $request->cliente_id != '') {
+                        $query->where('cliente_id', $request->cliente_id);
+                    }
+
+                    if ($request->has('estado') && $request->estado != '') {
+                        $query->where('estado', $request->estado);
+                    }
+
+                    if ($request->has('fecha_desde') && $request->fecha_desde != '') {
+                        $query->whereDate('fecha', '>=', $request->fecha_desde);
+                    }
+
+                    if ($request->has('fecha_hasta') && $request->fecha_hasta != '') {
+                        $query->whereDate('fecha', '<=', $request->fecha_hasta);
+                    }
+                })
+                ->rawColumns(['estado', 'acciones'])
+                ->make(true);
+        }
+
+        $clientes = Cliente::orderBy('nombre')->get();
+
+        return view('modulos.cotizaciones.index', compact('clientes'));
     }
 
     /**
