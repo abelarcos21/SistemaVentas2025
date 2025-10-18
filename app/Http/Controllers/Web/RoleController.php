@@ -22,14 +22,9 @@ class RoleController extends Controller
     }
 
 
-    /* public function index(Request $request): View {
-        $roles = Role::orderBy('id','DESC')->paginate(5);
-        return view('modulos.rolesusuarios.index',compact('roles'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
-    } */
-
     public function index(Request $request){
         if ($request->ajax()) {
+
             $data = Role::select('*');
 
             return DataTables::of($data)
