@@ -623,7 +623,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/borrar-carrito', // Asegúrate de que esta ruta sea correcta
+                        url: '/carrito/borrar-carrito', // Asegúrate de que esta ruta sea correcta
                         method: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'
@@ -832,7 +832,7 @@
 
         function actualizarCantidad(id, nuevaCantidad) {
             $.ajax({
-                url: `/venta/actualizar/${id}`,
+                url: `/carrito/venta/actualizar/${id}`,
                 method: 'PUT', // o POST según tu ruta
                 data: {
                     _token: '{{ csrf_token() }}',
@@ -866,7 +866,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/venta/quitar/${id}`,
+                        url: `/carrito/venta/quitar/${id}`,
                         method: 'DELETE',
                         data: {
                             _token: '{{ csrf_token() }}'

@@ -50,12 +50,20 @@ Route::middleware(['auth'])->group(function() {
     // ============================================
     // CARRITO
     // ============================================
-    Route::prefix('carrito')->group(function() {
+    /* Route::prefix('carrito')->group(function() {
         Route::get('/carrito/obtener', [CarritoController::class, 'obtenerCarrito'])->name('carrito.obtener');
         Route::post('/carrito/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
         Route::delete('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->name('ventas.borrar.carrito');
         Route::delete('/venta/quitar/{id}', [CarritoController::class, 'quitar_carrito'])->name('ventas.quitar.carrito');
         Route::put('/venta/actualizar/{id}', [CarritoController::class, 'update'])->name('venta.actualizar');
+    }); */
+
+    Route::prefix('carrito')->group(function() {
+        Route::get('/obtener', [CarritoController::class, 'obtenerCarrito'])->name('carrito.obtener');
+        Route::post('/agregar/{id}', [CarritoController::class, 'agregar'])->name('carrito.agregar');
+        Route::delete('/borrar-carrito', [CarritoController::class, 'borrar_carrito'])->name('carrito.borrar');
+        Route::delete('/venta/quitar/{id}', [CarritoController::class, 'quitar_carrito'])->name('carrito.quitar');
+        Route::put('/venta/actualizar/{id}', [CarritoController::class, 'update'])->name('carrito.actualizar');
     });
 
     // ============================================
