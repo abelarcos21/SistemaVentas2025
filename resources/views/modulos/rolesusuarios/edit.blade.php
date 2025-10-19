@@ -21,7 +21,7 @@
     </section>
 @stop
 
-@section('content')
+{{-- @section('content')
     <!-- Main content -->
     <section class="content">
       <div class="container-fluid">
@@ -103,7 +103,138 @@
     <!-- /.content -->
 
 
-@stop
+@stop --}}
+
+@section('content')
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-user-shield"></i>
+                        {{ isset($role) ? 'Editar Rol' : 'Crear Nuevo Rol' }}
+                    </h3>
+                </div>
+
+                <form action="{{ isset($role) ? route('roles.update', $role) : route('roles.store') }}"
+                      method="POST">
+                    @csrf
+                    @if(isset($role))
+                        @method('PUT')
+                    @endif
+
+                    <div class="card-body">
+                        @if($errors->any())
+                        <div class="alert alert-danger">
+                            <h5><i class="icon fas fa-ban"></i> Errores:</h5>
+                            <ul class="mb-0">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
+                        <!-- Nombre del Rol -->
+                        <div class="form-group">
+                            <label for="name">
+                                Nombre del Rol <span class="text-danger">*</span>
+                            </label>
+                            <input type="text"
+                                   class="form-control @error('name') is-invalid @enderror"
+                                   id="name"
+                                   name="name"
+                                   value="{{ old('name', $role->name ?? '') }}"
+                                   placeholder="Ej: Gerente de Ventas"
+                                   required>
+                            @error('name')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <hr>
+
+                        <!-- Permisos -->
+                        <div class="form-group">
+                            <label class="d-block">
+                                <strong>Permisos</strong>
+                                <small class="text-muted">(Selecciona los permisos que tendrá este rol)</small>
+                            </label>
+
+                            <!-- Botones de selección rápida -->
+                            <div class="mb-3">
+                                <button type="button" class="btn btn-sm btn-success" id="selectAll">
+                                    <i class="fas fa-check-double"></i> Seleccionar Todos
+                                </button>
+                                <button type="button" class="btn btn-sm btn-warning" id="unselectAll">
+                                    <i class="fas fa-times"></i> Deseleccionar Todos
+                                </button>
+                            </div>
+
+                            <div class="row">
+                                @foreach($permissions as $module => $modulePermissions)
+                                <div class="col-md-6 col-lg-4 mb-3">
+                                    <div class="card border">
+                                        <div class="card-header bg-light py-2">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox"
+                                                       class="custom-control-input module-checkbox"
+                                                       id="module_{{ $module }}"
+                                                       data-module="{{ $module }}">
+                                                <label class="custom-control-label font-weight-bold"
+                                                       for="module_{{ $module }}">
+                                                    <i class="fas {{ \App\Helpers\PermissionHelper::getModuleIcon($module) }}"></i>
+                                                    {{ \App\Helpers\PermissionHelper::translateModule($module) }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="card-body py-2 px-3">
+                                            @foreach($modulePermissions as $permission)
+                                            <div class="custom-control custom-checkbox mb-1">
+                                                <input type="checkbox"
+                                                       class="custom-control-input permission-checkbox"
+                                                       name="permissions[]"
+                                                       id="permission_{{ $permission->id }}"
+                                                       value="{{ $permission->id }}"
+                                                       data-module="{{ $module }}"
+                                                       {{ isset($rolePermissions) && in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
+                                                <label class="custom-control-label small"
+                                                       for="permission_{{ $permission->id }}">
+                                                    <span class="badge badge-sm {{ \App\Helpers\PermissionHelper::getActionBadgeClass(explode('.', $permission->name)[1]) }}">
+                                                        {{ \App\Helpers\PermissionHelper::translateAction(explode('.', $permission->name)[1]) }}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+
+                            @error('permissions')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            {{ isset($role) ? 'Actualizar Rol' : 'Crear Rol' }}
+                        </button>
+                        <a href="{{ route('roles.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
 
 @section('css')
     {{-- Add here extra stylesheets --}}

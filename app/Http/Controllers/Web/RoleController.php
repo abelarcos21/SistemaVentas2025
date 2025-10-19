@@ -6,23 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
-class RoleController extends Controller
-{
-    //constructor
-    function __construct(){
-        $this->middleware('permission:role-list|role-create|role-edit|role-delete', ['only' => ['index','store']]);
-        $this->middleware('permission:role-create', ['only' => ['create','store']]);
-        $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+class RoleController extends Controller{
+    public function __construct()
+    {
+        $this->middleware('permission:roles.index|roles.create|roles.edit|roles.destroy', ['only' => ['index', 'store']]);
+        $this->middleware('permission:roles.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:roles.edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:roles.destroy', ['only' => ['destroy']]);
     }
 
-
-    public function index(Request $request){
+   /*  public function index(Request $request){
         if ($request->ajax()) {
 
             $data = Role::select('*');
@@ -69,74 +65,177 @@ class RoleController extends Controller
         }
 
         return view('modulos.rolesusuarios.index');
+    } */
+
+
+    /**
+     * Mostrar lista de roles
+     */
+    public function index()
+    {
+        $roles = Role::with('permissions')->get();
+        return view('modulos.rolesusuarios.index', compact('roles'));
     }
 
-    public function create(): View {
-        $permission = Permission::get();
-        return view('modulos.rolesusuarios.create',compact('permission'));
+    /**
+     * Mostrar formulario de creación
+     */
+    public function create()
+    {
+        // Agrupar permisos por módulo
+        $permissions = Permission::all()->groupBy(function ($permission) {
+            return explode('.', $permission->name)[0];
+        })->map(function ($group) {
+            return $group->sortBy(function ($permission) {
+                $action = explode('.', $permission->name)[1];
+                // Ordenar por prioridad de acción
+                $order = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+                $pos = array_search($action, $order);
+                return $pos !== false ? $pos : 999;
+            });
+        });
+
+        return view('modulos.rolesusuarios.create', compact('permissions'));
     }
 
-    public function store(Request $request): RedirectResponse {
-        $this->validate($request, [
-            'name' => 'required|unique:roles,name',
-            'permission' => 'required',
+    /**
+     * Guardar nuevo rol
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id'
+        ], [
+            'name.required' => 'El nombre del rol es obligatorio.',
+            'name.unique' => 'Ya existe un rol con este nombre.',
+            'permissions.array' => 'Los permisos deben ser un array.',
+            'permissions.*.exists' => 'Uno o más permisos no son válidos.'
         ]);
 
-        $permissionsID = array_map(
-            function($value) { return (int)$value; },
-            $request->input('permission')
-        );
+        try {
+            DB::beginTransaction();
 
-        $role = Role::create(['name' => $request->input('name')]);
-        $role->syncPermissions($permissionsID);
+            $role = Role::create(['name' => $request->name]);
 
-        return redirect()->route('roles.index')
-                        ->with('success','Rol Creado Correctamente');
+            if ($request->has('permissions')) {
+                $role->syncPermissions($request->permissions);
+            }
+
+            DB::commit();
+
+            return redirect()->route('roles.index')
+                ->with('success', 'Rol creado exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al crear el rol: ' . $e->getMessage());
+        }
     }
 
-    public function show($id): View {
-        $role = Role::find($id);
-        $rolePermissions = Permission::join("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
-            ->where("role_has_permissions.role_id",$id)
-            ->get();
+    /**
+     * Mostrar detalles del rol
+     */
+    public function show(Role $role)
+    {
+        $role->load('permissions');
 
-        return view('modulos.rolesusuarios.show',compact('role','rolePermissions'));
+        // Agrupar permisos por módulo
+        $permissionsByModule = $role->permissions->groupBy(function ($permission) {
+            return explode('.', $permission->name)[0];
+        });
+
+        return view('modulos.rolesusuarios.show', compact('role', 'permissionsByModule'));
     }
 
-    public function edit($id): View {
-        $role = Role::find($id);
-        $permission = Permission::get();
-        $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id",$id)
-            ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
-            ->all();
+    /**
+     * Mostrar formulario de edición
+     */
+    public function edit(Role $role)
+    {
+        // Agrupar permisos por módulo
+        $permissions = Permission::all()->groupBy(function ($permission) {
+            return explode('.', $permission->name)[0];
+        })->map(function ($group) {
+            return $group->sortBy(function ($permission) {
+                $action = explode('.', $permission->name)[1];
+                $order = ['index', 'create', 'store', 'show', 'edit', 'update', 'destroy'];
+                $pos = array_search($action, $order);
+                return $pos !== false ? $pos : 999;
+            });
+        });
 
-        return view('modulos.rolesusuarios.edit',compact('role','permission','rolePermissions'));
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
+
+        return view('modulos.rolesusuarios.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
-    public function update(Request $request, $id): RedirectResponse {
-        $this->validate($request, [
-            'name' => 'required',
-            'permission' => 'required',
+    /**
+     * Actualizar rol
+     */
+    public function update(Request $request, Role $role)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id'
+        ], [
+            'name.required' => 'El nombre del rol es obligatorio.',
+            'name.unique' => 'Ya existe un rol con este nombre.',
+            'permissions.array' => 'Los permisos deben ser un array.',
+            'permissions.*.exists' => 'Uno o más permisos no son válidos.'
         ]);
 
-        $role = Role::find($id);
-        $role->name = $request->input('name');
-        $role->save();
+        try {
+            DB::beginTransaction();
 
-        $permissionsID = array_map(
-            function($value) { return (int)$value; },
-            $request->input('permission')
-        );
+            $role->update(['name' => $request->name]);
+            $role->syncPermissions($request->permissions ?? []);
 
-        $role->syncPermissions($permissionsID);
+            DB::commit();
 
-        return redirect()->route('roles.index')
-                        ->with('success','Rol Actualizado Correctamente');
+            return redirect()->route('roles.index')
+                ->with('success', 'Rol actualizado exitosamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el rol: ' . $e->getMessage());
+        }
     }
 
-    public function destroy($id): RedirectResponse {
-        DB::table("roles")->where('id',$id)->delete();
-        return redirect()->route('roles.index')
-                        ->with('success','Rol Eliminado Correctamente');
+    /**
+     * Eliminar rol
+     */
+    public function destroy(Role $role)
+    {
+        // Prevenir eliminación de roles críticos
+        $rolesProtegidos = ['Super Admin', 'Administrador'];
+
+        if (in_array($role->name, $rolesProtegidos)) {
+            return redirect()->route('roles.index')
+                ->with('error', 'No se puede eliminar el rol ' . $role->name . '.');
+        }
+
+        // Verificar si hay usuarios con este rol
+        if ($role->users()->count() > 0) {
+            return redirect()->route('roles.index')
+                ->with('error', 'No se puede eliminar el rol porque tiene usuarios asignados.');
+        }
+
+        try {
+            $role->delete();
+
+            return redirect()->route('roles.index')
+                ->with('success', 'Rol eliminado exitosamente.');
+
+        } catch (\Exception $e) {
+            return redirect()->route('roles.index')
+                ->with('error', 'Error al eliminar el rol: ' . $e->getMessage());
+        }
     }
 }
