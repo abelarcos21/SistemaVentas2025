@@ -28,7 +28,7 @@
 
     {{-- Imagen del Login --}}
     <div class="text-center mb-3">
-        <img src="{{ asset('images/imagenventa.png') }}"
+        <img src="{{ asset('images/login.png') }}"
             alt="Logo del sistema"
             style="width: 280px; height: 245px;  border-color: #f7f7f7 !important;">
     </div>
