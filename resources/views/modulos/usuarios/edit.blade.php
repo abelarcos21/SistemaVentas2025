@@ -109,7 +109,7 @@
                                                 </span>
                                                 <select name="roles[]" id="roles" class="form-control select2 ml-2" multiple="multiple" style="width: 100%;">
                                                     @foreach ($roles as $value => $label)
-                                                        <option value="{{ $value }}" {{ isset($userRole[$value]) ? 'selected' : ''}}>
+                                                        <option value="{{ $value }}" {{ isset($userRoles[$value]) ? 'selected' : ''}}>
                                                             {{ $label }}
                                                         </option>
                                                     @endforeach

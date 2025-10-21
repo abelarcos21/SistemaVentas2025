@@ -19,10 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]); */
 
         //El paquete Spatie proporciona su middleware incorporado
+        // Registrar alias de middleware
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'check.permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
 
         //midlewares de grupos

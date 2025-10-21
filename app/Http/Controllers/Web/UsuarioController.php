@@ -3,29 +3,24 @@
 namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
+use App\Http\Controllers\Controller; //IMPORTANTE: esta línea importa la clase base
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Arr;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Exception;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Arr;
 
 class UsuarioController extends Controller
 {
-    //index
-   /*  public function index(Request $request): View {
 
-       /*  $usuarios = User::latest()->paginate(5);
-
-        return view('modulos.usuarios.index',compact('usuarios'))->with('i', ($request->input('page', 1) - 1) * 5); */
-       /*  $usuarios = User::all();
-        return view('modulos.usuarios.index', compact('usuarios')); */
-    /* }  */
+    public function __construct(){
+        $this->middleware('permission:usuarios.index|usuarios.create|usuarios.edit|usuarios.destroy', ['only' => ['index', 'show']]);
+        $this->middleware('permission:usuarios.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:usuarios.edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:usuarios.destroy', ['only' => ['destroy']]);
+    }
 
     /**
      *Metodo Index.
@@ -84,16 +79,22 @@ class UsuarioController extends Controller
         return view('modulos.usuarios.index');
     }
 
-    public function create(): View {
+    /**
+     * Mostrar formulario de creación
+    */
+    public function create(){
 
         $roles = Role::pluck('name','name')->all();
 
         return view('modulos.usuarios.create',compact('roles'));
-       /*  return view('modulos.usuarios.create'); */
 
     }
 
-    public function store(Request $request): RedirectResponse{
+    /**
+    * Guardar nuevo usuario
+    */
+    public function store(Request $request){
+
         $this->validate($request, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
@@ -102,177 +103,188 @@ class UsuarioController extends Controller
             'roles' => 'required'
         ]);
 
-        $validated = $request->all();
-        $validated['password'] = Hash::make($validated['password']);
-
-        $user = User::create($validated);
-        $user->assignRole($request->input('roles'));
-
-        return redirect()->route('usuario.index')
-                        ->with('success','Usuario guardado con exito!');
-    }
-    /* public function store(Request $request){
-
         try {
+            DB::beginTransaction();
 
-            $validated = $request->validate([
+            $validated = $request->all();
+            $validated['password'] = Hash::make($validated['password']);
 
-                'name' => 'required|string|max:255',
-                'email' => 'required',
-                'password' => 'required',
-                'activo' => 'nullable|boolean',
-                'rol' => 'required',
+            $user = User::create($validated);
+            $user->syncRoles($request->roles);
 
-            ]);
+            DB::commit();
 
-            $validated['activo'] = $request->has('activo'); // El switch solo envía el valor si está activado
+            return redirect()->route('usuario.index')
+                ->with('success', 'Usuario creado exitosamente.');
 
-            User::create($validated);
-
-            session()->flash('swal', [
-
-                'icon' => 'success',
-                'title' => 'Usuario creado correctamente',
-                'text' => 'Bien Hecho!',
-                'draggable' => 'true',
-
-            ]);
-
-            //return to_route('usuario.index')->with('success', 'Usuario guardado con exito!');
-            return redirect()->route('usuario.index');
-
-
-        } catch (Exception $e) {
-            return to_route('usuario.create')->with('error', 'Error al guardar usuario!' . $e->getMessage());
-        }
-    } */
-
-    //CAMBIAR ESTADO DE ACTIVO VIA AJAX
-    public function toggleActivo(Request $request){
-        try {
-            $cliente = User::findOrFail($request->id);
-            $cliente->activo = $request->activo;
-            $cliente->save();
-
-            return response()->json([
-                'success' => true,
-                'message' => $request->activo ? 'Usuario activado correctamente' : 'Usuario desactivado correctamente'
-            ]);
         } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al crear el usuario: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Cambiar estado activo del usuario (AJAX)
+    */
+    public function toggleActivo(Request $request){
+        $user = User::findOrFail($request->id);
+
+        // Prevenir desactivar al propio usuario
+        if ($user->id === auth()->id()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el estado'
-            ], 500);
+                'message' => 'No puedes desactivar tu propia cuenta.'
+            ], 403);
         }
+
+        // Prevenir desactivar Super Admin
+        if ($user->hasRole('Super Admin')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede desactivar un usuario Super Admin.'
+            ], 403);
+        }
+
+        $user->activo = !$user->activo;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $user->activo ? 'Usuario activado correctamente' : 'Usuario desactivado correctamente.'
+        ]);
     }
 
-    //CAMBIAR, ACTUALIZAR CONTRASEÑA
+
+    /**
+     * Cambiar contraseña del usuario
+    */
     public function cambiarPassword(Request $request){
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'password' => 'required|string|min:8',
+            /* 'password' => 'required|string|min:8|confirmed', */
+        ]); /* , [
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
+        ]); */
 
-        ]);
+        try {
+            $usuario = User::findOrFail($request->user_id);
 
-        $usuario = User::findOrFail($request->user_id);
-        $usuario->password = bcrypt($request->password);
-        $usuario->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Contraseña actualizada correctamente'
-        ]);
+            $usuario->password = Hash::make($request->password);
+
+            $usuario->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Contraseña actualizada correctamente'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al cambiar la contraseña: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
-    public function show($id): View {
-        $user = User::find($id);
 
-        return view('modulos.usuarios.show',compact('user'));
-    }
-
-   /*  public function show(User $user){
+    /**
+     * Mostrar detalles del usuario
+    */
+    public function show(User $user){
+        $user->load('roles.permissions');
         return view('modulos.usuarios.show', compact('user'));
-    } */
-
-     public function edit($id): View {
-        $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
-        $userRole = $user->roles->pluck('name','name')->all();
-
-        return view('modulos.usuarios.edit',compact('user','roles','userRole'));
     }
 
-    /* public function edit(User $user){
-        return view('modulos.usuarios.edit', compact('user'));
+    /**
+     * Mostrar formulario de edición
+     */
+    public function edit(User $user)
+    {
+        $roles = Role::pluck('name','name')->all();
+        $userRoles = $user->roles->pluck('name','name')->all();
 
-    } */
+        return view('modulos.usuarios.edit', compact('user', 'roles', 'userRoles'));
+    }
 
+    /**
+     * Actualizar usuario
+    */
+    public function update(Request $request, User $user){
 
-    public function update(Request $request, $id): RedirectResponse {
         $this->validate($request, [
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'password' => 'same:confirm-password',
             'activo' => 'required|boolean', //gracias al input hidden + checkbox, este campo siempre se enviará
             'roles' => 'required'
         ]);
 
-        $input = $request->all();
-        if(!empty($input['password'])){
-            $input['password'] = Hash::make($input['password']);
-        }else{
-            $input = Arr::except($input,array('password'));
-        }
-
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-
-        $user->assignRole($request->input('roles'));
-
-        return redirect()->route('usuario.index')
-                        ->with('success','Usuario actualizado correctamente');
-    }
-
-   /*  public function update(Request $request, User $user){
-
-        // Validar los datos
-        $validated = $request->validate([
-            'name'   => ['required', 'string', 'max:255'],
-            'email'  => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'activo' => ['nullable', 'boolean'],
-            'rol'    => ['required', 'string'],
-        ]);
-
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
 
-            $user->fill($validated)->save();// Llenar el modelo con los datos validados y guardar
+            $userData = $request->all();
+
+            if(!empty($userData['password'])){
+                $userData['password'] = Hash::make($userData['password']);
+            }else{
+                $userData = Arr::except($userData,array('password'));
+            }
+
+
+            if ($request->filled('password')) {
+                $userData['password'] = Hash::make($request->password);
+            }
+
+            $user->update($userData);
+            $user->syncRoles($request->roles);
 
             DB::commit();
 
-            return redirect()->route('usuario.index')->with('success', 'Usuario actualizado correctamente');
-        } catch (Exception $e) {
+            return redirect()->route('usuario.index')
+                ->with('success', 'Usuario actualizado exitosamente.');
+
+        } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error al actualizar usuario: ' . $e->getMessage());
-
-            return redirect()->route('usuario.index')->with('error', 'Error al actualizar usuario: ' . $e->getMessage());
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error al actualizar el usuario: ' . $e->getMessage());
         }
-
-    } */
-
-    public function destroy($id): RedirectResponse {
-        User::find($id)->delete();
-        return redirect()->route('users.index')
-                        ->with('success','User deleted successfully');
     }
 
-   /*  public function destroy(User $user){
-        $nombreCategoria = $categoria->nombre;
-        $categoria->delete();
-        return redirect()->route('categoria.index')->with('success','La Categoria' .$nombreCategoria.'se Elimino Correctamente');
 
-    } */
+    /**
+     * Eliminar usuario
+    */
+    public function destroy(User $user){
+
+        // Prevenir que el usuario se elimine a sí mismo
+        if ($user->id === auth()->id()) {
+            return redirect()->route('usuario.index')
+                ->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
+        // Prevenir eliminar usuarios con rol Super Admin
+        if ($user->hasRole('Super Admin')) {
+            return redirect()->route('usuario.index')
+                ->with('error', 'No se puede eliminar un usuario con rol Super Admin.');
+        }
+
+        try {
+            $user->delete();
+
+            return redirect()->route('usuario.index')
+                ->with('success', 'Usuario eliminado exitosamente.');
+
+        } catch (\Exception $e) {
+            return redirect()->route('usuario.index')
+                ->with('error', 'Error al eliminar el usuario: ' . $e->getMessage());
+        }
+    }
 
 
 }

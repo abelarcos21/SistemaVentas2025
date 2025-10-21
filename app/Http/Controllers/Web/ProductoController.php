@@ -23,10 +23,10 @@ class ProductoController extends Controller
 {
     //constructor
     function __construct(){
-        $this->middleware('permission:product-list|product-create|product-edit|product-delete', ['only' => ['index','show']]);
-        $this->middleware('permission:product-create', ['only' => ['create','store']]);
-        $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:product-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:productos.index|productos.create|productos.edit|productos.destroy', ['only' => ['index','show']]);
+        $this->middleware('permission:productos.create', ['only' => ['create','store']]);
+        $this->middleware('permission:productos.edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:productos.destroy', ['only' => ['destroy']]);
     }
 
     //index
@@ -194,14 +194,14 @@ class ProductoController extends Controller
             ->addColumn('acciones', function ($producto) {
                 $buttons = '<div class="d-flex">';
 
-                if(auth()->user()->can('product-edit')) {
+                if(auth()->user()->can('productos.edit')) {
                     $buttons .= '<button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center"
                                     data-id="'.$producto->id.'">
                                     <i class="fas fa-edit mr-1"></i> Editar
                                 </button>';
                 }
 
-                if(auth()->user()->can('product-delete')) {
+                if(auth()->user()->can('productos.destroy')) {
                     $buttons .= '<button data-id="'.$producto->id.'"
                                     class="btn btn-danger btn-delete btn-sm mr-1 d-flex align-items-center">
                                     <i class="fas fa-trash-alt mr-1"></i> Eliminar
