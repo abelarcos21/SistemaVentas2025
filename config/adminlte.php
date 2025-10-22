@@ -324,7 +324,7 @@ return [
             'text' => 'Modulos Del Sistema',
             'url' => '/home',
             'icon' => 'nav-icon fas fa-tachometer-alt',
-            'label' => 8,
+            'label' => 10,
             'label_color' => 'warning',
         ],
 
@@ -367,7 +367,7 @@ return [
         ],
 
         [
-            'text' => 'Inventario',
+            'text' => 'Gestion de Inventario',
             'icon' => 'fas fa-boxes',
             'submenu' => [
                 [
@@ -377,13 +377,13 @@ return [
                 ],
 
                 [
-                    'text' => 'Lista Marcas',
+                    'text' => 'Administrar Marcas',
                     'url' => 'marcas/',
                     'icon' => 'fas fa-tags ',
                 ],
 
                 [
-                    'text' => 'Lista Categorias',
+                    'text' => 'Administrar Categorias',
                     'url' => 'categorias/',
                     'icon' => 'fas fa-tags ',
                 ],
@@ -405,17 +405,17 @@ return [
         ],
 
         [
-            'text' => 'Administrar Usuarios',
+            'text' => 'Gestion de Usuarios',
             'icon' => 'fas fa-user-shield ',
             'submenu' => [
                 [
-                    'text' => 'Lista Usuarios',
+                    'text' => 'Administrar Usuarios',
                     'url' => 'usuarios/',
                     'icon' => 'fas fa-users',
                 ],
 
                 [
-                    'text' => 'Lista Roles',
+                    'text' => 'Administrar Roles',
                     'url' => 'roles/',
                     'icon' => 'fas fa-user-shield',
                 ],
