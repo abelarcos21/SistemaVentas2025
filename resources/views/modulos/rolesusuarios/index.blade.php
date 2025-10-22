@@ -21,7 +21,7 @@
     </section>
 @stop
 
-{{-- @section('content')
+@section('content')
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -42,7 +42,9 @@
                                     <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
-                                            <th>Nombre</th>
+                                            <th>Nombre del Rol</th>
+                                            <th>Permisos</th>
+                                            <th>Usuarios</th>
                                             <th>Fecha Registro</th>
                                             <th class="no-exportar">Acciones</th>
                                         </tr>
@@ -61,128 +63,7 @@
         <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-@stop --}}
-
-@section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0">
-                            <i class="fas fa-user-shield"></i> Gestión de Roles
-                        </h3>
-                        @can('roles.create')
-                        <a href="{{ route('roles.create') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Crear Rol
-                        </a>
-                        @endcan
-                    </div>
-                </div>
-
-                <div class="card-body">
-                    @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle"></i> {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    @endif
-
-                    @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    @endif
-
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th width="50">#</th>
-                                    <th>Nombre del Rol</th>
-                                    <th>Permisos</th>
-                                    <th>Usuarios</th>
-                                    <th width="200" class="text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($roles as $index => $role)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>
-                                        <strong>{{ $role->name }}</strong>
-                                        @if($role->name === 'Super Admin')
-                                        <span class="badge badge-danger ml-2">Protegido</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-info">
-                                            {{ $role->permissions->count() }} permisos
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-secondary">
-                                            {{ $role->users->count() }} usuarios
-                                        </span>
-                                    </td>
-                                    <td class="text-center">
-                                        @can('roles.show')
-                                        <a href="{{ route('roles.show', $role) }}"
-                                           class="btn btn-sm btn-info"
-                                           title="Ver detalles">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        @endcan
-
-                                        @can('roles.edit')
-                                        <a href="{{ route('roles.edit', $role) }}"
-                                           class="btn btn-sm btn-warning"
-                                           title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        @endcan
-
-                                        @can('roles.destroy')
-                                        @if(!in_array($role->name, ['Super Admin', 'Administrador']))
-                                        <form action="{{ route('roles.destroy', $role) }}"
-                                              method="POST"
-                                              class="d-inline"
-                                              onsubmit="return confirm('¿Estás seguro de eliminar este rol?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-danger"
-                                                    title="Eliminar">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                        @endif
-                                        @endcan
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="text-center">
-                                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">No hay roles registrados</p>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+@stop
 
 @section('css')
     <!-- Google Font: Source Sans Pro -->
@@ -238,15 +119,17 @@
     {{--DATATABLE YAJRA PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
         $(document).ready(function() {
-            $('#roles-table').DataTable({
+            var $table = $('#roles-table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('roles.index') }}",
                 columns: [
                     {data: 'id', name: 'id', className: 'text-center'},
-                    { data: 'name_badge', name: 'name' },
-                    { data: 'fecha_registro', name: 'created_at', className: 'text-center' },
-                    { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+                    {data: 'nombre', name: 'name' },
+                    {data: 'permisos', name: 'permisos', orderable: false, searchable: false},
+                    {data: 'usuarios', name: 'usuarios', orderable: false, searchable: false},
+                    {data: 'fecha_registro', name: 'created_at', className: 'text-center' },
+                    {data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
                 ],
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
                 buttons: [

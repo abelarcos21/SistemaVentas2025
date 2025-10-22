@@ -18,37 +18,52 @@ class RoleController extends Controller{
         $this->middleware('permission:roles.destroy', ['only' => ['destroy']]);
     }
 
-   /*  public function index(Request $request){
+    public function index(Request $request){
         if ($request->ajax()) {
 
             $data = Role::select('*');
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('name_badge', function($row) {
-                    return '<span class="badge bg-success">' . $row->name . '</span>';
+                ->addColumn('nombre', function ($role) {
+                    $html = '<strong>' . $role->name . '</strong>';
+                    if ($role->name === 'Super Admin') {
+                        $html .= ' <span class="badge badge-danger ml-2">Protegido</span>';
+                    }
+                    return $html;
                 })
-                ->addColumn('fecha_registro', function($row) {
-                    return $row->created_at->format('d/m/Y h:i a');
+                ->addColumn('permisos', function ($role) {
+                    return '<span class="badge badge-info">' .
+                           $role->permissions->count() . ' permisos</span>';
                 })
-                ->addColumn('action', function($row) {
+                ->addColumn('usuarios', function ($role) {
+                    return '<span class="badge badge-secondary">' .
+                           $role->users->count() . ' usuarios</span>';
+                })
+                ->addColumn('fecha_registro', function($role) {
+                    return $role->created_at->format('d/m/Y h:i a');
+                })
+                ->addColumn('action', function($role) {
+
                     $btn = '<div class="d-flex">';
 
                     // Botón Ver
-                    $btn .= '<a href="' . route('roles.show', $row->id) . '" class="btn bg-gradient-info btn-sm mr-1">
+                    if (auth()->user()->can('roles.show')) {
+                        $btn .= '<a href="' . route('roles.show', $role->id) . '" class="btn bg-gradient-info btn-sm mr-1">
                                 <i class="fas fa-eye"></i> Ver
                             </a>';
+                    }
 
                     // Botón Editar (con verificación de permisos)
-                    if (auth()->user()->can('role-edit')) {
-                        $btn .= '<a class="btn bg-gradient-warning btn-sm mr-1" href="' . route('roles.edit', $row->id) . '">
+                    if (auth()->user()->can('roles.edit')) {
+                        $btn .= '<a class="btn bg-gradient-warning btn-sm mr-1" href="' . route('roles.edit', $role->id) . '">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>';
                     }
 
                     // Botón Eliminar (con verificación de permisos)
-                    if (auth()->user()->can('role-delete')) {
-                        $btn .= '<form method="POST" class="formulario-eliminar d-inline" action="' . route('roles.destroy', $row->id) . '">
+                    if (auth()->user()->can('roles.destroy') && !in_array($role->name, ['Super Admin', 'Administrador'])) {
+                        $btn .= '<form method="POST" class="formulario-eliminar d-inline" action="' . route('roles.destroy', $role->id) . '">
                                     ' . csrf_field() . '
                                     ' . method_field('DELETE') . '
                                     <button type="submit" class="btn bg-gradient-danger btn-sm">
@@ -60,22 +75,22 @@ class RoleController extends Controller{
                     $btn .= '</div>';
                     return $btn;
                 })
-                ->rawColumns(['name_badge', 'action'])
+                ->rawColumns(['nombre', 'permisos', 'usuarios', 'action'])
                 ->make(true);
         }
 
         return view('modulos.rolesusuarios.index');
-    } */
+    }
 
 
     /**
      * Mostrar lista de roles
      */
-    public function index()
+    /* public function index()
     {
         $roles = Role::with('permissions')->get();
         return view('modulos.rolesusuarios.index', compact('roles'));
-    }
+    } */
 
     /**
      * Mostrar formulario de creación
