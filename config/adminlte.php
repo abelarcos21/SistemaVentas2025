@@ -138,7 +138,7 @@ return [
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => true,
     'usermenu_desc' => true,
-    'usermenu_profile_url' => true,
+    'usermenu_profile_url' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -236,7 +236,7 @@ return [
     |
     */
 
-    'right_sidebar' => true,
+    'right_sidebar' => false,
     'right_sidebar_icon' => 'fas fa-cogs',
     'right_sidebar_theme' => 'dark',
     'right_sidebar_slide' => true,
@@ -301,9 +301,9 @@ return [
     */
 
     'menu' => [
+
         // Navbar items:
         [
-
             'text' => 'Link 1',
             'url' => '#',
             'topnav_right' => true,
@@ -319,165 +319,170 @@ return [
         ],
 
         // Sidebar items:
-
         [
-            'text' => 'Modulos Del Sistema',
+            'text' => 'Dashboard',
             'url' => '/home',
-            'icon' => 'nav-icon fas fa-tachometer-alt',
-            'label' => 10,
-            'label_color' => 'warning',
+            'icon' => 'fas fa-tachometer-alt',
         ],
 
-        [],//'header' => 'account_settings'],
+        ['header' => 'OPERACIONES'],
 
+        // Punto de Venta
+        /* [
+            'text' => 'Punto de Venta (POS)',
+            'url' => 'pos',
+            'icon' => 'fas fa-cash-register',
+            'can' => 'pos.index',
+        ], */
+
+        // Ventas
         [
             'text' => 'Ventas',
             'icon' => 'fas fa-shopping-cart',
+            'can' => ['ventas.index', 'ventas.create'], // Muestra si tiene cualquiera de estos
             'submenu' => [
                 [
                     'text' => 'Punto de Venta (POS)',
                     'url' => 'ventas/crear-venta',
                     'icon' => 'fas fa-cash-register',
+                    'can' => 'ventas.create',
                 ],
-
                 [
                     'text' => 'Historial Ventas',
                     'url' => 'detalles/detalle-ventas',
                     'icon' => 'fas fa-history',
+                    'can' => 'ventas.index',
                 ],
             ],
         ],
 
-        [
-            'text' => 'Compras',
-            'url' => 'compras/',
-            'icon' => 'fas fa-store',
-        ],
-
-        [
-            'text' => 'Caja',
-            'url' => 'cajas/',
-            'icon' => 'fas fa-cash-register',
-        ],
-
+        // Cotizaciones
         [
             'text' => 'Cotizaciones',
-            'url' => 'cotizaciones/',
+            'url' => 'cotizaciones',
             'icon' => 'fas fa-file-alt',
+            'can' => 'cotizaciones.index',
         ],
 
-        [
-            'text' => 'Gestion de Inventario',
-            'icon' => 'fas fa-boxes',
-            'submenu' => [
-                [
-                    'text' => 'Administrar Productos',
-                    'url' => 'productos/',
-                    'icon' => 'fas fa-boxes',
-                ],
-
-                [
-                    'text' => 'Administrar Marcas',
-                    'url' => 'marcas/',
-                    'icon' => 'fas fa-tags ',
-                ],
-
-                [
-                    'text' => 'Administrar Categorias',
-                    'url' => 'categorias/',
-                    'icon' => 'fas fa-tags ',
-                ],
-
-
-            ],
-        ],
-
-        [
-            'text' => 'Proveedores',
-            'url' => 'proveedores/',
-            'icon' => 'fas fa-truck ',
-        ],
-
+        // Clientes
         [
             'text' => 'Clientes',
-            'url' => 'clientes/',
-            'icon' => 'fas fa-users ',
+            'url' => 'clientes',
+            'icon' => 'fas fa-users',
+            'can' => 'clientes.index',
         ],
 
+        // Caja
         [
-            'text' => 'Gestion de Usuarios',
-            'icon' => 'fas fa-user-shield ',
+            'text' => 'Caja',
+            'url' => 'cajas',
+            'icon' => 'fas fa-money-bill-wave',
+            'can' => 'cajas.index',
+        ],
+
+        ['header' => 'INVENTARIO'],
+
+        // Gestión de Inventario
+        [
+            'text' => 'Gestión de Inventario',
+            'icon' => 'fas fa-boxes',
+            'can' => ['productos.index', 'categorias.index', 'marcas.index'],
             'submenu' => [
                 [
-                    'text' => 'Administrar Usuarios',
-                    'url' => 'usuarios/',
-                    'icon' => 'fas fa-users',
+                    'text' => 'Productos',
+                    'url' => 'productos',
+                    'icon' => 'fas fa-box',
+                    'can' => 'productos.index',
                 ],
-
                 [
-                    'text' => 'Administrar Roles',
-                    'url' => 'roles/',
-                    'icon' => 'fas fa-user-shield',
+                    'text' => 'Categorías',
+                    'url' => 'categorias',
+                    'icon' => 'fas fa-tags',
+                    'can' => 'categorias.index',
+                ],
+                [
+                    'text' => 'Marcas',
+                    'url' => 'marcas',
+                    'icon' => 'fas fa-copyright',
+                    'can' => 'marcas.index',
                 ],
             ],
         ],
 
+        // Compras y Proveedores
+        [
+            'text' => 'Compras',
+            'icon' => 'fas fa-shopping-basket',
+            'can' => ['compras.index', 'proveedores.index'],
+            'submenu' => [
+                [
+                    'text' => 'Historial Compras',
+                    'url' => 'compras',
+                    'icon' => 'fas fa-history',
+                    'can' => 'compras.index',
+                ],
+                [
+                    'text' => 'Proveedores',
+                    'url' => 'proveedores',
+                    'icon' => 'fas fa-truck',
+                    'can' => 'proveedores.index',
+                ],
+            ],
+        ],
+
+        ['header' => 'REPORTES'],
+
+        // Reportes
         [
             'text' => 'Reportes',
             'icon' => 'fas fa-chart-line',
+            'can' => 'reportes.index',
             'submenu' => [
                 [
-                    'text' => 'Reportes de Productos',
-                    'url' => 'reporte-productos/',
+                    'text' => 'Reporte de Productos',
+                    'url' => 'reporte-productos',
                     'icon' => 'fas fa-chart-bar',
+                    'can' => 'reportes.productos',
+                ],
+                [
+                    'text' => 'Productos Bajo Stock',
+                    'url' => 'reporte-productos/falta-stock',
+                    'icon' => 'fas fa-exclamation-triangle',
+                    'can' => 'reportes.falta-stock',
                 ],
             ],
         ],
 
-        /* [
-            'text' => 'Facturación',
-            'icon' => 'fas fa-file-alt',
+        ['header' => 'ADMINISTRACIÓN'],
+
+        // Gestión de Usuarios
+        [
+            'text' => 'Gestión de Usuarios',
+            'icon' => 'fas fa-user-shield',
+            'can' => ['usuarios.index', 'roles.index'],
             'submenu' => [
                 [
-                    'text' => 'Nueva Factura',
-                    'url' => 'facturacion/create',
-                    'icon' => 'fas fa-plus',
+                    'text' => 'Usuarios',
+                    'url' => 'usuarios',
+                    'icon' => 'fas fa-users',
+                    'can' => 'usuarios.index',
                 ],
                 [
-                    'text' => 'Mis Facturas',
-                    'url' => 'facturacion',
-                    'icon' => 'fas fa-file-invoice',
-                ],
-                [
-                    'text' => 'Catálogos',
-                    'icon' => 'fas fa-folder-open',
-                    'submenu' => [
-                        [
-                            'text' => 'Productos',
-                            'url' => 'facturacion/productos',
-                            'icon' => 'fas fa-boxes',
-                        ],
-                        [
-                            'text' => 'Clientes',
-                            'url' => 'facturacion/clientes',
-                            'icon' => 'fas fa-users',
-                        ],
-                        [
-                            'text' => 'Impuestos',
-                            'url' => 'facturacion/impuestos',
-                            'icon' => 'fas fa-file-invoice-dollar',
-                        ],
-                    ],
+                    'text' => 'Roles y Permisos',
+                    'url' => 'roles',
+                    'icon' => 'fas fa-user-lock',
+                    'can' => 'roles.index',
                 ],
             ],
-        ], */
-        [
-            'text' => 'Configuracion Negocio',
-            'url' => 'negocio/configuracion',
-            'icon' => 'fas fa-building ',
         ],
 
-
+        // Configuración del Negocio
+        [
+            'text' => 'Configuración',
+            'url' => 'negocio/configuracion',
+            'icon' => 'fas fa-cogs ',
+            'can' => 'negocio.edit',
+        ],
     ],
 
     /*

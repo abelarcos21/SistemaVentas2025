@@ -53,10 +53,15 @@ class User extends Authenticatable
         return 'https://picsum.photos/300/300';
     }
 
+    /* public function adminlte_image(){
+        return asset('images/avatar.png'); // o $this->avatar si lo tienes guardado
+    } */
+
     public function adminlte_profile_url(){
         return 'negocio/perfil/';
     }
+
     public function adminlte_desc(){
-        return 'Administrador';
+        return $this->getRoleNames()->first() ?? 'Sin rol';
     }
 }

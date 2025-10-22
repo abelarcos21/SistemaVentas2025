@@ -149,17 +149,16 @@
                 </div>
             </div>
 
-            <div class="col-md-3 col-sm-6 col-12">
+            {{-- <div class="col-md-3 col-sm-6 col-12">
                 <div class="info-box shadow">
                     <span class="info-box-icon bg-gradient-primary"><i class="fas fa-users"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Ganancias</span>
-                        {{-- <span class="info-box-number">$3,000</span> --}}
                         <h3>$3,000</h3>
                         <span class="small info-box-text">Ganancias</span>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
         </div>
 

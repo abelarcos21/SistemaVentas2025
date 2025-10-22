@@ -43,6 +43,6 @@
 @elseif ($navbarItemHelper->isLink($item))
 
     {{-- Link --}}
-    @include('adminlte::partials.navbar.menu-item-link')
+    {{-- @include('adminlte::partials.navbar.menu-item-link') --}}
 
 @endif
