@@ -391,7 +391,7 @@ return [
                 [
                     'text' => 'Productos',
                     'url' => 'productos',
-                    'icon' => 'fas fa-box',
+                    'icon' => 'fas fa-box-open',
                     'can' => 'productos.index',
                 ],
                 [
