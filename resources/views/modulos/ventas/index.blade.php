@@ -106,9 +106,18 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-1" onclick="agregarPago()">
+                            <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-3" onclick="agregarPago()">
                                 <i class="fa fa-plus"></i> Agregar otra opción de pago
                             </button>
+
+                            <div class="alert alert-info text-center mb-2">
+                                <h5 class="text-light">Total a Pagar</h5>
+                                <h2 class="font-weight-bold text-light">
+                                    <div id="carrito-total-container" class="text-center mt-3" style="display:none;">
+                                        <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
+                                    </div>
+                                </h2>
+                            </div>
 
                             {{-- Nota adicional --}}
                             <div class="form-group mb-3">
@@ -146,15 +155,6 @@
                                     <input type="number" class="form-control form-control-sm" id="envio"
                                         value="0" min="0" step="0.01">
                                 </div> --}}
-                            </div>
-
-                            <div class="alert alert-info text-center mb-3">
-                                <h5 class="text-light">Total a Pagar</h5>
-                                <h2 class="font-weight-bold text-light">
-                                    <div id="carrito-total-container" class="text-center mt-3" style="display:none;">
-                                        <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
-                                    </div>
-                                </h2>
                             </div>
 
                             <div class="row">
