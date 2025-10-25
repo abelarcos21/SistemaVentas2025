@@ -433,11 +433,13 @@
             subtotal += subtotalFila;
         });
 
-        let iva = subtotal * 0.16;
-        let total = subtotal + iva;
+       /*  let iva = subtotal * 0.16; */
+       /*  let total = subtotal + iva; */
+
+       let total = subtotal;
 
         $('#subtotal').text(subtotal.toFixed(2));
-        $('#iva').text(iva.toFixed(2));
+       /*  $('#iva').text(iva.toFixed(2)); */
         $('#total').text(total.toFixed(2));
     }
 

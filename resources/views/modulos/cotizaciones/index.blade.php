@@ -410,7 +410,9 @@
             });
 
             // Cancelar cotización
-            $(document).on('click', '.btn-cancelar', function() {
+            $(document).on('click', '.btn-cancelar', function(e) {
+                e.preventDefault();
+
                 var url = $(this).data('url');
                 var id = $(this).data('id');
 
@@ -437,13 +439,22 @@
                                     text: 'La cotización ha sido cancelada',
                                     icon: 'success'
                                 }).then(() => {
-                                    table.draw();
+                                    table.ajax.reload(null, false); // Mejor que table.draw()
                                 });
                             },
                             error: function(xhr) {
+                                let mensaje = 'No se pudo cancelar la cotización';
+
+                                // Mostrar mensaje específico del servidor si existe
+                                if (xhr.responseJSON && xhr.responseJSON.message) {
+                                    mensaje = xhr.responseJSON.message;
+                                } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                                    mensaje = xhr.responseJSON.error;
+                                }
+
                                 Swal.fire({
                                     title: 'Error',
-                                    text: 'No se pudo cancelar la cotización',
+                                    text: mensaje,
                                     icon: 'error'
                                 });
                             }

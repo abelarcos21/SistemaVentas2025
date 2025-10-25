@@ -273,7 +273,7 @@
                     <td>{{ $item->producto->nombre }}</td>
                     <td>{{ $item->cantidad }}</td>
                     <td>${{ number_format($item->precio_unitario, 2) }}</td>
-                    <td>${{ number_format($item->subtotal, 2) }}</td>
+                    <td>${{ number_format($item->total, 2) }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -287,7 +287,7 @@
         </tr>
         <tr>
             <td><strong>Impuestos:</strong></td>
-            <td>${{ number_format($cotizacion->impuestos, 2) }}</td>
+            <td>$0.00{{-- {{ number_format($cotizacion->impuestos, 2) }} --}}</td>
         </tr>
         <tr>
             <td><strong>Total:</strong></td>
