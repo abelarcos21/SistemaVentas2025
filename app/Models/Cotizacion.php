@@ -24,4 +24,9 @@ class Cotizacion extends Model
     public function usuario(){
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function venta(){
+        return $this->hasOne(Venta::class, 'cotizacion_id');
+
+    }
 }

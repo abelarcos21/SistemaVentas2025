@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('venta_id')->constrained()->onDelete('cascade');
             $table->decimal('monto', 10, 2);
             $table->string('metodo_pago')->default('efectivo'); // efectivo, tarjeta, transferencia, etc.
+            $table->string('referencia')->nullable();
             $table->timestamps();
         });
     }

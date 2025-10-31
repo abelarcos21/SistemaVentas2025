@@ -81,9 +81,10 @@
                                         <tr>
                                             <th>Nro</th>
                                             <th>Cliente</th>
-                                            <th>Fecha</th>
+                                            <th>Fecha Registro</th>
                                             <th>Gran Total</th>
                                             <th>Estado</th>
+                                            <th>Venta Asociada</th>
                                             <th class="no-export">Acciones</th>
                                         </tr>
                                     </thead>
@@ -134,7 +135,7 @@
         /* Dropdown: ancho igual al select, no desbordar */
         .select2-dropdown {
             position: absolute !important;
-            width: 100% !important;        /* 🔥 Solución clave */
+            width: 100% !important;        /* Solución clave */
             min-width: unset !important;
             max-width: none !important;
             box-sizing: border-box;
@@ -251,24 +252,11 @@
                     }
                 },
                 width: '100%',
-                dropdownParent: $('#filter_cliente').closest('.col-md-3'), // 👈 clave
+                dropdownParent: $('#filter_cliente').closest('.col-md-3'), // clave
                 dropdownAutoWidth: false,
                 containerCssClass: 'select2-sm',
                 dropdownCssClass: 'select2-sm'
             });
-
-           /*  $('#filter_estado').select2({
-                theme: 'bootstrap4',
-                placeholder: 'Seleccione un estado',
-                allowClear: true,
-                language: 'es',
-                width: '100%',
-                minimumResultsForSearch: -1, // Ocultar búsqueda para pocos elementos
-                dropdownAutoWidth: true,
-                containerCssClass: 'select2-sm',
-                dropdownCssClass: 'select2-sm'
-            }); */
-
 
             // Inicializar DataTable
             var table = $('#cotizaciones-table').DataTable({
@@ -289,6 +277,7 @@
                     { data: 'fecha', name: 'fecha', className: 'text-center' },
                     { data: 'total', name: 'total', className: 'text-right' },
                     { data: 'estado', name: 'estado', className: 'text-center', orderable: false },
+                    { data: 'venta', name: 'venta', orderable: false, searchable: false },
                     { data: 'acciones', name: 'acciones', className: 'text-center no-exportar', orderable: false, searchable: false }
                 ],
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
