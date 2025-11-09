@@ -17,8 +17,9 @@ return new class extends Migration
             $table->foreignId('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
             $table->foreignId('empresa_id')->constrained('empresas')->cascadeOnDelete(); //cascadeondelete Si se elimina la empresa, también se eliminan las ventas relacionadas
             $table->foreignId('caja_id')->nullable()->constrained('cajas');
+            $table->foreignId('cotizacion_id')->nullable()->constrained('cotizaciones')->nullOnDelete();
             $table->float('total_venta');
-            $table->enum('estado', ['completada','cancelada','eliminada'])->default('completada');
+            $table->enum('estado', ['completada','cancelada'])->default('completada');
             $table->string('folio')->unique();
             $table->timestamps();
         });

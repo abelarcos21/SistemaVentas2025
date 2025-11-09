@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Venta extends Model
 {
 
-    protected $fillable = ['user_id', 'cliente_id', 'empresa_id', 'total_venta', 'estado', 'folio'];
+    protected $fillable = ['user_id', 'cliente_id', 'empresa_id', 'caja_id', 'cotizacion_id', 'total_venta', 'estado', 'folio'];
 
     public function caja(){
         return $this->belongsTo(Caja::class);
@@ -27,5 +27,9 @@ class Venta extends Model
 
     public function detalles(){
         return $this->hasMany(DetalleVenta::class);
+    }
+
+    public function cotizacion(){
+        return $this->belongsTo(Cotizacion::class, 'cotizacion_id');
     }
 }

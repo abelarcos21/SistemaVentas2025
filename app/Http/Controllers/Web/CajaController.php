@@ -31,11 +31,11 @@ class CajaController extends Controller{
                     return $caja->usuario->name;
                 })
                 ->addColumn('apertura', function ($caja) {
-                    return \Carbon\Carbon::parse($caja->apertura)->format('d/m/Y H:i');
+                    return \Carbon\Carbon::parse($caja->apertura)->format('d/m/Y h:i a');
                 })
                 ->addColumn('cierre', function ($caja) {
                     return $caja->cierre
-                        ? \Carbon\Carbon::parse($caja->cierre)->format('d/m/Y H:i')
+                        ? \Carbon\Carbon::parse($caja->cierre)->format('d/m/Y h:i a')
                         : '-';
                 })
                 ->addColumn('monto_inicial', function ($caja) {

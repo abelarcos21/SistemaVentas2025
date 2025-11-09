@@ -207,12 +207,18 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/{cotizacion}', [CotizacionController::class, 'show'])->name('cotizaciones.show')->middleware('permission:cotizaciones.show');
         Route::get('/{cotizacion}/edit', [CotizacionController::class, 'edit'])->name('cotizaciones.edit')->middleware('permission:cotizaciones.edit');
         Route::put('/{cotizacion}', [CotizacionController::class, 'update'])->name('cotizaciones.update')->middleware('permission:cotizaciones.update');
-        Route::delete('/{cotizacion}', [CotizacionController::class, 'destroy'])->name('cotizaciones.destroy')->middleware('permission:cotizaciones.destroy');
+        Route::delete('/{cotizacion}/cancelar', [CotizacionController::class, 'destroy'])->name('cotizaciones.destroy')->middleware('permission:cotizaciones.destroy');
 
         // Acciones especiales
-        Route::post('/{cotizacion}/convertir', [CotizacionController::class, 'convertirEnVenta'])->name('cotizaciones.convertir');
-        Route::post('/{cotizacion}/cancelar', [CotizacionController::class, 'cancelar'])->name('cotizaciones.cancelar');
+       /*  Route::post('/{cotizacion}/convertir', [CotizacionController::class, 'convertirEnVenta'])->name('cotizaciones.convertir'); */
+       /*  Route::post('/{cotizacion}/cancelar', [CotizacionController::class, 'cancelar'])->name('cotizaciones.cancelar'); */
         Route::get('/{id}/pdf', [CotizacionController::class, 'descargarPdf'])->name('cotizaciones.pdf');
+
+        // Mostrar formulario de conversión
+        Route::get('/{id}/convertir', [CotizacionController::class, 'mostrarFormularioConversion'])->name('cotizaciones.convertir');
+
+        // Procesar la venta
+        Route::post('/{id}/procesar-venta', [CotizacionController::class, 'convertirEnVenta'])->name('cotizaciones.procesar-venta');
     });
 
     // ============================================

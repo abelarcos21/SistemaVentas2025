@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('producto_id')->constrained('productos');
             $table->integer('cantidad');
             $table->decimal('precio_unitario', 10, 2);
+            $table->string('tipo_precio')->default('base');
             $table->decimal('total', 10, 2);
             $table->timestamps();
         });

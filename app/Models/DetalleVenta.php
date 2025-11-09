@@ -16,8 +16,14 @@ class DetalleVenta extends Model
         'venta_id',
         'producto_id',
         'cantidad',
-        'precio_unitario',
+        'precio_unitario_aplicado',
         'sub_total',
+        'tipo_precio_aplicado',
+    ];
+
+    protected $casts = [
+        'precio_unitario_aplicado' => 'decimal:2',
+        'sub_total' => 'decimal:2',
     ];
 
     // Relaciones

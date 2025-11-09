@@ -4,7 +4,7 @@
 
 @section('content_header')
     <!-- Content Header (Page header) -->
-    <h1><i class="fas fa-cash-register"></i> Punto de Venta</h1>
+    <h1></h1>
 @stop
 
 @section('content')
@@ -40,9 +40,9 @@
                                             <th>Producto</th>
                                             <th>Stock</th>
                                             <th>Cantidad</th>
-                                            <th>Precio Vta.</th>
+                                            <th>Precio</th>
                                             <th>Total</th>
-                                            <th>Quitar</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody id="carrito-items">
@@ -106,9 +106,18 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-1" onclick="agregarPago()">
+                            <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-3" onclick="agregarPago()">
                                 <i class="fa fa-plus"></i> Agregar otra opción de pago
                             </button>
+
+                            <div class="alert alert-info text-center mb-2">
+                                <h5 class="text-light">Total a Pagar</h5>
+                                <h2 class="font-weight-bold text-light">
+                                    <div id="carrito-total-container" class="text-center mt-3" style="display:none;">
+                                        <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
+                                    </div>
+                                </h2>
+                            </div>
 
                             {{-- Nota adicional --}}
                             <div class="form-group mb-3">
@@ -131,30 +140,21 @@
                         <div class="card-footer bg-light" style="position: sticky; bottom: 0; z-index: 20;">
                             <!-- totales -->
                             <div class="row mb-2">
-                                <div class="col-4">
+                                <div class="col-6">
                                     <label class="text-sm">Impuesto %</label>
                                     <input type="number" class="form-control form-control-sm" id="impuesto"
                                         value="0" min="0" max="100" step="0.1">
                                 </div>
-                                <div class="col-4">
+                                <div class="col-6">
                                     <label class="text-sm">Descuento $</label>
                                     <input type="number" class="form-control form-control-sm" id="descuento"
                                         value="0" min="0" step="0.01">
                                 </div>
-                                <div class="col-4">
+                                {{-- <div class="col-4">
                                     <label class="text-sm">Envío $</label>
                                     <input type="number" class="form-control form-control-sm" id="envio"
                                         value="0" min="0" step="0.01">
-                                </div>
-                            </div>
-
-                            <div class="alert alert-info text-center mb-3">
-                                <h5 class="text-light">Total a Pagar</h5>
-                                <h2 class="font-weight-bold text-light">
-                                    <div id="carrito-total-container" class="text-center mt-3" style="display:none;">
-                                        <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
-                                    </div>
-                                </h2>
+                                </div> --}}
                             </div>
 
                             <div class="row">
@@ -757,11 +757,11 @@
                 //Etiqueta visual según el tipo de precio aplicado
                 let badgeTipo = '';
                 if (item.tipo_precio === 'oferta') {
-                    badgeTipo = `<span class="badge bg-danger ms-1">Oferta</span>`;
+                    badgeTipo = `<span class="badge bg-success ms-1">Oferta</span>`;
                 } else if (item.tipo_precio === 'mayoreo') {
                     badgeTipo = `<span class="badge bg-warning text-dark ms-1">Mayoreo</span>`;
                 } else {
-                    badgeTipo = `<span class="badge bg-secondary ms-1">Base</span>`;
+                    badgeTipo = `<span class="badge bg-secondary ms-1">Normal</span>`;
                 }
 
                 const row = `

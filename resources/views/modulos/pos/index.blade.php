@@ -748,9 +748,12 @@
                 this.showResult('Buscando producto...', 'loading');
 
                 const searchPromise = $.ajax({
-                    url: '/api/productos/buscar',
+                    url: '{{ route("productos.buscar") }}',
                     method: 'POST',
-                    data: { codigo: codigo },
+                    data: {
+                        codigo: codigo,
+                        _token: '{{ csrf_token() }}'
+                    },
                     timeout: 5000
                 });
 
@@ -819,7 +822,7 @@
                         cancelButtonColor: '#d33'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = "/producto/create?codigo=" + codigo;
+                            window.location.href = "/productos/create-modal?codigo=" + codigo;
                         }
                     });
                 }, 1500);
