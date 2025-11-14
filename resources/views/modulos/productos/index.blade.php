@@ -47,6 +47,36 @@
                         <!-- /.card-header -->
 
                         <div class="card-body">
+                            <!-- Filtros -->
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title mb-2">
+                                                <i class="fas fa-filter"></i> Filtros de Caducidad
+                                            </h5>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm ml-1 filter-caducidad active" data-filter="all">
+                                                    <i class="fas fa-list"></i> Todos
+                                                </button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm filter-caducidad" data-filter="vencidos">
+                                                    <i class="fas fa-times-circle"></i> Vencidos
+                                                </button>
+                                                <button type="button" class="btn btn-outline-warning btn-sm filter-caducidad" data-filter="7dias">
+                                                    <i class="fas fa-exclamation-triangle"></i> Próximos 7 días
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info btn-sm filter-caducidad" data-filter="15dias">
+                                                    <i class="fas fa-clock"></i> Próximos 15 días
+                                                </button>
+                                                <button type="button" class="btn btn-outline-success btn-sm filter-caducidad" data-filter="30dias">
+                                                    <i class="fas fa-calendar-check"></i> Próximos 30 días
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
@@ -55,13 +85,14 @@
                                             <th class="no-exportar">Imagen</th>
                                             <th>Codigo de Barras</th>
                                             <th>Nombre</th>
+                                            <th>Caducidad</th>
                                             <th>Categoria</th>
                                             <th>Marca</th>
                                             <th>Descripción</th>
                                             <th>Proveedor</th>
                                             <th>Stock</th>
-                                            <th>Precio Venta</th>
-                                            <th>Precio Mayoreo</th>
+                                            <th>Precio Venta.P.</th>
+                                            <th>Precio Mayoreo.</th>
                                             <th>Precio Oferta</th>
                                             <th>Precio Compra</th>
                                             <th>Fecha Registro</th>
@@ -749,154 +780,6 @@
         });
     </script>
 
-
-    {{--ESCANEAR EL PRODUCTO O ESCRIBIRLO PARA VERIFICAR SI EXISTE SI NO SE CREA UN NUEVO PRODUCTO--}}
-    <script>
-       /*  $(document).ready(function() {
-            $('#codigo_input').on('keypress', function(e) {
-                if (e.which === 13) { // Enter
-                    e.preventDefault();
-                    const codigo = $(this).val().trim();
-
-                    if (!codigo) return;
-
-                    // Validación EAN-13: 13 dígitos numéricos exactos
-                    const esEAN13 = /^\d{13}$/.test(codigo);
-                    if (!esEAN13) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Código inválido',
-                            text: 'El código debe contener exactamente 13 dígitos (EAN-13).'
-                        });
-                        $(this).val(''); // Limpiar
-                        return;
-                    }
-
-                    $.ajax({
-                        url: '{{ route("productos.buscar") }}',
-                        method: 'POST',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            codigo: codigo
-                        },
-                        success: function(res) {
-
-                            // Si llega aquí es porque encontró el producto
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Producto ya registrado',
-                                text: `Producto: ${res.nombre}\nPrecio: $${res.precio_venta}\nStock: ${res.cantidad}`,
-                            });
-
-
-                        },
-                        error: function(xhr){
-
-                            // Si llega aquí es porque NO encontró el producto (error 404)
-                            if (xhr.status === 404) {
-                                // Cerrar modal del scanner
-                                //$('#scannerModal').modal('hide');
-
-                                // Prellenar código y mostrar modal crear producto
-                                $('#codigo').val(codigo);
-                                $('#modalCrearProducto').modal('show');
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Error al buscar el producto. Intente nuevamente.'
-                                });
-                            }
-
-                        }
-                    });
-
-                    $(this).val(''); // Limpiar campo para siguiente escaneo
-                }
-            });
-
-            $('#formCrearProducto').on('submit', function(e) {
-                e.preventDefault();
-
-                var formData = new FormData(this);
-                formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
-                $.ajax({
-                    url: '{{ route("producto.store") }}',
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(res) {
-                        $('#modalCrearProducto').modal('hide');
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Producto creado',
-                            text: 'Puedes realizar la compra más tarde usando el botón Comprar.',
-                        });
-
-                        // Agregar nueva fila al DataTable con todas las columnas
-                        $('#example1').DataTable().row.add([
-                            res.producto.id, // Nro
-                            `<a href="#" data-toggle="modal" data-target="#modalImagen${res.producto.id}">
-                                <img src="/storage/${res.producto.imagen ? res.producto.imagen.ruta : 'images/placeholder-caja.png'}"
-                                    width="50" height="50" class="img-thumbnail rounded shadow" style="object-fit: cover;">
-                            </a>`, // Imagen
-                            `<code>${res.producto.codigo || ''}</code>`, // Código de Barras
-                            res.producto.nombre, // Nombre
-                            `<span class="badge bg-primary">${res.producto.categoria_id || ''}</span>`, // Categoría
-                            res.producto.marca_id || '', // Marca
-                            res.producto.descripcion || '', // Descripción
-                            res.producto.proveedor_id || '', // Proveedor
-                            res.producto.cantidad == 0 ?
-                                '<span class="badge bg-warning">Sin stock</span>' :
-                                `<span class="badge bg-success">${res.producto.cantidad || 0}</span>`, // Stock
-                            res.producto.precio_venta ?
-                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_venta).toFixed(2)}</strong>` :
-                                '<span class="text-muted">No definido</span>', // Precio Venta
-                            res.producto.precio_compra ?
-                                `<strong>${res.producto.moneda || 'BOB'} $${parseFloat(res.producto.precio_compra).toFixed(2)}</strong>` :
-                                '<span class="text-muted">No definido</span>', // Precio Compra
-                            new Date().toLocaleDateString('es-ES', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: true
-                            }), // Fecha Registro
-                            `<div class="custom-control custom-switch toggle-estado">
-                                <input type="checkbox" role="switch" class="custom-control-input"
-                                    id="activoSwitch${res.producto.id}" ${res.producto.activo ? 'checked' : ''} data-id="${res.producto.id}">
-                                <label class="custom-control-label" for="activoSwitch${res.producto.id}"></label>
-                            </div>`, // Activo
-                            `<div class="d-flex">
-                                <a href="/compras/create/${res.producto.id}" class="btn btn-success btn-sm mr-1 d-flex align-items-center">
-                                    <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
-                                </a>
-                            </div>`, // Comprar
-                            `<div class="d-flex">
-                                <a href="/productos/${res.producto.id}/edit" class="btn btn-info btn-sm mr-1 d-flex align-items-center">
-                                    <i class="fas fa-edit mr-1"></i> Editar
-                                </a>
-                                <a href="/productos/${res.producto.id}/show" class="btn btn-danger btn-sm mr-1 d-flex align-items-center">
-                                    <i class="fas fa-trash-alt mr-1"></i> Eliminar
-                                </a>
-                            </div>` // Acciones
-                        ]).draw();
-
-                        // Limpiar el formulario
-                        $('#formCrearProducto')[0].reset();
-                    },
-                    error: function(err) {
-                        Swal.fire('Error', 'Ocurrió un problema al guardar.', 'error');
-                    }
-                });
-            });
-        }); */
-    </script>
-
-
     {{-- IMPRIMIR CODIGOS EAN-13 ETIQUETAS  --}}
     <script>
         function imprimirCodigo(imagenUrl) {
@@ -995,13 +878,18 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('producto.index') }}",
-                    type: 'GET'
+                    type: 'GET',
+                    data: function(d) {
+                        //AGREGAR PARÁMETRO DE FILTRO DE CADUCIDAD
+                        d.filter_caducidad = $('.filter-caducidad.active').data('filter') || 'all';
+                    }
                 },
                 columns: [
                     {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'imagen', name: 'imagen', orderable: false, searchable: false, className: 'no-exportar'},
                     {data: 'codigo', name: 'productos.codigo'},
                     {data: 'nombre', name: 'productos.nombre'},
+                    {data: 'caducidad', name: 'caducidad', orderable: true, searchable: false,className: 'text-center'},
                     {data: 'nombre_categoria', name: 'categorias.nombre'},
                     {data: 'nombre_marca', name: 'marcas.nombre'},
                     {data: 'descripcion', name: 'productos.descripcion'},
@@ -1449,6 +1337,23 @@
                 scrollX: false
             });
 
+            //FILTROS DE CADUCIDAD
+            $('.filter-caducidad').on('click', function() {
+                var filter = $(this).data('filter');
+
+                // Remover clase active de todos los botones
+                $('.filter-caducidad').removeClass('active');
+                $(this).addClass('active');
+
+                // Recargar tabla con el nuevo filtro
+                table.ajax.reload();
+            });
+
+            // Refrescar tabla
+            $('#refreshTable').on('click', function() {
+                table.ajax.reload();
+            });
+
             // Refrescar tabla
             $('#refreshTable').on('click', function() {
                 table.ajax.reload();
@@ -1467,7 +1372,10 @@
                 });
             });
         });
-</script>
+
+
+
+    </script>
 
 @stop
 

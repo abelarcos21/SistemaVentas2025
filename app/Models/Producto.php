@@ -38,15 +38,9 @@ class Producto extends Model
         'fecha_inicio_oferta',
         'fecha_fin_oferta',
 
-
-        /* 'clave_prod_serv',//datos fiscales del sat cfdi 4.0
-        'clave_unidad',
-        'unidad_descripcion',
-        'precio_unitario',
-        'tasa_o_cuota',
-        'tipo_factor',
-        'objeto_imp',
-        'numero_identificacion', */
+        //Campos de caducidad
+        'requiere_fecha_caducidad',
+        'fecha_caducidad',
 
     ];
 
@@ -55,6 +49,7 @@ class Producto extends Model
         'activo' => 'boolean',
         'permite_mayoreo' => 'boolean',
         'en_oferta' => 'boolean',
+        'requiere_fecha_caducidad' => 'boolean', 
         'precio_venta' => 'decimal:2',
         'precio_compra' => 'decimal:2',
         'precio_mayoreo' => 'decimal:2',
@@ -62,6 +57,7 @@ class Producto extends Model
         'cantidad_minima_mayoreo' => 'integer',
         'fecha_inicio_oferta' => 'date',
         'fecha_fin_oferta' => 'date',
+        'fecha_caducidad' => 'date', 
     ];
 
     //Accesor para obtener el precio vigente
@@ -136,6 +132,128 @@ class Producto extends Model
      */
     public function scopeInactivos($query){
         return $query->where('activo', false);
+    }
+
+    /**
+     * Scope para productos que requieren control de caducidad
+    */
+    public function scopeConCaducidad($query)
+    {
+        return $query->where('requiere_fecha_caducidad', true)
+                    ->whereNotNull('fecha_caducidad');
+    }
+
+    /**
+     * Scope para productos próximos a vencer
+     * @param int $dias Días de anticipación para la alerta
+    */
+    public function scopeProximosAVencer($query, $dias = 30)
+    {
+        $fechaLimite = now()->addDays($dias);
+        
+        return $query->where('requiere_fecha_caducidad', true)
+                    ->whereNotNull('fecha_caducidad')
+                    ->where('fecha_caducidad', '<=', $fechaLimite)
+                    ->where('fecha_caducidad', '>=', now())
+                    ->where('activo', true);
+    }
+
+    /**
+     * Scope para productos vencidos
+     */
+    public function scopeVencidos($query)
+    {
+        return $query->where('requiere_fecha_caducidad', true)
+                    ->whereNotNull('fecha_caducidad')
+                    ->where('fecha_caducidad', '<', now())
+                    ->where('activo', true);
+    }
+
+    /**
+     * Verificar si el producto está próximo a vencer
+     * @param int $dias
+     * @return bool
+     */
+    public function estaProximoAVencer($dias = 30)
+    {
+        if (!$this->requiere_fecha_caducidad || !$this->fecha_caducidad) {
+            return false;
+        }
+        
+        // Asegurarse de que sea un objeto Carbon
+        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon 
+            ? $this->fecha_caducidad 
+            : \Carbon\Carbon::parse($this->fecha_caducidad);
+        
+        return $fecha->isFuture() && $fecha->diffInDays(now()) <= $dias;
+    }
+
+    
+    /**
+     * Verificar si el producto está vencido
+     * @return bool
+     */
+    public function estaVencido()
+    {
+        if (!$this->requiere_fecha_caducidad || !$this->fecha_caducidad) {
+            return false;
+        }
+        
+        // Asegurarse de que sea un objeto Carbon
+        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon 
+            ? $this->fecha_caducidad 
+            : \Carbon\Carbon::parse($this->fecha_caducidad);
+        
+        return $fecha->isPast();
+    }
+
+    /**
+     * Obtener días restantes hasta vencer
+     * @return int|null
+    */
+    public function diasParaVencer()
+    {
+        if (!$this->requiere_fecha_caducidad || !$this->fecha_caducidad) {
+            return null;
+        }
+        
+        // Asegurarse de que sea un objeto Carbon
+        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon 
+            ? $this->fecha_caducidad 
+            : \Carbon\Carbon::parse($this->fecha_caducidad);
+        
+        if ($fecha->isPast()) {
+            return 0;
+        }
+        
+        return $fecha->diffInDays(now());
+    }
+
+    /**
+     * Obtener clase de badge según estado de caducidad
+     * @return string
+     */
+    public function getBadgeCaducidad()
+    {
+        if (!$this->requiere_fecha_caducidad) {
+            return '';
+        }
+        
+        if ($this->estaVencido()) {
+            return 'badge-danger';
+        }
+        
+        $dias = $this->diasParaVencer();
+        
+        if ($dias <= 7) {
+            return 'badge-danger';
+        } elseif ($dias <= 15) {
+            return 'badge-warning';
+        } elseif ($dias <= 30) {
+            return 'badge-info';
+        }
+        
+        return 'badge-success';
     }
 
     /**

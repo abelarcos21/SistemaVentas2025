@@ -50,14 +50,14 @@ class ProveedorController extends Controller
                 })
                 ->addColumn('acciones', function($proveedor) {
                     return '<div class="d-flex justify-content-center">
-                                <a href="'.route('proveedor.show', $proveedor->id).'" class="btn btn-info btn-sm mr-1" title="Ver">
-                                    <i class="fas fa-eye"></i> Ver
+                                <a href="'.route('proveedor.show', $proveedor->id).'" class="btn bg-gradient-info btn-sm mr-1" title="Ver Detalles">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="'.route('proveedor.edit', $proveedor->id).'" class="btn btn-warning btn-sm mr-1" title="Editar">
-                                    <i class="fas fa-edit"></i> Editar
+                                <a href="'.route('proveedor.edit', $proveedor->id).'" class="btn bg-gradient-primary btn-sm mr-1" title="Editar">
+                                    <i class="fas fa-edit"></i>
                                 </a>
-                                <button type="button" class="btn btn-danger btn-sm delete-btn" data-id="'.$proveedor->id.'" title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                <button type="button" class="btn bg-gradient-danger btn-sm delete-btn" data-id="'.$proveedor->id.'" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </div>';
                 })

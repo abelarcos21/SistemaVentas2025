@@ -112,6 +112,38 @@
                                     </div>
                                 </div>
 
+                                {{-- ================== CAMPOS DE FECHA DE CADUCIDAD ================== --}}
+                                <hr>
+                                <h5 class="text-primary"><i class="fas fa-calendar-times"></i> Control de Caducidad</h5>
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch mt-4">
+                                                <input type="hidden" name="requiere_fecha_caducidad" value="0">
+                                                <input type="checkbox" class="custom-control-input" id="requiere_fecha_caducidad_create" name="requiere_fecha_caducidad" value="1">
+                                                <label class="custom-control-label" for="requiere_fecha_caducidad_create">
+                                                    Producto con Fecha de Caducidad
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> Activa esta opción para productos perecederos o con vencimiento
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12" id="fecha_caducidad_container_create" style="display: none;">
+                                        <div class="form-group">
+                                            <label for="fecha_caducidad_create">
+                                                <i class="fas fa-calendar-alt text-warning"></i> Fecha de Caducidad <span class="text-danger" id="required_asterisk_caducidad">*</span>
+                                            </label>
+                                            <input type="date" name="fecha_caducidad" id="fecha_caducidad_create" class="form-control" value="{{ old('fecha_caducidad') }}" min="{{ date('Y-m-d') }}">
+                                            <small class="text-muted">
+                                                <i class="fas fa-exclamation-triangle"></i> Debe ser una fecha futura
+                                            </small>
+                                            <div class="invalid-feedback" id="error-fecha_caducidad"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {{-- ================== CAMPOS DE MAYOREO ================== --}}
                                 <hr>
                                 <h5 class="text-primary"><i class="fas fa-boxes"></i> Opciones de Mayoreo</h5>
@@ -234,6 +266,7 @@
                                             <li><i class="fas fa-check text-success"></i> Imagen opcional pero recomendada</li>
                                             <li><i class="fas fa-check text-success"></i> Validación EAN-13 automática</li>
                                             <li><i class="fas fa-check text-success"></i> Producto activo por defecto</li>
+                                            <li><i class="fas fa-clock text-warning"></i> Control de caducidad opcional</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -308,6 +341,23 @@ function initializeCreateModal() {
 
             console.log('Select2 inicializados correctamente');
         }, 200);
+    });
+
+    // Toggle de fecha de caducidad
+    $('#requiere_fecha_caducidad_create').change(function() {
+        const container = $('#fecha_caducidad_container_create');
+        const input = $('#fecha_caducidad_create');
+        
+        if ($(this).is(':checked')) {
+            container.slideDown(300);
+            input.prop('required', true);
+        } else {
+            container.slideUp(300);
+            input.prop('required', false);
+            input.val('');
+            input.removeClass('is-invalid');
+            $('#error-fecha_caducidad').text('').hide();
+        }
     });
 
     // Preview de imagen
@@ -473,6 +523,10 @@ function initializeCreateModal() {
         $('#img_placeholder_create').removeClass('d-none');
         $('.form-control').removeClass('is-invalid');
         $('.invalid-feedback').text('').hide();
+        
+        // Reset del campo de fecha de caducidad
+        $('#fecha_caducidad_container_create').hide();
+        $('#fecha_caducidad_create').prop('required', false);
     });
 }
 
@@ -582,5 +636,10 @@ initializeCreateModal();
 
 .select2-container--bootstrap4.select2-container--open .select2-dropdown {
     border-top: 1px solid #ced4da;
+}
+
+/* Estilos para el contenedor de fecha de caducidad */
+#fecha_caducidad_container_create {
+    transition: all 0.3s ease;
 }
 </style>

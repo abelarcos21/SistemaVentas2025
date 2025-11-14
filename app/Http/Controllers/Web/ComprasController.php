@@ -60,12 +60,12 @@ class ComprasController extends Controller
                     return $compra->created_at->format('d/m/Y h:i a');
                 })
                 ->addColumn('acciones', function ($compra) {
-                    $editBtn = '<a href="' . route('compra.edit', $compra->id) . '" class="btn bg-gradient-info btn-sm mr-1">
-                                    <i class="fas fa-edit"></i> Editar
+                    $editBtn = '<a href="' . route('compra.edit', $compra->id) . '" class="btn bg-gradient-primary btn-sm mr-1" title="Editar">
+                                    <i class="fas fa-edit"></i>
                                 </a>';
 
-                    $deleteBtn = '<button class="btn bg-gradient-danger btn-sm delete-btn" data-id="' . $compra->id . '">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
+                    $deleteBtn = '<button class="btn bg-gradient-danger btn-sm delete-btn" data-id="' . $compra->id . '" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>';
 
                     return '<div class="d-flex">' . $editBtn . $deleteBtn . '</div>';
@@ -291,23 +291,5 @@ class ComprasController extends Controller
 
     }
 
-    /* // Método para eliminar compra vía AJAX
-    public function destroy($id)
-    {
-        try {
-            $compra = Compra::findOrFail($id);
-            $compra->delete();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Compra eliminada exitosamente'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al eliminar la compra: ' . $e->getMessage()
-            ], 500);
-        }
-    } */
 
 }

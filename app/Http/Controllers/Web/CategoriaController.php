@@ -39,17 +39,17 @@ class CategoriaController extends Controller{
                 })
                 ->addColumn('acciones', function ($categoria) {
                     return '<div class="d-flex">
-                                <a href="' . route('categoria.show', $categoria) . '" class="btn bg-gradient-info btn-sm mr-1">
-                                    <i class="fas fa-eye"></i> Ver
+                                <a href="' . route('categoria.show', $categoria) . '" class="btn bg-gradient-info btn-sm mr-1" title="Ver Detalles">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="' . route('categoria.edit', $categoria) . '" class="btn bg-gradient-warning btn-sm mr-1">
-                                    <i class="fas fa-edit"></i> Editar
+                                <a href="' . route('categoria.edit', $categoria) . '" class="btn bg-gradient-primary btn-sm mr-1" title="Editar">
+                                    <i class="fas fa-edit"></i>
                                 </a>
                                 <form action="' . route('categoria.destroy', $categoria) . '" method="POST" class="formulario-eliminar" style="display:inline;">
                                     ' . csrf_field() . '
                                     ' . method_field('DELETE') . '
-                                    <button type="submit" class="btn bg-gradient-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    <button type="submit" class="btn bg-gradient-danger btn-sm" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>
                             </div>';

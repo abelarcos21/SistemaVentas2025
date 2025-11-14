@@ -44,9 +44,14 @@ return new class extends Migration
             $table->date('fecha_inicio_oferta')->nullable();
             $table->date('fecha_fin_oferta')->nullable();
 
+            //CAMPOS PARA FECHA DE CADUCIDAD
+            $table->boolean('requiere_fecha_caducidad')->default(false);
+            $table->date('fecha_caducidad')->nullable();
+
             //-- Índices para rendimiento
             $table->index(['en_oferta', 'fecha_inicio_oferta', 'fecha_fin_oferta'], 'idx_productos_oferta');
             $table->index('permite_mayoreo', 'idx_productos_mayoreo');
+            $table->index(['requiere_fecha_caducidad', 'fecha_caducidad'], 'idx_productos_caducidad');
 
             $table->timestamps();
         });

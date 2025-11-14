@@ -86,28 +86,28 @@ class CotizacionController extends Controller
                     $acciones = '
                         <div class="d-flex justify-content-center gap-1" style="gap: 0.25rem;">
                             <a href="' . route('cotizaciones.show', $cotizacion) . '" class="btn bg-gradient-info btn-sm" title="Ver Detalle">
-                                <i class="fas fa-eye"></i> Ver Detalle
+                                <i class="fas fa-eye"></i>
                             </a>
                             <a target="_blank" href="' . route('cotizaciones.pdf', $cotizacion->id) . '" class="btn bg-gradient-secondary btn-sm" title="Ver PDF">
-                                <i class="fas fa-print"></i> Ver PDF
+                                <i class="fas fa-file-pdf"></i>
                             </a>
                     ';
 
                     if ($cotizacion->estado === 'pendiente') {
                         $acciones .= '
-                            <a href="' . route('cotizaciones.edit', $cotizacion) . '" class="btn bg-gradient-warning btn-sm" title="Editar">
-                                <i class="fas fa-edit"></i> Editar
+                            <a href="' . route('cotizaciones.edit', $cotizacion) . '" class="btn bg-gradient-primary btn-sm" title="Editar">
+                                <i class="fas fa-edit"></i>
                             </a>
                             <a href="' . route('cotizaciones.convertir', $cotizacion->id) . '"
                             class="btn bg-gradient-success btn-sm"
                             title="Convertir a Venta">
-                                <i class="fas fa-cash-register"></i> Convertir a Venta
+                                <i class="fas fa-cash-register"></i>
                             </a>
                             <button type="button" class="btn bg-gradient-danger btn-sm btn-cancelar"
                                 data-id="' . $cotizacion->id . '"
                                 data-url="' . route('cotizaciones.destroy', $cotizacion) . '"
                                 title="Cancelar Cotizacion">
-                                <i class="fas fa-trash"></i> Cancelar
+                                <i class="fas fa-trash"></i>
                             </button>';
                     }
 

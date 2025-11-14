@@ -62,11 +62,11 @@ class UsuarioController extends Controller
                 ->addColumn('action', function($row) {
                     $btn = '
                         <div class="d-inline-flex justify-content-center">
-                            <a href="' . route('usuario.show', $row) . '" class="btn bg-gradient-info btn-sm mr-1">
-                                <i class="fas fa-eye"></i> Ver
+                            <a href="' . route('usuario.show', $row) . '" class="btn bg-gradient-info btn-sm mr-1" title="Ver Detalles">
+                                <i class="fas fa-eye"></i>
                             </a>
-                            <a href="' . route('usuario.edit', $row) . '" class="btn bg-gradient-warning btn-sm mr-1">
-                                <i class="fas fa-user"></i> <i class="fas fa-pen"></i> Editar
+                            <a href="' . route('usuario.edit', $row) . '" class="btn bg-gradient-primary btn-sm mr-1" title="Editar">
+                                <i class="fas fa-user"></i> <i class="fas fa-pen"></i>
                             </a>
                         </div>
                     ';

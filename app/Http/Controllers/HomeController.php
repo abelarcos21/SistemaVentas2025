@@ -44,6 +44,26 @@ class HomeController extends Controller
         $ventasRecientes = Venta::orderBy('created_at','desc')->take(5)->get();
         $comprasRecientes = Compra::orderBy('created_at', 'desc')->take(5)->get();
 
+        // Productos próximos a vencer (30 días)
+        $productosProximosVencer = Producto::proximosAVencer(30)
+            ->with(['categoria', 'marca'])
+            ->orderBy('fecha_caducidad', 'asc')
+            ->get();
+        
+        // Productos vencidos
+        $productosVencidos = Producto::vencidos()
+            ->with(['categoria', 'marca'])
+            ->orderBy('fecha_caducidad', 'asc')
+            ->get();
+        
+        // Estadísticas de caducidad
+        $estadisticasCaducidad = [
+            'proximos_7_dias' => Producto::proximosAVencer(7)->count(),
+            'proximos_15_dias' => Producto::proximosAVencer(15)->count(),
+            'proximos_30_dias' => Producto::proximosAVencer(30)->count(),
+            'vencidos' => Producto::vencidos()->count(),
+        ];
+
         // DATOS PARA LA GRÁFICA
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
@@ -87,6 +107,9 @@ class HomeController extends Controller
         }
 
         return view('home', compact(
+            'productosProximosVencer',
+            'productosVencidos',
+            'estadisticasCaducidad',
             'totalVentas',
             'cantidadVentas',
             'productosBajoStock',

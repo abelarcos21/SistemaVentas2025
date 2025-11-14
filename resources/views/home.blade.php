@@ -3,11 +3,6 @@
 @section('title', 'Dashboard')
 
 @section('content_header')
-    {{-- <button type="button" class="btn btn-primary bg-gradient-primary btn-lg btn-block" disabled>
-        <h1>¡Bienvenido a ClickVenta!</h1>
-        <h6>Tu Sistema de ventas rápido, simple y confiable.</h6>
-        <span class="badge badge-lg bg-light">V1.0</span>
-    </button> --}}
 
     <div class="welcome-header">
         <div class="welcome-content">
@@ -169,6 +164,11 @@
                 <div class="card card-outline card-info shadow-sm">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-list me-2"></i> Ventas recientes</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -232,6 +232,11 @@
                 <div class="card card-outline card-info shadow-sm">
                     <div class="card-header">
                         <h3 class="card-title"><i class="fas fa-list me-2"></i> Compras recientes</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -289,12 +294,20 @@
 
         </div>
 
+        {{-- Widget de alertas de caducidad --}}
+        @include('modulos.productos.partials.alertas-caducidad')
+
 
         <div class="row">
             <div class="col-sm-6">
                 <div class="card card-outline card-info">
                     <div class="card-header">
                         <h3 class="card-title">Ventas y compras de esta semana</h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="card-body">
                         <canvas id="ventasComprasChart" height="130" width="400px"></canvas>
@@ -338,8 +351,8 @@
 
         /* Variables CSS para temas */
         :root {
-            --primary-color: #667eea;
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #17a2b8;
+            --primary-gradient: linear-gradient(45deg,  #17a2b8, 0%, #138496 100%);
             --secondary-color: #f093fb;
             --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --success-color: #4facfe;

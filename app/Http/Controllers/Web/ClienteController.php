@@ -26,9 +26,9 @@ class ClienteController extends Controller
                 ->addIndexColumn()
                 ->addColumn('acciones', function($row) {
                     $actionBtn = '<div class="d-flex">';
-                    $actionBtn .= '<a href="'.route('cliente.show', $row->id).'" class="btn btn-info btn-sm mr-1" title="Ver"><i class="fas fa-eye"></i> Ver</a>';
-                    $actionBtn .= '<a href="'.route('cliente.edit', $row->id).'" class="btn btn-warning btn-sm mr-1" title="Editar"><i class="fas fa-edit"></i> Editar</a>';
-                    $actionBtn .= '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'" title="Eliminar"><i class="fas fa-trash-alt"></i> Eliminar</button>';
+                    $actionBtn .= '<a href="'.route('cliente.show', $row->id).'" class="btn bg-gradient-info btn-sm mr-1" title="Ver Detalles"><i class="fas fa-eye"></i></a>';
+                    $actionBtn .= '<a href="'.route('cliente.edit', $row->id).'" class="btn bg-gradient-primary btn-sm mr-1" title="Editar"><i class="fas fa-edit"></i></a>';
+                    $actionBtn .= '<button type="button" class="btn bg-gradient-danger btn-sm delete-btn" data-id="'.$row->id.'" title="Eliminar"><i class="fas fa-trash-alt"></i></button>';
                     $actionBtn .= '</div>';
                     return $actionBtn;
                 })

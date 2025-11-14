@@ -49,15 +49,15 @@ class RoleController extends Controller{
 
                     // Botón Ver
                     if (auth()->user()->can('roles.show')) {
-                        $btn .= '<a href="' . route('roles.show', $role->id) . '" class="btn bg-gradient-info btn-sm mr-1">
-                                <i class="fas fa-eye"></i> Ver
+                        $btn .= '<a href="' . route('roles.show', $role->id) . '" class="btn bg-gradient-info btn-sm mr-1" title="Ver Detalles">
+                                <i class="fas fa-eye"></i>
                             </a>';
                     }
 
                     // Botón Editar (con verificación de permisos)
                     if (auth()->user()->can('roles.edit')) {
-                        $btn .= '<a class="btn bg-gradient-warning btn-sm mr-1" href="' . route('roles.edit', $role->id) . '">
-                                    <i class="fas fa-edit"></i> Editar
+                        $btn .= '<a class="btn bg-gradient-primary btn-sm mr-1" href="' . route('roles.edit', $role->id) . '" title="Editar">
+                                    <i class="fas fa-edit"></i>
                                 </a>';
                     }
 
@@ -66,8 +66,8 @@ class RoleController extends Controller{
                         $btn .= '<form method="POST" class="formulario-eliminar d-inline" action="' . route('roles.destroy', $role->id) . '">
                                     ' . csrf_field() . '
                                     ' . method_field('DELETE') . '
-                                    <button type="submit" class="btn bg-gradient-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    <button type="submit" class="btn bg-gradient-danger btn-sm" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </form>';
                     }

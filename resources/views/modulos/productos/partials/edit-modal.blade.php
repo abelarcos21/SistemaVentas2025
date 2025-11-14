@@ -121,6 +121,47 @@
                                     </div>
                                 </div>
 
+                                {{-- ================== CAMPOS DE FECHA DE CADUCIDAD ================== --}}
+                                <hr>
+                                <h5 class="text-primary"><i class="fas fa-calendar-times"></i> Control de Caducidad</h5>
+                                <div class="row">
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
+                                            <div class="custom-control custom-switch mt-4">
+                                                <input type="hidden" name="requiere_fecha_caducidad" value="0">
+                                                <input type="checkbox" class="custom-control-input"
+                                                    id="requiere_fecha_caducidad_edit_{{ $producto->id }}"
+                                                    name="requiere_fecha_caducidad" value="1"
+                                                    {{ old('requiere_fecha_caducidad', $producto->requiere_fecha_caducidad ?? false) ? 'checked' : '' }}>
+                                                <label class="custom-control-label" for="requiere_fecha_caducidad_edit_{{ $producto->id }}">
+                                                    Producto con Fecha de Caducidad
+                                                </label>
+                                            </div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> Activa esta opción para productos perecederos o con vencimiento
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-12" id="fecha_caducidad_container_edit_{{ $producto->id }}" style="display: {{ ($producto->requiere_fecha_caducidad ?? false) ? 'block' : 'none' }};">
+                                        <div class="form-group">
+                                            <label for="fecha_caducidad_edit_{{ $producto->id }}">
+                                                <i class="fas fa-calendar-alt text-warning"></i> Fecha de Caducidad
+                                                <span class="text-danger" id="required_asterisk_caducidad_edit">{{ ($producto->requiere_fecha_caducidad ?? false) ? '*' : '' }}</span>
+                                            </label>
+                                            <input type="date" name="fecha_caducidad"
+                                                id="fecha_caducidad_edit_{{ $producto->id }}"
+                                                class="form-control"
+                                                value="{{ old('fecha_caducidad', $producto->fecha_caducidad ? \Carbon\Carbon::parse($producto->fecha_caducidad)->format('Y-m-d') : '') }}"
+                                                min="{{ date('Y-m-d') }}"
+                                                {{ ($producto->requiere_fecha_caducidad ?? false) ? 'required' : '' }}>
+                                            <small class="text-muted">
+                                                <i class="fas fa-exclamation-triangle"></i> Debe ser una fecha futura
+                                            </small>
+                                            <div class="invalid-feedback" id="error-fecha_caducidad_edit"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {{-- ================== CAMPOS DE MAYOREO ================== --}}
                                 <hr>
                                 <h5 class="text-primary"><i class="fas fa-boxes"></i> Opciones de Mayoreo</h5>
@@ -316,6 +357,27 @@ $(document).ready(function() {
         width: '100%'
     });
 
+    // Toggle de fecha de caducidad - usar ID dinámico con producto->id
+    $('[id^="requiere_fecha_caducidad_edit_"]').change(function() {
+        const productoId = $(this).attr('id').split('_').pop();
+        const container = $(`#fecha_caducidad_container_edit_${productoId}`);
+        const input = $(`#fecha_caducidad_edit_${productoId}`);
+        const asterisk = $('#required_asterisk_caducidad_edit');
+
+        if ($(this).is(':checked')) {
+            container.slideDown(300);
+            input.prop('required', true);
+            asterisk.text('*');
+        } else {
+            container.slideUp(300);
+            input.prop('required', false);
+            input.val('');
+            input.removeClass('is-invalid');
+            $('#error-fecha_caducidad_edit').text('').hide();
+            asterisk.text('');
+        }
+    });
+
     // Preview de imagen
     $('#imagen_edit').change(function() {
         if (this.files && this.files[0]) {
@@ -349,6 +411,10 @@ $(document).ready(function() {
         const formData = new FormData(this);
         const submitBtn = $(this).find('button[type="submit"]');
 
+        // Limpiar errores previos
+        $('.form-control').removeClass('is-invalid');
+        $('.invalid-feedback').text('').hide();
+
         // Deshabilitar botón durante el envío
         submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Actualizando...');
 
@@ -360,26 +426,59 @@ $(document).ready(function() {
             processData: false,
             success: function(response) {
                 $('#editModal').modal('hide');
-                // agregar notificación de éxito
+
+                // Notificación de éxito
                 Swal.fire({
                     icon: 'success',
-                    title: 'Producto Actualizado Correctamente.',
-
+                    title: 'Producto Actualizado',
+                    text: 'El producto se ha actualizado exitosamente.',
+                    showConfirmButton: false,
+                    timer: 1500
                 });
 
                 // Refrescar manteniendo la página actual y posición
                 $('#example1').DataTable().ajax.reload(null, false);
             },
             error: function(xhr) {
-                const errors = xhr.responseJSON?.errors;
-                if (errors) {
-                    let errorMsg = 'Errores de validación:\n';
-                    Object.keys(errors).forEach(key => {
-                        errorMsg += `- ${errors[key][0]}\n`;
-                    });
-                    alert(errorMsg);
+                console.error('Error al actualizar producto:', xhr);
+
+                if (xhr.status === 422) {
+                    // Errores de validación
+                    const errors = xhr.responseJSON?.errors;
+                    if (errors) {
+                        // Mostrar errores específicos en cada campo
+                        Object.keys(errors).forEach(field => {
+                            const errorElement = $(`#error-${field}_edit`);
+                            const inputElement = $(`[name="${field}"]`);
+
+                            if (errorElement.length) {
+                                errorElement.text(errors[field][0]).show();
+                                inputElement.addClass('is-invalid');
+                            }
+                        });
+
+                        // También mostrar alerta general
+                        let errorMsg = 'Errores de validación:\n';
+                        Object.keys(errors).forEach(key => {
+                            errorMsg += `- ${errors[key][0]}\n`;
+                        });
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Errores de Validación',
+                            text: errorMsg,
+                            confirmButtonText: 'Entendido'
+                        });
+                    }
                 } else {
-                    alert('Error al actualizar el producto. Intenta nuevamente.');
+                    // Error general
+                    const message = xhr.responseJSON?.message || 'Error al actualizar el producto. Intenta nuevamente.';
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: message,
+                        confirmButtonText: 'Entendido'
+                    });
                 }
             },
             complete: function() {
@@ -447,5 +546,10 @@ $(document).ready(function() {
     .img-thumbnail {
         border: 1px solid #dee2e6;
         border-radius: 0.25rem;
+    }
+
+    /* Estilos para el contenedor de fecha de caducidad */
+    [id^="fecha_caducidad_container_edit_"] {
+        transition: all 0.3s ease;
     }
 </style>

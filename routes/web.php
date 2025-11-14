@@ -20,6 +20,20 @@ use App\Http\Controllers\Web\POSController;
 use App\Http\Controllers\Web\CajaController;
 use App\Http\Controllers\Web\CotizacionController;
 
+Route::get('/test-caducidad/{id}', function($id) {
+    $producto = \App\Models\Producto::find($id);
+
+    return [
+        'nombre' => $producto->nombre,
+        'requiere_caducidad' => $producto->requiere_fecha_caducidad,
+        'requiere_caducidad_tipo' => gettype($producto->requiere_fecha_caducidad),
+        'fecha_caducidad' => $producto->fecha_caducidad,
+        'fecha_caducidad_tipo' => gettype($producto->fecha_caducidad),
+        'esta_vencido' => $producto->estaVencido(),
+        'dias_para_vencer' => $producto->diasParaVencer(),
+    ];
+});
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -154,6 +168,8 @@ Route::middleware(['auth'])->group(function() {
 
         // Cambiar estado
         Route::post('/cambiar-estado/{id}', [ProductoController::class, 'cambiarEstado'])->middleware('permission:productos.toggle-activo');
+
+        Route::post('/{id}/desactivar', [ProductoController::class, 'desactivar'])->name('producto.desactivar');
 
     });
 

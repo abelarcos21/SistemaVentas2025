@@ -30,11 +30,11 @@ class ProductoController extends Controller
     }
 
     //index
-    public function index(){
+    public function index(Request $request){
 
         // Si es una petición AJAX (DataTables), devolver JSON
         if(request()->ajax()) {
-            return $this->getDataTableData();
+            return $this->getDataTableData($request);//pasar el $request
         }
         // Si es una petición normal, devolver la vista
         $categorias = Categoria::all();
@@ -44,10 +44,18 @@ class ProductoController extends Controller
         return view('modulos.productos.index', compact('categorias', 'proveedores', 'marcas'));
     }
 
-    private function getDataTableData(){
+    private function getDataTableData(Request $request = null){
+
+        // Si no se pasa request, obtenerlo de la función helper
+        if (!$request) {
+            $request = request();
+        }
+
         $productos = Producto::select(
             'productos.id',
             'productos.nombre',
+            'productos.requiere_fecha_caducidad',
+            'productos.fecha_caducidad',
             'productos.descripcion',
             'productos.precio_compra',
             'productos.precio_venta',
@@ -78,6 +86,40 @@ class ProductoController extends Controller
         ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
         ->with('moneda');
+
+        // APLICAR FILTRO DE CADUCIDAD
+        $filterCaducidad = $request->get('filter_caducidad', 'all');
+
+        switch ($filterCaducidad) {
+            case 'vencidos':
+                $productos->where('requiere_fecha_caducidad', true)
+                      ->whereNotNull('fecha_caducidad')
+                      ->where('fecha_caducidad', '<', now());
+                break;
+
+            case '7dias':
+                $productos->where('requiere_fecha_caducidad', true)
+                      ->whereNotNull('fecha_caducidad')
+                      ->whereBetween('fecha_caducidad', [now(), now()->addDays(7)]);
+                break;
+
+            case '15dias':
+                $productos->where('requiere_fecha_caducidad', true)
+                      ->whereNotNull('fecha_caducidad')
+                      ->whereBetween('fecha_caducidad', [now(), now()->addDays(15)]);
+                break;
+
+            case '30dias':
+                $productos->where('requiere_fecha_caducidad', true)
+                      ->whereNotNull('fecha_caducidad')
+                      ->whereBetween('fecha_caducidad', [now(), now()->addDays(30)]);
+                break;
+
+            case 'all':
+            default:
+                // No aplicar filtro
+                break;
+        }
 
 
         return DataTables::of($productos)
@@ -143,7 +185,7 @@ class ProductoController extends Controller
                 return '<span class="badge bg-secondary">N/A</span>';
             })
             // Mostrar oferta si aplica
-           ->addColumn('oferta', function ($producto) {
+            ->addColumn('oferta', function ($producto) {
                 if ((int)$producto->en_oferta == true && $producto->precio_oferta > 0) {
                     $hoy = now();
                     $inicio = \Carbon\Carbon::parse($producto->fecha_inicio_oferta);
@@ -169,6 +211,53 @@ class ProductoController extends Controller
                     }
                 }
                 return '<span class="badge bg-secondary">N/A</span>';
+            })
+            ->addColumn('caducidad', function ($producto) {
+                // 🔍 DEBUG temporal - ver en la consola del navegador
+                /* \Log::info('Producto: ' . $producto->nombre, [
+                    'requiere_caducidad' => $producto->requiere_fecha_caducidad,
+                    'fecha_caducidad' => $producto->fecha_caducidad,
+                    'tipo' => gettype($producto->fecha_caducidad),
+                ]); */
+
+                if (!$producto->requiere_fecha_caducidad) {
+                    return '<span class="badge badge-secondary">
+                                <i class="fas fa-times"></i> No aplica
+                            </span>';
+                }
+
+                // Verificar que fecha_caducidad no sea null
+                if (empty($producto->fecha_caducidad)) {
+                    return '<span class="badge badge-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Sin fecha
+                            </span>';
+                }
+
+                if ($producto->estaVencido()) {
+                    return '<span class="badge badge-danger" title="Producto vencido">
+                                <i class="fas fa-times-circle"></i> VENCIDO
+                            </span><br>
+                            <small class="text-danger">' .
+                                $producto->fecha_caducidad->format('d/m/Y') .
+                            '</small>';
+                }
+
+                $dias = $producto->diasParaVencer();
+                $badgeClass = $producto->getBadgeCaducidad();
+
+                $icono = 'fa-clock';
+                if ($dias <= 7) {
+                    $icono = 'fa-exclamation-triangle';
+                } elseif ($dias <= 15) {
+                    $icono = 'fa-exclamation-circle';
+                }
+
+                return '<span class="badge ' . $badgeClass . '" title="' . $dias . ' días restantes">
+                            <i class="fas ' . $icono . '"></i> ' . $dias . ' días
+                        </span><br>
+                        <small class="text-muted">' .
+                            $producto->fecha_caducidad->format('d/m/Y') .
+                        '</small>';
             })
             ->addColumn('precio_compra_formatted', function ($producto) {
                 $precioCompra = ($producto->moneda->codigo ?? '') . ' ' . number_format($producto->precio_compra, 2);
@@ -217,7 +306,7 @@ class ProductoController extends Controller
             ->editColumn('codigo', function ($producto) {
                 return '<code>' . $producto->codigo . '</code><br>';
             })
-            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo','precio_base','precio_compra_formatted','oferta','mayoreo',])
+            ->rawColumns(['imagen', 'cantidad', 'activo', 'acciones', 'nombre', 'boton_compra', 'codigo','precio_base','precio_compra_formatted','oferta','mayoreo','caducidad',])
             ->make(true);
     }
 
@@ -440,7 +529,6 @@ class ProductoController extends Controller
             'codigo' => 'nullable|string|max:255|unique:productos,codigo',
 
             // Campos de precios y promociones
-           /*  'precio_venta' => 'required|numeric|min:0', */
             'precio_compra' => 'nullable|numeric|min:0',
             'cantidad' => 'nullable|integer|min:0',
 
@@ -455,7 +543,14 @@ class ProductoController extends Controller
             'nombre' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'activo' => 'required|boolean',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',// validación opcional de imagen max en KB
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+
+            // CAMPOS DE CADUCIDAD
+            'requiere_fecha_caducidad' => 'boolean',
+            'fecha_caducidad' => 'nullable|required_if:requiere_fecha_caducidad,1|date|after:today',
+        ], [
+            'fecha_caducidad.required_if' => 'La fecha de caducidad es obligatoria cuando se activa el control de caducidad.',
+            'fecha_caducidad.after' => 'La fecha de caducidad debe ser posterior a hoy.',
         ]);
 
 
@@ -471,7 +566,7 @@ class ProductoController extends Controller
                 if(!preg_match('/^\d{13}$/', $codigo)){
                     DB::rollBack();
                     return back()->withErrors(['codigo' => 'El código debe tener exactamente 13 dígitos numéricos.'])
-                             ->withInput();
+                            ->withInput();
                 }
 
                 // Validar dígito verificador EAN-13
@@ -500,10 +595,6 @@ class ProductoController extends Controller
                 } while (Producto::where('codigo', $codigo)->exists());
             }
 
-            // Generar código si no se envía
-            //$codigo = $request->input('codigo') ?? str_pad((Producto::max('id') ?? 0) + 1, 8, '0', STR_PAD_LEFT);
-
-
             // Generar imagen de código de barras
             $barcodePath = $this->generarCodigoBarras($codigo);
 
@@ -521,9 +612,9 @@ class ProductoController extends Controller
                 'activo'       => $validated['activo'],
 
                 // 🔹 Campos de precios y stock los creo en la compra y en el editar del producto
-               /*  'precio_venta' => $validated['precio_venta'], */
+            /*  'precio_venta' => $validated['precio_venta'], */
                 /* 'precio_compra' => $validated['precio_compra'] ?? 0, */
-               /*  'cantidad' => $validated['cantidad'] ?? 0, */
+            /*  'cantidad' => $validated['cantidad'] ?? 0, */
 
                 // 🔹 Mayoreo
                 'permite_mayoreo' => $request->boolean('permite_mayoreo'),
@@ -535,6 +626,10 @@ class ProductoController extends Controller
                 'precio_oferta' => $validated['precio_oferta'] ?? null,
                 'fecha_inicio_oferta' => $validated['fecha_inicio_oferta'] ?? null,
                 'fecha_fin_oferta' => $validated['fecha_fin_oferta'] ?? null,
+
+                // 🔹 CADUCIDAD
+                'requiere_fecha_caducidad' => $request->boolean('requiere_fecha_caducidad'),
+                'fecha_caducidad' => $validated['fecha_caducidad'] ?? null,
             ]);
 
 
@@ -556,30 +651,6 @@ class ProductoController extends Controller
             DB::commit();
 
             // Devolver los datos del producto creado para cuando se crea un producto con modal con ajax
-            /* if($request->ajax()){
-
-                return response()->json([
-                    'success' => true,
-                    'producto' => [
-                        'id' => $producto->id,
-                        'nombre' => $producto->nombre,
-                        'codigo' => $producto->codigo,
-                        'descripcion' => $producto->descripcion,
-                        'categoria_id' => $producto->categoria->nombre ?? '',
-                        'marca_id' => $producto->marca->nombre ?? '',
-                        'proveedor_id' => $producto->proveedor->nombre ?? '',
-                        'precio_venta' => $producto->precio_venta,
-                        'precio_compra' => $producto->precio_compra,
-                        'cantidad' => $producto->cantidad,
-                        'activo' => $producto->activo,
-                        'imagen' => $producto->imagen,
-                        'moneda' => $producto->monedas->codigo ?? 'BOB',
-                        'created_at' => $producto->created_at
-                    ]
-                ]);
-
-            } */
-
             //Respuesta AJAX
             if ($request->ajax()) {
                 return response()->json([
@@ -603,6 +674,8 @@ class ProductoController extends Controller
                         'marca' => $producto->marca->nombre ?? '',
                         'proveedor' => $producto->proveedor->nombre ?? '',
                         'activo' => $producto->activo,
+                        'requiere_fecha_caducidad' => $producto->requiere_fecha_caducidad,
+                        'fecha_caducidad' => $producto->fecha_caducidad ? $producto->fecha_caducidad->format('d/m/Y') : null,
                         'imagen' => $producto->imagen ? asset('storage/' . $producto->imagen->ruta) : null,
                         'created_at' => $producto->created_at->format('d/m/Y H:i')
                     ]
@@ -624,7 +697,6 @@ class ProductoController extends Controller
                     'error_details' => config('app.debug') ? $e->getTraceAsString() : null
                 ], 500);
             }
-
 
             //return back()->with('error', 'Error: ' . $e->getMessage());//mostrar error completo
             //return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
@@ -683,18 +755,6 @@ class ProductoController extends Controller
 
     public function update(Request $request, Producto $producto){
 
-        // Validaciones básicas
-       /*  $rules = [
-            'categoria_id' => 'required|exists:categorias,id',
-            'proveedor_id' => 'required|exists:proveedores,id',
-            'marca_id' => 'required|exists:marcas,id',
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string|max:255',
-            'activo' => 'required|boolean',
-            'precio_venta' => 'required|numeric|min:0',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]; */
-
         // Validaciones
         $rules = [
 
@@ -715,6 +775,16 @@ class ProductoController extends Controller
             'descripcion'  => 'required|string|max:255',
             'activo'       => 'required|boolean',
             'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+
+            // 🔹 CAMPOS DE CADUCIDAD
+            'requiere_fecha_caducidad' => 'boolean',
+            'fecha_caducidad' => 'nullable|required_if:requiere_fecha_caducidad,1|date|after:today',
+        ];
+
+        // Mensajes personalizados
+        $messages = [
+            'fecha_caducidad.required_if' => 'La fecha de caducidad es obligatoria cuando se activa el control de caducidad.',
+            'fecha_caducidad.after' => 'La fecha de caducidad debe ser posterior a hoy.',
         ];
 
         // Verificar si el producto puede ser editado
@@ -734,7 +804,7 @@ class ProductoController extends Controller
 
 
         try {
-            $validated = $request->validate($rules);
+            $validated = $request->validate($rules, $messages);
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->ajax()) {
                 return response()->json([
@@ -766,6 +836,15 @@ class ProductoController extends Controller
                 }
             }
 
+            // 🔹 Manejar fecha de caducidad
+            $requiereCaducidad = $request->boolean('requiere_fecha_caducidad');
+            $fechaCaducidad = $validated['fecha_caducidad'] ?? null;
+
+            // Si se desactiva el control de caducidad, limpiar la fecha
+            if (!$requiereCaducidad) {
+                $fechaCaducidad = null;
+            }
+
             // Preparar datos para actualizar
             $updateData = [
 
@@ -790,6 +869,10 @@ class ProductoController extends Controller
                 'precio_oferta'      => $validated['precio_oferta'] ?? null,
                 'fecha_inicio_oferta'=> $validated['fecha_inicio_oferta'] ?? null,
                 'fecha_fin_oferta'   => $fechaFin,
+
+                // 🔹 Caducidad
+                'requiere_fecha_caducidad' => $requiereCaducidad,
+                'fecha_caducidad'          => $fechaCaducidad,
             ];
 
             // Solo incluir código si es editable
@@ -817,7 +900,7 @@ class ProductoController extends Controller
                 'Producto actualizado exitosamente! Se ha generado un nuevo código de barras.' :
                 'Producto actualizado exitosamente!';
 
-           // Respuesta para AJAX
+            // Respuesta para AJAX
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -847,15 +930,37 @@ class ProductoController extends Controller
             }
 
             // Respuesta para formulario tradicional
-            return redirect()->route('producto.index')->with('error', 'Error al Actualizar el producto.');
+            return redirect()->route('producto.index')->with('error', 'Error al Actualizar el producto!.' . $e->getMessage());
 
         }
+    }
 
+    //Desactivar Productos Vencidos
+    public function desactivar($id){
+        try {
+            $producto = Producto::findOrFail($id);
 
-        /* $producto->fill($validated); // metodo fill es igual que el método save() pero sin crear un nuevo registro
+            // Verificar que esté vencido
+            if (!$producto->estaVencido()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El producto no está vencido.'
+                ], 400);
+            }
 
-        return redirect()->route('producto.index')->with('error', 'Error al Guardar!' . $e->getMessage()); */
+            $producto->update(['activo' => false]);
 
+            return response()->json([
+                'success' => true,
+                'message' => 'Producto desactivado exitosamente.'
+            ]);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al desactivar el producto: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 
