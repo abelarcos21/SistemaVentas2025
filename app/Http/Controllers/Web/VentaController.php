@@ -72,8 +72,8 @@ class VentaController extends Controller
 
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
+            'metodo_pago' => 'required|array|min:1',
             'metodo_pago.*' => 'required|string',
-            'monto.*' => 'required|numeric|min:0.01',
         ]);
 
         $items_carrito = Session::get('items_carrito', []);
@@ -107,10 +107,36 @@ class VentaController extends Controller
                 $totalVenta += $item['cantidad'] * $precioBase;
             }
 
-            // 👉 VALIDAR QUE EL MONTO TOTAL DE PAGOS SEA IGUAL AL TOTAL DE LA VENTA
+            // CALCULAR TOTAL DE PAGOS (incluye mixto) SEA IGUAL AL TOTAL DE LA VENTA
             $totalPagos = 0;
-            foreach ($request->monto as $monto) {
-                $totalPagos += $monto;
+            $contadorMixto = 0;
+            $contadorNormal = 0;
+
+
+            foreach ($request->metodo_pago as $metodo) {
+                if ($metodo === 'mixto') {
+                    $efectivo = $request->monto_efectivo[$contadorMixto] ?? 0;
+                    $tarjeta = $request->monto_tarjeta[$contadorMixto] ?? 0;
+
+                    // Validar que ambos montos existan y sean mayores a 0
+                    if ($efectivo <= 0 || $tarjeta <= 0) {
+                        DB::rollBack();
+                        return to_route('venta.index')->with('error', 'En pago mixto, tanto el efectivo como la tarjeta deben ser mayores a 0');
+                    }
+
+                    $totalPagos += $efectivo + $tarjeta;
+                    $contadorMixto++;
+                } else {
+                    $monto = $request->monto[$contadorNormal] ?? 0;
+
+                    if ($monto <= 0) {
+                        DB::rollBack();
+                        return to_route('venta.index')->with('error', 'El monto del pago debe ser mayor a 0');
+                    }
+
+                    $totalPagos += $monto;
+                    $contadorNormal++;
+                }
             }
 
             // Calcular el cambio
@@ -202,13 +228,49 @@ class VentaController extends Controller
                 $producto->save();
             }
 
+
             // Guardar los pagos
-            foreach ($request->metodo_pago as $i => $metodo) {
-                Pago::create([
-                    'venta_id' => $venta->id,
-                    'metodo_pago' => $metodo,
-                    'monto' => $request->monto[$i],
-                ]);
+            $contadorMixto = 0;
+            $contadorNormal = 0;
+
+            foreach ($request->metodo_pago as $metodo) {
+                if ($metodo === 'mixto') {
+                    $efectivo = $request->monto_efectivo[$contadorMixto] ?? 0;
+                    $tarjeta = $request->monto_tarjeta[$contadorMixto] ?? 0;
+
+                    if ($efectivo > 0) {
+                        Pago::create([
+                            'venta_id' => $venta->id,
+                            'metodo_pago' => 'efectivo',
+                            'monto' => $efectivo,
+                            'referencia' => null,
+                        ]);
+                    }
+
+                    if ($tarjeta > 0) {
+                        Pago::create([
+                            'venta_id' => $venta->id,
+                            'metodo_pago' => 'tarjeta',
+                            'monto' => $tarjeta,
+                            'referencia' => $request->referencia_tarjeta[$contadorMixto] ?? null,
+                        ]);
+                    }
+
+                    $contadorMixto++;
+                } else {
+                    $monto = $request->monto[$contadorNormal] ?? 0;
+
+                    if ($monto > 0) {
+                        Pago::create([
+                            'venta_id' => $venta->id,
+                            'metodo_pago' => $metodo,
+                            'monto' => $monto,
+                            'referencia' => $request->referencia[$contadorNormal] ?? null,
+                        ]);
+                    }
+
+                    $contadorNormal++;
+                }
             }
 
 

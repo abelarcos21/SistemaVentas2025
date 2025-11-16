@@ -81,23 +81,61 @@
 
                             <!-- pagos -->
                             <div id="pagos-container">
-                                <label for="metodo_pago"><i class="fa fa-credit-card mr-1"></i> Metodo Pago</label>
+                                <label><i class="fa fa-credit-card mr-1"></i> Métodos de pago</label>
+
                                 <div class="row mb-2 pago-item">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <select name="metodo_pago[]" class="form-control">
+                                            <select name="metodo_pago[]" class="form-control metodo_pago" onchange="cambiarMetodoPago(this)">
                                                 <option value="efectivo">Efectivo</option>
-                                                <option value="tarjeta">Tarjeta Credito/Debito</option>
+                                                <option value="tarjeta">Tarjeta Crédito/Débito</option>
                                                 <option value="transferencia">Transferencia</option>
+                                                <option value="mixto">Mixto(Efectivo + Tarjeta)</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+
+                                    <!-- Monto normal -->
+                                    <div class="col-md-3 monto-normal">
                                         <div class="form-group">
-                                            <input type="number" step="0.01" name="monto[]" class="form-control"
-                                                placeholder="Monto">
+                                            <input type="number" step="0.01" name="monto[]" class="form-control" placeholder="Monto">
                                         </div>
                                     </div>
+
+                                    <!-- Referencia general -->
+                                    <div class="col-md-3 referencia-wrapper d-none">
+                                        <div class="form-group">
+                                            <input type="text" name="referencia[]" class="form-control" placeholder="#Referencia">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> (Opcional)
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    <!-- MIXTO -->
+                                    <div class="col-md-3 mixto-efectivo d-none">
+                                        <div class="form-group">
+                                            <input type="number" step="0.01" name="monto_efectivo[]" class="form-control"
+                                                placeholder="Monto efectivo">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3 mixto-tarjeta d-none">
+                                        <div class="form-group">
+                                            <input type="number" step="0.01" name="monto_tarjeta[]" class="form-control"
+                                                placeholder="Monto tarjeta">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 mixto-referencia d-none">
+                                        <div class="form-group">
+                                            <input type="text" name="referencia_tarjeta[]" class="form-control" placeholder="#Referencia tarjeta">
+                                            <small class="text-muted">
+                                                <i class="fas fa-info-circle"></i> (Opcional)
+                                            </small>
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-2">
                                         <button type="button" class="btn btn-danger btn-sm" onclick="eliminarPago(this)">
                                             <i class="fa fa-trash"></i>
@@ -106,8 +144,8 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-info bg-gradient-info btn-sm mb-3" onclick="agregarPago()">
-                                <i class="fa fa-plus"></i> Agregar otra opción de pago
+                            <button type="button" class="btn btn-info btn-sm mb-3" onclick="agregarPago()">
+                                <i class="fa fa-plus"></i> Agregar otra forma de pago
                             </button>
 
                             <div class="alert alert-info text-center mb-2">
@@ -902,31 +940,69 @@
 
     {{--SCRIPT PARA AGREGAR EL METODO DE PAGO--}}
     <script>
-        function agregarPago() {
-            const html = `
-            <div class="row mb-2 pago-item">
-                <div class="col-md-6">
-                    <select name="metodo_pago[]" class="form-control">
-                        <option value="efectivo">Efectivo</option>
-                        <option value="tarjeta">Tarjeta Credito/Debito</option>
-                        <option value="transferencia">Transferencia</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <input type="number" step="0.01" name="monto[]" class="form-control" placeholder="Monto">
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-danger btn-sm" onclick="eliminarPago(this)">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </div>
-            </div>`;
-            document.getElementById('pagos-container').insertAdjacentHTML('beforeend', html);
+
+        function cambiarMetodoPago(select) {
+            let item = select.closest('.pago-item');
+
+            let montoNormalDiv = item.querySelector('.monto-normal');
+            let referenciaDiv = item.querySelector('.referencia-wrapper');
+            let mixtoEfDiv = item.querySelector('.mixto-efectivo');
+            let mixtoTarDiv = item.querySelector('.mixto-tarjeta');
+            let mixtoRefDiv = item.querySelector('.mixto-referencia');
+
+            // Ocultar todos
+            montoNormalDiv.classList.add('d-none');
+            referenciaDiv.classList.add('d-none');
+            mixtoEfDiv.classList.add('d-none');
+            mixtoTarDiv.classList.add('d-none');
+            mixtoRefDiv.classList.add('d-none');
+
+            // Limpiar valores de campos ocultos
+            montoNormalDiv.querySelector('input').value = '';
+            referenciaDiv.querySelector('input').value = '';
+            mixtoEfDiv.querySelector('input').value = '';
+            mixtoTarDiv.querySelector('input').value = '';
+            mixtoRefDiv.querySelector('input').value = '';
+
+            switch (select.value) {
+                case 'efectivo':
+                    montoNormalDiv.classList.remove('d-none');
+                    break;
+
+                case 'tarjeta':
+                case 'transferencia':
+                    montoNormalDiv.classList.remove('d-none');
+                    referenciaDiv.classList.remove('d-none');
+                    break;
+
+                case 'mixto':
+                    mixtoEfDiv.classList.remove('d-none');
+                    mixtoTarDiv.classList.remove('d-none');
+                    mixtoRefDiv.classList.remove('d-none');
+                    break;
+            }
         }
 
-        function eliminarPago(button) {
-            button.closest('.pago-item').remove();
+        function agregarPago() {
+            let cont = document.querySelector('#pagos-container');
+            let item = cont.querySelector('.pago-item');
+            let clone = item.cloneNode(true);
+
+            clone.querySelectorAll('input').forEach(i => i.value = "");
+            clone.querySelector('select').value = "efectivo";
+
+            cambiarMetodoPago(clone.querySelector('select'));
+
+            cont.appendChild(clone);
         }
+
+        function eliminarPago(btn) {
+            let items = document.querySelectorAll('.pago-item');
+            if (items.length > 1) {
+                btn.closest('.pago-item').remove();
+            }
+        }
+
     </script>
 
     {{--FILTRAR LOS PRODUCTOS PAGINADOS--}}
