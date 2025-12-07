@@ -24,7 +24,7 @@
 @section('content')
     <div class="card shadow-sm">
         <div class="card-header bg-gradient-info">
-            <h3 class="card-title"><i class="fas fa-file-invoice"></i> Editar Cotización #{{ $cotizacion->id }}</h3>
+            <h3 class="card-title"><i class="fas fa-file-invoice"></i> Editar Cotización {{ $cotizacion->folio }}</h3>
         </div>
         <form action="{{ route('cotizaciones.update', $cotizacion->id) }}" method="POST" id="formCotizacion">
             @csrf
@@ -47,13 +47,13 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="fecha">Fecha</label>
-                            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ $cotizacion->fecha ?? date('Y-m-d') }}" readonly>
+                            <input type="date" class="form-control" id="fecha" name="fecha" value="{{ $cotizacion->fecha ? $cotizacion->fecha->format('Y-m-d') : date('Y-m-d') }}" readonly>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="vigencia">Vigencia (días)</label>
-                            <input type="number" class="form-control" id="vigencia" name="vigencia" value="{{ $cotizacion->vigencia ?? 30 }}" min="1">
+                            <input type="number" class="form-control" id="vigencia" name="vigencia_dias" value="{{ $cotizacion->vigencia_dias ?? 30 }}" min="1">
                         </div>
                     </div>
                 </div>
@@ -163,8 +163,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="observaciones">Observaciones</label>
-                    <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="Comentarios adicionales...">{{ $cotizacion->observaciones ?? '' }}</textarea>
+                    <label for="nota">Observaciones</label>
+                    <textarea class="form-control" id="nota" name="nota" rows="3" placeholder="Comentarios adicionales...">{{ $cotizacion->nota ?? '' }}</textarea>
                 </div>
             </div>
 

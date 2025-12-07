@@ -50,7 +50,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="vigencia">Vigencia (días)</label>
-                            <input type="number" class="form-control" id="vigencia" name="vigencia" value="30" min="1">
+                            <input type="number" class="form-control" id="vigencia" name="vigencia_dias" value="30" min="1">
                         </div>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
 
                 <div class="form-group">
                     <label for="observaciones">Observaciones</label>
-                    <textarea class="form-control" id="observaciones" name="observaciones" rows="3" placeholder="Comentarios adicionales..."></textarea>
+                    <textarea class="form-control" id="observaciones" name="nota" rows="3" placeholder="Comentarios adicionales..."></textarea>
                 </div>
             </div>
 

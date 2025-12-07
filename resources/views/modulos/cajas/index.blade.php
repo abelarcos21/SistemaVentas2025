@@ -46,8 +46,8 @@
         </div>
     @else
         {{-- Caja Abierta --}}
-        <div class="card card-success card-outline">
-            <div class="card-header">
+        <div class="card">
+            <div class="card-header bg-gradient-info">
                 <h3 class="card-title mb-0"><i class="fas fa-cash-register"></i> Caja Abierta (ID: {{ $cajaAbierta->id }})</h3>
             </div>
             <div class="card-body">
@@ -107,13 +107,13 @@
                 <h5><i class="fas fa-lock"></i> Cerrar Caja</h5>
                 <form id="formCerrarCaja" action="{{ route('cajas.cerrar', $cajaAbierta) }}" method="POST">
                     @csrf
-                    <div class="form-row">
+                    <div class="form-row align-items-center">
                         <div class="col-md-6">
                             <label for="monto_final">Monto contado (al cierre)</label>
                             <input type="number" step="0.01" name="monto_final" id="monto_final" class="form-control" placeholder="0.00" required>
                             <small class="form-text text-muted">Esperado: ${{ number_format($totalEsperado, 2) }}</small>
                         </div>
-                        <div class="col-md-6 d-flex align-items-end">
+                        <div class="col-md-6">
                             <button type="submit" class="btn btn-danger">
                                 <i class="fas fa-lock"></i> Cerrar Caja
                             </button>

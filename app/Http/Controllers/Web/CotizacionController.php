@@ -14,8 +14,13 @@ use App\Models\DetalleVenta;
 use App\Models\Caja;
 use App\Models\Pago;
 use App\Models\Empresa;
+use App\Models\FolioCotizacion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\QrCode as EndroidQrCode;
 
 
 class CotizacionController extends Controller
@@ -26,27 +31,51 @@ class CotizacionController extends Controller
      */
     public function index(Request $request){
 
-       /*  $cotizaciones = Cotizacion::with('cliente')
-            ->when($request->cliente_id, fn($q) => $q->where('cliente_id', $request->cliente_id))
-            ->when($request->estado, fn($q) => $q->where('estado', $request->estado))
-            ->latest()
-            ->paginate(10);
-
-        $clientes = Cliente::all();
-
-        return view('modulos.cotizaciones.index', compact('cotizaciones')); */
-
         if ($request->ajax()) {
 
-            $cotizaciones = Cotizacion::with(['cliente', 'venta'])->select('cotizaciones.*');
+            $cotizaciones = Cotizacion::with(['cliente', 'venta', 'usuario'])->select('cotizaciones.*');
 
             return DataTables::eloquent($cotizaciones)
                 ->addIndexColumn()
+                ->addColumn('folio', function ($cotizacion) {
+                    return '<span class="badge bg-primary">' . ($cotizacion->folio ?? 'N/A') . '</span>';
+                })
                 ->addColumn('cliente', function ($cotizacion) {
-                    return $cotizacion->cliente->nombre . ' ' . $cotizacion->cliente->apellido;
+                    return $cotizacion->cliente
+                        ? $cotizacion->cliente->nombre . ' ' . $cotizacion->cliente->apellido
+                        : 'PÚBLICO GENERAL';
+                })
+                ->addColumn('fecha', function ($cotizacion) {
+                    return $cotizacion->fecha
+                        ? \Carbon\Carbon::parse($cotizacion->fecha)->format('d/m/Y h:i a')
+                        : 'N/A';
                 })
                 ->addColumn('total', function ($cotizacion) {
                     return '$' . number_format($cotizacion->total, 2);
+                })
+                ->addColumn('vigencia', function ($cotizacion) {
+                    if ($cotizacion->estado !== 'pendiente') {
+                        return '<span class="badge bg-secondary">N/A</span>';
+                    }
+
+                    // Calcular días restantes
+                    $fechaVencimiento = \Carbon\Carbon::parse($cotizacion->fecha)
+                        ->addDays($cotizacion->vigencia_dias);
+                    $diasRestantes = now()->diffInDays($fechaVencimiento, false);
+
+                    if ($diasRestantes < 0) {
+                        return '<span class="badge bg-danger">
+                                    <i class="fas fa-exclamation-circle"></i> Vencida
+                                </span>';
+                    } elseif ($diasRestantes <= 7) {
+                        return '<span class="badge bg-warning text-dark">
+                                    <i class="fas fa-clock"></i> ' . abs($diasRestantes) . ' días
+                                </span>';
+                    } else {
+                        return '<span class="badge bg-success">
+                                    <i class="fas fa-check"></i> ' . $diasRestantes . ' días
+                                </span>';
+                    }
                 })
                 ->addColumn('estado', function ($cotizacion) {
                     $badgeClass = match($cotizacion->estado) {
@@ -126,23 +155,34 @@ class CotizacionController extends Controller
                     return $acciones;
                 })
                 ->filter(function ($query) use ($request) {
-                    if ($request->has('cliente_id') && $request->cliente_id != '') {
+                    if ($request->filled('cliente_id') && $request->cliente_id != '') {
                         $query->where('cliente_id', $request->cliente_id);
                     }
 
-                    if ($request->has('estado') && $request->estado != '') {
+                    if ($request->filled('estado') && $request->estado != '') {
                         $query->where('estado', $request->estado);
                     }
 
-                    if ($request->has('fecha_desde') && $request->fecha_desde != '') {
+                    if ($request->filled('fecha_desde') && $request->fecha_desde != '') {
                         $query->whereDate('fecha', '>=', $request->fecha_desde);
                     }
 
-                    if ($request->has('fecha_hasta') && $request->fecha_hasta != '') {
+                    if ($request->filled('fecha_hasta') && $request->fecha_hasta != '') {
                         $query->whereDate('fecha', '<=', $request->fecha_hasta);
                     }
+
+                    // Filtro de vigencia
+                    if ($request->filled('vigentes') && $request->vigentes == '1') {
+                        $query->where('estado', 'pendiente')
+                            ->whereRaw('DATE_ADD(fecha, INTERVAL vigencia_dias DAY) >= CURDATE()');
+                    }
+
+                    if ($request->filled('vencidas') && $request->vencidas == '1') {
+                        $query->where('estado', 'pendiente')
+                            ->whereRaw('DATE_ADD(fecha, INTERVAL vigencia_dias DAY) < CURDATE()');
+                    }
                 })
-                ->rawColumns(['estado', 'venta', 'acciones'])
+                ->rawColumns(['folio', 'vigencia', 'estado', 'venta', 'acciones'])
                 ->make(true);
         }
 
@@ -156,16 +196,21 @@ class CotizacionController extends Controller
     */
     public function create(){
         $clientes = Cliente::all();
-        $productos = Producto::all();
+        $productos = Producto::where('cantidad', '>', 0)->get();
         return view('modulos.cotizaciones.create', compact('clientes', 'productos'));
     }
 
-    // Mostrar formulario de conversión (aquí se pueden modificar productos)
+    // Mostrar formulario de conversión a venta (aquí se pueden modificar productos)
     public function mostrarFormularioConversion($id){
         $cotizacion = Cotizacion::with('detalles.producto')->findOrFail($id);
 
         if ($cotizacion->estado !== 'pendiente') {
             return back()->with('error', 'Esta cotización ya fue procesada.');
+        }
+
+        // Verificar vigencia
+        if (!$cotizacion->estaVigente()) {
+            return back()->with('warning', 'Esta cotización está vencida. Puedes procesarla pero considera renovar los precios.');
         }
 
         // Verificar caja abierta
@@ -179,9 +224,7 @@ class CotizacionController extends Controller
         return view('modulos.cotizaciones.convertir', compact('cotizacion', 'productos', 'caja'));
     }
 
-
-
-    // Procesar la conversión con los productos modificados
+    // convertir cotizacion en venta Procesar la conversión con los productos modificados
     public function convertirEnVenta(Request $request, $id){
         $cotizacion = Cotizacion::with('detalles')->findOrFail($id);
 
@@ -194,17 +237,18 @@ class CotizacionController extends Controller
             'productos.*.producto_id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
             'productos.*.precio_unitario_aplicado' => 'required|numeric|min:0.01',
+            //'metodo_pago' => 'required|in:efectivo,tarjeta,transferencia,mixto',
         ]);
 
         // Buscar caja abierta
         $caja = Caja::getCajaActivaByUser(auth()->id());
         if (!$caja) {
-            return back()->with('error', 'Debes tener una caja abierta para convertir cotización en venta.');
+            return back()->with('error', 'Debes tener una caja abierta.');
         }
 
         DB::beginTransaction();
         try {
-            // Generar folio consecutivo
+            // Generar folio de venta  consecutivo
             $folio = \App\Models\Folio::lockForUpdate()->firstOrCreate(
                 ['serie' => '001'],
                 ['ultimo_numero' => 0]
@@ -311,50 +355,9 @@ class CotizacionController extends Controller
                 $producto->decrement('cantidad', $cantidad);
             }
 
-            // ===GUARDAR PAGOS SEGÚN MÉTODO ===
-            $metodo = $request->input('metodo_pago');
-            $referencia = $request->input('referencia_pago');
+            // Registrar pagos
+            $this->registrarPagos($request, $venta);
 
-            switch ($metodo) {
-                case 'efectivo':
-                    Pago::create([
-                        'venta_id' => $venta->id,
-                        'monto' => $request->input('monto_recibido'),
-                        'metodo_pago' => 'efectivo',
-                    ]);
-                    break;
-
-                case 'tarjeta':
-                case 'transferencia':
-                    Pago::create([
-                        'venta_id' => $venta->id,
-                        'monto' => $venta->total_venta,
-                        'metodo_pago' => $metodo,
-                        'referencia' => $referencia,
-                    ]);
-                    break;
-
-                case 'mixto':
-                    // Efectivo
-                    if ($request->filled('monto_efectivo') && $request->monto_efectivo > 0) {
-                        Pago::create([
-                            'venta_id' => $venta->id,
-                            'monto' => $request->monto_efectivo,
-                            'metodo_pago' => 'efectivo',
-                        ]);
-                    }
-
-                    // Tarjeta
-                    if ($request->filled('monto_tarjeta') && $request->monto_tarjeta > 0) {
-                        Pago::create([
-                            'venta_id' => $venta->id,
-                            'monto' => $request->monto_tarjeta,
-                            'metodo_pago' => 'tarjeta',
-                            'referencia' => $referencia,
-                        ]);
-                    }
-                    break;
-            }
 
             // Actualizar cotización
             $cotizacion->update(['estado' => 'convertida']);
@@ -370,10 +373,10 @@ class CotizacionController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Error al convertir cotización en venta', [
+            Log::error('Error convirtiendo cotización en venta', [
+                'cotizacion_id' => $id,
                 'error' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile()
+                'line' => $e->getLine()
             ]);
             return back()->with('error', 'Error al procesar venta: ' . $e->getMessage());
         }
@@ -391,9 +394,14 @@ class CotizacionController extends Controller
             'cantidades' => 'required|array',
             'precios'    => 'required|array',
             'tipos_precio' => 'required|array',
+            'nota' => 'nullable|string|max:500',
+            'vigencia_dias' => 'nullable|integer|min:1|max:365',
         ]);
 
         DB::transaction(function () use ($request) {
+            // Generar folio único
+            $folio = FolioCotizacion::generarSiguiente();
+
             $productos  = $request->productos;   // array de IDs
             $cantidades = $request->cantidades;  // array de cantidades
             $precios    = $request->precios;     // array de precios unitarios
@@ -427,7 +435,7 @@ class CotizacionController extends Controller
 
             // Crear la cotización
             $cotizacion = Cotizacion::create([
-
+                'folio'      => $folio,
                 'cliente_id' => $request->cliente_id,
                 'user_id'    => auth()->id(),
                 'fecha'      => now(),
@@ -435,8 +443,8 @@ class CotizacionController extends Controller
                 /* 'impuestos'  => $impuestos, */
                 'total'      => $total,
                 'estado'     => 'pendiente',
-               /*  'vigencia'   => $request->vigencia ?? 30,
-                'observaciones' => $request->observaciones, */
+                'nota'          => $request->nota,
+                'vigencia_dias' => $request->vigencia_dias ?? 30,
             ]);
 
             // Crear detalles
@@ -453,7 +461,7 @@ class CotizacionController extends Controller
      * Ver detalle de una cotización
      */
     public function show($id){
-        $cotizacion = Cotizacion::with(['cliente', 'detalles.producto'])->findOrFail($id);
+        $cotizacion = Cotizacion::with(['cliente', 'detalles.producto', 'usuario', 'venta'])->findOrFail($id);
 
         // Traer la empresa (siempre 1, o la que necesite)
         $empresa = Empresa::first();
@@ -465,6 +473,11 @@ class CotizacionController extends Controller
      */
     public function edit($id){
         $cotizacion = Cotizacion::with('detalles.producto')->findOrFail($id);
+
+        if ($cotizacion->estado !== 'pendiente') {
+            return back()->with('error', 'Solo se pueden editar cotizaciones pendientes.');
+        }
+
         $clientes = Cliente::all();
         $productos = Producto::all();
 
@@ -478,6 +491,10 @@ class CotizacionController extends Controller
 
         $cotizacion = Cotizacion::findOrFail($id);
 
+        if ($cotizacion->estado !== 'pendiente') {
+            return back()->with('error', 'Solo se pueden editar cotizaciones pendientes.');
+        }
+
         $request->validate([
             'cliente_id' => 'required|exists:clientes,id',
             'productos'  => 'required|array',
@@ -485,6 +502,8 @@ class CotizacionController extends Controller
             'cantidades' => 'required|array',
             'precios'    => 'required|array',
             'tipos_precio' => 'required|array',
+            'nota' => 'nullable|string|max:500',
+            'vigencia_dias' => 'nullable|integer|min:1|max:365',
         ]);
 
         DB::transaction(function () use ($request, $cotizacion) {
@@ -526,8 +545,8 @@ class CotizacionController extends Controller
                 'subtotal'   => $subtotal,
                 /* 'impuestos'  => $impuestos, */
                 'total'      => $total,
-                /* 'vigencia'   => $request->vigencia,
-                'observaciones' => $request->observaciones, */
+                'nota'          => $request->nota,
+                'vigencia_dias' => $request->vigencia_dias ?? $cotizacion->vigencia_dias,
             ]);
 
             // limpiar detalles previos
@@ -563,19 +582,137 @@ class CotizacionController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            Log::error('Error cancelando cotización', [
+                'cotizacion_id' => $id,
+                'error' => $e->getMessage()
+            ]);
+
             return response()->json([
                 'error' => 'Error al cancelar la cotización: ' . $e->getMessage()
             ], 500);
         }
     }
 
+    /**
+     * Registrar pagos según método
+     */
+    private function registrarPagos(Request $request, Venta $venta): void
+    {
+        // ===GUARDAR PAGOS SEGÚN MÉTODO ===
+        $metodo = $request->input('metodo_pago');
+        $referencia = $request->input('referencia_pago');
+
+        switch ($metodo) {
+            case 'efectivo':
+                Pago::create([
+                    'venta_id' => $venta->id,
+                    'monto' => $request->input('monto_recibido'),
+                    'metodo_pago' => 'efectivo',
+                ]);
+                break;
+
+            case 'tarjeta':
+            case 'transferencia':
+                Pago::create([
+                    'venta_id' => $venta->id,
+                    'monto' => $venta->total_venta,
+                    'metodo_pago' => $metodo,
+                    'referencia' => $referencia,
+                ]);
+                break;
+
+            case 'mixto':
+                //EFECTIVO
+                if ($request->filled('monto_efectivo') && $request->monto_efectivo > 0) {
+                    Pago::create([
+                        'venta_id' => $venta->id,
+                        'monto' => $request->monto_efectivo,
+                        'metodo_pago' => 'efectivo',
+                    ]);
+                }
+
+                //Tarjeta
+                if ($request->filled('monto_tarjeta') && $request->monto_tarjeta > 0) {
+                    Pago::create([
+                        'venta_id' => $venta->id,
+                        'monto' => $request->monto_tarjeta,
+                        'metodo_pago' => 'tarjeta',
+                        'referencia' => $referencia,
+                    ]);
+                }
+                break;
+        }
+    }
+
 
     public function descargarPdf($id){
-        $cotizacion = Cotizacion::with(['cliente', 'detalles.producto'])->findOrFail($id);
+        //Eager loading más específico
+        $cotizacion = Cotizacion::with([
+            'cliente:id,nombre,apellido,rfc,correo,telefono',
+            'detalles.producto:id,codigo,nombre',
+            'usuario:id,name'
+        ])->findOrFail($id);
+
         $empresa = Empresa::first(); // o datos fijos
 
-        $pdf = Pdf::loadView('modulos.cotizaciones.pdf', compact('cotizacion', 'empresa'))
-                ->setPaper('A4', 'portrait');
+        if (!$empresa) {
+            abort(404, 'No se encontró información de la empresa');
+        }
+
+        // Convertir imagen a base64 para DomPDF
+        $logoBase64 = null;
+        if ($empresa->imagen) {
+            $imagePath = storage_path('app/public/' . $empresa->imagen);
+            if (file_exists($imagePath)) {
+                $imageData = file_get_contents($imagePath);
+                $imageType = pathinfo($imagePath, PATHINFO_EXTENSION);
+                $logoBase64 = 'data:image/' . $imageType . ';base64,' . base64_encode($imageData);
+            }
+        }
+
+        $nota = 'Precios Sujetos a cambios sin previo aviso.  Esta cotización es válida por 30 días a partir de la fecha de emisión.';
+
+        // Contenido para el QR con datos del cliente y datos de empresa
+        $qrContenido = "BOLETA DE COTIZACION\n";
+        $qrContenido .= "Empresa: {$cotizacion->razon_social_empresa}\n";
+        $qrContenido .= "RFC Empresa: {$cotizacion->rfc_empresa}\n";
+        $qrContenido .= "Cliente: {$cotizacion->nombre_cliente}\n";
+        $qrContenido .= "RFC/CURP: {$cotizacion->rfc_cliente}\n";
+        $qrContenido .= "Total: $" . number_format($cotizacion->total_venta, 2) . "\n";
+        $qrContenido .= "Folio: {$cotizacion->folio}\n";
+        $qrContenido .= "Validación: {$cotizacion->razon_social_empresa}";
+
+        // Generar QR
+        /* $qr = base64_encode(QrCode::format('png')->size(150)->generate($qrContenido)); */
+        // Intentar generar el QR (compatibilidad local + AlwaysData)
+        try {
+            // En local: usa el método normal de Simple QrCode
+            $qr = base64_encode(
+                QrCode::format('png')
+                    ->size(100)
+                    ->generate('http://sistemaventas2025.test/boleta/'.$cotizacion->id)
+            );
+        } catch (\Exception $e) {
+            // Generar QR como SVG (compatible con AlwaysData)
+            $renderer = new ImageRenderer(
+                new RendererStyle(100),
+                new SvgImageBackEnd()
+            );
+            $writer = new Writer($renderer);
+
+            $qr = base64_encode($writer->writeString($qrContenido));
+        }
+
+        $pdf = Pdf::loadView('modulos.cotizaciones.pdf', compact('cotizacion', 'empresa', 'logoBase64','qr', 'nota'))
+            ->setPaper('A4', 'portrait')
+            ->setOption('enable-local-file-access', true); // Para imágenes locales
+
+        // Nombre de archivo más descriptivo
+        /* $nombreArchivo = sprintf(
+            'cotizacion_%s_%s.pdf',
+            $folio,
+            now()->format('Ymd')
+        ); */
 
         return $pdf->stream('cotizacion_'.$cotizacion->id.'.pdf');
     }
