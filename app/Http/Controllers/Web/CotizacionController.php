@@ -18,6 +18,11 @@ use App\Models\FolioCotizacion;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+
+use BaconQrCode\Writer;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\QrCode as EndroidQrCode;
