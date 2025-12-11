@@ -71,7 +71,10 @@ class CarritoController extends Controller
             foreach ($items_carrito as $index => $item) {
                 if ($item['id'] == $id) {
                     if ($item['cantidad'] + $cantidadAgregada > $producto->cantidad) {
-                        return response()->json(['error' => 'No hay stock suficiente para agregar más unidades.'], 400);
+                        return response()->json([
+                            'success' => 'false',
+                            'error' => "Stock insuficiente. Solo quedan {$producto->cantidad} unidades."
+                        ], 422);// Código 422: Unprocessable Entity
                     }
 
                     $items_carrito[$index]['cantidad'] += $cantidadAgregada;

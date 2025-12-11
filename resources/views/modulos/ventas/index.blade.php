@@ -9,6 +9,72 @@
 
 @section('content')
 
+    <style>
+
+        /* Contenedor del Slider */
+        .scrolling-wrapper {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+            padding-top: 5px;
+            margin-bottom: 15px;
+            width: 100%;
+            /* Ocultar barra de scroll visualmente pero permitir funcionalidad */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE 10+ */
+        }
+
+        .scrolling-wrapper::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Las Tarjetas (Cards) */
+        .card-filtro {
+            flex: 0 0 auto; /* ESTO ES CLAVE: Impide que se encojan */
+            width: 110px;   /* Ancho fijo para uniformidad */
+            margin-right: 10px;
+            background: #fff;
+            border: 1px solid #e3e6f0;
+            border-radius: 8px;
+            text-align: center;
+            padding: 10px 5px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+
+        /* Efectos hover y activo */
+        .card-filtro:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+            border-color: #17a2b8;
+        }
+
+        .card-filtro.active {
+            background-color: #17a2b8 !important; /* Color Info */
+            color: #fff !important;
+            border-color: #17a2b8;
+            box-shadow: 0 4px 6px rgba(23, 162, 184, 0.4);
+        }
+
+        .card-filtro i {
+            font-size: 20px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .card-filtro span {
+            font-size: 11px;
+            font-weight: bold;
+            line-height: 1.2;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+
     <div class="container-fluid">
         <div class="row">
 
@@ -229,139 +295,83 @@
 
             </div>
 
-
             {{-- Panel derecho --}}
             <div class="col-md-8 d-flex flex-column" style="height: 100%;">
 
-                {{-- Buscador fijo --}}
-                <div class="mb-2">
-                    <div class="d-flex align-items-center mb-2">
-                        <button type="button" class="btn btn-light p-1 me-2" onclick="abrirScanner()">
-                            {{-- <img src="{{ asset('images/scan.png') }}" alt="Buscar" width="40" height="40"> --}}
-                            <span class="input-group-text btn-outline-primary" style="font-size: 1.2rem; padding: 0.6rem 0.9rem;">
-                                <i class="fas fa-barcode"></i>
-                            </span>
+                {{-- Buscador y Filtros Superiores (fijo) --}}
+                <div class="bg-light p-2 border-bottom shadow-sm mb-2">
+
+                    {{-- Fila del Buscador --}}
+                    <div class="d-flex align-items-center mb-3">
+                        {{-- Botón para abrir cámara/scanner (Si usas html5-qrcode u otro) --}}
+                        <button type="button" class="btn btn-light border mr-2" onclick="abrirScanner()">
+                            <i class="fas fa-barcode text-dark"></i>
                         </button>
-                        <div class="input-group flex-grow-1">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control" id="buscador" placeholder="Escanear/Buscar producto por código o nombre">
-                        </div>
+                        {{-- Input que recibe texto manual o del lector USB --}}
+                        <input type="text" class="form-control rounded-pill" id="buscador"
+                            placeholder="Buscar producto o escanear..." autocomplete="off">
                     </div>
 
-                    {{-- Filtros de Categoría y Marcas --}}
-                    <div id="filtros" class="mb-2"  id="sidebar-categorias">
+                    {{-- SECCIÓN CATEGORÍAS --}}
+                    <h6 class="text-muted text-xs font-weight-bold text-uppercase pl-1">Categorías</h6>
 
-                        {{-- <button class="btn btn-outline-primary mb-2 filtro-categoria active" data-id="todos">
-                            <i class="fas fa-th-large"></i> Todos
-                        </button> --}}
-
-                        <div class="row">
-                            <!-- Botón Categorías --> <!-- Botón para abrir sidebar -->
-                            <div class="col-6 col-sm-6 col-md-6 col-lg-6">
-                                <button class="btn btn-outline-info btn-block mb-2" onclick="abrirSidebarCategorias()">
-                                    <i class="fas fa-bars"></i> Categorías
-                                </button>
-                            </div>
-
-                            <!-- Botón Marcas --> <!-- Botón para abrir sidebar -->
-                            <div class="col-6 col-sm-6 col-md-6 col-lg-6">
-                                <button class="btn btn-outline-info btn-block mb-2" onclick="abrirSidebarMarcas()">
-                                    <i class="fas fa-tags"></i> Marcas
-                                </button>
-                            </div>
+                    <div class="scrolling-wrapper">
+                        {{-- Botón "Todas" --}}
+                        {{-- NOTA: Ya no lleva onclick, solo la clase y el data-id --}}
+                        <div class="card-filtro filtro-categoria active" data-id="todas">
+                            <i class="fas fa-th"></i>
+                            <span>Todas</span>
                         </div>
 
-                        <!-- Sidebar Categorías lateral derecho -->
-                        <div id="sidebar-categorias" class="sidebar-categorias bg-light border-left"
-                            style="position:fixed; top:0; right:-250px; width:250px; height:100%;
-                                    overflow-y:auto; transition:0.3s; z-index:1050; padding:1rem;">
-                            <h5>Lista de Categorías</h5>
-                            <button class="close btn btn-sm btn-light mb-3" onclick="cerrarSidebarCategorias()">&times;</button>
-
-                            <!-- Spinner -->
-                            <div id="spinner-categorias" class="text-center py-3" style="display:none;">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="sr-only">Cargando...</span>
-                                </div>
+                        @foreach($categorias as $categoria)
+                            <div class="card-filtro filtro-categoria" data-id="{{ $categoria->id }}">
+                                <i class="{{ $categoria->icono ?? 'fas fa-box-open' }}"></i>
+                                <span>{{ $categoria->nombre }}</span>
                             </div>
-
-                            <!-- Contenido dinámico -->
-                            <div id="lista-categorias">
-                                @include('modulos.categorias.partials.lista', ['categorias' => $categorias])
-                            </div>
-                        </div>
-
-
-                        <!-- Sidebar Marcas lateral derecho -->
-                        <div id="sidebar-marcas" class="sidebar-marcas bg-light border-left"
-                            style="position:fixed; top:0; right:-250px; width:250px; height:100%;
-                                    overflow-y:auto; transition:0.3s; z-index:1050; padding:1rem;">
-                            <h5>Lista de Marcas</h5>
-                            <button class="close btn btn-sm btn-light mb-3" onclick="cerrarSidebarMarcas()">&times;</button>
-
-                            <div class="d-flex flex-wrap align-items-center mb-2">
-                                <h6 class="text-muted me-3 mb-0">
-                                    <i class="fas fa-filter me-1"></i>Filtrar:
-                                </h6>
-                            </div>
-
-
-                            {{-- Botón Todas las marcas --}}
-                            <button class="btn btn-outline-info btn-block mb-2 active"
-                                    data-count="{{ $totalProductos }}"
-                                    onclick="marcaSeleccionada = 'todas'; filtrarProductos();">
-                                <i class="fas fa-th-large"></i> Todas las Marcas
-                                <span class="badge bg-light ms-1">{{ $totalProductos }}</span>
-                            </button>
-
-
-                            @php
-                                $iconosMarcas = [
-                                    'Coca Cola'     => 'fas fa-wine-bottle',
-                                    'Pepsi'         => 'fas fa-glass-whiskey',
-                                    'Samsung'       => 'fas fa-mobile-alt',
-                                    'LG'            => 'fas fa-tv',
-                                    'Nike'          => 'fas fa-shoe-prints',
-                                    'Adidas'        => 'fas fa-running',
-                                    'Colgate'       => 'fas fa-tooth',
-                                    'HP'            => 'fas fa-laptop',
-                                ];
-                            @endphp
-
-                            @foreach($marcas as $marca)
-                                @php $icono = $iconosMarcas[$marca->nombre] ?? 'fas fa-tag'; @endphp
-                                <button class="btn btn-outline-info btn-block filtro-categoria mb-2"
-                                    data-count="{{ $marca->productos_count }}"
-                                    onclick="marcaSeleccionada = '{{ $marca->id }}'; filtrarProductos();">
-                                    <i class="{{ $icono }}"></i> {{ $marca->nombre }}
-                                    <span class="badge bg-secondary ms-1">{{ $marca->productos_count }}</span>
-                                </button>
-                            @endforeach
-
-                        </div>
-
-
+                        @endforeach
                     </div>
+
+                    {{-- SECCIÓN MARCAS --}}
+                    <h6 class="text-muted text-xs font-weight-bold text-uppercase pl-1 mt-2">Marcas</h6>
+
+                    <div class="scrolling-wrapper">
+                        {{-- Botón "Todas" --}}
+                        <div class="card-filtro filtro-marca active" data-id="todas">
+                            <i class="fas fa-globe"></i>
+                            <span>Todas</span>
+                        </div>
+
+                        @foreach($marcas as $marca)
+                            <div class="card-filtro filtro-marca" data-id="{{ $marca->id }}">
+                                <i class="fas fa-tag"></i>
+                                <span>{{ $marca->nombre }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+
                 </div>
+                {{-- Fin Header Fijo --}}
 
                 {{-- Contenedor productos scrollable --}}
-                {{--  <div style="flex: 1 1 auto; overflow-y: auto; max-height: 100%;"> --}}
-                    <p>Total encontrados: <span id="contador-filtrados">0</span></p>
+                <div style="flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; padding: 0 5px;" id="contenedor-scroll-productos">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                        <small class="text-muted">Mostrando resultados</small>
+                        <span class="badge badge-info" id="contador-filtrados">{{ $totalProductos ?? 0 }} prod.</span>
+                    </div>
+
                     <div class="row g-2" id="contenedor-productos">
                         @include('modulos.productos.listafiltrado', ['productos' => $productos])
                     </div>
-                {{-- </div> --}}
 
-                {{-- Paginación fija debajo actual --}}
-                <div class="d-flex justify-content-center mt-2 flex-shrink-0"  id="pagination-wrapper">
-                    {{ $productos->links() }}{{-- Muestra los enlaces de paginación --}}
+                    {{-- Paginación --}}
+                    <div class="d-flex justify-content-center mt-3 mb-2" id="pagination-wrapper">
+                        {{ $productos->links() }}
+                    </div>
                 </div>
 
             </div>
+
         </div>
     </div>
 
@@ -447,47 +457,6 @@
 @stop
 
 @section('js')
-
-    <script>
-        function abrirSidebarCategorias(){
-            document.getElementById('sidebar-categorias').style.right = '0';
-        }
-        function cerrarSidebarCategorias(){
-            document.getElementById('sidebar-categorias').style.right = '-250px';
-        }
-        function abrirSidebarMarcas(){
-            document.getElementById('sidebar-marcas').style.right = '0';
-        }
-        function cerrarSidebarMarcas(){
-            document.getElementById('sidebar-marcas').style.right = '-250px';
-        }
-    </script>
-
-    <script>
-        $(document).on('click', '#lista-categorias a', function(e) {
-            e.preventDefault();
-            let url = $(this).attr('href');
-
-            // Mostrar spinner
-            $('#lista-categorias').hide();
-            $('#spinner-categorias').show();
-
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function(data) {
-                    $('#lista-categorias').html(data).fadeIn();
-                    $('#spinner-categorias').hide();
-                },
-                error: function() {
-                    alert("Error al cargar categorías");
-                    $('#spinner-categorias').hide();
-                }
-            });
-        });
-    </script>
-
-
 
     {{--SONIDO PARA POS VENTAS PITIDO AL VENDER--}}
     <audio id="sonidoCarrito" src="{{ asset('sounds/Beep.wav') }}" preload="auto"></audio>
@@ -692,14 +661,65 @@
             agregarProductoAlCarrito(button);
         }
 
-        function agregarProductoAlCarrito(button) {
+        /**
+         * @param {HTMLElement|null} button - El elemento botón si se hizo clic (null si es automático)
+         * @param {Object|null} datosAutomaticos - Objeto con datos del producto si viene del scanner
+         */
+        function agregarProductoAlCarrito(button, datosAutomaticos = null) {
+            // PREPARAR DATOS
+            let producto = {};
+            let esAutomatico = false;
 
-            // Reproducir sonido
+            // Reproducir sonido siempre
             let audio = document.getElementById('sonidoCarrito');
-            audio.currentTime = 0; // Reinicia por si ya se reprodujo antes
-            audio.play();
+            if(audio) {
+                audio.currentTime = 0;// Reinicia por si ya se reprodujo antes
+                audio.play().catch(e => console.log("Audio error"));
+            }
 
-            let btn = $(button);
+            if(datosAutomaticos){
+                //FLUJO AUTOMATICO (SCANNER)
+                esAutomatico = true;
+                producto = {
+                    id: datosAutomaticos.id,
+                    precioBase: parseFloat(datosAutomaticos.precio_venta),
+                    enOferta: Boolean(datosAutomaticos.en_oferta), // Asegúrate que tu JSON devuelva true/1
+                    precioOferta: parseFloat(datosAutomaticos.precio_oferta),
+                    fechaInicio: datosAutomaticos.fecha_inicio_oferta ? new Date(datosAutomaticos.fecha_inicio_oferta) : null,
+                    fechaFin: datosAutomaticos.fecha_fin_oferta ? new Date(datosAutomaticos.fecha_fin_oferta) : null,
+                    permiteMayoreo: Boolean(datosAutomaticos.permite_mayoreo),
+                    precioMayoreo: parseFloat(datosAutomaticos.precio_mayoreo),
+                    cantidadMinima: parseInt(datosAutomaticos.cantidad_minima_mayoreo) || 0,
+                    stock: parseInt(datosAutomaticos.stock || datosAutomaticos.cantidad), // Ajusta según tu JSON
+                    cantidadSolicitada: 1 // Default para scanner
+                };
+            } else {
+                //FLUJO MANUAL (BOTON)
+                let btn = $(button);
+                producto = {
+                    id: btn.data('id'),
+                    precioBase: parseFloat(btn.data('precio-base')),
+                    enOferta: parseInt(btn.data('en-oferta')) === 1,
+                    precioOferta: parseFloat(btn.data('precio-oferta')),
+                    fechaInicio: btn.data('fecha-inicio') ? new Date(btn.data('fecha-inicio')) : null,
+                    fechaFin: btn.data('fecha-fin') ? new Date(btn.data('fecha-fin')) : null,
+                    permiteMayoreo: parseInt(btn.data('permite-mayoreo')) === 1,
+                    precioMayoreo: parseFloat(btn.data('precio-mayoreo')),
+                    cantidadMinima: parseInt(btn.data('cantidad-minima')) || 0,
+                    stock: parseInt(btn.data('stock')),
+                    cantidadSolicitada: null // Se pedirá en el Swal
+                };
+            }
+
+            //--LOGICA DE PROCESAMIENTO
+            // Si es automático, enviamos directo. Si es manual, preguntamos.
+            if (esAutomatico) {
+                procesarAgregarAlCarrito(producto);
+            } else {
+                preguntarCantidad(producto);
+            }
+
+           /*  let btn = $(button);
             let productoId = btn.data('id');
             let precioBase = parseFloat(btn.data('precio-base'));
             let enOferta = parseInt(btn.data('en-oferta')) === 1;
@@ -709,10 +729,10 @@
 
             let permiteMayoreo = parseInt(btn.data('permite-mayoreo')) === 1;
             let precioMayoreo = parseFloat(btn.data('precio-mayoreo'));
-            let cantidadMinima = parseInt(btn.data('cantidad-minima')) || 0;
+            let cantidadMinima = parseInt(btn.data('cantidad-minima')) || 0; */
 
             // Preguntar cantidad al cajero (puedes cambiar por input default = 1)
-            Swal.fire({
+           /*  Swal.fire({
                 title: 'Cantidad',
                 input: 'number',
                 inputValue: 1,
@@ -766,6 +786,98 @@
                             Swal.fire('Error', errorMsg, 'error');
                         }
                     });
+                }
+            }); */
+        }
+
+        // Función auxiliar para el Modal de Cantidad (Solo flujo manual)
+        function preguntarCantidad(producto){
+            Swal.fire({
+                title: 'Cantidad',
+                input: 'number',
+                inputValue: 1,
+                inputAttributes: { min: 1 },
+                showCancelButton: true,
+                confirmButtonText: 'Agregar',
+                didOpen: () => {
+                    Swal.getInput().select(); // Auto-seleccionar el número para escribir rápido
+                },
+                inputValidator: (value) => {
+                    //Convertir explícitamente a números
+                    let cantidadIngresada = parseInt(value);
+                    let stockDisponible = parseInt(producto.stock);
+
+                    if (!cantidadIngresada || cantidadIngresada <= 0) {
+                        return 'Debes ingresar una cantidad válida';
+                    }
+
+                    //Hacer la comparación numérica
+                    if (cantidadIngresada > stockDisponible) {
+                        return `Solo hay ${stockDisponible} unidades disponibles. No puedes agregar ${cantidadIngresada}.`;
+                    }
+
+                    return null; // Todo correcto
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    producto.cantidadSolicitada = parseInt(result.value) || 1;
+                    procesarAgregarAlCarrito(producto);
+                }
+            });
+        }
+
+        // Función que calcula precio y hace el AJAX (Compartida por ambos flujos)
+        function procesarAgregarAlCarrito(producto){
+            let cantidad = producto.cantidadSolicitada;
+            let precioAplicado = producto.precioBase;
+            let hoy = new Date();
+
+            // 1. Verificar oferta
+            if (producto.enOferta && producto.precioOferta > 0 &&
+                producto.fechaInicio && producto.fechaFin &&
+                hoy >= producto.fechaInicio && hoy <= producto.fechaFin) {
+                precioAplicado = producto.precioOferta;
+            }
+
+            // 2. Verificar mayoreo
+            if (producto.permiteMayoreo && producto.precioMayoreo > 0 && cantidad >= producto.cantidadMinima) {
+                precioAplicado = producto.precioMayoreo;
+            }
+
+            // 3. Enviar al Backend
+            $.ajax({
+                url: '/carrito/agregar/' + producto.id,
+                method: 'POST',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'), // Es mejor usar el meta tag
+                    cantidad: cantidad,
+                    precio: precioAplicado
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Toast pequeño en esquina en vez de Alert grande para ser más rápido
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true
+                        });
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Agregado: ' + cantidad + ' u.'
+                        });
+
+                        // Renderizar tabla (asumiendo que tienes esta función)
+                        if(typeof renderizarTablaCarrito === 'function'){
+                            renderizarTablaCarrito(response.carrito, response.total);
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    let errorMsg = xhr.responseJSON?.error || 'Error al agregar';
+                    Swal.fire('Error', errorMsg, 'error');
                 }
             });
         }
@@ -1049,137 +1161,203 @@
 
     {{--FILTRAR LAS CATEGORIAS y MARCAS AL SELECCIONARLA Y FILTRAR LOS PRODUCTOS--}}
     <script>
-        let categoriaSeleccionada = 'todos';
-        let marcaSeleccionada = 'todas';
+        // 1. Variables Globales de Estado
+        let estadoFiltros = {
+            categoria: 'todas',
+            marca: 'todas',
+            busqueda: ''
+        };
         let timerBusqueda = null;
 
-        function filtrarProductos(page= 1) {
-            const busqueda = $('#buscador').val();
+        $(document).ready(function() {
+
+            // ---------------------------------------------------------
+            // A. MANEJO DE CLICS EN CATEGORÍAS (Visual + Lógica)
+            // ---------------------------------------------------------
+            $(document).on('click', '.filtro-categoria', function() {
+                // 1. Efecto Visual: Quitar active a otros y poner al actual
+                $('.filtro-categoria').removeClass('active');
+                $(this).addClass('active');
+
+                // 2. Actualizar Estado
+                estadoFiltros.categoria = $(this).data('id');
+
+                // 3. Ejecutar Filtro
+                filtrarProductos();
+            });
+
+            // ---------------------------------------------------------
+            // B. MANEJO DE CLICS EN MARCAS (Visual + Lógica)
+            // ---------------------------------------------------------
+            $(document).on('click', '.filtro-marca', function() {
+                // 1. Efecto Visual
+                $('.filtro-marca').removeClass('active');
+                $(this).addClass('active');
+
+                // 2. Actualizar Estado
+                estadoFiltros.marca = $(this).data('id');
+
+                // 3. Ejecutar Filtro
+                filtrarProductos();
+            });
+
+            // ---------------------------------------------------------
+            // C. BUSCADOR INTELIGENTE (Input + Scanner)
+            // ---------------------------------------------------------
+            $('#buscador').on('input', function() {
+                const valor = $(this).val().trim();
+                estadoFiltros.busqueda = valor;
+
+                // Limpiar timer anterior
+                if (timerBusqueda) clearTimeout(timerBusqueda);
+
+                // LOGICA DE BARCODE: Si tiene más de 6 dígitos y son solo números
+                if (esCodigoBarras(valor)) {
+                    // Búsqueda inmediata sin espera
+                    buscarPorCodigoDirecto(valor);
+                } else {
+                    // Búsqueda normal (texto) con espera de 300ms (Debounce)
+                    timerBusqueda = setTimeout(() => {
+                        filtrarProductos();
+                    }, 300);
+                }
+            });
+
+            // Detectar ENTER para forzar búsqueda
+            $('#buscador').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault(); // Evitar submit del form si está dentro de uno
+                    const valor = $(this).val().trim();
+                    if(esCodigoBarras(valor)){
+                        buscarPorCodigoDirecto(valor);
+                    } else {
+                        filtrarProductos();
+                    }
+                }
+            });
+
+            // ---------------------------------------------------------
+            // D. PAGINACIÓN AJAX
+            // ---------------------------------------------------------
+            $(document).on('click', '#pagination-wrapper a', function(e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                if(url) {
+                    let page = url.split('page=')[1];
+                    filtrarProductos(page);
+                }
+            });
+        });
+
+
+
+        // ---------------------------------------------------------
+        // FUNCIONES PRINCIPALES
+        // ---------------------------------------------------------
+
+        function filtrarProductos(page = 1) {
+            // Mostrar indicador de carga visual (opcional)
+            $('#contenedor-productos').css('opacity', '0.5');
+
+            // Asegurar que si es 'todas', se envíe tal cual
+            let catEnviar = estadoFiltros.categoria;
+            let marcaEnviar = estadoFiltros.marca;
+            let busquedaEnviar = $('#buscador').val(); // Tomar valor fresco del input
 
             $.ajax({
-                url: "{{ route('productos.filtrar') }}?page=" + page, // page dinámico
+                url: "{{ route('productos.filtrar') }}",
+                type: "GET",
                 data: {
-                    busqueda: busqueda,
-                    categoria_id: categoriaSeleccionada, //filtro categorias
-                    marca_id: marcaSeleccionada, // filtro marcas
-                    buscar_codigo: true // Indicar que también busque por código
+                    page: page,
+                    busqueda: busquedaEnviar,
+                    categoria_id: catEnviar,
+                    marca_id: marcaEnviar
                 },
                 success: function(data) {
+                    // 1. Renderizar Productos
                     $('#contenedor-productos').html(data.html);
-                    $('#contador-filtrados').text(data.total);
+                    $('#contenedor-productos').css('opacity', '1');
 
-                    // Actualizar paginación si existe
+                    // 2. Actualizar Contador
+                    $('#contador-filtrados').text(data.total + (data.total === 1 ? ' prod.' : ' prods.'));
+
+                    // 3. Renderizar actualizar Paginación
                     if (data.pagination) {
                         $('#pagination-wrapper').html(data.pagination);
                     } else {
                         $('#pagination-wrapper').empty();
                     }
                 },
-                error: function() {
-                    Swal.fire('Error', 'Error al filtrar productos', 'error');
+                error: function(xhr) {
+                    console.error(xhr); // Ver error en consola
+                    $('#contenedor-productos').css('opacity', '1');
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Error al cargar productos',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
                 }
             });
-
         }
-
-        //Capturar click en la paginación al filtrar en boton todos
-        $(document).on('click', '#pagination-wrapper a', function(e) {
-            e.preventDefault();
-            let page = $(this).attr('href').split('page=')[1]; // obtiene el número de página
-            filtrarProductos(page);
-        });
-
-        // Función para detectar si es un código de barras
-        function esCodigoBarras(texto) {
-            // Asumiendo que los códigos de barras son solo números y tienen más de 8 dígitos
-            return /^\d{8,}$/.test(texto);
-        }
-
-        $('#buscador').on('input', function() {
-            const valor = $(this).val().trim();
-
-            // Limpiar el timer anterior
-            if (timerBusqueda) {
-                clearTimeout(timerBusqueda);
-            }
-
-            // Si parece un código de barras, buscar inmediatamente
-            if (esCodigoBarras(valor) && valor.length >= 8) {
-                buscarPorCodigoDirecto(valor);
-            } else {
-                // Para búsqueda normal, esperar un poco antes de buscar
-                timerBusqueda = setTimeout(() => {
-                    filtrarProductos();
-                }, 300);
-            }
-        });
 
         function buscarPorCodigoDirecto(codigo) {
+            // Bloquear input mientras busca para evitar doble lectura del scanner
+            $('#buscador').prop('readonly', true);
+
             $.ajax({
                 url: "{{ route('productos.buscar-codigo') }}",
-                data: {
-                    codigo: codigo
-                },
+                method: 'GET',
+                data: { codigo: codigo },
                 success: function(data) {
+                    $('#buscador').prop('readonly', false);
+                    //$('#buscador').val('').focus(); // Limpiar y enfocar rápido
                     if (data.producto) {
-                        // Producto encontrado por código exacto
-                        Swal.fire({
-                            title: '¡Producto encontrado!',
-                            html: `
-                                <div class="text-center">
-                                    <img src="${data.producto.imagen || '/images/placeholder-caja.png'}"
-                                        class="img-thumbnail mb-2" style="width: 100px; height: 100px;">
-                                    <h5>${data.producto.nombre}</h5>
-                                    <p class="text-muted">${data.producto.codigo}</p>
-                                    <h4 class="text-primary">MXN$${data.producto.precio}</h4>
-                                    <p class="text-info">Stock: ${data.producto.stock}</p>
-                                </div>
-                            `,
-                            icon: 'success',
-                            showCancelButton: true,
-                            confirmButtonText: 'Agregar al carrito',
-                            cancelButtonText: 'Cancelar',
-                            confirmButtonColor: '#28a745'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                agregarProductoAlCarrito(data.producto.id);
-                            }
-                            // Limpiar el buscador
-                            $('#buscador').val('');
-                        });
+                        // ÉXITO: Producto encontrado
+                        // AQUÍ LA LLAMADA AUTOMÁTICA
+                        // Pasamos 'null' como elemento HTML, y el objeto producto como segundo param
+                        agregarProductoAlCarrito(null, data.producto);
                     } else {
-                        // No encontrado por código, hacer búsqueda normal
-                        filtrarProductos();
+
+                        // Sonido de error
+                        // ...
+                        Swal.fire({
+                            toast: true, position: 'top-end', icon: 'error',
+                            title: 'Producto no encontrado', showConfirmButton: false, timer: 2000
+                        });
+
+                        // NO ENCONTRADO: Filtrar lista normal por si el nombre coincide parcialmente
+                        //filtrarProductos();
+                        /* Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: 'Código no registrado, buscando por nombre...',
+                            showConfirmButton: false,
+                            timer: 2000
+                        }); */
                     }
                 },
                 error: function() {
-                    // Si hay error, hacer búsqueda normal
-                    filtrarProductos();
+                    $('#buscador').prop('readonly', false);
+                    //filtrarProductos();
                 }
             });
         }
 
-        // Búsqueda al presionar Enter
-        $('#buscador').on('keypress', function(e) {
-            if (e.which === 13) { // Enter key
-                const valor = $(this).val().trim();
-                if (valor) {
-                    if (esCodigoBarras(valor)) {
-                        buscarPorCodigoDirecto(valor);
-                    } else {
-                        filtrarProductos();
-                    }
-                }
-            }
-        });
+        // Validador simple de Código de Barras (ajusta el length según tus productos)
+        function esCodigoBarras(texto) {
+            return /^\d{6,}$/.test(texto); // Detecta si son solo números y más de 6 dígitos
+        }
 
-
-        $('.filtro-categoria').on('click', function() {
-            categoriaSeleccionada = $(this).data('id');
-            $('.filtro-categoria').removeClass('active');
-            $(this).addClass('active');
-            filtrarProductos();
-        });
+        //Sonido beep tipo cajera (opcional)
+        function reproducirSonidoBeep() {
+            //agregar un archivo beep.mp3 en tu carpeta public
+            let audio = new Audio("{{ asset('sounds/Beep.wav') }}");
+            audio.play().catch(e => {});
+        }
     </script>
 
 
@@ -1243,32 +1421,4 @@
         });
     </script>
 
-
-    {{--español datatables traducir <script>
-      $(document).ready(function(){
-        $('#productos_carrito').DataTable({
-          "pageLength" : 2,
-          language: {
-            "decimal": "",
-            "emptyTable": "No hay información",
-            "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
-            "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
-            "infoFiltered": "(Filtrado de _MAX_ total entradas)",
-            "infoPostFix": "",
-            "thousands": ",",
-            "lengthMenu": "Mostrar _MENU_ Entradas",
-            "loadingRecords": "Cargando...",
-            "processing": "Procesando...",
-            "search": "Buscar:",
-            "zeroRecords": "Sin resultados encontrados",
-            "paginate": {
-                "first": "Primero",
-                "last": "Ultimo",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            }
-          }
-        });
-      })
-    </script> --}}
 @stop

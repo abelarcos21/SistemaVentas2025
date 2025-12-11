@@ -36,7 +36,7 @@
             </a>
 
             <div class="card-body p-2">
-                <h6 class="mb-1" style="font-size: 14px;">{{ $producto->nombre }}</h6>
+                <h6 class="mb-1 text-truncate" style="font-size: 14px;">{{ $producto->nombre }}</h6>
                 <p class="mb-1 text-primary font-weight-bold" style="font-size: 14px;">
                     @if($tipoPrecio === 'oferta')
                         <span class="text-muted" style="text-decoration: line-through;">
@@ -89,6 +89,7 @@
 @empty
     <div class="col-12 text-center text-muted">
         <p>No se encontraron productos.</p>
+        <p>Intenta con otro nombre o selecciona "Todas" las categorías.</p>
     </div>
 @endforelse
 
