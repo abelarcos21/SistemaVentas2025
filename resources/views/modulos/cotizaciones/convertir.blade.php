@@ -25,7 +25,7 @@
     <div class="card shadow-sm">
         <div class="card-header bg-gradient-info">
             <h3 class="card-title text-white">
-                <i class="fas fa-file-invoice"></i> Cotización #{{ $cotizacion->id }} - Cliente: {{ $cotizacion->cliente->nombre ?? 'N/A' }} {{ $cotizacion->cliente->apellido ?? 'N/A' }}
+                <i class="fas fa-file-invoice"></i> Nro. Cotización: {{ $cotizacion->folio }} - Cliente: {{ $cotizacion->cliente->nombre ?? 'N/A' }} {{ $cotizacion->cliente->apellido ?? 'N/A' }}
             </h3>
         </div>
         <form action="{{ route('cotizaciones.procesar-venta', $cotizacion->id) }}" method="POST" id="formConvertirVenta">

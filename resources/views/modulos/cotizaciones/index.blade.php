@@ -36,17 +36,26 @@
                         <!-- Filtros -->
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-md-3">
-                                    <label for="filter_cliente">Cliente:</label>
+                                <!-- Cliente -->
+                                <div class="col-md-2 col-sm-6 mb-2">
+                                    <label for="filter_cliente" class="form-label">
+                                        <i class="fas fa-user"></i> Cliente:
+                                    </label>
                                     <select id="filter_cliente" class="form-control form-control-sm">
                                         <option value="">Todos los clientes</option>
                                         @foreach($clientes as $cliente)
-                                            <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
+                                            <option value="{{ $cliente->id }}">
+                                                {{ $cliente->nombre }} {{ $cliente->apellido }}
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <label for="filter_estado">Estado:</label>
+
+                                <!-- Estado -->
+                                <div class="col-md-2 col-sm-6 mb-2">
+                                    <label for="filter_estado" class="form-label">
+                                        <i class="fas fa-flag"></i> Estado:
+                                    </label>
                                     <select id="filter_estado" class="form-control form-control-sm">
                                         <option value="">Todos</option>
                                         <option value="pendiente">Pendiente</option>
@@ -54,35 +63,79 @@
                                         <option value="cancelada">Cancelada</option>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <label for="filter_fecha_desde">Fecha desde:</label>
-                                    <input type="date" id="filter_fecha_desde" class="form-control form-control-sm">
+
+                                <!-- Vigencia -->
+                                <div class="col-md-2 col-sm-6 mb-2">
+                                    <label for="filter_vigencia" class="form-label">
+                                        <i class="fas fa-calendar-check"></i> Vigencia:
+                                    </label>
+                                    <select id="filter_vigencia" class="form-control form-control-sm">
+                                        <option value="">Todas</option>
+                                        <option value="vigentes">Solo Vigentes</option>
+                                        <option value="vencidas">Solo Vencidas</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <label for="filter_fecha_hasta">Fecha hasta:</label>
-                                    <input type="date" id="filter_fecha_hasta" class="form-control form-control-sm">
+
+                                <!-- Fecha desde -->
+                                <div class="col-md-2 col-sm-6 mb-2">
+                                    <label for="filter_fecha_desde" class="form-label">
+                                        <i class="fas fa-calendar-alt"></i> Desde:
+                                    </label>
+                                    <input type="date"
+                                        id="filter_fecha_desde"
+                                        class="form-control form-control-sm">
                                 </div>
-                                <div class="col-md-3">
-                                    <label>&nbsp;</label>
-                                    <div>
-                                        <button type="button" id="btn-filtrar" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-filter"></i> Filtrar
+
+                                <!-- Fecha hasta -->
+                                <div class="col-md-2 col-sm-6 mb-2">
+                                    <label for="filter_fecha_hasta" class="form-label">
+                                        <i class="fas fa-calendar-alt"></i> Hasta:
+                                    </label>
+                                    <input type="date"
+                                        id="filter_fecha_hasta"
+                                        class="form-control form-control-sm">
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="col-md-2 col-sm-12 mb-2">
+                                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                                    <div class="btn-group w-100" role="group">
+                                        <button type="button"
+                                                id="btn-filtrar"
+                                                class="btn btn-primary btn-sm"
+                                                title="Aplicar filtros">
+                                            <i class="fas fa-filter"></i> Aplicar
                                         </button>
-                                        <button type="button" id="btn-limpiar" class="btn btn-secondary btn-sm">
+                                        <button type="button"
+                                                id="btn-limpiar"
+                                                class="btn btn-secondary btn-sm"
+                                                title="Limpiar filtros">
                                             <i class="fas fa-eraser"></i> Limpiar
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Alertas de filtros activos -->
+                            <div id="filtros-activos" class="alert alert-info alert-dismissible fade show d-none" role="alert">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Filtros activos:</strong> <span id="filtros-texto"></span>
+                                <button type="button" class="close" data-dismiss="alert">
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+
+                            <!-- Tabla -->
                             <div class="table-responsive">
                                 <table id="cotizaciones-table" class="table table-bordered table-striped">
                                     <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
+                                            <th>Nro De Cotizacion</th>
                                             <th>Cliente</th>
                                             <th>Fecha Registro</th>
                                             <th>Gran Total</th>
+                                            <th>Vigencia</th>
                                             <th>Estado</th>
                                             <th>Venta Asociada</th>
                                             <th class="no-export">Acciones</th>
@@ -112,66 +165,51 @@
         ================================ */
 
         /* Asegurar que el contenedor use todo el ancho disponible */
-        .select2-container {
+        /* .select2-container {
             width: 100% !important;
-        }
+        } */
 
         /* Altura uniforme para selects pequeños (form-control-sm) */
-        .select2-container .select2-selection--single {
+        /* .select2-container .select2-selection--single {
             height: calc(1.5em + .5rem + 2px) !important;
             padding: .25rem .5rem !important;
-        }
+        } */
 
         /* Alinear el texto dentro del select */
-        .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
+        /* .select2-container--bootstrap4 .select2-selection--single .select2-selection__rendered {
             line-height: calc(1.5em + .5rem) !important;
-        }
+        } */
 
         /* Alinear flecha del select */
-        .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
+        /* .select2-container--bootstrap4 .select2-selection--single .select2-selection__arrow {
             height: calc(1.5em + .5rem) !important;
-        }
+        } */
 
         /* Dropdown: ancho igual al select, no desbordar */
-        .select2-dropdown {
+        /* .select2-dropdown {
             position: absolute !important;
             width: 100% !important;        /* Solución clave */
-            min-width: unset !important;
+            /* min-width: unset !important;
             max-width: none !important;
             box-sizing: border-box;
             border: 1px solid #ced4da;
-            z-index: 1056 !important;       /* Por encima de modals */
-        }
+            z-index: 1056 !important; */       /* Por encima de modals */
+        /* } */
 
         /* Opciones dentro del dropdown */
-        .select2-results__options {
+        /* .select2-results__options {
             max-height: 250px !important;
             overflow-y: auto !important;
-        }
+        } */
 
         /* Evitar texto cortado en opciones largas */
-        .select2-results__option {
+        /* .select2-results__option {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             padding: 6px 12px;
-        }
+        } */
 
-        /* Evitar scroll en el body cuando el dropdown está abierto */
-        body.select2-open {
-            overflow: hidden !important;
-        }
-
-        /* Mejorar visualización móvil */
-        @media (max-width: 768px) {
-            .select2-results__options {
-                max-height: 180px !important;
-            }
-
-            .select2-dropdown {
-                max-width: calc(100vw - 40px) !important;
-            }
-        }
 
         /* ================================
         AJUSTES TABLA RESPONSIVE
@@ -238,8 +276,8 @@
     <script>
         $(document).ready(function() {
 
-            // Inicializar Select2 en los filtros
-            $('#filter_cliente').select2({
+            // Inicializar Select2 en los filtros cliente
+           /*  $('#filter_cliente').select2({
                 theme: 'bootstrap4',
                 placeholder: 'Seleccione un cliente',
                 allowClear: true,
@@ -256,7 +294,7 @@
                 dropdownAutoWidth: false,
                 containerCssClass: 'select2-sm',
                 dropdownCssClass: 'select2-sm'
-            });
+            }); */
 
             // Inicializar DataTable
             var table = $('#cotizaciones-table').DataTable({
@@ -269,15 +307,31 @@
                         d.estado = $('#filter_estado').val();
                         d.fecha_desde = $('#filter_fecha_desde').val();
                         d.fecha_hasta = $('#filter_fecha_hasta').val();
+                        //filtros de vigencia
+                        if ($('#filter_vigencia').val() === 'vigentes') {
+                            d.vigentes = 1;
+                        } else if ($('#filter_vigencia').val() === 'vencidas') {
+                            d.vencidas = 1;
+                        }
+                    },
+                    error: function(xhr, error, code) {
+                        console.error('Error en DataTables:', xhr.responseJSON);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al cargar datos',
+                            text: xhr.responseJSON?.message || 'Hubo un problema al cargar las cotizaciones.'
+                        });
                     }
                 },
                 columns: [
                     { data: 'id', name: 'id', className: 'text-center' },
+                    { data: 'folio', name: 'folio', className: 'text-center' },
                     { data: 'cliente', name: 'cliente.nombre' },
                     { data: 'fecha', name: 'fecha', className: 'text-center' },
                     { data: 'total', name: 'total', className: 'text-right' },
+                    { data: 'vigencia', name: 'vigencia', className: 'text-center', orderable: false, searchable: false },
                     { data: 'estado', name: 'estado', className: 'text-center', orderable: false },
-                    { data: 'venta', name: 'venta', orderable: false, searchable: false },
+                    { data: 'venta', name: 'venta', orderable: false, className: 'text-center', searchable: false },
                     { data: 'acciones', name: 'acciones', className: 'text-center no-exportar', orderable: false, searchable: false }
                 ],
                 dom: '<"top d-flex justify-content-between align-items-center mb-2"lf><"top mb-2"B>rt<"bottom d-flex justify-content-between align-items-center"ip><"clear">',
@@ -335,7 +389,7 @@
                 stateSave: true,
                 columnDefs: [
                     {
-                        targets: [5], // Columnas y Acciones
+                        targets: [7], // Columnas y Acciones
                         className: 'text-center align-middle'
                     }
                 ]
@@ -344,16 +398,55 @@
             // Filtrar al hacer clic en el botón
             $('#btn-filtrar').on('click', function() {
                 table.draw();
+                mostrarFiltrosActivos();
             });
 
             // Limpiar filtros
             $('#btn-limpiar').on('click', function() {
                 $('#filter_cliente').val('');
                 $('#filter_estado').val('');
+                $('#filter_vigencia').val('');
                 $('#filter_fecha_desde').val('');
                 $('#filter_fecha_hasta').val('');
+
+                $('#filtros-activos').addClass('d-none');
                 table.draw();
             });
+
+            // Filtrar al presionar Enter en inputs de fecha
+            $('#filter_fecha_desde, #filter_fecha_hasta').on('keypress', function(e) {
+                if (e.which === 13) {
+                    $('#btn-filtrar').click();
+                }
+            });
+
+            // Mostrar filtros activos
+            function mostrarFiltrosActivos() {
+                let filtros = [];
+
+                if ($('#filter_cliente').val()) {
+                    filtros.push('Cliente: ' + $('#filter_cliente option:selected').text());
+                }
+                if ($('#filter_estado').val()) {
+                    filtros.push('Estado: ' + $('#filter_estado option:selected').text());
+                }
+                if ($('#filter_vigencia').val()) {
+                    filtros.push('Vigencia: ' + $('#filter_vigencia option:selected').text());
+                }
+                if ($('#filter_fecha_desde').val()) {
+                    filtros.push('Desde: ' + $('#filter_fecha_desde').val());
+                }
+                if ($('#filter_fecha_hasta').val()) {
+                    filtros.push('Hasta: ' + $('#filter_fecha_hasta').val());
+                }
+
+                if (filtros.length > 0) {
+                    $('#filtros-texto').text(filtros.join(' | '));
+                    $('#filtros-activos').removeClass('d-none');
+                } else {
+                    $('#filtros-activos').addClass('d-none');
+                }
+            }
 
             // Convertir a venta
             $(document).on('click', '.btn-convertir', function() {

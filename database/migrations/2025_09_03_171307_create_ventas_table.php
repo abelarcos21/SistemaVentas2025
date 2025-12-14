@@ -21,6 +21,7 @@ return new class extends Migration
             $table->float('total_venta');
             $table->enum('estado', ['completada','cancelada'])->default('completada');
             $table->string('folio')->unique();
+            $table->text('nota_venta')->nullable();
             $table->timestamps();
         });
     }

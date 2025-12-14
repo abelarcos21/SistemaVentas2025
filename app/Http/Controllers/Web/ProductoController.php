@@ -441,46 +441,45 @@ class ProductoController extends Controller
     //FILTRAR LOS PRODUCTOS Y LAS CATEGORIAS y MARCAS
     public function filtrar(Request $request){
 
+        // Iniciar la consulta base
+        // Asegúrar de incluir las relaciones necesarias (imagen, categoria, etc.)
+        //$query = Producto::with(['imagen', 'categoria', 'marca', 'moneda']);
+
        $query = Producto::query();
 
+        // 1. Lógica del BUSCADOR (Nombre o Código)
         if ($request->filled('busqueda')) {
             $busqueda = $request->busqueda;
 
-             // Si parece un código de barras (solo números y más de 8 dígitos)
-            if (preg_match('/^\d{8,}$/', $busqueda)) {
-                // Búsqueda exacta por código
-                $query->where(function($q) use ($busqueda) {
-                    $q->where('codigo', $busqueda);
-
-                });
-            } else {
-                // Búsqueda normal por nombre y códigos (con LIKE)
-                $query->where(function($q) use ($busqueda) {
-                    $q->where('nombre', 'LIKE', '%' . $busqueda . '%')
-                    ->orWhere('codigo', 'LIKE', '%' . $busqueda . '%');
-                });
-            }
-
+            // Usamos un grupo (closure) para que el OR no rompa los otros filtros
+            $query->where(function($q) use ($busqueda) {
+                $q->where('nombre', 'LIKE', "%{$busqueda}%")
+                ->orWhere('codigo', 'LIKE', "%{$busqueda}%"); // Asumiendo que tienes columna 'codigo'
+            });
         }
 
-        if ($request->filled('categoria_id') && $request->categoria_id !== 'todos') {
+        //Lógica de CATEGORÍAS (Aquí corregimos el error de "Todas")
+        // Solo aplicamos el filtro si el ID NO es 'todas' y no está vacío
+        if ($request->filled('categoria_id') && $request->categoria_id !== 'todas') {
             $query->where('categoria_id', $request->categoria_id);
         }
 
-
+        // 3. Lógica de MARCAS (Igual que categorías)
         if ($request->filled('marca_id') && $request->marca_id !== 'todas') {
             $query->where('marca_id', $request->marca_id);
         }
 
-        $productos = $query->where('cantidad', '>=', 0)->paginate(10); //Asegúrar de que los productos tengan cantidad > 0 en BD
+        //Ordenamiento y Paginación Asegúrar de que los productos tengan cantidad > 0 en BD
+        $productos = $query->where('cantidad', '>=', 0)->paginate(10);
 
-
-        return response()->json([
-            'html' => view('modulos.productos.listafiltrado', compact('productos'))->render(),
-            'pagination' => $productos->links()->render(),
-            'total' => $productos->count(),
-
-        ]);
+        //Retornar vista parcial (JSON)
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('modulos.productos.listafiltrado', compact('productos'))->render(),
+                'pagination' => (string) $productos->links()->render(),
+                'total' => $productos->count(),
+            ]);
+        }
 
     }
 

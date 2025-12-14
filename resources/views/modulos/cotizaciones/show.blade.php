@@ -76,7 +76,7 @@
                         <h5 class="card-title mb-0"><i class="fas fa-file-invoice-dollar"></i> Información de la Cotización</h5>
                     </div>
                     <div class="card-body">
-                        <p><strong>Nro:</strong> {{ $cotizacion->id ?? 'N/A' }}</p>
+                        <p><strong>Nro Cotizacion:</strong> {{ $cotizacion->folio ?? 'N/A' }}</p>
                         <p><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($cotizacion->fecha)->format('d/m/Y h:i a') }}</p>
                         <p><strong>Estado:</strong>
                             <span class="badge

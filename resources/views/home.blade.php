@@ -27,10 +27,10 @@
                     Corte de Caja
                 </a> --}}
 
-                <a href="/reporte-productos" class="btn-action btn-secondary-action">
+                {{-- <a href="/reporte-productos" class="btn-action btn-secondary-action">
                     <i class="fas fa-chart-line"></i>
                     Reportes
-                </a>
+                </a> --}}
             </div>
         </div>
     </div>

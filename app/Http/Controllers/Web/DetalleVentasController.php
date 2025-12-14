@@ -74,9 +74,11 @@ class DetalleVentasController extends Controller
                             </a>';
                 })
                 ->addColumn('imprimir_ticket', function ($venta) {
-                    return '<a target="_blank" href="' . route('detalle.ticket', $venta->id) . '"
-                            class="btn btn-success bg-gradient-success btn-sm">
-                            <i class="fas fa-print"></i> Ticket
+                    $url = route('detalle.ticket', $venta->id) . '?t=' . uniqid();
+
+                    return '<a target="_blank" href="' . $url . '"
+                                class="btn btn-success bg-gradient-success btn-sm">
+                                <i class="fas fa-print"></i> Ticket
                             </a>';
                 })
                 ->addColumn('boleta_venta', function ($venta) {
@@ -388,7 +390,11 @@ class DetalleVentasController extends Controller
         $pdf = Pdf::loadView('modulos.detalleventas.ticket', compact('venta', 'detalles', 'qr', 'totalLetras','efectivoTotal','cambio', 'pagos','totalArticulos', 'logoBase64'))
                 ->setPaper([0, 0, 300, 900], 'portrait'); // 80mm de ancho
 
-        return $pdf->stream("ticket_compra_{$venta->id}.pdf");
+        return $pdf->stream("ticket_compra_{$venta->id}.pdf", [//para no cachear/cache en modo movil
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => '0'
+        ]);
     }
 
     public function generarBoleta($id){
