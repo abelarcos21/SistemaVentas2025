@@ -75,224 +75,167 @@
         }
     </style>
 
+    <style>
+        /* Hace que el panel ocupe el alto de la pantalla menos el navbar (ajusta el 60px según tu navbar) */
+        .pos-panel-container {
+            height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* El cuerpo del carrito crece para ocupar el espacio vacío */
+        .cart-scrollable-body {
+            flex: 1;
+            overflow-y: auto; /* Scroll vertical solo aquí */
+            overflow-x: hidden;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Estilo tipo "Ticket" para la tabla */
+        .table-pos th {
+            background-color: #f4f6f9;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        /* El Total Grande */
+        .pos-total-display {
+            background-color: #343a40; /* Dark */
+            color: #00ffaa; /* Verde neón tipo caja registradora */
+            font-family: 'Courier New', monospace;
+            padding: 15px;
+            text-align: right;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* Ajustes para móvil */
+        @media (max-width: 768px) {
+            .pos-panel-container {
+                height: auto; /* En móvil dejamos que fluya natural */
+                max-height: 50vh; /* O limitamos a la mitad de pantalla */
+            }
+        }
+    </style>
+
+    <!--errores de validación-->
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="container-fluid">
         <div class="row">
 
             {{-- Panel izquierdo --}}
-            <div class="col-md-4" style="height: 100%;">
+            <div class="col-md-4 p-0 bg-white border-right pos-panel-container">
 
-                <!-- Carrito de Compras -->
-                <div class="card card-outline card-primary h-100 d-flex flex-column">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title m-0">
-                            <i class="fas fa-shopping-cart"></i> Orden de Venta
-                        </h3>
-                        <a id="btn-vaciar-carrito" class="btn bg-gradient-danger btn-sm ml-auto">
-                            <i class="fas fa-boxes"></i> Vaciar
-                        </a>
-                    </div>
-                    <form action="{{ route('ventas.vender') }}" method="POST">
-                        @csrf
+                <form action="{{ route('ventas.vender') }}" method="POST" id="form-venta" class="d-flex flex-column h-100">
+                    @csrf
 
-                        <!--Quitamos overflow-auto del card-body -->
-                        <div class="card-body p-3">
-                            <!-- Carrito con scroll limitado -->
-                            <div id="tabla-carrito-container"
-                                style="display:none; max-height:220px; overflow-y:auto; overflow-x:auto;">
-                                <table id="productos_carrito" class="table table-sm table-bordered mb-0 w-100">
-                                    <thead class="bg-gradient-info text-white"
-                                        style="position: sticky; top: 0; z-index: 10;">
-                                        <tr>
-                                            <th>Producto</th>
-                                            <th>Stock</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio</th>
-                                            <th>Total</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="carrito-items">
-                                        <!-- Aquí se renderiza dinámicamente el carrito -->
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <p id="carrito-vacio" class="text-center text-muted my-3">
-                                Aún no tienes productos en tu carrito
-                            </p>
-
-                            <!-- Sección de datos extras -->
-                            {{-- Fecha de Venta --}}
-                            <div class="form-group mb-3 mt-2">
-                                <label for="fecha_venta"><i class="fa fa-calendar-alt mr-1"></i> Fecha de Venta</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-light"><i class="fa fa-calendar"></i></span>
-                                    </div>
-                                    <input type="date" class="form-control" id="fecha_venta"
-                                        value="{{ now()->format('Y-m-d')}}" readonly>
+                    {{-- 1. CABECERA: Cliente y Datos Básicos --}}
+                    <div class="p-2 border-bottom bg-light">
+                        <div class="form-group mb-1">
+                            <div class="input-group input-group-sm">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
                                 </div>
-                            </div>
-
-                            {{-- Cliente --}}
-                            <div class="form-group mb-3">
-                                <label for="cliente_id"><i class="fa fa-user mr-1"></i> Cliente</label>
-                                <select name="cliente_id" id="cliente_id" class="form-control selectcliente" required>
-                                    <option value="" disabled selected>Selecciona un cliente</option>
+                                <select name="cliente_id" id="cliente_id" class="form-control" required>
+                                    <option value="1">Cliente General</option> {{-- Default común en POS --}}
                                     @foreach($clientes as $cliente)
-                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->correo }}</option>
+                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-
-                            <!-- pagos -->
-                            <div id="pagos-container">
-                                <label><i class="fa fa-credit-card mr-1"></i> Métodos de pago</label>
-
-                                <div class="row mb-2 pago-item">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <select name="metodo_pago[]" class="form-control metodo_pago" onchange="cambiarMetodoPago(this)">
-                                                <option value="efectivo">Efectivo</option>
-                                                <option value="tarjeta">Tarjeta Crédito/Débito</option>
-                                                <option value="transferencia">Transferencia</option>
-                                                <option value="mixto">Mixto(Efectivo + Tarjeta)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Monto normal -->
-                                    <div class="col-md-3 monto-normal">
-                                        <div class="form-group">
-                                            <input type="number" step="0.01" name="monto[]" class="form-control" placeholder="Monto">
-                                        </div>
-                                    </div>
-
-                                    <!-- Referencia general -->
-                                    <div class="col-md-3 referencia-wrapper d-none">
-                                        <div class="form-group">
-                                            <input type="text" name="referencia[]" class="form-control" placeholder="#Referencia">
-                                            <small class="text-muted">
-                                                <i class="fas fa-info-circle"></i> (Opcional)
-                                            </small>
-                                        </div>
-                                    </div>
-
-                                    <!-- MIXTO -->
-                                    <div class="col-md-3 mixto-efectivo d-none">
-                                        <div class="form-group">
-                                            <input type="number" step="0.01" name="monto_efectivo[]" class="form-control"
-                                                placeholder="Monto efectivo">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-3 mixto-tarjeta d-none">
-                                        <div class="form-group">
-                                            <input type="number" step="0.01" name="monto_tarjeta[]" class="form-control"
-                                                placeholder="Monto tarjeta">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4 mixto-referencia d-none">
-                                        <div class="form-group">
-                                            <input type="text" name="referencia_tarjeta[]" class="form-control" placeholder="#Referencia tarjeta">
-                                            <small class="text-muted">
-                                                <i class="fas fa-info-circle"></i> (Opcional)
-                                            </small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="eliminarPago(this)">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
-                                    </div>
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" title="Nuevo Cliente"><i class="fa fa-plus"></i></button>
                                 </div>
                             </div>
+                        </div>
 
-                            <button type="button" class="btn btn-info btn-sm mb-3" onclick="agregarPago()">
-                                <i class="fa fa-plus"></i> Agregar otra forma de pago
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small class="text-muted"><i class="fa fa-calendar"></i> {{ now()->format('d/m/Y') }}</small>
+                            <button type="button" id="btn-vaciar-carrito" class="btn btn-xs btn-outline-danger">
+                                <i class="fas fa-trash"></i> Vaciar
                             </button>
+                        </div>
+                    </div>
 
-                            <div class="alert alert-info text-center mb-2">
-                                <h5 class="text-light">Total a Pagar</h5>
-                                <h2 class="font-weight-bold text-light">
-                                    <div id="carrito-total-container" class="text-center mt-3" style="display:none;">
-                                        <h5>Total: <span id="total-carrito">MXN$0.00</span></h5>
-                                    </div>
-                                </h2>
+                    {{-- 2. CUERPO: Tabla de Productos (Scrollable) --}}
+                    <div class="cart-scrollable-body p-0">
+                        <table class="table table-hover table-pos mb-0">
+                            <thead>
+                                <tr>
+                                    <th width="40%">Producto</th>
+                                    <th width="20%" class="text-center">Cant.</th>
+                                    <th width="20%" class="text-right">Total</th>
+                                    <th width="10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="carrito-items">
+                                {{-- Renderizado dinámico aquí --}}
+                                {{-- Ejemplo visual de cómo se ve un item: --}}
+                                </tbody>
+                        </table>
+
+                        {{-- Mensaje de vacío --}}
+                        <div id="carrito-vacio" class="text-center text-muted mt-5" style="display:none;">
+                            <i class="fas fa-shopping-basket fa-3x mb-3 opacity-50"></i>
+                            <p>Carrito vacío</p>
+                        </div>
+                    </div>
+
+                    {{-- 3. FOOTER: Totales y Botón de Cobro --}}
+                    <div class="p-3 bg-white border-top shadow-sm" style="z-index: 20;">
+
+                        {{-- Descuentos e Impuestos (Colapsables o pequeños) --}}
+                        <div class="row mb-2 text-sm">
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend"><span class="input-group-text">Desc $</span></div>
+                                    <input type="number" class="form-control text-right" id="descuento" value="0">
+                                </div>
                             </div>
-
-                            {{-- Nota adicional --}}
-                            <div class="form-group mb-3">
-                                <label for="nota_adicional"><i class="fa fa-sticky-note mr-1"></i> Nota adicional</label>
-                                <textarea class="form-control" name="nota_adicional" id="nota_adicional"
-                                        rows="2" placeholder="Escribe una nota..."></textarea>
-                            </div>
-
-                            {{-- Enviar Comprobante --}}
-                            <div class="form-check mb-3">
-                                <input type="checkbox" name="enviar_correo" id="enviar_correo"
-                                    class="form-check-input" value="1">
-                                <label class="form-check-label" for="enviar_correo">
-                                    <i class="fa fa-envelope mr-1"></i> Enviar comprobante por correo
-                                </label>
+                            <div class="col-6">
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend"><span class="input-group-text">Imp %</span></div>
+                                    <input type="number" class="form-control text-right" id="impuesto" value="0">
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Totales y botones siempre visibles -->
-                        <div class="card-footer bg-light" style="position: sticky; bottom: 0; z-index: 20;">
-                            <!-- totales -->
-                            <div class="row mb-2">
-                                <div class="col-6">
-                                    <label class="text-sm">Impuesto %</label>
-                                    <input type="number" class="form-control form-control-sm" id="impuesto"
-                                        value="0" min="0" max="100" step="0.1">
-                                </div>
-                                <div class="col-6">
-                                    <label class="text-sm">Descuento $</label>
-                                    <input type="number" class="form-control form-control-sm" id="descuento"
-                                        value="0" min="0" step="0.01">
-                                </div>
-                                {{-- <div class="col-4">
-                                    <label class="text-sm">Envío $</label>
-                                    <input type="number" class="form-control form-control-sm" id="envio"
-                                        value="0" min="0" step="0.01">
-                                </div> --}}
+                        {{-- TOTAL GRANDE --}}
+                        <div class="pos-total-display">
+                            <div class="d-flex justify-content-between align-items-end">
+                                <span class="h6 mb-0 text-white-50">TOTAL A PAGAR</span>
+                                <span class="h1 mb-0 font-weight-bold" id="total-carrito-display">$0.00</span>
                             </div>
-
-                            <div class="row">
-                                <div class="col-6">
-                                    <button class="btn btn-outline-secondary btn-block" onclick="reiniciarVenta()">
-                                        <i class="fas fa-redo"></i> Reiniciar
-                                    </button>
-                                </div>
-                                <div class="col-6">
-                                    <button type="submit" class="btn bg-gradient-primary btn-block">
-                                        <i class="fa fa-credit-card mr-1"></i> Procesar Venta
-                                    </button>
-                                </div>
-                            </div>
-
-                            {{-- <div class="row mt-2">
-                                <div class="col-12">
-                                    <div class="btn-group btn-block" role="group">
-                                        <button class="btn btn-outline-info btn-sm" onclick="pagarAhora()">
-                                            <i class="fas fa-money-bill"></i> Pagar
-                                        </button>
-                                        <button class="btn btn-outline-primary btn-sm" onclick="borrarVenta()">
-                                            <i class="fas fa-eraser"></i> Borrador
-                                        </button>
-                                        <button class="btn btn-outline-warning btn-sm" onclick="borradorRecientes()">
-                                            <i class="fas fa-history"></i> Recientes
-                                        </button>
-                                    </div>
-                                </div>
-                            </div> --}}
+                            <input type="hidden" name="total_venta" id="hidden_total_venta">
                         </div>
-                    </form>
-                </div>
 
+                        {{-- Input ocultos para luego con javascript enviarlos al backend--}}
+                        <input type="hidden" name="metodo_pago" id="hidden_metodo_pago" value="">
+                        <input type="hidden" name="pago_recibido" id="hidden_pago_recibido" value="">
+                        <input type="hidden" name="referencia" id="hidden_referencia" value="">
+                        <input type="hidden" name="monto_efectivo" id="hidden_monto_efectivo" value="">
+                        <input type="hidden" name="monto_tarjeta" id="hidden_monto_tarjeta" value="">
+                        <input type="hidden" name="nota_venta" id="hidden_nota_venta" value="">
+
+                        {{-- Botón Gigante de Cobrar Abre Modal --}}
+                        <button type="button" class="btn btn-info btn-lg btn-block font-weight-bold py-3" onclick="abrirModalPago()">
+                            <i class="fas fa-money-bill-wave mr-2"></i> COBRAR
+                        </button>
+                    </div>
+
+                </form>
             </div>
 
             {{-- Panel derecho --}}
@@ -304,7 +247,7 @@
                     {{-- Fila del Buscador --}}
                     <div class="d-flex align-items-center mb-3">
                         {{-- Botón para abrir cámara/scanner (Si usas html5-qrcode u otro) --}}
-                        <button type="button" class="btn btn-light border mr-2" onclick="abrirScanner()">
+                        <button type="button" class="btn bg-gradient-info border mr-2" onclick="abrirScanner()">
                             <i class="fas fa-barcode text-dark"></i>
                         </button>
                         {{-- Input que recibe texto manual o del lector USB --}}
@@ -373,37 +316,114 @@
             </div>
 
         </div>
+        <!-- MODAL DE PAGO-->
+        <div class="modal fade" id="modalPago" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-success text-white">
+                        <h5 class="modal-title">Finalizar Venta</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="text-center mb-4">
+                            <h1 class="display-4 font-weight-bold text-success" id="modal-total-pagar">$0.00</h1>
+                            <p class="text-muted">Total a Pagar</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Método de Pago</label>
+                            <select class="form-control form-control-lg" id="modal_metodo_pago" onchange="cambiarMetodoPago()">
+                                <option value="efectivo">Efectivo</option>
+                                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                                <option value="transferencia">Transferencia</option>
+                                <option value="mixto">Mixto (Efectivo + Tarjeta)</option>
+                            </select>
+                        </div>
+
+                        <div id="seccion-efectivo">
+                            <div class="form-group">
+                                <label>Dinero Recibido</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control form-control-lg" id="pago_efectivo_input" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="alert alert-secondary text-center mt-2">
+                                Cambio: <strong id="modal-cambio-display">$0.00</strong>
+                            </div>
+                        </div>
+
+                        <div id="seccion-referencia" class="d-none">
+                            <div class="form-group">
+                                <label>Número de Referencia / Folio (Opcional)</label>
+                                <input type="text" class="form-control" id="referencia_input" placeholder="Ej. 123456">
+                            </div>
+                        </div>
+
+                        <div id="seccion-mixto" class="d-none bg-light p-3 rounded border">
+                            <h6 class="text-center mb-3 border-bottom pb-2">Desglose del Pago</h6>
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Efectivo:</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend"><span class="input-group-text">$</span></div>
+                                        <input type="number" class="form-control" id="mixto_efectivo" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Tarjeta:</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend"><span class="input-group-text">$</span></div>
+                                        <input type="number" class="form-control" id="mixto_tarjeta" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label"><small>Ref. Tarjeta:</small></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="mixto_referencia" placeholder="Opcional">
+                                </div>
+                            </div>
+
+                            <div class="text-center text-danger small" id="error-mixto" style="display:none;">
+                                La suma debe ser igual al total.
+                            </div>
+                        </div>
+
+                        {{-- Checkbox de correo y nota --}}
+                        <div class="form-group mt-3">
+                            <textarea class="form-control" id="modal_nota_venta" placeholder="Nota de venta (opcional)"></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+                        {{-- Este botón envía el formulario principal --}}
+                        <button type="button" class="btn btn-primary font-weight-bold px-4" onclick="confirmarVenta()">
+                            <i class="fas fa-print mr-1"></i> Confirmar e Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 @stop
 
 @section('css')
-
-    {{-- ESTILOS PARA EL FILTRO DE CATEGORIAS BOTONES Y ICONS--}}
-    <style>
-        .filtro-categoria {
-            font-size: 0.95rem;
-            padding: 0.5rem 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            border-radius: 1.25rem;
-            transition: all 0.2s ease-in-out;
-        }
-
-        .filtro-categoria i {
-            font-size: 1.1rem;
-        }
-
-        @media (max-width: 768px) {
-            #filtros button.filtro-categoria {
-                flex: 1 1 100%;
-                width: 100%;
-            }
-        }
-    </style>
-
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
 
     {{-- Este estilo limita la altura del dropdown a 300px y agrega una barra de desplazamiento si hay muchos elementos. --}}
     <style>
@@ -590,6 +610,133 @@
 
             });
         @endif
+
+    </script>
+
+    <script>
+
+        // --- FUNCIONES ---
+        function abrirModalPago() {
+            // 1. Obtener el total del carrito (del input hidden que ya tienes en el panel izquierdo)
+            let total = parseFloat($('#hidden_total_venta').val() || 0);
+
+            // 2. Validar que haya algo que cobrar
+            if (total <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Carrito vacío',
+                    text: 'Agrega productos antes de cobrar.'
+                });
+                return;
+            }
+
+            // 3. Actualizar textos del Modal
+            $('#modal-total-pagar').text('$' + total.toFixed(2));
+
+            // 4. Resetear el modal a estado inicial (Efectivo)
+            $('#modal_metodo_pago').val('efectivo').trigger('change');
+            $('#pago_recibido').val('');
+            $('#pago_cambio').text('$0.00');
+
+            // 5. Mostrar Modal
+            $('#modalPago').modal('show');
+        }
+
+        function calcularCambio() {
+            let total = parseFloat($('#hidden_total_venta').val() || 0);
+            let recibido = parseFloat($('#pago_recibido').val() || 0);
+            let cambio = recibido - total;
+
+            // Formatear moneda
+            let textoCambio = '$' + cambio.toFixed(2);
+
+            let labelCambio = $('#pago_cambio');
+
+            if (recibido < total) {
+                // Falta dinero
+                labelCambio.html('<span class="text-danger">Faltan ' + Math.abs(cambio).toFixed(2) + '</span>');
+                return false; // Indica que no se puede cobrar aún
+            } else {
+                // Alcanza
+                labelCambio.html('<span class="text-success font-weight-bold">' + textoCambio + '</span>');
+                return true; // Listo para cobrar
+            }
+        }
+
+        function confirmarVenta() {
+            //RECOGER DATOS DEL MODAL (Lo que escribe el usuario)
+            let metodo = $('#modal_metodo_pago').val();
+            let totalVenta = parseFloat($('#hidden_total_venta').val());
+
+            // Variables para enviar
+            let pagoFinal = 0;
+            let referencia = '';
+            let mixtoEfectivo = 0;
+            let mixtoTarjeta = 0;
+
+            // VALIDACIONES SEGÚN TIPO
+            if (metodo === 'efectivo') {
+                // Obtenemos lo que escribió en el input del modal
+                pagoFinal = parseFloat($('#pago_efectivo_input').val() || 0);
+
+                // Validación: Si está vacío, error.
+                if(!pagoFinal){
+                    Swal.fire('Error', 'Debes ingresar con cuánto paga el cliente', 'warning');
+                    return;
+                }
+
+                // Validación: Si efectivo es menor al total.
+                if (pagoFinal < totalVenta) {
+                    Swal.fire('Pago Insuficiente', 'El efectivo es menor al total', 'warning');
+                    return;
+                }
+
+            } else if (metodo === 'tarjeta' || metodo === 'transferencia') {
+                pagoFinal = totalVenta; // Se asume pago exacto
+                referencia = $('#referencia_input').val();
+
+            } else if (metodo === 'mixto') {
+                mixtoEfectivo = parseFloat($('#mixto_efectivo').val() || 0);
+                mixtoTarjeta = parseFloat($('#mixto_tarjeta').val() || 0);
+                referencia = $('#mixto_referencia').val();
+                pagoFinal = mixtoEfectivo + mixtoTarjeta;
+
+                // Permitimos un margen de error de 0.10 centavos por redondeos
+                if (Math.abs(pagoFinal - totalVenta) > 0.10) {
+                    Swal.fire('Error en Montos', `La suma ($${pagoFinal}) no coincide con el total ($${totalVenta})`, 'error');
+                    return;
+                }
+            }
+
+            // LLENAR INPUTS OCULTOS TRANSFERIR DATOS AL FORMULARIO PRINCIPAL (El paso crucial)
+            $('#hidden_metodo_pago').val(metodo);
+            $('#hidden_pago_recibido').val(pagoFinal);
+            $('#hidden_referencia').val(referencia);
+            $('#hidden_monto_efectivo').val(mixtoEfectivo);
+            $('#hidden_monto_tarjeta').val(mixtoTarjeta);
+            $('#hidden_nota_venta').val($('#modal_nota_venta').val()); // ID al textarea del modal
+
+            // DEBUG: Muestra en la consola del navegador (F12) qué se va a enviar
+           /*  console.log("Enviando Formulario...");
+            console.log("Método:", metodo);
+            console.log("Pago Recibido:", pagoFinal);
+ */
+            // ENVIAR EL FORMULARIO
+            $('#modalPago').modal('hide');
+            Swal.fire({ title: 'Procesando Venta...', didOpen: () => Swal.showLoading() });
+
+            // Pequeña pausa para asegurar que el DOM se actualizó
+            setTimeout(() => { $('#form-venta').submit(); }, 300);
+        }
+
+        // 3. Listener para calcular cambio en tiempo real (solo efectivo)
+        $('#pago_efectivo_input').on('keyup', function() {
+            let pago = parseFloat($(this).val() || 0);
+            let total = parseFloat($('#hidden_total_venta').val() || 0);
+            let cambio = pago - total;
+            if(cambio < 0) cambio = 0;
+            $('#modal-cambio-display').text('$' + cambio.toFixed(2));
+        });
 
     </script>
 
@@ -813,98 +960,125 @@
         }
 
         function renderizarTablaCarrito(items, total) {
+            // 1. SELECTORES
             const tbody = $('#carrito-items');
-            const tablaContainer = $('#tabla-carrito-container');
             const mensajeVacio = $('#carrito-vacio');
-            const totalContainer = $('#carrito-total-container');
 
+            // Selectores del nuevo diseño (Total Grande y Input Oculto)
+            const totalDisplay = $('#total-carrito-display');
+            const inputTotalOculto = $('#hidden_total_venta');
+
+            // 2. LIMPIEZA Y ACTUALIZACIÓN DE TOTALES
             tbody.empty();
 
-            if (!items.length) {
-                tablaContainer.hide();
-                mensajeVacio.show();
-                $('#total-carrito').text('MXN$0.00');
+            // Actualizamos el total visual (Grande)
+            totalDisplay.text('$' + parseFloat(total).toFixed(2));
+
+            // Actualizamos el input oculto (CRUCIAL para que el botón COBRAR funcione)
+            inputTotalOculto.val(parseFloat(total));
+
+            // 3. MANEJO DE ESTADO VACÍO
+            if (!items || items.length === 0) {
+                mensajeVacio.show(); // Mostrar icono de cesta vacía
                 return;
+            } else {
+                mensajeVacio.hide();
             }
 
-            tablaContainer.show();
-            mensajeVacio.hide();
-            totalContainer.show();
-
+            // 4. RENDERIZADO DE FILAS
             items.forEach(item => {
                 const totalProducto = item.precio * item.cantidad;
 
-                //Etiqueta visual según el tipo de precio aplicado
+                // Lógica de Badges (Oferta/Mayoreo) adaptada al diseño compacto
                 let badgeTipo = '';
                 if (item.tipo_precio === 'oferta') {
-                    badgeTipo = `<span class="badge bg-success ms-1">Oferta</span>`;
+                    badgeTipo = `<span class="badge badge-success" style="font-size: 0.7em;">Oferta</span>`;
                 } else if (item.tipo_precio === 'mayoreo') {
-                    badgeTipo = `<span class="badge bg-warning text-dark ms-1">Mayoreo</span>`;
-                } else {
+                    badgeTipo = `<span class="badge badge-warning text-dark" style="font-size: 0.7em;">Mayoreo</span>`;
+                }else {
                     badgeTipo = `<span class="badge bg-secondary ms-1">Normal</span>`;
+                }
+
+                // Lógica de Stock bajo (Visual)
+                let alertaStock = '';
+                if(item.stock <= 5) {
+                    alertaStock = `<i class="fas fa-exclamation-circle text-warning ml-1" title="Stock bajo: ${item.stock}"></i>`;
                 }
 
                 const row = `
                     <tr>
-
-                        <td class="text-center">${item.nombre}</td>
-                        <td class="text-center">
-                            <span class="badge ${item.stock > 5 ? 'bg-success' : 'bg-danger'}">
-                                ${item.stock}
-                            </span>
-                        </td>
-                        <td class="text-center">
-                            <div class="d-inline-flex align-items-center">
-                                <button type="button" class="btn btn-sm btn-outline-info cantidad-menos" data-id="${item.id}">−</button>
-                                <input type="number" class="form-control form-control-sm text-center mx-1 cantidad-input"
-                                    value="${item.cantidad}" min="1" max="${item.stock}"
-                                    style="width: 60px;" readonly>
-                                <button type="button" class="btn btn-sm btn-outline-info cantidad-mas" data-id="${item.id}">+</button>
+                        <td class="align-middle pl-3">
+                            <div class="d-flex flex-column">
+                                <span class="font-weight-bold text-truncate" style="max-width: 160px;" title="${item.nombre}">
+                                    ${item.nombre} ${alertaStock}
+                                </span>
+                                <div class="d-flex align-items-center">
+                                    <small class="text-muted mr-2">$${parseFloat(item.precio).toFixed(2)} c/u</small>
+                                    ${badgeTipo}
+                                </div>
                             </div>
                         </td>
-                        <td class="text-center text-primary">
-                            $${item.precio.toFixed(2)} ${badgeTipo}
+
+                        <td class="align-middle text-center">
+                            <div class="btn-group btn-group-sm shadow-sm" role="group">
+                                <button type="button" class="btn btn-light border btn-xs"
+                                        onclick="cambiarCantidad('${item.id}', 'restar')">
+                                    <i class="fas fa-minus text-xs"></i>
+                                </button>
+
+                                <input type="text" id="input-cantidad-${item.id}" class="form-control form-control-sm text-center px-0 border-top border-bottom"
+                                    value="${item.cantidad}"
+                                    style="width: 35px; font-size: 0.9rem; font-weight: bold; pointer-events: none; background: #fff;" readonly>
+
+                                <button type="button" class="btn btn-light border btn-xs"
+                                        onclick="cambiarCantidad('${item.id}', 'sumar')">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </button>
+                            </div>
                         </td>
-                        <td class="text-center text-primary">$${totalProducto.toFixed(2)}</td>
-                        <td class="text-center">
-                            <button class="btn btn-danger btn-sm quitar-producto" data-id="${item.id}">
-                                <i class="fas fa-trash-alt"></i>
+
+                        <td class="align-middle text-right font-weight-bold pr-3">
+                            $${totalProducto.toFixed(2)}
+                        </td>
+
+                        <td class="align-middle text-center">
+                            <button type="button" class="btn btn-xs text-danger"
+                                    onclick="eliminarDelCarrito('${item.id}')" title="Eliminar">
+                                <i class="fas fa-times"></i>
                             </button>
                         </td>
                     </tr>
                 `;
 
                 tbody.append(row);
-
-                // Debug: aseguramos que llegue tipo_precio
-                console.log(`➡️ Producto ${item.nombre}: tipo_precio = ${item.tipo_precio}, precio = ${item.precio}`);
             });
-
-            $('#total-carrito').text('MXN$' + total.toFixed(2));
         }
-
 
         // IMPORTANTE: Cargar el carrito cuando la página esté lista
         $(document).ready(function() {
             cargarCarritoExistente();
         });
 
-        //Captura los clics con jQuery
-        $(document).on('click', '.cantidad-mas', function () {
-            const id = $(this).data('id');
-            const input = $(this).siblings('.cantidad-input');
-            const nuevaCantidad = parseInt(input.val()) + 1;
-            actualizarCantidad(id, nuevaCantidad);
-        });
+        // Esta función es el "Puente": recibe la acción del botón y calcula el número
+        function cambiarCantidad(id, accion) {
+            // Obtenemos el valor actual del input visualmente
+            let input = $('#input-cantidad-' + id);
+            let cantidadActual = parseInt(input.val());
 
-        $(document).on('click', '.cantidad-menos', function () {
-            const id = $(this).data('id');
-            const input = $(this).siblings('.cantidad-input');
-            let nuevaCantidad = parseInt(input.val()) - 1;
-            if (nuevaCantidad >= 1) {
-                actualizarCantidad(id, nuevaCantidad); // Esta función hará la petición Ajax al backend
+            // Calculamos la nueva cantidad
+            let nuevaCantidad = 0;
+            if (accion === 'sumar') {
+                nuevaCantidad = cantidadActual + 1;
+            } else {
+                nuevaCantidad = cantidadActual - 1;
             }
-        });
+
+            // Evitar que baje de 1 (opcional, tu backend también debería validar)
+            if (nuevaCantidad < 1) return;
+
+            // Llamo a la función original que habla con el servidor
+            actualizarCantidad(id, nuevaCantidad);
+        }
 
     </script>
 
@@ -913,47 +1087,63 @@
         function actualizarCantidad(id, nuevaCantidad) {
             $.ajax({
                 url: `/carrito/venta/actualizar/${id}`,
-                method: 'PUT', // o POST según tu ruta
+                method: 'PUT',
                 data: {
-                    _token: '{{ csrf_token() }}',
+                    // Usamos el meta tag si existe, o el blade token
+                    _token: $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}',
                     cantidad: nuevaCantidad
                 },
                 success: function (response) {
                     if (response.success) {
-                        // 🔹 Solo actualiza la tabla, sin alertas emergentes
+                        // Renderizamos la tabla con los nuevos totales calculados por el server
                         renderizarTablaCarrito(response.carrito, response.total);
                     }
                 },
                 error: function (xhr) {
                     let errorMsg = xhr.responseJSON?.error || 'Error al actualizar cantidad.';
-                    Swal.fire('Error', errorMsg, 'error');
+                    // Tip: En POS rápido, a veces es mejor un 'Toast' pequeño que un Alert grande
+                    const Toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 2000});
+                    Toast.fire({icon: 'error', title: errorMsg});
                 }
             });
         }
     </script>
 
-    <script>
-        $(document).on('click', '.quitar-producto', function () {
-            const id = $(this).data('id');
 
+    <script>
+        /* =========================================
+        LÓGICA DE ELIMINAR QUITAR PRODUCTO
+        ========================================= */
+
+        //función nombrada para el onclick=""
+        function eliminarDelCarrito(id) {
             Swal.fire({
                 title: '¿Quitar producto?',
-                text: 'Se eliminará todo el producto del carrito.',
+                text: 'Se eliminará de la lista de venta.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, quitar',
                 cancelButtonText: 'Cancelar',
+                // Optimizaciones para POS:
+                focusCancel: true, // Enfocar cancelar por seguridad
+                reverseButtons: true // Botón de cancelar primero
             }).then((result) => {
                 if (result.isConfirmed) {
+
                     $.ajax({
                         url: `/carrito/venta/quitar/${id}`,
                         method: 'DELETE',
                         data: {
-                            _token: '{{ csrf_token() }}'
+                            _token: $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
                         },
                         success: function (response) {
                             if (response.success) {
-                                Swal.fire('Eliminado', response.message, 'success');
+                                // Toast rápido en lugar de Alert grande para no frenar al cajero
+                                const Toast = Swal.mixin({toast: true, position: 'top-end', showConfirmButton: false, timer: 1500});
+                                Toast.fire({icon: 'success', title: 'Producto eliminado'});
+
                                 renderizarTablaCarrito(response.carrito, response.total);
                             }
                         },
@@ -963,85 +1153,38 @@
                     });
                 }
             });
-        });
+        }
     </script>
 
-    {{--INCLUIR PLUGIN SELECT2 EN EL CARRITO PARA BUSCAR CLIENTE--}}
-    <script>
-        $(document).ready(function() {
-            $('.selectcliente').select2({
-                language: 'es',
-                theme: 'bootstrap4',
-                placeholder: "Selecciona o Busca un Cliente",
-                allowClear: true,
-                minimumResultsForSearch: 0,// Fuerza siempre el buscador Siempre mostrar buscador
-                dropdownAutoWidth: true //puede ayudar a que el ancho no se corte si los textos son largos.
-            });
-        });
-    </script>
 
-    {{--SCRIPT PARA AGREGAR EL METODO DE PAGO--}}
+    {{--SCRIPT PARA AGREGAR y manejar los METODOs DE PAGO--}}
     <script>
 
-        function cambiarMetodoPago(select) {
-            let item = select.closest('.pago-item');
+        //Mostrar/Ocultar secciones según el select
+        function cambiarMetodoPago() {
+            let metodo = $('#modal_metodo_pago').val();
+            let totalVenta = parseFloat($('#hidden_total_venta').val() || 0);
 
-            let montoNormalDiv = item.querySelector('.monto-normal');
-            let referenciaDiv = item.querySelector('.referencia-wrapper');
-            let mixtoEfDiv = item.querySelector('.mixto-efectivo');
-            let mixtoTarDiv = item.querySelector('.mixto-tarjeta');
-            let mixtoRefDiv = item.querySelector('.mixto-referencia');
+            // Ocultar todo primero
+            $('#seccion-efectivo').addClass('d-none');
+            $('#seccion-referencia').addClass('d-none');
+            $('#seccion-mixto').addClass('d-none');
 
-            // Ocultar todos
-            montoNormalDiv.classList.add('d-none');
-            referenciaDiv.classList.add('d-none');
-            mixtoEfDiv.classList.add('d-none');
-            mixtoTarDiv.classList.add('d-none');
-            mixtoRefDiv.classList.add('d-none');
+            if (metodo === 'efectivo') {
+                $('#seccion-efectivo').removeClass('d-none');
+                // Enfocar input
+                setTimeout(() => $('#pago_efectivo_input').focus(), 200);
 
-            // Limpiar valores de campos ocultos
-            montoNormalDiv.querySelector('input').value = '';
-            referenciaDiv.querySelector('input').value = '';
-            mixtoEfDiv.querySelector('input').value = '';
-            mixtoTarDiv.querySelector('input').value = '';
-            mixtoRefDiv.querySelector('input').value = '';
+            } else if (metodo === 'tarjeta' || metodo === 'transferencia') {
+                $('#seccion-referencia').removeClass('d-none');
+                // En estos métodos, asumimos pago exacto
+                $('#pago_efectivo_input').val(totalVenta.toFixed(2));
 
-            switch (select.value) {
-                case 'efectivo':
-                    montoNormalDiv.classList.remove('d-none');
-                    break;
-
-                case 'tarjeta':
-                case 'transferencia':
-                    montoNormalDiv.classList.remove('d-none');
-                    referenciaDiv.classList.remove('d-none');
-                    break;
-
-                case 'mixto':
-                    mixtoEfDiv.classList.remove('d-none');
-                    mixtoTarDiv.classList.remove('d-none');
-                    mixtoRefDiv.classList.remove('d-none');
-                    break;
-            }
-        }
-
-        function agregarPago() {
-            let cont = document.querySelector('#pagos-container');
-            let item = cont.querySelector('.pago-item');
-            let clone = item.cloneNode(true);
-
-            clone.querySelectorAll('input').forEach(i => i.value = "");
-            clone.querySelector('select').value = "efectivo";
-
-            cambiarMetodoPago(clone.querySelector('select'));
-
-            cont.appendChild(clone);
-        }
-
-        function eliminarPago(btn) {
-            let items = document.querySelectorAll('.pago-item');
-            if (items.length > 1) {
-                btn.closest('.pago-item').remove();
+            } else if (metodo === 'mixto') {
+                $('#seccion-mixto').removeClass('d-none');
+                // Sugerencia visual: poner mitad y mitad por defecto (opcional)
+                $('#mixto_efectivo').val('');
+                $('#mixto_tarjeta').val('');
             }
         }
 
@@ -1179,8 +1322,6 @@
             });
         });
 
-
-
         // ---------------------------------------------------------
         // FUNCIONES PRINCIPALES
         // ---------------------------------------------------------
@@ -1288,67 +1429,6 @@
             let audio = new Audio("{{ asset('sounds/Beep.wav') }}");
             audio.play().catch(e => {});
         }
-    </script>
-
-
-
-    {{--Script para aumentar/disminuir la cantidad en carrito y enviar automáticamente js vanilla javascript--}}
-    <script>
-        document.querySelectorAll('.cantidad-mas').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-                const form = this.closest('form');
-                const input = form.querySelector('.cantidad-input');
-                const max = parseInt(input.getAttribute('max'));
-                const current = parseInt(input.value);
-
-                if (current < max) {
-                    input.value = current + 1;
-                    form.submit();
-                } else if (current === max) {
-                    if (max === 0) {
-                       /*  alert('No hay productos disponibles.'); */
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Sin stock',
-                            text: 'No hay productos disponibles.'
-                        });
-                    } else if (max === 1) {
-                        /* alert('Solo queda 1 producto en stock.'); */
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Stock limitado',
-                            text: 'Solo queda 1 producto en stock.'
-
-                        });
-                    } else {
-                       /*  alert('Has alcanzado el límite disponible de este producto.'); */
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Límite alcanzado',
-                            text: 'Has alcanzado el límite disponible de este producto.'
-                        });
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('.cantidad-menos').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault(); // Evita que el formulario se envíe automáticamente
-
-                const form = this.closest('form');
-                const input = form.querySelector('.cantidad-input');
-                const min = parseInt(input.getAttribute('min'));
-                const current = parseInt(input.value);
-
-                if (current > min) {
-                    input.value = current - 1;
-                    form.submit();
-                }
-            });
-        });
     </script>
 
 @stop
