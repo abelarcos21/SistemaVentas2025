@@ -73,7 +73,7 @@ class VentaController extends Controller
         // VALIDACIÓN ADAPTADA AL NUEVO FORMULARIO
         // Ahora esperamos strings y números simples, no arrays.
         $request->validate([
-            'cliente_id'    => 'required|exists:clientes,id',
+            'cliente_id'    => 'nullable|exists:clientes,id',
             'metodo_pago'   => 'required|string', // Antes era array
             'pago_recibido' => 'required|numeric|min:0',
             'referencia' => 'nullable|string',
@@ -141,11 +141,32 @@ class VentaController extends Controller
             $folio->ultimo_numero += 1;
             $folio->save();
 
+            //CODIGO PARA BUSCAR UN CLIENTE O CREAR CON LOS DATOS DEL ARRAY PUBLICO EN GENERAL AL REALIZAR VENTAS DESDE EL PUNTO DE VENTA(POS)
+            // Obtener el ID del cliente del request
+            $cliente_id = $request->input('cliente_id');
+
+            // Si viene vacío, buscamos o creamos al "Público en General"
+            if (empty($cliente_id)) {
+                // firstOrCreate busca por 'nombre'. Si no existe, lo crea con los datos del segundo array.
+                $clienteGeneral = \App\Models\Cliente::firstOrCreate(
+                    ['nombre' => 'Publico en General'], // Condición de búsqueda
+                    [
+                        'rfc' => 'XAXX010101000',      // Datos para crear si no existe
+                        'apellido' => '',              // Asegura que no falle si apellido es required en BD
+                        'telefono' => '',
+                        'correo' => 'ventas@general.com',
+                        'activo' => 1
+                    ]
+                );
+
+                $cliente_id = $clienteGeneral->id;
+            }
+
             // --- D. GUARDAR VENTA ---
             $venta = new Venta();
             $venta->caja_id = $caja->id;
             $venta->user_id = Auth::id();
-            $venta->cliente_id  = $request->cliente_id;
+            $venta->cliente_id  = $cliente_id;
             $venta->empresa_id = 1;
             $venta->total_venta = $totalVenta;
             $venta->estado = 'completada';

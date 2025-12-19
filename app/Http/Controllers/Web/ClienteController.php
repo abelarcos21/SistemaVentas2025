@@ -169,11 +169,18 @@ class ClienteController extends Controller
         DB::beginTransaction();
 
         try {
-            // Crear nuevo cliente
-            Cliente::create($validated);// requiere tener $fillable en el modelo
+
+            // Crear el cliente
+            $cliente = Cliente::create($validated);
 
             DB::commit();
 
+            // SI LA PETICIÓN ES AJAX (Viene del Modal del POS)
+            if ($request->ajax()) {
+                return response()->json($cliente);
+            }
+
+            // SI ES UNA PETICIÓN NORMAL (Viene del CRUD de clientes)
             return redirect()->route('cliente.index')->with('success', 'Cliente Creado Correctamente');
 
         } catch (Exception $e) {

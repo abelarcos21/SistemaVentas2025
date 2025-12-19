@@ -144,19 +144,37 @@
 
                     {{-- 1. CABECERA: Cliente y Datos Básicos --}}
                     <div class="p-2 border-bottom bg-light">
-                        <div class="form-group mb-1">
+                        {{-- <div class="form-group mb-1">
                             <div class="input-group input-group-sm">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fa fa-user"></i></span>
                                 </div>
                                 <select name="cliente_id" id="cliente_id" class="form-control" required>
                                     <option value="1">Cliente General</option> {{-- Default común en POS --}}
-                                    @foreach($clientes as $cliente)
+                                   {{--  @foreach($clientes as $cliente)
                                         <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
                                     @endforeach
                                 </select>
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="button" title="Nuevo Cliente"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>  --}}
+
+                        <div class="form-group">
+                            <label>Cliente</label>
+                            <div class="input-group">
+                                <select class="form-control select2" id="cliente_id" name="cliente_id" style="width: 85%;">
+                                    <option value="">Seleccione un cliente (Opción por defecto: Público en General)</option>
+                                    @foreach($clientes as $c)
+                                        <option value="{{ $c->id }}">{{ $c->nombre }} {{ $c->apellido }} - {{ $c->rfc }}</option>
+                                    @endforeach
+                                </select>
+
+                                <div class="input-group-append">
+                                    <button class="btn btn-info" type="button" data-toggle="modal" data-target="#modalNuevoCliente">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -250,9 +268,12 @@
                         <button type="button" class="btn bg-gradient-info border mr-2" onclick="abrirScanner()">
                             <i class="fas fa-barcode text-dark"></i>
                         </button>
+                        {{-- <button type="button" class="btn bg-gradient-info border mr-2" data-toggle="modal" data-target="#modalScanner">
+                            <i class="fas fa-barcode text-dark"></i>
+                        </button> --}}
                         {{-- Input que recibe texto manual o del lector USB --}}
                         <input type="text" class="form-control rounded-pill" id="buscador"
-                            placeholder="Buscar producto o escanear..." autocomplete="off">
+                            placeholder="Buscar producto por codigo y nombre o escanear..." autocomplete="off">
                     </div>
 
                     {{-- SECCIÓN CATEGORÍAS --}}
@@ -415,6 +436,100 @@
                             <i class="fas fa-print mr-1"></i> Confirmar e Imprimir
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!--MODAL PARA CREAR CLIENTE NUEVO CON MODAL-->
+        <div class="modal fade" id="modalNuevoCliente" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-info">
+                        <h5 class="modal-title"><i class="fas fa-user-plus"></i> Nuevo Cliente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <form id="form_nuevo_cliente" class="form-horizontal" action="{{route('cliente.store')}}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group row">
+                                <label for="nombre" class="col-sm-2 col-form-label">Nombres</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <input type="text" name="nombre" placeholder="ingrese nombres..." class="form-control" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="apellido" class="col-sm-2 col-form-label">Apellidos</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info"><i class="fas fa-user"></i></span>
+                                        </div>
+                                        <input type="text" name="apellido" placeholder="ingrese apellidos..." class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="rfc" class="col-sm-2 col-form-label">RFC</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info"><i class="fas fa-id-card"></i></span>
+                                        </div>
+                                        <input type="text" name="rfc" placeholder="ingrese el RFC" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="telefono" class="col-sm-2 col-form-label">Telefono</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info"><i class="fas fa-phone"></i></span>
+                                        </div>
+                                        <input type="text" name="telefono" placeholder="ingrese el Telefono" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="correo" class="col-sm-2 col-form-label">Correo</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-gradient-info"><i class="fas fa-envelope"></i></span>
+                                        </div>
+                                        <input type="email" name="correo" placeholder="ingrese el Correo" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-10 offset-sm-2">
+                                    <div class="custom-control custom-switch">
+                                        <input type="hidden" name="activo" value="0">
+                                        <input type="checkbox" class="custom-control-input" value="1" id="activoSwitch" name="activo" checked>
+                                        <label class="custom-control-label" for="activoSwitch">¿Activo?</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-info"><i class="fas fa-save"></i> Guardar Cliente</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -613,6 +728,53 @@
 
     </script>
 
+    <!--SCRIPT PARA MANEJAR EL NUEVO CLIENTE DESDE EL MODAL en el PUNTO DE VENTA POS--->
+    <script>
+        $(document).ready(function() {
+
+            // Opcional: Inicializar Select2 si lo usas
+            // $('.select2').select2();
+
+            // Interceptar el envío del formulario del modal
+            $('#form_nuevo_cliente').on('submit', function(e) {
+                e.preventDefault(); // Evita que la página se recargue
+
+                var formData = $(this).serialize(); // Toma todos los datos del form
+                var url = $(this).attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: formData,
+                    success: function(response) {
+                        // 1. Cerrar el modal
+                        $('#modalNuevoCliente').modal('hide');
+
+                        // 2. Limpiar el formulario
+                        $('#form_nuevo_cliente')[0].reset();
+
+                        // 3. Agregar el nuevo cliente al Select y seleccionarlo
+                        // Asumimos que response devuelve el objeto cliente creado
+                        var newOption = new Option(
+                            response.nombre + ' ' + (response.apellido || '') + ' - ' + (response.rfc || ''),
+                            response.id,
+                            true,
+                            true
+                        );
+                        $('#cliente_id').append(newOption).trigger('change');
+
+                        // 4. Mensaje de éxito (usando SweetAlert o alert normal)
+                        Swal.fire('Éxito', 'Cliente registrado correctamente', 'success');
+                    },
+                    error: function(error) {
+                        console.log(error);
+                        Swal.fire('Error', 'Hubo un problema al guardar el cliente', 'error');
+                    }
+                });
+            });
+        });
+    </script>
+
     <script>
 
         // --- FUNCIONES ---
@@ -635,7 +797,7 @@
 
             // 4. Resetear el modal a estado inicial (Efectivo)
             $('#modal_metodo_pago').val('efectivo').trigger('change');
-            $('#pago_recibido').val('');
+            $('#pago_recibido').val('').focus();
             $('#pago_cambio').text('$0.00');
 
             // 5. Mostrar Modal
@@ -1384,7 +1546,7 @@
                 data: { codigo: codigo },
                 success: function(data) {
                     $('#buscador').prop('readonly', false);
-                    //$('#buscador').val('').focus(); // Limpiar y enfocar rápido
+                    $('#buscador').val('').focus(); // Limpiar y enfocar rápido
                     if (data.producto) {
                         // ÉXITO: Producto encontrado
                         // AQUÍ LA LLAMADA AUTOMÁTICA
@@ -1393,40 +1555,47 @@
                     } else {
 
                         // Sonido de error
-                        // ...
+                        reproducirSonidoError();
+
                         Swal.fire({
                             toast: true, position: 'top-end', icon: 'error',
                             title: 'Producto no encontrado', showConfirmButton: false, timer: 2000
                         });
 
                         // NO ENCONTRADO: Filtrar lista normal por si el nombre coincide parcialmente
-                        //filtrarProductos();
-                        /* Swal.fire({
+                        filtrarProductos();
+                        Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: 'warning',
                             title: 'Código no registrado, buscando por nombre...',
                             showConfirmButton: false,
                             timer: 2000
-                        }); */
+                        });
                     }
                 },
                 error: function() {
                     $('#buscador').prop('readonly', false);
-                    //filtrarProductos();
+                    filtrarProductos();
                 }
             });
         }
 
         // Validador simple de Código de Barras (ajusta el length según tus productos)
         function esCodigoBarras(texto) {
-            return /^\d{6,}$/.test(texto); // Detecta si son solo números y más de 6 dígitos
+            return /^\d{13}$/.test(texto); // Detecta si son solo números y más de 6 dígitos
         }
 
         //Sonido beep tipo cajera (opcional)
         function reproducirSonidoBeep() {
             //agregar un archivo beep.mp3 en tu carpeta public
             let audio = new Audio("{{ asset('sounds/Beep.wav') }}");
+            audio.play().catch(e => {});
+        }
+
+        function reproducirSonidoError() {
+            //agregar un archivo beep.mp3 en tu carpeta public
+            let audio = new Audio("{{ asset('sounds/Windows-error.mp3') }}");
             audio.play().catch(e => {});
         }
     </script>
