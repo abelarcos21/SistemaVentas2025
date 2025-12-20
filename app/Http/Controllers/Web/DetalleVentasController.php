@@ -87,6 +87,10 @@ class DetalleVentasController extends Controller
                             </a>';
                 })
                 ->addColumn('imprimir_ticket_termico', function ($venta) {
+                    if (!app()->environment('local')) {
+                        return ''; // NO mostrar botón en AlwaysData
+                    }
+
                     $url = route('ventas.imprimir.termico', $venta->id) . '?t=' . uniqid();
 
                     return '<a target="_blank" href="' . $url . '"
@@ -361,6 +365,10 @@ class DetalleVentasController extends Controller
 
     //PARA IMPRESORA TERMICA WIFI/USB impresión directa caja
     public function imprimirTicketTermico($id){
+
+        if (!app()->environment('local')) {
+            abort(403, 'Impresión térmica solo disponible en caja local');
+        }
 
         $venta = Venta::with(['pagos', 'detalles.producto', 'empresa', 'user', 'cliente'])
         ->findOrFail($id);
