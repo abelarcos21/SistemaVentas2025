@@ -297,6 +297,7 @@
                                             <th>Estado</th>
                                             <th>Ver Detalle</th>
                                             <th>Ticket De Venta</th>
+                                            <th>Ticket Termico</th>
                                             <th>Boleta De Venta</th>
                                             <th>Acciones</th>
                                         </tr>
@@ -412,6 +413,7 @@
                     {data: 'estado_badge', name: 'estado', className: 'text-center align-middle', orderable: false},
                     {data: 'ver_detalle',name: 'ver_detalle',className: 'text-center',orderable: false,searchable: false },
                     {data: 'imprimir_ticket',name: 'imprimir_ticket',className: 'text-center',orderable: false,searchable: false },
+                    {data: 'imprimir_ticket_termico',name: 'imprimir_ticket_termico',className: 'text-center',orderable: false,searchable: false },
                     {data: 'boleta_venta',name: 'boleta_venta',className: 'text-center',orderable: false,searchable: false},
                     {data: 'acciones',name: 'acciones',className: 'text-center',orderable: false,searchable: false}
                 ],

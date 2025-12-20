@@ -84,14 +84,6 @@
         <p><strong>({{ ucfirst($totalLetras)}})</strong></p>
         <p><strong>IVA(16.0%):</strong> 0.00</p>
         <p><strong>Descuento:</strong> 0.00</p>
-        {{-- <p><strong>Formas de Pago:</strong></p>
-        @foreach ($pagos as $pago)
-            <p>
-                {{ ucfirst($pago->metodo_pago) }}:
-                ${{ number_format($pago->monto, 2) }}
-            </p>
-        @endforeach --}}
-        {{-- Resumen por método de pago --}}
         @if($pagos->count() >= 1)
             <p><strong> Formas de Pagos:</strong></p>
             @foreach($pagos->groupBy('metodo_pago') as $metodo => $pagosPorMetodo)

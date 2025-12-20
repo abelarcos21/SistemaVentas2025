@@ -11,6 +11,11 @@ use App\Models\Producto;
 use App\Models\Empresa;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;//impresora termica Windows (USB / compartida)
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;//impresora termica Red (Ethernet / WiFi)
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\EscposImage;
+
 use BaconQrCode\Writer;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
@@ -78,13 +83,21 @@ class DetalleVentasController extends Controller
 
                     return '<a target="_blank" href="' . $url . '"
                                 class="btn btn-success bg-gradient-success btn-sm">
-                                <i class="fas fa-print"></i> Ticket
+                                <i class="fas fa-file-pdf"></i> Ver Ticket
+                            </a>';
+                })
+                ->addColumn('imprimir_ticket_termico', function ($venta) {
+                    $url = route('ventas.imprimir.termico', $venta->id) . '?t=' . uniqid();
+
+                    return '<a target="_blank" href="' . $url . '"
+                                class="btn btn-info bg-gradient-info btn-sm">
+                                <i class="fas fa-print"></i> Imprimir
                             </a>';
                 })
                 ->addColumn('boleta_venta', function ($venta) {
                     return '<a target="_blank" href="' . route('detalle.boleta', $venta->id) . '"
                             class="btn btn-secondary bg-gradient-secondary btn-sm">
-                            <i class="fas fa-print"></i> Boleta
+                            <i class="fas fa-file-pdf"></i> Boleta
                             </a>';
                 })
                 ->addColumn('acciones', function ($venta) {
@@ -99,7 +112,7 @@ class DetalleVentasController extends Controller
                     }
                     return '<span class="text-muted">Sin acciones</span>';
                 })
-                ->rawColumns(['estado_badge', 'ver_detalle', 'imprimir_ticket', 'boleta_venta', 'total_formateado','folio_formateado','acciones'])
+                ->rawColumns(['estado_badge', 'ver_detalle', 'imprimir_ticket', 'imprimir_ticket_termico', 'boleta_venta', 'total_formateado','folio_formateado','acciones'])
                 ->make(true);
         }
 
@@ -113,52 +126,6 @@ class DetalleVentasController extends Controller
 
         return view('modulos.detalleventas.detalle_venta', compact('venta'));
     }
-
-    // Método para DataTable de detalles de venta específica(2 OPCION)
-    /* public function detalleVentaData(Request $request, $ventaId)
-    {
-        if ($request->ajax()) {
-            $detalles = DetalleVenta::with('producto')
-                ->where('venta_id', $ventaId)
-                ->select([
-                    'detalle_ventas.id',
-                    'detalle_ventas.producto_id',
-                    'detalle_ventas.tipo_precio_aplicado',
-                    'detalle_ventas.precio_unitario_aplicado',
-                    'detalle_ventas.descuento_aplicado',
-                    'detalle_ventas.cantidad',
-                    'detalle_ventas.sub_total'
-                ]);
-
-            return DataTables::of($detalles)
-                ->addIndexColumn()
-                ->addColumn('producto_nombre', function ($detalle) {
-                    return $detalle->producto ? $detalle->producto->nombre : 'Producto no encontrado';
-                })
-                ->addColumn('precio_formateado', function ($detalle) {
-                    return 'MXN $' . number_format($detalle->precio_unitario_aplicado, 2);
-                })
-                ->addColumn('descuento_formateado', function ($detalle) {
-                    return 'MXN $' . number_format($detalle->descuento_aplicado, 2);
-                })
-                ->addColumn('subtotal_formateado', function ($detalle) {
-                    return 'MXN $' . number_format($detalle->sub_total, 2);
-                })
-                ->addColumn('tipo_precio_badge', function ($detalle) {
-                    $badgeClass = match($detalle->tipo_precio_aplicado) {
-                        'base' => 'bg-primary',
-                        'mayoreo' => 'bg-info',
-                        'oferta' => 'bg-warning',
-                        default => 'bg-secondary'
-                    };
-                    return '<span class="badge ' . $badgeClass . '">' . ucfirst($detalle->tipo_precio_aplicado) . '</span>';
-                })
-                ->rawColumns(['tipo_precio_badge'])
-                ->make(true);
-        }
-
-        return response()->json(['error' => 'Acceso no autorizado'], 403);
-    } */
 
     /**
     * Obtener datos de productos vendidos para DataTable
@@ -278,12 +245,6 @@ class DetalleVentasController extends Controller
 
             }
 
-            /* $detalles = DetalleVenta::select(
-                'producto_id', 'cantidad'
-            )
-            ->where('venta_id', $id)
-            ->get(); */
-
             $detalles = DetalleVenta::Where('venta_id',$venta->id)->get();
 
             //devolver stock
@@ -304,6 +265,7 @@ class DetalleVentasController extends Controller
         }
     }
 
+    //PARA PDF vista previa / móvil / WhatsApp
     public function generarTicket($id){
 
         $venta = Venta::select(
@@ -395,6 +357,95 @@ class DetalleVentasController extends Controller
             'Pragma' => 'no-cache',
             'Expires' => '0'
         ]);
+    }
+
+    //PARA IMPRESORA TERMICA WIFI/USB impresión directa caja
+    public function imprimirTicketTermico($id){
+
+        $venta = Venta::with(['pagos', 'detalles.producto', 'empresa', 'user', 'cliente'])
+        ->findOrFail($id);
+
+        // Conector (ajusta el nombre)
+        $connector = new WindowsPrintConnector("Brother MFC-T4500DW");
+        $printer = new Printer($connector);
+
+        /* ===== LOGO ===== */
+        if ($venta->empresa->imagen) {
+            $logoPath = storage_path('app/public/' . $venta->empresa->imagen);
+            if (file_exists($logoPath)) {
+                $logo = EscposImage::load($logoPath);
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->graphics($logo);
+            }
+        }
+
+        /* ===== ENCABEZADO ===== */
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->setEmphasis(true);
+        $printer->text($venta->empresa->razon_social . "\n");
+        $printer->setEmphasis(false);
+        $printer->text("RFC: {$venta->empresa->rfc}\n");
+        $printer->text($venta->empresa->direccion . "\n");
+        $printer->text("Tel: {$venta->empresa->telefono}\n");
+        $printer->text(str_repeat("=", 32) . "\n");
+
+        /* ===== DATOS VENTA ===== */
+        $printer->setJustification(Printer::JUSTIFY_LEFT);
+        $printer->text("Fecha: " . $venta->created_at->format('d/m/Y h:i a') . "\n");
+        $printer->text("Cajero: {$venta->user->name}\n");
+        $printer->text("Cliente: {$venta->cliente->nombre}\n");
+        $printer->text("Folio: {$venta->folio}\n");
+        $printer->text(str_repeat("-", 32) . "\n");
+
+        /* ===== PRODUCTOS ===== */
+        foreach ($venta->detalles as $item) {
+            $printer->text($item->producto->nombre . "\n");
+            $printer->text(
+                "{$item->cantidad} x $" .
+                number_format($item->precio_unitario_aplicado, 2) .
+                "  $" . number_format($item->sub_total, 2) . "\n"
+            );
+        }
+
+        $printer->text(str_repeat("-", 32) . "\n");
+
+        /* ===== TOTALES ===== */
+        $printer->setEmphasis(true);
+        $printer->text("TOTAL: $" . number_format($venta->total_venta, 2) . "\n");
+        $printer->setEmphasis(false);
+
+        $printer->text("Artículos: " . $venta->detalles->sum('cantidad') . "\n");
+
+        foreach ($venta->pagos->groupBy('metodo_pago') as $metodo => $pagos) {
+            $printer->text(
+                ucfirst($metodo) . ": $" .
+                number_format($pagos->sum('monto'), 2) . "\n"
+            );
+        }
+
+        $cambio = $venta->pagos->sum('monto') - $venta->total_venta;
+        $printer->text("Cambio: $" . number_format($cambio, 2) . "\n");
+
+        /* ===== MENSAJE ===== */
+        $printer->setJustification(Printer::JUSTIFY_CENTER);
+        $printer->text(str_repeat("=", 32) . "\n");
+        $printer->text("¡Gracias por su compra!\n");
+        $printer->text("Este ticket no es factura\n");
+
+        /* ===== QR ===== */
+        $printer->qrCode(
+            url('/ticket/' . $venta->id),
+            Printer::QR_ECLEVEL_L,
+            6
+        );
+
+        /* ===== FINAL ===== */
+        $printer->feed(3);
+        $printer->cut();
+        $printer->close();
+
+        return back()->with('success', 'Ticket impreso correctamente');
+
     }
 
     public function generarBoleta($id){

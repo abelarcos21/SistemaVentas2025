@@ -84,6 +84,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/vista-detalle/{id_venta}', [DetalleVentasController::class, 'vista_detalle'])->name('detalleventas.detalle_venta');
         Route::post('/eliminar/{id_venta}', [DetalleVentasController::class, 'revocar'])->name('detalle.revocar')->middleware('permission:ventas.destroy');
         Route::get('/ticket/{id_venta}', [DetalleVentasController::class, 'generarTicket'])->name('detalle.ticket');
+        Route::get('/ventas/{id}/imprimir-termico',[DetalleVentasController::class, 'imprimirTicketTermico'])->name('ventas.imprimir.termico');
         Route::get('/boleta/{id_venta}', [DetalleVentasController::class, 'generarBoleta'])->name('detalle.boleta');
         Route::get('/detalle-venta/{venta}/productos-data', [DetalleVentasController::class, 'getProductosVendidos'])->name('detalle.productos.data');
     });

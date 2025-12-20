@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Venta extends Model
 {
@@ -31,5 +33,10 @@ class Venta extends Model
 
     public function cotizacion(){
         return $this->belongsTo(Cotizacion::class, 'cotizacion_id');
+    }
+
+    public function empresa(): BelongsTo
+    {
+        return $this->belongsTo(Empresa::class);
     }
 }
