@@ -20,11 +20,15 @@
     <ul class="navbar-nav ml-auto">
 
         <!-- Botón Modo Oscuro/Claro -->
-        <li class="nav-item">
-            <a class="nav-link" href="javascript:void(0);" id="darkModeToggle">
-                <span id="darkModeIcon">🌙</span>
-                <span id="darkModeText">Modo Oscuro</span>
-            </a>
+        <li class="nav-item d-flex align-items-center ml-3">
+            <div class="theme-switch-wrapper">
+                <i class="fas fa-sun mr-2 text-warning" id="sun-icon"></i>
+                <label class="theme-switch" for="darkModeToggle">
+                    <input type="checkbox" id="darkModeToggle" />
+                    <div class="slider round"></div>
+                </label>
+                <i class="fas fa-moon ml-2 text-primary" id="moon-icon"></i>
+            </div>
         </li>
 
         {{-- Custom right links --}}

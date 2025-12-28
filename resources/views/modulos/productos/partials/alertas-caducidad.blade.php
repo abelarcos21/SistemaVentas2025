@@ -1,153 +1,93 @@
 {{-- resources/views/productos/partials/alertas-caducidad.blade.php --}}
 
 <div class="row">
-    {{-- Tarjetas de Estadísticas --}}
-    <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box shadow card-outline-info">
-            <span class="info-box-icon bg-gradient-danger"><i class="fas fa-exclamation-triangle"></i></span>
-
-            <div class="info-box-content">
-                {{-- <span class="info-box-number">34</span> --}}
-                <h3>{{ $estadisticasCaducidad['vencidos'] }}</h3>
-                <span class="small info-box-text">Productos Vencidos</span>
+    {{-- Tarjetas de Estadísticas - 2 por fila en móvil --}}
+    <div class="col-lg-3 col-6">
+        <div class="info-box shadow-sm border-left-danger">
+            <span class="info-box-icon bg-danger d-none d-md-flex"><i class="fas fa-exclamation-triangle"></i></span>
+            <div class="info-box-content p-2 p-md-3">
+                <span class="info-box-text text-xs-small">Productos Vencidos</span>
+                <h3 class="info-box-number mb-0">{{ $estadisticasCaducidad['vencidos'] }}</h3>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
 
-    <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box shadow card-outline-info">
-            <span class="info-box-icon bg-gradient-warning"><i class="fas fa-clock"></i></span>
-
-            <div class="info-box-content">
-                {{-- <span class="info-box-number">34</span> --}}
-                <h3>{{ $estadisticasCaducidad['proximos_7_dias'] }}</h3>
-                <span class="small info-box-text">Vencen en 7 días</span>
+    <div class="col-lg-3 col-6">
+        <div class="info-box shadow-sm border-left-warning">
+            <span class="info-box-icon bg-warning d-none d-md-flex"><i class="fas fa-clock"></i></span>
+            <div class="info-box-content p-2 p-md-3">
+                <span class="info-box-text text-xs-small">En 7 días</span>
+                <h3 class="info-box-number mb-0">{{ $estadisticasCaducidad['proximos_7_dias'] }}</h3>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
 
-    <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box shadow card-outline-info">
-            <span class="info-box-icon bg-gradient-info"><i class="fas fa-calendar-alt"></i></span>
-
-            <div class="info-box-content">
-                {{-- <span class="info-box-number">34</span> --}}
-                <h3>{{ $estadisticasCaducidad['proximos_15_dias'] }}</h3>
-                <span class="small info-box-text">Vencen en 15 días</span>
+    <div class="col-lg-3 col-6">
+        <div class="info-box shadow-sm border-left-info">
+            <span class="info-box-icon bg-info d-none d-md-flex"><i class="fas fa-calendar-alt"></i></span>
+            <div class="info-box-content p-2 p-md-3">
+                <span class="info-box-text text-xs-small">En 15 días</span>
+                <h3 class="info-box-number mb-0">{{ $estadisticasCaducidad['proximos_15_dias'] }}</h3>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
 
-    <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box shadow card-outline-info">
-            <span class="info-box-icon bg-gradient-success"><i class="fas fa-calendar-check"></i></span>
-
-            <div class="info-box-content">
-                {{-- <span class="info-box-number">34</span> --}}
-                <h3>{{ $estadisticasCaducidad['proximos_30_dias'] }}</h3>
-                <span class="small info-box-text">Vencen en 30 días</span>
+    <div class="col-lg-3 col-6">
+        <div class="info-box shadow-sm border-left-success">
+            <span class="info-box-icon bg-success d-none d-md-flex"><i class="fas fa-calendar-check"></i></span>
+            <div class="info-box-content p-2 p-md-3">
+                <span class="info-box-text text-xs-small">En 30 días</span>
+                <h3 class="info-box-number mb-0">{{ $estadisticasCaducidad['proximos_30_dias'] }}</h3>
             </div>
-            <!-- /.info-box-content -->
         </div>
-        <!-- /.info-box -->
     </div>
 </div>
 
 {{-- Tabla de Productos Próximos a Vencer --}}
 @if($productosProximosVencer->count() > 0)
-<div class="row">
+<div class="row mt-2">
     <div class="col-12">
-        <div class="card card-outline card-warning">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-exclamation-circle"></i>
-                    Productos Próximos a Vencer (30 días)
+        <div class="card card-outline card-warning shadow-sm">
+            <div class="card-header py-2">
+                <h3 class="card-title font-weight-bold" style="font-size: 0.9rem;">
+                    <i class="fas fa-exclamation-circle mr-1"></i> Productos Próximos a Vencer (30 días)
                 </h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
                 </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
+                    <table class="table table-sm table-hover mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <th style="width: 50px">#</th>
-                                <th>Producto</th>
-                                <th>Código</th>
-                                <th>Categoría</th>
-                                <th>Marca</th>
-                                <th>Stock</th>
-                                <th>Fecha Caducidad</th>
-                                <th>Días Restantes</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th class="pl-3">Producto</th>
+                                <th class="d-none d-md-table-cell">Categoría</th>
+                                <th class="text-center">Stock</th>
+                                <th class="d-none d-sm-table-cell">Fecha</th>
+                                <th class="text-center">Días</th>
+                                <th class="text-right pr-3">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($productosProximosVencer as $index => $producto)
+                            @foreach($productosProximosVencer as $producto)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    <strong>{{ $producto->nombre }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ Str::limit($producto->descripcion, 40) }}</small>
-                                </td>
-                                <td>
-                                    <code>{{ $producto->codigo }}</code>
-                                </td>
-                                <td>
-                                    <span class="badge badge-secondary">
-                                        {{ $producto->categoria->nombre ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>{{ $producto->marca->nombre ?? 'N/A' }}</td>
-                                <td>
-                                    <span class="badge {{ $producto->cantidad > 0 ? 'badge-success' : 'badge-danger' }}">
-                                        {{ $producto->cantidad }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <i class="fas fa-calendar-alt text-warning"></i>
-                                    {{ $producto->fecha_caducidad->format('d/m/Y') }}
-                                </td>
-                                <td>
-                                    <strong class="text-{{ $producto->diasParaVencer() <= 7 ? 'danger' : ($producto->diasParaVencer() <= 15 ? 'warning' : 'info') }}">
-                                        {{ $producto->diasParaVencer() }} días
-                                    </strong>
-                                </td>
-                                <td>
-                                    <span class="badge {{ $producto->getBadgeCaducidad() }}">
-                                        @if($producto->diasParaVencer() <= 7)
-                                            ¡Urgente!
-                                        @elseif($producto->diasParaVencer() <= 15)
-                                            Atención
-                                        @else
-                                            Alerta
-                                        @endif
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a href="{{-- route('producto.show', $producto->id) --}}"
-                                           class="btn btn-info"
-                                           title="Ver detalles">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{-- route('producto.edit', $producto->id) --}}"
-                                           class="btn btn-primary"
-                                           title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                <td class="pl-3">
+                                    <div class="d-flex flex-column">
+                                        <span class="font-weight-bold text-truncate" style="max-width: 140px;">{{ $producto->nombre }}</span>
+                                        <small class="text-muted d-sm-none">{{ $producto->codigo }}</small>
                                     </div>
+                                </td>
+                                <td class="d-none d-md-table-cell"><span class="badge badge-light border">{{ $producto->categoria->nombre ?? 'N/A' }}</span></td>
+                                <td class="text-center"><span class="badge {{ $producto->cantidad > 0 ? 'badge-success' : 'badge-danger' }}">{{ $producto->cantidad }}</span></td>
+                                <td class="d-none d-sm-table-cell small">{{ $producto->fecha_caducidad->format('d/m/y') }}</td>
+                                <td class="text-center">
+                                    <span class="text-{{ $producto->diasParaVencer() <= 7 ? 'danger' : 'warning' }} font-weight-bold">
+                                        {{ $producto->diasParaVencer() }}d
+                                    </span>
+                                </td>
+                                <td class="text-right pr-3">
+                                    <a href="#" class="btn btn-xs btn-primary"><i class="fas fa-edit"></i></a>
                                 </td>
                             </tr>
                             @endforeach
@@ -164,78 +104,29 @@
 @if($productosVencidos->count() > 0)
 <div class="row">
     <div class="col-12">
-        <div class="card card-outline card-danger">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-times-circle"></i>
-                    Productos Vencidos - ¡ACCIÓN REQUERIDA!
+        <div class="card card-outline card-danger shadow-sm">
+            <div class="card-header py-2 bg-danger-light">
+                <h3 class="card-title font-weight-bold text-danger" style="font-size: 0.9rem;">
+                    <i class="fas fa-times-circle mr-1"></i> Productos Vencidos - ¡ACCIÓN REQUERIDA!
                 </h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px">#</th>
-                                <th>Producto</th>
-                                <th>Código</th>
-                                <th>Categoría</th>
-                                <th>Stock</th>
-                                <th>Fecha Caducidad</th>
-                                <th>Días Vencido</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
+                    <table class="table table-sm table-hover mb-0">
                         <tbody>
-                            @foreach($productosVencidos as $index => $producto)
-                            <tr class="bg-danger-light">
-                                <td>{{ $index + 1 }}</td>
-                                <td>
-                                    <strong>{{ $producto->nombre }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ Str::limit($producto->descripcion, 40) }}</small>
+                            @foreach($productosVencidos as $producto)
+                            <tr>
+                                <td class="pl-3 py-2">
+                                    <span class="font-weight-bold d-block text-truncate" style="max-width: 180px;">{{ $producto->nombre }}</span>
+                                    <small class="text-danger font-weight-bold">Venció hace {{ abs($producto->fecha_caducidad->diffInDays(now())) }} días</small>
                                 </td>
-                                <td>
-                                    <code>{{ $producto->codigo }}</code>
+                                <td class="text-center align-middle">
+                                    <span class="badge badge-danger">Stock: {{ $producto->cantidad }}</span>
                                 </td>
-                                <td>
-                                    <span class="badge badge-secondary">
-                                        {{ $producto->categoria->nombre ?? 'N/A' }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-danger">
-                                        {{ $producto->cantidad }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <i class="fas fa-calendar-times text-danger"></i>
-                                    {{ $producto->fecha_caducidad->format('d/m/Y') }}
-                                </td>
-                                <td>
-                                    <strong class="text-danger">
-                                        {{ abs($producto->fecha_caducidad->diffInDays(now())) }} días
-                                    </strong>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button type="button"
-                                                class="btn btn-warning btn-desactivar-producto"
-                                                data-producto-id="{{ $producto->id }}"
-                                                title="Desactivar producto">
-                                            <i class="fas fa-ban"></i> Desactivar
-                                        </button>
-                                        <a href="{{-- route('producto.edit.modal', $producto->id) --}}"
-                                           class="btn btn-primary"
-                                           title="Actualizar fecha">
-                                            <i class="fas fa-calendar-plus"></i> Actualizar
-                                        </a>
-                                    </div>
+                                <td class="text-right pr-3 align-middle">
+                                    <button class="btn btn-xs btn-warning btn-desactivar-producto" data-producto-id="{{ $producto->id }}">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
                                 </td>
                             </tr>
                             @endforeach
@@ -247,6 +138,49 @@
     </div>
 </div>
 @endif
+
+<style>
+    /* Ajustes para evitar cortes de texto en Info Boxes */
+    @media (max-width: 768px) {
+        .info-box-number {
+            font-size: 1.2rem !important;
+        }
+        .info-box-text {
+            font-size: 0.75rem !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .info-box {
+            min-height: 70px;
+            margin-bottom: 0.5rem;
+        }
+        .info-box-content {
+            padding: 5px !important;
+        }
+        /* Ocultar iconos en móvil para ganar espacio */
+        .info-box-icon {
+            display: none !important;
+        }
+    }
+
+    /* Colores suaves para los bordes de los info-boxes */
+    .border-left-danger { border-left: 4px solid #dc3545 !important; }
+    .border-left-warning { border-left: 4px solid #ffc107 !important; }
+    .border-left-info { border-left: 4px solid #17a2b8 !important; }
+    .border-left-success { border-left: 4px solid #28a745 !important; }
+
+    .bg-danger-light {
+        background-color: rgba(220, 53, 69, 0.1) !important;
+    }
+
+    /* Ajuste de tablas en móvil */
+    .table-sm td {
+        font-size: 0.85rem;
+        vertical-align: middle;
+    }
+</style>
+
 
 {{-- Script para desactivar productos vencidos --}}
 <script>
@@ -294,28 +228,3 @@ $(document).ready(function() {
     });
 });
 </script>
-
-<style>
-.bg-danger-light {
-    background-color: #f8d7da !important;
-}
-
-.table-hover tbody tr:hover {
-    background-color: rgba(0,0,0,.075);
-}
-
-.small-box {
-    border-radius: 0.25rem;
-    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
-}
-
-.small-box .icon {
-    color: rgba(0,0,0,.15);
-    z-index: 0;
-}
-
-.badge {
-    font-size: 85%;
-    font-weight: 600;
-}
-</style>
