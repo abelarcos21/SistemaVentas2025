@@ -65,6 +65,74 @@
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
 
+    {{-- Custom Stylos Para modo oscuro y claro --}}
+    <style>
+        /* Contenedor del Switch */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 24px;
+            position: relative;
+            width: 45px;
+            margin-bottom: 0; /* Alineación perfecta en navbar */
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        /* El "riel" del switch */
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+        }
+
+        /* El círculo que se mueve */
+        .slider:before {
+            background-color: #fff;
+            bottom: 3px;
+            content: "";
+            height: 18px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Color cuando está activo (Modo Oscuro) */
+        input:checked + .slider {
+            background-color: #17a2b8; /* Color info de AdminLTE */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(19px);
+        }
+
+        /* Redondeado */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Ajuste de iconos según el modo */
+        .dark-mode #sun-icon { color: #6c757d !important; }
+        .dark-mode #moon-icon { color: #fff !important; }
+    </style>
+
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
         <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
@@ -131,36 +199,35 @@
     {{-- Custom Scripts --}}
     @yield('adminlte_js')
 
-    {{-- Custom Scripts Para modo oscuro y claro --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const body = document.body;
-            const toggleBtn = document.getElementById('darkModeToggle');
-            const iconSpan = document.getElementById('darkModeIcon');
-            const textSpan = document.getElementById('darkModeText');
+            const toggleSwitch = document.querySelector('#darkModeToggle');
             const darkModeClass = 'dark-mode';
 
-            function updateButtonUI() {
-                const isDark = body.classList.contains(darkModeClass);
-                iconSpan.textContent = isDark ? '🌞' : '🌙';
-                textSpan.textContent = isDark ? 'Claro' : 'Oscuro';
+            // 1. Cargar el estado guardado
+            const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+
+            if (currentTheme) {
+                if (currentTheme === 'dark') {
+                    body.classList.add(darkModeClass);
+                    toggleSwitch.checked = true; // Activa el switch visualmente
+                }
             }
 
-            // Aplicar modo guardado
-            if (localStorage.getItem('theme') === 'dark') {
-                body.classList.add(darkModeClass);
-            } else {
-                body.classList.remove(darkModeClass);
+            // 2. Función para cambiar el tema
+            function switchTheme(e) {
+                if (e.target.checked) {
+                    body.classList.add(darkModeClass);
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    body.classList.remove(darkModeClass);
+                    localStorage.setItem('theme', 'light');
+                }
             }
-            updateButtonUI();
 
-            // Alternar modo
-            toggleBtn.addEventListener('click', () => {
-                body.classList.toggle(darkModeClass);
-                const newTheme = body.classList.contains(darkModeClass) ? 'dark' : 'light';
-                localStorage.setItem('theme', newTheme);
-                updateButtonUI();
-            });
+            // 3. Listener del cambio
+            toggleSwitch.addEventListener('change', switchTheme, false);
         });
     </script>
 
