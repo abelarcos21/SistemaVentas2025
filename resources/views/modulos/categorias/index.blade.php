@@ -42,7 +42,6 @@
                                     <thead class="text-center align-middle bg-gradient-info">
                                         <tr>
                                             <th>Nro</th>
-                                            <th>Usuario</th>
                                             <th>Nombre</th>
                                             <th>Descripción</th>
                                             <th>Medida</th>
@@ -206,7 +205,6 @@
                 ajax: "{{ route('categoria.index') }}",
                 columns: [
                     {data: 'DT_RowIndex',name: 'DT_RowIndex',orderable: false,searchable: false,className: 'text-center align-middle'},
-                    {data: 'user_id',name: 'user.name',className: 'text-center align-middle'},
                     {data: 'nombre',name: 'nombre',className: 'text-start align-middle'},
                     {data: 'descripcion',name: 'descripcion',className: 'text-start align-middle'},
                     {data: 'medida',name: 'medida',className: 'text-center align-middle'},
@@ -226,7 +224,7 @@
                                     let cleanData = data;
 
                                     // Manejar campo activo (columna 6)
-                                    if (column === 6) {
+                                    if (column === 5) {
                                         // Verificar si hay checkbox o switch en el nodo
                                         let $node = $(node);
                                         let checkbox = $node.find('input[type="checkbox"], input[role="switch"], [role="switch"]');
@@ -576,7 +574,7 @@
                 stateSave: true,
                 columnDefs: [
                     {
-                        targets: [6, 7], // Columnas Activo y Acciones
+                        targets: [5, 6], // Columnas Activo y Acciones
                         className: 'text-center align-middle'
                     }
                 ]

@@ -91,10 +91,10 @@
                                             <th>Descripción</th>
                                             <th>Proveedor</th>
                                             <th>Stock</th>
-                                            <th>Precio Venta.P.</th>
-                                            <th>Precio Mayoreo.</th>
-                                            <th>Precio Oferta</th>
-                                            <th>Precio Compra</th>
+                                            <th>P. Venta</th>
+                                            <th>P. Mayoreo</th>
+                                            <th>P. Oferta</th>
+                                            <th>P. Compra</th>
                                             <th>Fecha Registro</th>
                                             <th>Activo</th>
                                             <th class="no-exportar">Comprar</th>

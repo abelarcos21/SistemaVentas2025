@@ -22,9 +22,6 @@ class CategoriaController extends Controller{
 
             return DataTables::of($categorias)
                 ->addIndexColumn()
-                ->editColumn('user_id', function ($categoria) {
-                    return $categoria->user->name ?? 'N/A';
-                })
                 ->editColumn('created_at', function ($categoria) {
                     return $categoria->created_at->format('d/m/Y h:i a');
                 })

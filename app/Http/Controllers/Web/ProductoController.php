@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
+use App\Http\Controllers\Controller; //IMPORTANTE: esta línea importa la clase base
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Milon\Barcode\Facades\DNS1DFacade as DNS1D;

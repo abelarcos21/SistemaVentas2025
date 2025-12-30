@@ -165,7 +165,7 @@
                             <label>Cliente</label>
                             <div class="input-group">
                                 <select class="form-control select2" id="cliente_id" name="cliente_id" style="width: 85%;">
-                                    <option value="">Seleccione un cliente (Opción por defecto: Público en General)</option>
+                                    <option value="">Seleccione un cliente (Por defecto: Público en General)</option>
                                     @foreach($clientes as $c)
                                         <option value="{{ $c->id }}">{{ $c->nombre }} {{ $c->apellido }} - {{ $c->rfc }}</option>
                                     @endforeach
@@ -1154,11 +1154,11 @@
                 // Lógica de Badges (Oferta/Mayoreo) adaptada al diseño compacto
                 let badgeTipo = '';
                 if (item.tipo_precio === 'oferta') {
-                    badgeTipo = `<span class="badge badge-success" style="font-size: 0.7em;">Oferta</span>`;
+                    badgeTipo = `<span class="badge badge-success" style="font-size: 0.7em;">P. Oferta</span>`;
                 } else if (item.tipo_precio === 'mayoreo') {
-                    badgeTipo = `<span class="badge badge-warning text-dark" style="font-size: 0.7em;">Mayoreo</span>`;
+                    badgeTipo = `<span class="badge badge-warning text-dark" style="font-size: 0.7em;">P. Mayoreo</span>`;
                 }else {
-                    badgeTipo = `<span class="badge bg-secondary ms-1">Normal</span>`;
+                    badgeTipo = `<span class="badge bg-secondary ms-1">P. Normal</span>`;
                 }
 
                 // Lógica de Stock bajo (Visual)
