@@ -32,7 +32,9 @@ class DetalleVentasController extends Controller
     public function index(Request $request){
 
         if ($request->ajax()) {
-            $ventas = Venta::with(['user', 'detalles.producto'])
+            // 1. Cargamos la relación 'pagos' junto con las demás
+            // añado 'cliente' también para que la columna 'cliente' no haga consultas extra
+            $ventas = Venta::with(['user', 'detalles.producto', 'pagos', 'cliente'])
                 ->select([
                     'ventas.id',
                     'ventas.folio',
@@ -45,6 +47,37 @@ class DetalleVentasController extends Controller
 
             return DataTables::of($ventas)
                 ->addIndexColumn()
+                // --METODO DE PAGO ---
+                ->addColumn('metodo_pago', function ($venta) {
+                    // Obtenemos los métodos únicos de la tabla pagos para esta venta
+                    $metodos = $venta->pagos->pluck('metodo_pago')->unique();
+
+                    if ($metodos->count() > 1) {
+                        // Es un pago Mixto
+                        $detalle = $metodos->map(fn($m) => ucfirst($m))->implode(' + ');
+                        return '<span class="badge bg-info bg-gradient-info" title="'.$detalle.'">
+                                    <i class="fas fa-layer-group"></i> Mixto
+                                </span>';
+                    } elseif ($metodos->count() === 1) {
+                        // Es un solo método
+                        $metodo = strtolower($metodos->first());
+                        $icon = match($metodo) {
+                            'efectivo' => '<i class="fas fa-money-bill-wave"></i> ',
+                            'tarjeta' => '<i class="fas fa-credit-card"></i> ',
+                            'transferencia' => '<i class="fas fa-university"></i> ',
+                            default => ''
+                        };
+                        $class = match($metodo) {
+                            'efectivo' => 'bg-success',
+                            'tarjeta' => 'bg-primary',
+                            'transferencia' => 'bg-teal',
+                            default => 'bg-secondary'
+                        };
+                        return '<span class="badge '.$class.'">'.$icon . ucfirst($metodo).'</span>';
+                    }
+
+                    return '<span class="text-muted">No registrado</span>';
+                })
                 ->addColumn('usuario', function ($venta) {
                     return $venta->user ? $venta->user->name : 'Sin Usuario';
                 })
@@ -116,7 +149,7 @@ class DetalleVentasController extends Controller
                     }
                     return '<span class="text-muted">Sin acciones</span>';
                 })
-                ->rawColumns(['estado_badge', 'ver_detalle', 'imprimir_ticket', 'imprimir_ticket_termico', 'boleta_venta', 'total_formateado','folio_formateado','acciones'])
+                ->rawColumns(['metodo_pago', 'estado_badge', 'ver_detalle', 'imprimir_ticket', 'imprimir_ticket_termico', 'boleta_venta', 'total_formateado','folio_formateado','acciones'])
                 ->make(true);
         }
 

@@ -290,6 +290,7 @@
                                         <tr>
                                             <th>Nro</th>
                                             <th>Total Vendido</th>
+                                            <th>Método Pago</th>
                                             <th>Nro de Venta</th>
                                             <th>Fecha Venta</th>
                                             <th>Añadido por</th>
@@ -406,6 +407,7 @@
                 columns: [
                     {data: 'id', name: 'id', className: 'text-center align-middle'},
                     {data: 'total_formateado', name: 'total_venta', className: 'text-center align-middle', orderable: true},
+                    {data: 'metodo_pago', name: 'metodo_pago', orderable: false, searchable: false }, // <--- NUEVA COLUMNA
                     {data: 'folio_formateado', name: 'folio', className: 'text-center align-middle'},
                     {data: 'fecha_formateada', name: 'created_at', className: 'text-center align-middle'},
                     {data: 'usuario', name: 'usuario', className: ''},

@@ -20,7 +20,7 @@ class Venta extends Model
     }
 
     public function pagos(){
-        return $this->hasMany(Pago::class);
+        return $this->hasMany(Pago::class, 'venta_id');
     }
 
     public function cliente(){
