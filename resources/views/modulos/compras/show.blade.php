@@ -8,7 +8,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1> <i class="fas fa-store"></i> Eliminar Compra Del Stock</h1>
+              <h1> <i class="fas fa-store"></i> Compras | Datos De La Compra</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -28,56 +28,53 @@
         <div class="row">
           <div class="col-12">
             <div class="card">
-              <div class="card-header bg-gradient-primary ">
-                <h3 class="card-title"> <i class="fas fa-trash-alt"></i> Cuando la Compra sea eliminado, no podra ser recuperado!!!!</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-
-                <table class="table table-bordered table-striped">
-                    <thead class="bg-gradient-info">
-                    <tr>
-                      <th>Nro#</th>
-                      <th>Usuario</th>
-                      <th>Producto</th>
-                      <th>Cantidad</th>
-                      <th>Precio de Compra</th>
-                      <th>Total Compra</th>
-                      <th>Fecha</th>
-
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                        <tr>
-                            <td>{{$compra->id}}</td>
-                            <td class="text-primary">{{$compra->nombre_usuario}}</td>
-                            <td>{{$compra->nombre_producto}}</td>
-                            <td><span class="badge bg-success">{{ $compra->cantidad }}</span></td>
-                            <td class="text-primary">MXN ${{$compra->precio_compra}}</td>
-                            <td class="text-primary">MXN ${{$compra->precio_compra * $compra->cantidad }}</td>
-                            <td>{{$compra->created_at}}</td>
-                        </tr>
-
-                    </tfoot>
-                </table>
-
-                <!-- End Table with stripped rows -->
-                <hr>
-                <form action="{{ route('compra.destroy', $compra) }}" method="POST" class="formulario-eliminar">
-                    @csrf
-                    @method('DELETE')
-                    <input type="hidden" name="producto_id" value="{{ $compra->producto_id }}">
-                    <button class="btn btn-danger btn-sm">
-                      <i class="fas fa-trash-alt"></i> Eliminar Compra
-                    </button>
-                    <a href="{{ route('compra.index') }}" class="btn btn-secondary btn-sm">
-                      <i class="fas fa-times"></i> Cancelar
+                <div class="card-header bg-gradient-primary text-right">
+                    <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Detalle de la Compra #{{ $compra->id }}</h3>
+                    <a href="{{ route('compra.index') }}" class="btn btn-light text-primary btn-sm">
+                        <i class="fas fa-arrow-left"></i>
+                        Volver
                     </a>
-                </form>
+                </div>
+              <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead class="bg-gradient-info">
+                            <tr>
+                            <th>Registrado por</th>
+                            <th>Producto</th>
+                            <th>Stock Actual</th>
+                            <th>Cantidad Comprada</th>
+                            <th>Precio Unitario</th>
+                            <th>Total de la Operación</th>
+                            <th>Fecha y Hora</th>
 
+                            </tr>
+                            </thead>
+                            <tbody>
 
-              </div>
+                                <tr>
+                                    <td><span class="badge badge-secondary">{{ $compra->user->name }}</span></td>
+                                    <td style="width: 20%">{{$compra->producto->nombre}}</td>
+                                    <td><span class="badge bg-primary">{{ $compra->producto->cantidad }}</span></td>
+                                    <td><span class="badge bg-success">{{ $compra->cantidad }} unidades</span></td>
+                                    <td class="text-success font-weight-bold">${{ number_format($compra->precio_compra, 2) }}</td>
+                                    <td class="text-blue font-weight-bold" style="font-size: 1.2rem;">${{ number_format($total, 2) }}</td>
+                                    <td>{{$compra->created_at->format('d/m/Y h:i a')}}</td>
+                                </tr>
+
+                            </tfoot>
+                        </table>
+                    </div>
+                    <hr>
+                    <a href="{{ route('compra.edit', $compra->id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Editar Compra
+                    </a>
+                    <a href="{{ route('compra.index') }}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+
+                </div>
               <!-- /.card-body -->
             </div>
             <!-- /.card -->
@@ -89,8 +86,6 @@
       <!-- /.container-fluid -->
     </section>
     <!-- /.content -->
-
-
 
 @stop
 

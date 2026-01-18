@@ -26,17 +26,65 @@
     <section class="content">
         <div class="container-fluid">
             <div class="row">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total Compras</span>
+                            <span class="info-box-number" id="total-compras-count">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3">
+                    <div class="info-box mb-3">
+                        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-money-bill"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Gasto Total</span>
+                            <span class="info-box-number" id="total-gasto-monto">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header bg-gradient-primary text-right d-flex justify-content-between align-items-center">
-                            <h3 class="card-title mb-0"><i class="fas fa-list"></i> Compras registradas</h3>
-                            {{-- <a href="#" class="btn btn-light bg-gradient-light text-primary btn-sm">
-                                <i class="fas fa-plus"></i> button
-                            </a> --}}
+                        <div class="card-header bg-gradient-primary d-flex justify-content-between align-items-center">
+                            <h3 class="card-title"><i class="fas fa-history mr-2"></i>Historial de Compras</h3>
+                            <div class="card-tools ml-auto">
+                               {{--  <a href="{{route('compra.create') }}" class="btn btn-primary bg-gradient-primary btn-sm shadow-sm">
+                                    <i class="fas fa-plus-circle"></i> Registrar Compra
+                                </a> --}}
+                            </div>
                         </div>
                         <!-- /.card-header -->
 
                         <div class="card-body">
+                            <!-- Filtros -->
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="fecha_inicio">Fecha Inicio:</label>
+                                        <input type="date" id="fecha_inicio" class="form-control form-control-sm" placeholder="Desde">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="fecha_fin">Fecha Fin:</label>
+                                        <input type="date" id="fecha_fin" class="form-control form-control-sm" placeholder="Hasta">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <div class="form-group w-100">
+                                        <button type="button" id="filtro-fechas" class="btn bg-gradient-info btn-sm">
+                                            <i class="fas fa-filter"></i> Filtrar
+                                        </button>
+                                        <button type="button" id="reset-fechas" class="btn bg-gradient-secondary ml-2 btn-sm">
+                                            <i class="fas fa-sync-alt"></i> Limpiar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table id="compras-table" class="table table-bordered table-striped">
                                     <thead class="text-center align-middle bg-gradient-info">
@@ -185,13 +233,26 @@
 
     {{--DATATABLE PARA MOSTRAR LOS DATOS DE LA BD--}}
     <script>
+
+
+        $('#filtro-fechas').click(function() {
+            $('#compras-table').DataTable().draw(); // Esto dispara la recarga con los nuevos datos
+        });
+
+
         $(document).ready(function() {
             // Inicializar DataTable
             var table = $('#compras-table').DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: "{{ route('compra.index') }}",
+                    data: function (d) {
+                        // Capturamos los valores de los inputs y los enviamos al controlador
+                        d.fecha_inicio = $('#fecha_inicio').val(); // Toma el valor del input inicio
+                        d.fecha_fin = $('#fecha_fin').val();       // Toma el valor del input fin
+                    },
                     type: 'GET',
                 },
                 columns: [
@@ -508,8 +569,36 @@
                         targets: [3, 4, 5, 6, 7], // Columnas numéricas y acciones
                         className: 'text-center align-middle'
                     }
-                ]
+                ],
+
+                // ESTA ES LA PARTE CLAVE Info-Boxes :
+                "drawCallback": function(settings) {
+                    // Accedemos a los datos extra que enviamos con "with" desde el controlador
+                    var api = this.api();
+                    var json = api.ajax.json();
+
+                    if (json) {
+                        // Actualizamos los Info-Boxes con los IDs que pusiste en tu HTML
+                        $('#total-compras-count').text(json.totalCompras);
+                        $('#total-gasto-monto').text('$' + json.totalGasto);
+                    }
+                }
+
             });
+
+            // Evento para el botón de Filtrar
+            $('#filtro-fechas').click(function() {
+                table.draw(); // Recarga la tabla ejecutando de nuevo el ajax con las fechas
+            });
+
+            // Evento para el botón de Limpiar
+            $('#reset-fechas').click(function() {
+                $('#fecha_inicio').val('');
+                $('#fecha_fin').val('');
+                table.draw();
+            });
+
+
         });
     </script>
 @stop
