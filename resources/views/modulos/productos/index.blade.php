@@ -81,24 +81,33 @@
                                 <table id="example1" class="table table-bordered table-striped">
                                     <thead class="bg-gradient-info">
                                         <tr>
-                                            <th>Nro</th>
+                                            {{-- <th>Nro</th> --}}
                                             <th class="no-exportar">Imagen</th>
-                                            <th>Codigo de Barras</th>
+                                            <th>Codigo Barras</th>
                                             <th>Nombre</th>
                                             <th>Caducidad</th>
                                             <th>Categoria</th>
                                             <th>Marca</th>
-                                            <th>Descripción</th>
-                                            <th>Proveedor</th>
+                                           {{--  <th>Descripción</th> --}}
+                                           {{--  <th>Proveedor</th> --}}
                                             <th>Stock</th>
                                             <th>P. Venta</th>
-                                            <th>P. Mayoreo</th>
-                                            <th>P. Oferta</th>
+                                            {{-- <th>P. Mayoreo</th>
+                                            <th>P. Oferta</th> --}}
                                             <th>P. Compra</th>
-                                            <th>Fecha Registro</th>
+                                            {{-- <th>Fecha Registro</th> --}}
                                             <th>Activo</th>
                                             <th class="no-exportar">Comprar</th>
                                             <th class="no-exportar">Acciones</th>
+
+                                            {{-- <th width="5%">#</th>
+                                            <th width="10%" class="no-exportar">Imagen</th>
+                                            <th>Producto</th> <th>Categoría</th>
+
+                                            <th>Stock</th>
+                                            <th>P. Venta</th>
+                                            <th>Caducidad</th> <th width="5%">Estado</th>
+                                            <th width="10%" class="no-exportar">Acciones</th> --}}
                                         </tr>
                                     </thead>
                                 </table>
@@ -117,6 +126,78 @@
     <!-- /.content -->
 
     <div id="modal-container"></div>{{-- mostar loading spinne --}}
+
+    {{-- modal mostar detalles del producto --}}
+    <div class="modal fade" id="modalVerDetalles" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-box-open mr-2"></i> Detalles del Producto
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center border-right">
+                            <img id="modal_imagen" src="" class="img-fluid rounded shadow mb-3" style="max-height: 200px;">
+                            <h5 id="modal_codigo" class="text-muted font-weight-bold"></h5>
+                            <h4 id="modal_nombre" class="text-info"></h4>
+                            <span id="modal_stock_badge" class="badge badge-dark p-2 mt-2" style="font-size: 1rem;"></span>
+                        </div>
+
+                        <div class="col-md-8">
+                            <h6 class="heading-small text-muted mb-3">Información General</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Categoría:</strong> <span id="modal_categoria"></span></p>
+                                    <p><strong>Marca:</strong> <span id="modal_marca"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Proveedor:</strong> <span id="modal_proveedor"></span></p>
+                                    <p><strong>Fecha Registro:</strong> <span id="modal_fecha"></span></p>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <h6 class="heading-small text-muted mb-3">Precios</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="p-2 bg-light rounded border mb-2">
+                                        <small class="d-block text-muted">Precio Venta</small>
+                                        <strong class="text-primary h5" id="modal_pventa"></strong>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-2 bg-light rounded border mb-2">
+                                        <small class="d-block text-muted">Precio Compra</small>
+                                        <strong class="text-dark h5" id="modal_pcompra"></strong>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <small class="text-muted">Mayoreo:</small> <span id="modal_pmayoreo" class="font-weight-bold"></span>
+                                </div>
+                                <div class="col-md-6 mt-2">
+                                    <small class="text-muted">Oferta:</small> <span id="modal_poferta" class="font-weight-bold text-success"></span>
+                                </div>
+                            </div>
+
+                            <hr class="my-3">
+
+                            <h6 class="heading-small text-muted">Descripción</h6>
+                            <p id="modal_descripcion" class="text-justify bg-light p-3 rounded" style="font-size: 0.9rem;"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @stop
 
@@ -445,6 +526,60 @@
                     $('.select2-modal').select2('destroy');
                 }
             });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            // Evento al hacer clic en el botón "Ver Detalles de producto"
+            $(document).on('click', '.btn-ver-detalles', function() {
+
+                // 1. Obtener los datos del botón
+                var btn = $(this);
+                var nombre = btn.data('nombre');
+                var codigo = btn.data('codigo');
+                var categoria = btn.data('categoria');
+                var marca = btn.data('marca');
+                var proveedor = btn.data('proveedor');
+                var descripcion = btn.data('descripcion');
+                var stock = btn.data('stock');
+                var pventa = btn.data('pventa');
+                var pcompra = btn.data('pcompra');
+                var pmayoreo = btn.data('pmayoreo');
+                var poferta = btn.data('poferta');
+                var moneda = btn.data('moneda');
+                var fecha = btn.data('fechareg');
+                var imagen = btn.data('imagen');
+
+                // 2. Asignar datos al Modal
+                $('#modal_nombre').text(nombre);
+                $('#modal_codigo').text(codigo);
+                $('#modal_categoria').text(categoria);
+                $('#modal_marca').text(marca);
+                $('#modal_proveedor').text(proveedor);
+                $('#modal_descripcion').text(descripcion ? descripcion : 'Sin descripción detallada.');
+                $('#modal_fecha').text(fecha);
+                $('#modal_imagen').attr('src', imagen);
+
+                // Formato de precios
+                $('#modal_pventa').text(moneda + ' ' + pventa);
+                $('#modal_pcompra').text(moneda + ' ' + pcompra);
+                $('#modal_pmayoreo').text(pmayoreo !== 'N/A' ? moneda + ' ' + pmayoreo : 'No aplica');
+                $('#modal_poferta').text(poferta !== 'N/A' ? moneda + ' ' + poferta : 'No aplica');
+
+                // Lógica visual para el Stock
+                var stockClass = stock > 10 ? 'badge-success' : (stock > 0 ? 'badge-warning' : 'badge-danger');
+                var stockText = stock > 10 ? 'En Stock' : (stock > 0 ? 'Poco Stock' : 'Agotado');
+                $('#modal_stock_badge')
+                    .removeClass('badge-success badge-warning badge-danger badge-dark')
+                    .addClass(stockClass)
+                    .text(stockText + ' (' + stock + ')');
+
+                // 3. Mostrar el Modal
+                $('#modalVerDetalles').modal('show');
+            });
+
         });
     </script>
 
@@ -885,21 +1020,21 @@
                     }
                 },
                 columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                    //{data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
                     {data: 'imagen', name: 'imagen', orderable: false, searchable: false, className: 'no-exportar'},
                     {data: 'codigo', name: 'productos.codigo'},
                     {data: 'nombre', name: 'productos.nombre'},
                     {data: 'caducidad', name: 'caducidad', orderable: true, searchable: false,className: 'text-center'},
                     {data: 'nombre_categoria', name: 'categorias.nombre'},
                     {data: 'nombre_marca', name: 'marcas.nombre'},
-                    {data: 'descripcion', name: 'productos.descripcion'},
-                    {data: 'nombre_proveedor', name: 'proveedores.nombre'},
+                   /*  {data: 'descripcion', name: 'productos.descripcion'}, */
+                   /*  {data: 'nombre_proveedor', name: 'proveedores.nombre'}, */
                     {data: 'cantidad', name: 'productos.cantidad', orderable: true, searchable: false},
                     {data: 'precio_base', name: 'productos.precio_venta', orderable: true, searchable: false},
-                    {data: 'mayoreo', name: 'mayoreo', orderable: false, searchable: false },
-                    {data: 'oferta', name: 'oferta', orderable: false, searchable: false },
+                   /*  {data: 'mayoreo', name: 'mayoreo', orderable: false, searchable: false },
+                    {data: 'oferta', name: 'oferta', orderable: false, searchable: false }, */
                     {data: 'precio_compra_formatted', name: 'productos.precio_compra', orderable: true, searchable: false},
-                    {data: 'fecha_registro', name: 'productos.created_at'},
+                   /*  {data: 'fecha_registro', name: 'productos.created_at'}, */
                     {data: 'activo', name: 'productos.activo', orderable: false, searchable: false},
                     {data: 'boton_compra', name: 'boton_compra', orderable: false, searchable: false },
                     {data: 'acciones', name: 'acciones', orderable: false, searchable: false, className: 'no-exportar'}

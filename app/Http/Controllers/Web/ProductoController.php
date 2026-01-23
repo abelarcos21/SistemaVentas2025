@@ -123,7 +123,7 @@ class ProductoController extends Controller
 
 
         return DataTables::of($productos)
-            ->addIndexColumn()
+            /* ->addIndexColumn() */
             ->addColumn('boton_compra', function ($producto) {
                 if ($producto->cantidad == 0) {
                     return '<button type="button" class="btn btn-success btn-sm mr-1 btn-compra d-flex align-items-center"
@@ -174,7 +174,7 @@ class ProductoController extends Controller
                 return '<span class="text-primary fw-bold">' . $precioVenta . '</span>';
             })
             // Mostrar mayoreo si aplica
-            ->addColumn('mayoreo', function ($producto) {
+           /*  ->addColumn('mayoreo', function ($producto) {
                 if ((int)$producto->permite_mayoreo == true && $producto->precio_mayoreo > 0) {
                     return '<span class="badge bg-info">'
                         . ($producto->moneda->codigo ?? '') . ' '
@@ -183,9 +183,9 @@ class ProductoController extends Controller
                         . '</span>';
                 }
                 return '<span class="badge bg-secondary">N/A</span>';
-            })
+            }) */
             // Mostrar oferta si aplica
-            ->addColumn('oferta', function ($producto) {
+           /*  ->addColumn('oferta', function ($producto) {
                 if ((int)$producto->en_oferta == true && $producto->precio_oferta > 0) {
                     $hoy = now();
                     $inicio = \Carbon\Carbon::parse($producto->fecha_inicio_oferta);
@@ -211,7 +211,7 @@ class ProductoController extends Controller
                     }
                 }
                 return '<span class="badge bg-secondary">N/A</span>';
-            })
+            }) */
             ->addColumn('caducidad', function ($producto) {
                 // 🔍 DEBUG temporal - ver en la consola del navegador
                 /* \Log::info('Producto: ' . $producto->nombre, [
@@ -283,17 +283,38 @@ class ProductoController extends Controller
             ->addColumn('acciones', function ($producto) {
                 $buttons = '<div class="d-flex">';
 
+                // Pasamos todos los datos ocultos como atributos data-*
+                $buttons .= '<button type="button" class="btn btn-secondary btn-sm mr-1 btn-ver-detalles"
+                    title="Ver Detalles"
+                    data-nombre="'.htmlspecialchars($producto->nombre).'"
+                    data-codigo="'.$producto->codigo.'"
+                    data-categoria="'.$producto->nombre_categoria.'"
+                    data-marca="'.$producto->nombre_marca.'"
+                    data-proveedor="'.$producto->nombre_proveedor.'"
+                    data-descripcion="'.htmlspecialchars($producto->descripcion).'"
+                    data-stock="'.$producto->cantidad.'"
+                    data-pventa="'.number_format($producto->precio_venta, 2).'"
+                    data-pcompra="'.number_format($producto->precio_compra, 2).'"
+                    data-pmayoreo="'.($producto->permite_mayoreo ? number_format($producto->precio_mayoreo, 2) : 'N/A').'"
+                    data-poferta="'.($producto->en_oferta ? number_format($producto->precio_oferta, 2) : 'N/A').'"
+                    data-moneda="'.($producto->moneda->codigo ?? '$').'"
+                    data-fechareg="'.$producto->created_at->format('d/m/Y').'"
+                    data-imagen="'.($producto->imagen ? asset('storage/' . $producto->imagen->ruta) : asset('images/placeholder-caja.png')).'"
+                >
+                    <i class="fas fa-eye"></i>
+                </button>';
+
                 if(auth()->user()->can('productos.edit')) {
-                    $buttons .= '<button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center"
+                    $buttons .= '<button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center" title="Editar Producto"
                                     data-id="'.$producto->id.'">
-                                    <i class="fas fa-edit mr-1"></i> Editar
+                                    <i class="fas fa-edit mr-1"></i>
                                 </button>';
                 }
 
                 if(auth()->user()->can('productos.destroy')) {
                     $buttons .= '<button data-id="'.$producto->id.'"
-                                    class="btn btn-danger btn-delete btn-sm mr-1 d-flex align-items-center">
-                                    <i class="fas fa-trash-alt mr-1"></i> Eliminar
+                                    class="btn btn-danger btn-delete btn-sm mr-1 d-flex align-items-center"  title="Eliminar Producto">
+                                    <i class="fas fa-trash-alt mr-1"></i>
                                 </button>';
                 }
 
