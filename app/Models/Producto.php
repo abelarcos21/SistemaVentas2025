@@ -24,6 +24,8 @@ class Producto extends Model
         'barcode_path',
         'nombre',
         'descripcion',
+        'precio_compra',
+        'cantidad',
         'precio_venta',
         'activo',
 
@@ -49,7 +51,7 @@ class Producto extends Model
         'activo' => 'boolean',
         'permite_mayoreo' => 'boolean',
         'en_oferta' => 'boolean',
-        'requiere_fecha_caducidad' => 'boolean', 
+        'requiere_fecha_caducidad' => 'boolean',
         'precio_venta' => 'decimal:2',
         'precio_compra' => 'decimal:2',
         'precio_mayoreo' => 'decimal:2',
@@ -57,7 +59,7 @@ class Producto extends Model
         'cantidad_minima_mayoreo' => 'integer',
         'fecha_inicio_oferta' => 'date',
         'fecha_fin_oferta' => 'date',
-        'fecha_caducidad' => 'date', 
+        'fecha_caducidad' => 'date',
     ];
 
     //Accesor para obtener el precio vigente
@@ -150,7 +152,7 @@ class Producto extends Model
     public function scopeProximosAVencer($query, $dias = 30)
     {
         $fechaLimite = now()->addDays($dias);
-        
+
         return $query->where('requiere_fecha_caducidad', true)
                     ->whereNotNull('fecha_caducidad')
                     ->where('fecha_caducidad', '<=', $fechaLimite)
@@ -179,16 +181,16 @@ class Producto extends Model
         if (!$this->requiere_fecha_caducidad || !$this->fecha_caducidad) {
             return false;
         }
-        
+
         // Asegurarse de que sea un objeto Carbon
-        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon 
-            ? $this->fecha_caducidad 
+        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon
+            ? $this->fecha_caducidad
             : \Carbon\Carbon::parse($this->fecha_caducidad);
-        
+
         return $fecha->isFuture() && $fecha->diffInDays(now()) <= $dias;
     }
 
-    
+
     /**
      * Verificar si el producto está vencido
      * @return bool
@@ -198,12 +200,12 @@ class Producto extends Model
         if (!$this->requiere_fecha_caducidad || !$this->fecha_caducidad) {
             return false;
         }
-        
+
         // Asegurarse de que sea un objeto Carbon
-        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon 
-            ? $this->fecha_caducidad 
+        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon
+            ? $this->fecha_caducidad
             : \Carbon\Carbon::parse($this->fecha_caducidad);
-        
+
         return $fecha->isPast();
     }
 
@@ -216,16 +218,16 @@ class Producto extends Model
         if (!$this->requiere_fecha_caducidad || !$this->fecha_caducidad) {
             return null;
         }
-        
+
         // Asegurarse de que sea un objeto Carbon
-        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon 
-            ? $this->fecha_caducidad 
+        $fecha = $this->fecha_caducidad instanceof \Carbon\Carbon
+            ? $this->fecha_caducidad
             : \Carbon\Carbon::parse($this->fecha_caducidad);
-        
+
         if ($fecha->isPast()) {
             return 0;
         }
-        
+
         return $fecha->diffInDays(now());
     }
 
@@ -238,13 +240,13 @@ class Producto extends Model
         if (!$this->requiere_fecha_caducidad) {
             return '';
         }
-        
+
         if ($this->estaVencido()) {
             return 'badge-danger';
         }
-        
+
         $dias = $this->diasParaVencer();
-        
+
         if ($dias <= 7) {
             return 'badge-danger';
         } elseif ($dias <= 15) {
@@ -252,7 +254,7 @@ class Producto extends Model
         } elseif ($dias <= 30) {
             return 'badge-info';
         }
-        
+
         return 'badge-success';
     }
 

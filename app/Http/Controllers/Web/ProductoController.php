@@ -17,6 +17,8 @@ use Exception;
 use Storage;
 use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
+use App\Imports\ProductosImport; //IMPORTANTE: para importar productos masivamente
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class ProductoController extends Controller
@@ -1097,6 +1099,30 @@ class ProductoController extends Controller
             return $request->ajax()
                 ? response()->json(['success' => false, 'message' => 'Ocurrió un error al eliminar el producto.'], 500)
                 : redirect()->route('producto.index')->with('error', 'Ocurrió un error al eliminar el producto.');
+        }
+    }
+
+    //IMPORTANTE: para importar productos masivamente excel
+    public function importar(Request $request){
+
+        $request->validate([
+            'archivo_excel' => 'required|mimes:xlsx,csv,xls'
+        ]);
+
+        try {
+            Excel::import(new ProductosImport, $request->file('archivo_excel'));
+
+            return back()->with('success', '¡Productos importados correctamente!');
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $fallas = $e->failures();
+            $mensaje = "Error en la importación: ";
+            foreach ($fallas as $falla) {
+                $mensaje .= "Fila " . $falla->row() . ": " . implode(', ', $falla->errors()) . ". ";
+            }
+            return back()->with('error', $mensaje);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error general: ' . $e->getMessage());
         }
     }
 

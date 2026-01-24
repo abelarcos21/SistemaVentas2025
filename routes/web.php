@@ -171,6 +171,7 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/cambiar-estado/{id}', [ProductoController::class, 'cambiarEstado'])->middleware('permission:productos.toggle-activo');
 
         Route::post('/{id}/desactivar', [ProductoController::class, 'desactivar'])->name('producto.desactivar');
+        Route::post('productos/importar', [ProductoController::class, 'importar'])->name('productos.importar');
 
     });
 

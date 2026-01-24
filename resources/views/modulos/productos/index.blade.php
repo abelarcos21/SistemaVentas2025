@@ -38,6 +38,9 @@
                                 {{-- <a href="{{ route('reporte.falta_stock') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2">
                                     <i class="fas fa-boxes"></i> Productos con Stock 1 y 0
                                 </a> --}}
+                                <button type="button" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" data-toggle="modal" data-target="#modalImportar">
+                                    <i class="fas fa-file-excel mr-1"></i> Importar Productos
+                                </button>
                                 <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" target="_blank">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
                                 </a>
@@ -198,6 +201,9 @@
             </div>
         </div>
     </div>
+
+    @include('modulos.productos.partials.modal-importar')
+
 
 @stop
 
