@@ -19,6 +19,8 @@ use Illuminate\Http\JsonResponse;
 use Yajra\DataTables\DataTables;
 use App\Imports\ProductosImport; //IMPORTANTE: para importar productos masivamente
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Validation\ValidationException;
+
 
 
 class ProductoController extends Controller
@@ -581,45 +583,40 @@ class ProductoController extends Controller
         try{
 
             $codigo = null;
-            //si se envio un codigo manual
+
+            // CASO A: SI TIENES EL PRODUCTO EN MANO (Escáner)
             if(!empty($validated['codigo'])){
                 $codigo = $validated['codigo'];
-                //validar que sea numerico de 13 digitos
-                if(!preg_match('/^\d{13}$/', $codigo)){
-                    DB::rollBack();
-                    return back()->withErrors(['codigo' => 'El código debe tener exactamente 13 dígitos numéricos.'])
-                            ->withInput();
-                }
 
-                // Validar dígito verificador EAN-13
-                if(!$this->validateEAN13($codigo)){
-                    DB::rollBack();
-                    return back()->withErrors(['codigo' => 'El código EAN-13 no es válido (dígito verificador incorrecto).'])
-                                ->withInput();
-                }
+            // Validación estricta solo si es numérico (para evitar errores de dedo)
+            if (!preg_match('/^\d{13}$/', $codigo)) {
+                 // Opcional: Si tus productos tienen códigos cortos (UPC de 12 o EAN-8), ajusta el regex
+                throw ValidationException::withMessages(['codigo' => 'El código debe ser numérico de 13 dígitos.']);
+            }
+
+            // Validar checksum solo si es un código estándar EAN
+            if (!$this->validateEAN13($codigo)) {
+                throw ValidationException::withMessages(['codigo' => 'Dígito verificador incorrecto.']);
+            }
 
             }else{
 
-                //Generar codigo EAN-13 valido y unico
+                // CASO B: PRODUCTO A GRANEL O SIN CÓDIGO (Generación Interna)
+                // CAMBIO IMPORTANTE: Usamos prefijo '200' para uso interno, NO '750'.
                 do{
 
-                    $base12 = '750' . str_pad(random_int(0, 999999999), 9, '0', STR_PAD_LEFT);
+                    // Generamos 12 dígitos: prefijo 200 + 9 aleatorios
+                    $base12 = '200' . str_pad(mt_rand(0, 999999999), 9, '0', STR_PAD_LEFT);
 
-                    $suma = 0;
-                    for ($i = 0; $i < 12; $i++) {
-                        $digito = (int)$base12[$i];
-                        $suma += ($i % 2 === 0) ? $digito : $digito * 3;
-                    }
-
-                    $verificador = (10 - ($suma % 10)) % 10;
-                    $codigo = $base12 . $verificador;
+                    // Calculamos el dígito verificador para que el escáner lo lea bien
+                    $codigo = $base12 . $this->calcularDigitoVerificador($base12);
 
                 } while (Producto::where('codigo', $codigo)->exists());
             }
 
-            // Generar imagen de código de barras
+            // Generar ruta de imagen de barras (Solo si la necesitas guardar como archivo)
+            // Si usas una fuente de código de barras en el frontend, esto no es necesario guardarlo en BD.
             $barcodePath = $this->generarCodigoBarras($codigo);
-
 
             //Crear producto con todos los campos
             $producto = Producto::create([
@@ -640,12 +637,12 @@ class ProductoController extends Controller
 
                 // 🔹 Mayoreo
                 'permite_mayoreo' => $request->boolean('permite_mayoreo'),
-                'precio_mayoreo' => $validated['precio_mayoreo'] ?? null,
-                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? null,
+                'precio_mayoreo' => $validated['precio_mayoreo'] ?? 0,
+                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? 0,
 
                 // 🔹 Oferta
                 'en_oferta' => $request->boolean('en_oferta'),
-                'precio_oferta' => $validated['precio_oferta'] ?? null,
+                'precio_oferta' => $validated['precio_oferta'] ?? 0,
                 'fecha_inicio_oferta' => $validated['fecha_inicio_oferta'] ?? null,
                 'fecha_fin_oferta' => $validated['fecha_fin_oferta'] ?? null,
 
@@ -728,6 +725,16 @@ class ProductoController extends Controller
                     ->withInput();
 
         }
+    }
+
+    // Función auxiliar para calcular dígito (necesaria para el generador interno)
+    private function calcularDigitoVerificador($digits){
+        $sum = 0;
+        for ($i = 0; $i < strlen($digits); $i++) {
+            $sum += ($digits[$i] * (($i % 2 === 0) ? 1 : 3)); // Lógica EAN para posiciones (impar*1, par*3)
+            // Nota: Verifica tu lógica de par/impar según si el string empieza en index 0
+        }
+        return (10 - ($sum % 10)) % 10;
     }
 
     public function productCodeExists($number){
@@ -1123,6 +1130,58 @@ class ProductoController extends Controller
             return back()->with('error', $mensaje);
         } catch (\Exception $e) {
             return back()->with('error', 'Error general: ' . $e->getMessage());
+        }
+    }
+
+    //metodo para manejar la creación rápida de Categorías, Marcas y Proveedores dinámicamente en el modal de crear nuevo producto .
+    public function quickStore(Request $request, $type){
+        // Validar que se envíe un nombre
+        $request->validate(['nombre' => 'required|string|max:255']);
+
+        $newItem = null;
+
+        try {
+            // Switch para saber qué estamos creando
+            switch ($type) {
+                case 'categoria':
+                    $newItem = Categoria::create([
+                        'nombre' => $request->nombre,
+                        'descripcion' => 'Creada desde creación rápida',
+                        'user_id' => auth()->id(), // Si tu tabla lo requiere
+                        'medida' => 'Pieza'
+                    ]);
+                    break;
+
+                case 'marca':
+                    $newItem = Marca::create([
+                        'nombre' => $request->nombre,
+                        'user_id' => auth()->id()
+                    ]);
+                    break;
+
+                case 'proveedor':
+                    $newItem = Proveedor::create([
+                        'nombre' => $request->nombre,
+                        'user_id' => auth()->id(),
+                        'email' => 'Example@hotmail.com',
+                        'codigo_postal' => '24040',
+                        'telefono' => '0000000000',
+                        'direccion' => 'Sin dirección'
+                    ]);
+                    break;
+
+                default:
+                    return response()->json(['message' => 'Tipo no válido'], 400);
+            }
+
+            return response()->json([
+                'success' => true,
+                'id' => $newItem->id,
+                'nombre' => $newItem->nombre
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 
