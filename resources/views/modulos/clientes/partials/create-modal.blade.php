@@ -233,196 +233,206 @@
 </div>
 
 <script>
-// Función para inicializar el modal de crear cliente
-function initializeCreateModal() {
-    console.log('Inicializando modal de crear cliente...');
+    // Función para inicializar el modal de crear cliente
+    function initializeCreateModal() {
+        // 1. MEJORA UX: Auto-foco
+        $('#createModal').on('shown.bs.modal', function () {
+            $('#nombre_create').trigger('focus');
+        });
 
-    // Preview en tiempo real de los datos del cliente
-    function updateClientPreview() {
-        const nombre = $('#nombre_create').val().trim();
-        const apellido = $('#apellido_create').val().trim();
-        const rfc = $('#rfc_create').val().trim();
-        const telefono = $('#telefono_create').val().trim();
-        const correo = $('#correo_create').val().trim();
-        const activo = $('#activoSwitch_create').is(':checked');
+        // Preview en tiempo real (Tu código original funciona bien aquí)
+        function updateClientPreview() {
+            // ... (Mismo código que tienes) ...
+            const nombre = $('#nombre_create').val().trim();
+            const apellido = $('#apellido_create').val().trim();
+            const rfc = $('#rfc_create').val().trim();
+            const telefono = $('#telefono_create').val().trim();
+            const correo = $('#correo_create').val().trim();
+            const activo = $('#activoSwitch_create').is(':checked');
 
-        if (nombre || apellido) {
-            $('#client_info_preview').addClass('d-none');
-            $('#client_preview').removeClass('d-none');
-
-            // Actualizar preview
-            $('#preview_nombre_completo').text(nombre && apellido ? `${nombre} ${apellido}` : (nombre || apellido || '-'));
-            $('#preview_rfc').text(rfc || '-');
-            $('#preview_telefono').text(telefono || '-');
-            $('#preview_correo').text(correo || '-');
-
-            const estadoBadge = activo
-                ? '<span class="badge badge-success">Activo</span>'
-                : '<span class="badge badge-secondary">Inactivo</span>';
-            $('#preview_estado').html(estadoBadge);
-        } else {
-            $('#client_info_preview').removeClass('d-none');
-            $('#client_preview').addClass('d-none');
+            // ... Logica de visualización ...
+            if (nombre || apellido) {
+                $('#client_info_preview').addClass('d-none');
+                $('#client_preview').removeClass('d-none');
+                $('#preview_nombre_completo').text(nombre && apellido ? `${nombre} ${apellido}` : (nombre || apellido || '-'));
+                $('#preview_rfc').text(rfc || '-');
+                $('#preview_telefono').text(telefono || '-');
+                $('#preview_correo').text(correo || '-');
+                // ... resto de tu lógica
+                const estadoBadge = activo
+                    ? '<span class="badge badge-success">Activo</span>'
+                    : '<span class="badge badge-secondary">Inactivo</span>';
+                $('#preview_estado').html(estadoBadge);
+            } else {
+                $('#client_info_preview').removeClass('d-none');
+                $('#client_preview').addClass('d-none');
+            }
         }
-    }
 
-    // Eventos para actualizar preview en tiempo real
-    $('#nombre_create, #apellido_create, #rfc_create, #telefono_create, #correo_create').on('input', updateClientPreview);
-    $('#activoSwitch_create').on('change', updateClientPreview);
+        // Eventos input (Mismo código)
+        $('#nombre_create, #apellido_create, #correo_create').on('input', updateClientPreview);
+        $('#activoSwitch_create').on('change', updateClientPreview);
 
-    // Formatear RFC automáticamente
-    $('#rfc_create').on('input', function() {
-        let value = $(this).val().replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-        $(this).val(value);
-        updateClientPreview();
-    });
+        // 2. MEJORA: Validación estricta de RFC y Auto-Mayúsculas
+        $('#rfc_create').on('input', function() {
+            let start = this.selectionStart;
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9ñÑ&]/g, ''); // Solo caracteres válidos
+            this.setSelectionRange(start, start);
+            updateClientPreview();
+        }).on('blur', function() {
+            const rfc = $(this).val().trim();
+            // Regex completo para RFC Mexicano
+            const rfcPattern = /^([A-ZÑ&]{3,4}) ?(?:- ?)?(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])) ?(?:- ?)?([A-Z\d]{2})([A\d])$/;
 
-    // Validación en tiempo real del RFC
-    $('#rfc_create').on('blur', function() {
-        const rfc = $(this).val().trim();
-        if (rfc && rfc.length > 0 && rfc.length !== 13) {
-            $('#error-rfc').text('El RFC debe tener exactamente 13 caracteres').show();
-            $(this).addClass('is-invalid');
-        } else {
-            $('#error-rfc').text('').hide();
-            $(this).removeClass('is-invalid');
-        }
-    });
+            if (rfc.length > 0 && !rfcPattern.test(rfc)) {
+                $('#error-rfc').text('Formato inválido (Ej: XXX010101XX1)').show();
+                $(this).addClass('is-invalid');
+                $(this).removeClass('is-valid');
+            } else if (rfc.length > 0) {
+                $('#error-rfc').hide();
+                $(this).removeClass('is-invalid').addClass('is-valid');
+            } else {
+                $(this).removeClass('is-invalid is-valid');
+                $('#error-rfc').hide();
+            }
+        });
 
-    // Toggle de estado visual
-    $('#activoSwitch_create').change(function() {
-        const activeTexts = $('.active-text');
-        if ($(this).is(':checked')) {
-            activeTexts.addClass('d-none');
-            activeTexts.first().removeClass('d-none');
-        } else {
-            activeTexts.addClass('d-none');
-            activeTexts.last().removeClass('d-none');
-        }
-        updateClientPreview();
-    });
+        // 3. MEJORA: Input mask manual para teléfono
+        $('#telefono_create').on('input', function() {
+            // Solo permitir números y caracteres de formato telefónico
+            this.value = this.value.replace(/[^0-9+\-\s()]/g, '');
+            updateClientPreview();
+        });
 
-    // Trigger inicial para mostrar el estado correcto
-    $('#activoSwitch_create').trigger('change');
+        // Toggle switch (Tu código original está bien)
+        $('#activoSwitch_create').change(function() {
+            // ... Tu lógica existente ...
+            const activeTexts = $('.active-text');
+            if ($(this).is(':checked')) {
+                activeTexts.addClass('d-none');
+                activeTexts.first().removeClass('d-none');
+            } else {
+                activeTexts.addClass('d-none');
+                activeTexts.last().removeClass('d-none');
+            }
+            updateClientPreview();
+        });
 
-    // Manejar envío del formulario con AJAX
-    $('#createClientForm').submit(function(e) {
-        e.preventDefault();
+        // AJAX Submit Optimizado
+        $('#createClientForm').submit(function(e) {
+            e.preventDefault();
 
-        const formData = new FormData(this);
-        const submitBtn = $(this).find('button[type="submit"]');
+            // 1. IMPORTANTE: Capturar los datos ANTES de deshabilitar nada
+            // Si deshabilitas primero, formData estará vacío.
+            const formData = new FormData(this);
 
-        // Limpiar errores previos
-        $('.form-control').removeClass('is-invalid');
-        $('.invalid-feedback').text('').hide();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const allInputs = form.find('input, button, select, textarea');
 
-        // Deshabilitar botón durante el envío
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Creando...');
+            // 2. Limpiar errores visuales previos
+            $('.form-control').removeClass('is-invalid');
+            $('.invalid-feedback').hide();
 
-        $.ajax({
-            url: $(this).attr('action'),
-            method: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                $('#createModal').modal('hide');
+            // 3. AHORA SÍ: Bloquear inputs y mostrar spinner (Efecto visual)
+            allInputs.prop('disabled', true);
+            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
 
-                // Notificación de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Cliente Creado',
-                    text: 'El cliente se ha creado exitosamente.',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
+            $.ajax({
+                url: form.attr('action'),
+                method: 'POST',
+                data: formData, // Aquí van los datos que capturamos en el paso 1
+                contentType: false,
+                processData: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                beforeSend: function() {
+                    // Bloquear botón
+                    const btn = $('#createClientForm').find('button[type="submit"]');
+                    btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
+                },
+                success: function(response) {
+                    $('#createModal').modal('hide');
 
-                // Refrescar tabla si existe DataTable
-                if (typeof $('#tabla-clientes').DataTable !== 'undefined') {
-                    $('#tabla-clientes').DataTable().ajax.reload(null, false);
-                } else {
-                    // Recargar página si no hay DataTable
-                    location.reload();
-                }
-            },
-            error: function(xhr) {
-                console.error('Error al crear cliente:', xhr);
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Guardado!',
+                        text: 'El cliente se ha creado correctamente',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
 
-                if (xhr.status === 422) {
-                    // Errores de validación
-                    const errors = xhr.responseJSON?.errors;
-                    if (errors) {
-                        // Mostrar errores específicos en cada campo
-                        Object.keys(errors).forEach(field => {
-                            const errorElement = $(`#error-${field}`);
-                            const inputElement = $(`[name="${field}"]`);
+                    // Recargar tabla si existe
+                    if (typeof $('#tabla-clientes').DataTable !== 'undefined') {
+                        $('#tabla-clientes').DataTable().ajax.reload(null, false);
+                    } else {
+                        location.reload();
+                    }
+                },
+                error: function(xhr) {
+                    // Log para ver el error exacto en consola si vuelve a pasar
+                    console.log("Error response:", xhr.responseJSON);
 
-                            if (errorElement.length) {
-                                errorElement.text(errors[field][0]).show();
-                                inputElement.addClass('is-invalid');
+                    if (xhr.status === 422) {
+                        const errors = xhr.responseJSON.errors;
+
+                        // Recorrer errores y asignarlos a cada input
+                        Object.keys(errors).forEach(function(key) {
+                            const input = $('[name="' + key + '"]');
+                            const errorDiv = $('#error-' + key);
+
+                            if(input.length > 0) {
+                                input.addClass('is-invalid');
+                                errorDiv.text(errors[key][0]).show();
+
+                                // Pequeña animación para indicar error
+                                input.css('transition', '0.1s').css('transform', 'translateX(5px)');
+                                setTimeout(() => input.css('transform', 'translateX(0)'), 100);
                             }
                         });
 
-                        // También mostrar alerta general
-                        let errorMsg = 'Errores de validación:\n';
-                        Object.keys(errors).forEach(key => {
-                            errorMsg += `- ${errors[key][0]}\n`;
+                        // Alerta suave
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000
                         });
-
-                        Swal.fire({
+                        Toast.fire({
                             icon: 'error',
-                            title: 'Errores de Validación',
-                            text: errorMsg,
-                            confirmButtonText: 'Entendido'
+                            title: 'Verifica los campos marcados en rojo'
                         });
+
+                    } else {
+                        Swal.fire('Error', 'Ocurrió un error en el servidor', 'error');
                     }
-                } else {
-                    // Error general
-                    const message = xhr.responseJSON?.message || 'Error al crear el cliente. Intenta nuevamente.';
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: message,
-                        confirmButtonText: 'Entendido'
-                    });
+                },
+                complete: function() {
+                    // 4. SIEMPRE: Rehabilitar los botones e inputs al terminar (éxito o error)
+                    // Si no haces esto, el spinner se queda girando por siempre si hay error.
+                    allInputs.prop('disabled', false);
+                    submitBtn.html('<i class="fas fa-user-plus"></i> Crear Cliente');
+
                 }
-            },
-            complete: function() {
-                // Rehabilitar botón
-                submitBtn.prop('disabled', false).html('<i class="fas fa-user-plus"></i> Crear Cliente');
-            }
+            });
         });
-    });
 
-    // Reset form when modal is hidden
-    $('#createModal').on('hidden.bs.modal', function () {
-        try {
-            $('#createClientForm')[0].reset();
-        } catch(e) {
-            console.error('Error al resetear formulario:', e);
-        }
+        // Reset al cerrar
+        $('#createModal').on('hidden.bs.modal', function () {
+            const form = $('#createClientForm');
+            form[0].reset();
+            form.find('.is-invalid, .is-valid').removeClass('is-invalid is-valid');
+            $('.invalid-feedback').hide();
+            $('#activoSwitch_create').prop('checked', true).trigger('change');
+            // Limpiar preview manualmente
+            $('#nombre_create').trigger('input');
+        });
+    }
 
-        // Limpiar preview
-        $('#client_info_preview').removeClass('d-none');
-        $('#client_preview').addClass('d-none');
+    // Inicializar cuando el contenido del modal se carga
+    initializeCreateModal();
 
-        // Limpiar errores
-        $('.form-control').removeClass('is-invalid');
-        $('.invalid-feedback').text('').hide();
-
-        // Resetear estado del switch
-        $('#activoSwitch_create').prop('checked', true).trigger('change');
-    });
-
-    // Llamar a updateClientPreview inicialmente
-    updateClientPreview();
-}
-
-// Inicializar cuando el contenido del modal se carga
-initializeCreateModal();
 </script>
 
 <style>

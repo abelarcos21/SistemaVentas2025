@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller; // IMPORTANTE: esta línea importa la clase base
 use App\Models\Compra;
 use App\Models\Producto;
+use App\Models\Proveedor;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Log;
@@ -141,12 +142,14 @@ class ComprasController extends Controller
         try {
             $producto = Producto::findOrFail($id);
 
+            $proveedores = Proveedor::all();
+
             // Obtener el último precio de compra si existe
             $ultimaCompra = Compra::where('producto_id', $id)
                                  ->orderBy('created_at', 'desc')
                                  ->first();
 
-            return view('modulos.compras.partials.compra-modal', compact('producto', 'ultimaCompra'));
+            return view('modulos.compras.partials.compra-modal', compact('producto', 'proveedores', 'ultimaCompra'));
         } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,

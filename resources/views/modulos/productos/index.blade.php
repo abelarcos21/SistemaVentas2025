@@ -396,6 +396,7 @@
             // ========== MODAL DE EDICIÓN (Producto) ==========
             // Función para abrir modal de editar
             window.editProduct = function(productId) {
+
                 // Validar que el ID no sea undefined o null
                 if (!productId || productId === 'undefined') {
                     console.error('ID del producto no válido:', productId);
@@ -443,6 +444,20 @@
                         });
                     }
                 });
+            };
+
+            //FUNCIÓN (Función puente para pasar del modal Eliminar al Editar cando un producto tiene ventas// )
+            // ---------------------------------------------------------
+            window.cambiarAEditar = function(productId) {
+                // 1. Cerrar el modal actual (Eliminar)
+                $('#deleteModal').modal('hide');
+
+                // 2. Esperar 500ms a que termine la animación de cierre de Bootstrap
+                // para evitar que la pantalla se bloquee o se vea gris.
+                setTimeout(function() {
+                    // 3. Llamar a la función principal de arriba
+                    editProduct(productId);
+                }, 500);
             };
 
             // Manejar click en botones de editar

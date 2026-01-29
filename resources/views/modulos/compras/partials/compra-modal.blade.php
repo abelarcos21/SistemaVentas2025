@@ -1,4 +1,4 @@
-<div class="modal fade" id="compraModal" tabindex="-1" role="dialog" aria-labelledby="compraModalLabel" aria-hidden="true">
+<div class="modal fade" id="compraModal" role="dialog" aria-labelledby="compraModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-gradient-primary">
@@ -92,18 +92,55 @@
                                                     <span class="input-group-text bg-gradient-info">$</span>
                                                 </div>
                                                 <input type="number" name="precio_compra" id="precio_compra"
-                                                       class="form-control" placeholder="0.00"
-                                                       min="0.01" step="0.01"
-                                                       value="{{ $ultimaCompra ? $ultimaCompra->precio_compra : '' }}"
-                                                       required>
+                                                class="form-control" placeholder="0.00"
+                                                min="0.01" step="0.01"
+                                                value="{{ $ultimaCompra ? $ultimaCompra->precio_compra : '' }}"
+                                                required>
+                                                <div class="mt-2 d-flex justify-content-between align-items-center">
+                                                    <small class="text-muted p-4">Precio Venta actual: <strong>${{ number_format($producto->precio_venta, 2) }}</strong></small>
+                                                    <span id="info-utilidad" class="badge badge-secondary">Esperando datos...</span>
+                                                </div>
                                             </div>
                                             <div class="invalid-feedback" id="precio_compra-error"></div>
                                         </div>
                                     </div>
                                 </div>
 
+                                <div class="col-12 mb-3">
+                                    <label for="proveedor_id">
+                                        <i class="fas fa-truck text-info"></i> Proveedor
+                                        {{-- Pequeña ayuda visual para saber cuál es el habitual --}}
+                                        @if($producto->proveedor)
+                                            <small class="text-muted ml-2">
+                                                (Habitual: <strong>{{ $producto->proveedor->nombre }}</strong>)
+                                            </small>
+                                        @endif
+                                    </label>
+
+                                    <select name="proveedor_id" id="proveedor_id" class="form-control select2">
+                                        <option value="">-- Proveedor General / Varios --</option>
+
+                                        @foreach($proveedores as $prov)
+                                            <option value="{{ $prov->id }}"
+                                                {{-- LÓGICA DE PRESELECCIÓN: --}}
+                                                {{-- 1. Si hay una compra anterior, seleccionamos al proveedor de esa compra --}}
+                                                {{-- 2. Si no, seleccionamos al proveedor asignado al producto --}}
+                                                {{-- 3. Si coincide con el ID del ciclo, poner 'selected' --}}
+
+                                                @if(isset($ultimaCompra) && $ultimaCompra->proveedor_id == $prov->id)
+                                                    selected
+                                                @elseif(!isset($ultimaCompra) && $producto->proveedor_id == $prov->id)
+                                                    selected
+                                                @endif
+                                            >
+                                                {{ $prov->nombre }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
                                 {{-- Resumen de la compra --}}
-                                <div class="card border-success" id="resumen-compra" style="display: none;">
+                                <div class="card border-success" id="resumen-compra">
                                     <div class="card-header bg-success text-white">
                                         <h6 class="mb-0">
                                             <i class="fas fa-calculator"></i> Resumen de la Compra
@@ -200,6 +237,18 @@
 
 <script>
     $(document).ready(function() {
+
+        $('#compraModal').on('shown.bs.modal', function () {
+            // Inicializar select2 con tema de bootstrap
+            $('#proveedor_id').select2({
+                theme: 'classic',
+                dropdownParent: $('#compraModal' ), // IMPORTANTE: Esto evita que el buscador no funcione en modales
+                width: '100%',
+                placeholder: "Buscar proveedor...",
+                allowClear: true
+            });
+        });
+
         // Calcular total en tiempo real
         $('#cantidad, #precio_compra').on('input', function() {
             calcularTotal();
@@ -214,19 +263,46 @@
         // Función para calcular total
         function calcularTotal() {
             const cantidad = parseFloat($('#cantidad').val()) || 0;
-            const precio = parseFloat($('#precio_compra').val()) || 0;
-            const total = cantidad * precio;
+            const precioCompra = parseFloat($('#precio_compra').val()) || 0;
+            const precioVenta = {{ $producto->precio_venta }}; // Valor fijo de blade
+            const total = cantidad * precioCompra;
             const stockActual = {{ $producto->cantidad }};
 
-            if (cantidad > 0 && precio > 0) {
-                $('#resumen-cantidad').text(cantidad);
-                $('#resumen-precio').text(precio.toFixed(2));
-                $('#resumen-total').text(total.toFixed(2));
-                $('#cantidad-nueva').text(cantidad);
-                $('#stock-final').text(stockActual + cantidad);
-                $('#resumen-compra').show();
+            // 1. Actualizar Resumen Matemático
+            $('#resumen-cantidad').text(cantidad);
+            $('#resumen-precio').text(precioCompra.toFixed(2));
+            $('#resumen-total').text(total.toFixed(2));
+            $('#cantidad-nueva').text(cantidad);
+            $('#stock-final').text(stockActual + cantidad);
+
+            // 2. Lógica de UI (Mostrar/Ocultar y Margen)
+            if (cantidad > 0 && precioCompra > 0) {
+                $('#resumen-compra').fadeIn(); // Animación suave
+
+                // CÁLCULO DE UTILIDAD
+                const ganancia = precioVenta - precioCompra;
+                const margen = precioVenta > 0 ? (ganancia / precioVenta) * 100 : 0;
+
+                // Actualizar etiqueta de utilidad
+                let badgeClass = 'badge-success';
+                let icon = '<i class="fas fa-arrow-up"></i>';
+
+                if (ganancia <= 0) {
+                    badgeClass = 'badge-danger';
+                    icon = '<i class="fas fa-arrow-down"></i>';
+                } else if (margen < 15) {
+                    badgeClass = 'badge-warning';
+                    icon = '<i class="fas fa-exclamation"></i>';
+                }
+
+                const htmlBadge = `${icon} Utilidad: $${ganancia.toFixed(2)} (${margen.toFixed(1)}%)`;
+
+                // Asegúrate de crear este div en tu HTML debajo del input de precio
+                $('#info-utilidad').html(`<span class="badge ${badgeClass} w-100 p-2 mt-2">${htmlBadge}</span>`);
+
             } else {
-                $('#resumen-compra').hide();
+                $('#resumen-compra').fadeOut(); // Ocultar suave
+                $('#info-utilidad').empty();
             }
         }
 
@@ -308,10 +384,15 @@
             calcularTotal();
         @endif
     });
+
+    $('#compraModal').on('shown.bs.modal', function () {
+        $('#cantidad').trigger('focus');
+    });
+
 </script>
 
 <style>
-    /* Estilos similares a tu modal de edición */
+    /* Estilos del modal */
     @media (max-width: 768px) {
         .modal-lg {
             max-width: 95%;

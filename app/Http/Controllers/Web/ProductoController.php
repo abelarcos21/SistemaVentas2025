@@ -796,7 +796,7 @@ class ProductoController extends Controller
             'en_oferta'               => 'boolean',
             'precio_mayoreo'          => 'nullable|numeric|min:0',
             'precio_oferta'           => 'nullable|numeric|min:0',
-            'cantidad_minima_mayoreo' => 'nullable|integer|min:1',
+            'cantidad_minima_mayoreo' => 'exclude_if:permite_mayoreo,false,0|nullable|integer|min:1',
             'fecha_inicio_oferta'     => 'nullable|date',
             'fecha_fin_oferta'        => 'nullable|date|after_or_equal:fecha_inicio_oferta',
 
@@ -890,12 +890,12 @@ class ProductoController extends Controller
 
                 // 🔹 Mayoreo
                 'permite_mayoreo'         => $request->boolean('permite_mayoreo'),
-                'precio_mayoreo'          => $validated['precio_mayoreo'] ?? null,
-                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? null,
+                'precio_mayoreo'          => $validated['precio_mayoreo'] ?? 0,
+                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? 0,
 
                 // 🔹 Oferta (con validación de vencimiento)
                 'en_oferta'          => $enOferta,
-                'precio_oferta'      => $validated['precio_oferta'] ?? null,
+                'precio_oferta'      => $validated['precio_oferta'] ?? 0,
                 'fecha_inicio_oferta'=> $validated['fecha_inicio_oferta'] ?? null,
                 'fecha_fin_oferta'   => $fechaFin,
 

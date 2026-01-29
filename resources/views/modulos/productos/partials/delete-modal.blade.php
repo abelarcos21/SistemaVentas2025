@@ -1,185 +1,89 @@
 {{-- resources/views/productos/partials/delete-modal.blade.php --}}
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-danger">
-                <h4 class="modal-title text-white" id="deleteModalLabel">
-                    <i class="fas fa-exclamation-triangle"></i> Eliminar Producto
-                </h4>
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document"> {{-- Quité modal-lg para que sea más compacto y directo --}}
+        <div class="modal-content border-danger">
+
+            {{-- ENCABEZADO ROJO --}}
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-trash-alt mr-2"></i> Eliminar Producto
+                </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
 
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <!-- Alerta de advertencia -->
-                    <div class="alert alert-danger" role="alert">
-                        <h5><i class="fas fa-exclamation-triangle"></i> ¡Advertencia!</h5>
-                        <p class="mb-0">Esta acción eliminará permanentemente el producto y no podrá ser recuperado. Todos los datos asociados se perderán.</p>
-                    </div>
+            <div class="modal-body text-center p-4">
 
-                    <!-- Información del producto -->
-                    <div class="row">
-                        <!-- Información básica -->
-                        <div class="col-md-8">
-                            <div class="card">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-info-circle"></i> Información del Producto
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <table class="table table-sm table-borderless">
-                                        <tr>
-                                            <td class="font-weight-bold text-muted" style="width: 30%;">ID:</td>
-                                            <td><code>{{ $producto->id }}</code></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-weight-bold text-muted">Nombre:</td>
-                                            <td class="font-weight-bold">{{ $producto->nombre }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-weight-bold text-muted">Código:</td>
-                                            <td><code>{{ $producto->codigo }}</code></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-weight-bold text-muted">Categoría:</td>
-                                            <td>
-                                                <span class="badge badge-info">{{ $producto->categoria->nombre ?? 'N/A' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-weight-bold text-muted">Proveedor:</td>
-                                            <td>
-                                                <span class="badge badge-secondary">{{ $producto->proveedor->nombre ?? 'N/A' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-weight-bold text-muted">Marca:</td>
-                                            <td>
-                                                <span class="badge badge-primary">{{ $producto->marca->nombre ?? 'N/A' }}</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="font-weight-bold text-muted">Descripción:</td>
-                                            <td>{{ Str::limit($producto->descripcion, 100) }}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
+                {{-- ICONO DE ADVERTENCIA GIGANTE --}}
+                <div class="text-danger mb-3">
+                    <i class="fas fa-exclamation-circle fa-5x animated pulse"></i>
+                </div>
 
-                            <!-- Datos adicionales -->
-                            <div class="card mt-3">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-chart-line"></i> Datos Adicionales
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <small class="text-muted">Cantidad en Stock:</small>
-                                            <div>
-                                                @if($producto->cantidad > 5)
-                                                    <span class="badge badge-success badge-lg">{{ $producto->cantidad }} unidades</span>
-                                                @else
-                                                    <span class="badge badge-danger badge-lg">{{ $producto->cantidad }} unidades</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="col-6">
-                                            <small class="text-muted">Estado:</small>
-                                            <div>
-                                                @if($producto->activo)
-                                                    <span class="badge badge-success"><i class="fas fa-check"></i> Activo</span>
-                                                @else
-                                                    <span class="badge badge-secondary"><i class="fas fa-times"></i> Inactivo</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-2">
-                                        <div class="col-6">
-                                            <small class="text-muted">Precio Compra:</small>
-                                            <div class="font-weight-bold text-success">MXN ${{ number_format($producto->precio_compra, 2) }}</div>
-                                        </div>
-                                        <div class="col-6">
-                                            <small class="text-muted">Precio Venta:</small>
-                                            <div class="font-weight-bold text-primary">MXN ${{ number_format($producto->precio_venta, 2) }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <h4 class="font-weight-bold mb-1">¿Estás seguro?</h4>
+                <p class="text-muted">Vas a eliminar el producto:</p>
 
-                        <!-- Imagen del producto -->
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-image"></i> Imagen
-                                    </h6>
-                                </div>
-                                <div class="card-body text-center p-2">
-                                    @if($producto->imagen)
-                                        <img src="{{ asset('storage/' . $producto->imagen->ruta) }}"
-                                             class="img-fluid rounded shadow"
-                                             style="max-height: 200px; width: auto;"
-                                             alt="Imagen del producto">
-                                        <small class="d-block text-muted mt-2">
-                                            Esta imagen también será eliminada
-                                        </small>
-                                    @else
-                                        <div class="text-muted p-4">
-                                            <i class="fas fa-image fa-3x mb-2"></i>
-                                            <p>Sin imagen</p>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <!-- Código de barras -->
-                            @if($producto->barcode_path)
-                            <div class="card mt-3">
-                                <div class="card-header bg-light">
-                                    <h6 class="mb-0">
-                                        <i class="fas fa-barcode"></i> Código de Barras
-                                    </h6>
-                                </div>
-                                <div class="card-body text-center p-2">
-                                    <img src="{{ asset($producto->barcode_path) }}"
-                                         alt="Código de barras"
-                                         class="img-fluid mb-2"
-                                         style="max-height: 60px;">
-                                    <div><code class="small">{{ $producto->codigo }}</code></div>
-                                </div>
-                            </div>
+                {{-- FICHA DEL PRODUCTO A ELIMINAR --}}
+                <div class="card bg-light border-0 mb-3">
+                    <div class="card-body py-2">
+                        <h5 class="font-weight-bold text-dark mb-0">{{ $producto->nombre }}</h5>
+                        <small class="text-muted">Código: {{ $producto->codigo }}</small>
+                        <div class="mt-1">
+                            @if($producto->cantidad > 0)
+                                <span class="badge badge-warning">Stock: {{ $producto->cantidad }}</span>
+                            @else
+                                <span class="badge badge-secondary">Sin Stock</span>
                             @endif
                         </div>
                     </div>
-
-                    <!-- Verificaciones adicionales -->
-                    @if($producto->tieneVentas())
-                        <div class="alert alert-warning mt-3" role="alert">
-                            <h6><i class="fas fa-exclamation-triangle"></i> Producto con Ventas</h6>
-                            <p class="mb-0">Este producto tiene ventas registradas. Eliminar este producto podría afectar los reportes históricos.</p>
-                        </div>
-                    @endif
                 </div>
+
+                {{-- LÓGICA DE PROTECCIÓN: SI TIENE VENTAS --}}
+                @if($producto->tieneVentas())
+                    <div class="alert alert-warning text-left border-warning" role="alert">
+                        <div class="d-flex">
+                            <i class="fas fa-lock fa-2x mr-3 mt-1"></i>
+                            <div>
+                                <h6 class="font-weight-bold">No se puede eliminar</h6>
+                                <p class="mb-0 small">Este producto tiene historial de ventas. Eliminarlo rompería los reportes contables.</p>
+                                <hr class="my-2">
+                                <strong>Sugerencia:</strong> Mejor
+                                <a href="javascript:void(0);"
+                                onclick="cambiarAEditar({{ $producto->id }})"
+                                class="text-primary font-weight-bold"
+                                style="text-decoration: underline;">
+                                Edita el producto
+                                </a>
+                                y cambia su estado a "Inactivo".
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <p class="text-danger small font-weight-bold">
+                        <i class="fas fa-radiation"></i> Esta acción es irreversible.
+                    </p>
+                @endif
             </div>
 
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="fas fa-times"></i> Cancelar
+            <div class="modal-footer bg-light justify-content-center">
+                <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">
+                    Cancelar
                 </button>
 
-                <form id="deleteProductForm" action="{{ route('producto.destroy', $producto) }}" method="POST" class="d-inline">
+                {{-- FORMULARIO (Solo activo si NO tiene ventas) --}}
+                <form id="deleteProductForm" action="{{ route('producto.destroy', $producto->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash-alt"></i> Sí, Eliminar Producto
-                    </button>
+
+                    @if($producto->tieneVentas())
+                        <button type="button" class="btn btn-danger px-4" disabled title="Bloqueado por historial de ventas">
+                            <i class="fas fa-ban"></i> Eliminar Bloqueado
+                        </button>
+                    @else
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="fas fa-trash-alt"></i> Sí, Eliminarlo
+                        </button>
+                    @endif
                 </form>
             </div>
         </div>
@@ -187,148 +91,71 @@
 </div>
 
 <script>
-function initializeDeleteModal() {
-    // Manejar envío del formulario de eliminación
-    $('#deleteProductForm').off('submit').on('submit', function(e) {
-        e.preventDefault();
+    function initializeDeleteModal() {
+        $('#deleteProductForm').off('submit').on('submit', function(e) {
+            e.preventDefault(); // Evitar submit tradicional
 
-        const form = this;
-        const submitBtn = $(form).find('button[type="submit"]');
+            const form = this;
+            const submitBtn = $(form).find('button[type="submit"]');
 
-        // Confirmar eliminación
-        Swal.fire({
-            title: '¿Estás completamente seguro?',
-            text: "Esta acción eliminará permanentemente el producto '{{ $producto->nombre }}' y no podrá ser recuperado.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#dc3545',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Sí, eliminar definitivamente',
-            cancelButtonText: 'No, conservar producto',
-            reverseButtons: true,
-            focusCancel: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Deshabilitar botón y mostrar loading
-                submitBtn.prop('disabled', true)
-                    .html('<i class="fas fa-spinner fa-spin"></i> Eliminando...');
+            // 1. UI: Feedback inmediato (Cargando...)
+            submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Eliminando...');
 
-                // Crear FormData para AJAX
-                const formData = new FormData(form);
+            // 2. AJAX DIRECTO (Sin segundo SweetAlert)
+            $.ajax({
+                url: $(form).attr('action'),
+                method: 'POST',
+                data: new FormData(form),
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    $('#deleteModal').modal('hide');
 
-                // Enviar por AJAX
-                $.ajax({
-                    url: $(form).attr('action'),
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        $('#deleteModal').modal('hide');
+                    // Alerta de éxito (Toast pequeño en la esquina es más elegante)
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'El producto ha sido eliminado.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
 
-                        // Mostrar mensaje de éxito
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Producto Eliminado',
-                            text: 'El producto ha sido eliminado exitosamente.',
-                            showConfirmButton: false,
-                            timer: 2000
-                        });
+                    // Recargar tabla
+                    $('#example1').DataTable().ajax.reload(null, false);
+                },
+                error: function(xhr) {
+                    console.error(xhr);
+                    submitBtn.prop('disabled', false).html('<i class="fas fa-trash-alt"></i> Sí, Eliminarlo');
 
-                        // Refrescar manteniendo la página actual y posición
-                        $('#example1').DataTable().ajax.reload(null, false);
-                    },
-                    error: function(xhr) {
-                        console.error('Error al eliminar producto:', xhr);
-
-                        let errorMessage = 'Error al eliminar el producto.';
-                        if (xhr.responseJSON && xhr.responseJSON.message) {
-                            errorMessage = xhr.responseJSON.message;
-                        }
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: errorMessage,
-                            confirmButtonText: 'Entendido'
-                        });
-                    },
-                    complete: function() {
-                        // Rehabilitar botón
-                        submitBtn.prop('disabled', false)
-                            .html('<i class="fas fa-trash-alt"></i> Sí, Eliminar Producto');
-                    }
-                });
-            }
+                    // Mostrar error si falla
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'No se pudo eliminar el producto.'
+                    });
+                }
+            });
         });
-    });
-}
+    }
 
-// Inicializar cuando se carga el modal
-initializeDeleteModal();
+    initializeDeleteModal();
 </script>
 
 <style>
-/* Estilos para el modal de eliminación */
-.badge-lg {
-    font-size: 0.9em;
-    padding: 0.5em 0.75em;
-}
-
-.modal-lg {
-    max-width: 900px;
-}
-
-@media (max-width: 768px) {
-    .modal-lg {
-        max-width: 95%;
-        margin: 1rem auto;
+    /* Animación de pulso para el icono de peligro */
+    .animated.pulse {
+        animation-duration: 1s;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-name: pulse;
     }
-
-    .card-body {
-        padding: 0.75rem;
+    @keyframes pulse {
+        0% { transform: scale3d(1, 1, 1); }
+        50% { transform: scale3d(1.05, 1.05, 1.05); }
+        100% { transform: scale3d(1, 1, 1); }
     }
-
-    .modal-body {
-        padding: 1rem;
-    }
-
-    .table-sm td {
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .modal-header h4 {
-        font-size: 1.1rem;
-    }
-
-    .btn {
-        font-size: 0.875rem;
-        padding: 0.375rem 0.75rem;
-    }
-
-    .alert h5, .alert h6 {
-        font-size: 1rem;
-    }
-}
-
-/* Mejorar apariencia de las tarjetas */
-.card {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border: 1px solid rgba(0, 0, 0, 0.125);
-}
-
-.table-borderless td {
-    border: none;
-    padding: 0.25rem 0;
-}
-
-/* Estilo para códigos */
-code {
-    background-color: #f8f9fa;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
 </style>
+
+
