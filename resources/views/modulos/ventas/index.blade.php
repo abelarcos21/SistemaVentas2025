@@ -357,10 +357,10 @@
                         <div class="form-group">
                             <label>Método de Pago</label>
                             <select class="form-control form-control-lg" id="modal_metodo_pago" onchange="cambiarMetodoPago()">
-                                <option value="efectivo">Efectivo</option>
-                                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                                <option value="transferencia">Transferencia</option>
-                                <option value="mixto">Mixto (Efectivo + Tarjeta)</option>
+                                <option value="efectivo">💵 Efectivo</option>
+                                <option value="tarjeta">💳 Tarjeta (Crédito/Débito)</option>
+                                <option value="transferencia">🏦 Transferencia</option>
+                                <option value="mixto">🔀 Mixto (Efectivo + Tarjeta)</option>
                             </select>
                         </div>
 
@@ -373,9 +373,19 @@
                                     </div>
                                     <input type="number" class="form-control form-control-lg" id="pago_efectivo_input" placeholder="0.00">
                                 </div>
+                                {{----Botones de "Dinero Rápido" (Fast Cash)--}}
+                                <div class="mt-2 mb-3 text-center">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm m-1" onclick="setPago(20)">$20</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm m-1" onclick="setPago(50)">$50</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm m-1" onclick="setPago(100)">$100</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm m-1" onclick="setPago(200)">$200</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm m-1" onclick="setPago(500)">$500</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm m-1 font-weight-bold" onclick="setPagoExacto()">Exacto</button>
+                                </div>
                             </div>
-                            <div class="alert alert-secondary text-center mt-2">
-                                Cambio: <strong id="modal-cambio-display">$0.00</strong>
+                            <div id="alert-cambio" class="alert alert-secondary text-center mt-3 py-3 shadow-sm">
+                                <span id="label-cambio" class="h6">Cambio:</span> <br>
+                                <strong id="modal-cambio-display" class="h2 font-weight-bold">$0.00</strong>
                             </div>
                         </div>
 
@@ -432,8 +442,9 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
 
                         {{-- Este botón envía el formulario principal --}}
-                        <button type="button" class="btn btn-primary font-weight-bold px-4" onclick="confirmarVenta()">
-                            <i class="fas fa-print mr-1"></i> Confirmar e Imprimir
+                        <button type="button" class="btn btn-primary font-weight-bold px-4" id="btn-confirmar-venta" onclick="confirmarVenta()">
+                            <span id="btn-text-confirmar"><i class="fas fa-print mr-1"></i> Confirmar e Imprimir</span>
+                            <span id="btn-spinner-confirmar" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
@@ -804,24 +815,39 @@
             $('#modalPago').modal('show');
         }
 
+        //para los botones de fast cash dinero rapido y el cambio para que se coloquen en el input dinamicamente
+        function setPago(monto) {
+            $('#pago_efectivo_input').val(monto.toFixed(2));
+            calcularCambio(); // Asegúrate de llamar a tu función que calcula la resta
+            $('#pago_efectivo_input').focus();
+        }
+
+        function setPagoExacto() {
+            // Asumiendo que guardaste el total numérico en una variable global o hidden
+            let total = parseFloat($('#hidden_total_venta').val());
+            $('#pago_efectivo_input').val(total.toFixed(2));
+            calcularCambio();
+        }
+
         function calcularCambio() {
-            let total = parseFloat($('#hidden_total_venta').val() || 0);
-            let recibido = parseFloat($('#pago_recibido').val() || 0);
+            let total = parseFloat($('#hidden_total_venta').val()) || 0;
+            let recibido = parseFloat($('#pago_efectivo_input').val()) || 0;
             let cambio = recibido - total;
 
-            // Formatear moneda
-            let textoCambio = '$' + cambio.toFixed(2);
+            // Lógica visual del cambio
+            let alertBox = $('#alert-cambio');
+            let display = $('#modal-cambio-display');
 
-            let labelCambio = $('#pago_cambio');
-
-            if (recibido < total) {
+            if (cambio < 0) {
                 // Falta dinero
-                labelCambio.html('<span class="text-danger">Faltan ' + Math.abs(cambio).toFixed(2) + '</span>');
-                return false; // Indica que no se puede cobrar aún
+                alertBox.removeClass('alert-success alert-light').addClass('alert-danger text-white');
+                display.text("Faltan: $" + Math.abs(cambio).toFixed(2));
+                $('#btn-confirmar-venta').prop('disabled', true); // Bloquear botón
             } else {
-                // Alcanza
-                labelCambio.html('<span class="text-success font-weight-bold">' + textoCambio + '</span>');
-                return true; // Listo para cobrar
+                // Todo bien
+                alertBox.removeClass('alert-danger alert-light').addClass('alert-success text-white');
+                display.text("$" + cambio.toFixed(2));
+                $('#btn-confirmar-venta').prop('disabled', false); // Activar botón
             }
         }
 
