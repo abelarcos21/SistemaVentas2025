@@ -538,10 +538,38 @@ class ProductoController extends Controller
         ]);
     }
 
-    //IMPRIMIR ETIQUETAS DE CODIGO DE BARRAS
-    public function imprimirEtiquetas(){
-        $productos = Producto::orderBy('nombre')->get(); // o filtra como quieras
-        return view('modulos.productos.etiquetas', compact('productos'));
+    //IMPRIMIR ETIQUETAS DE PRODUCTOS DE CODIGO DE BARRAS
+    public function imprimirEtiquetas(Request $request){
+
+        $alcance = $request->input('alcance', 'todos');
+        //Definir variables según el formato
+        $formato = $request->input('formato', 'rollo_80mm');// Default
+
+        //Filtrar productos según lo que eligió el usuario
+        $query = Producto::query();
+
+        // FILTROS
+        switch ($alcance) {
+            case 'oferta':
+                // Filtra solo los que tienen oferta activa
+                $query->where('en_oferta', 1)
+                    ->whereNotNull('precio_oferta');
+                break;
+
+            case 'mayoreo':
+                // Filtra solo los que permiten mayoreo
+                $query->where('permite_mayoreo', 1)
+                    ->whereNotNull('precio_mayoreo');
+                break;
+
+            case 'cantidad':
+                $query->where('cantidad', '>', 0);
+                break;
+        }
+
+        $productos = $query->get();
+
+        return view('modulos.productos.etiquetas', compact('productos', 'formato', 'alcance'));
     }
 
     public function store(Request $request){

@@ -41,9 +41,10 @@
                                 <button type="button" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" data-toggle="modal" data-target="#modalImportar">
                                     <i class="fas fa-file-excel mr-1"></i> Importar Productos
                                 </button>
-                                <a href="{{ route('productos.imprimir.etiquetas') }}" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" target="_blank">
+
+                                <button type="button" class="btn btn-light bg-gradient-light text-primary btn-sm mr-2" data-toggle="modal" data-target="#modalImprimirEtiquetas">
                                     <i class="fas fa-print"></i> Imprimir etiquetas
-                                </a>
+                                </button>
 
                             </div>
                         </div>
@@ -201,6 +202,8 @@
             </div>
         </div>
     </div>
+    {{-- modales en partials para mejor mantenimiento de vistas --}}
+    @include('modulos.productos.partials.modal-etiquetas')
 
     @include('modulos.productos.partials.modal-importar')
 

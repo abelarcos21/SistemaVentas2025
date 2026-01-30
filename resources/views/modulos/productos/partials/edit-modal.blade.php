@@ -7,12 +7,8 @@
                 <div class="d-flex w-100 justify-content-between align-items-center">
                     <div>
                         <h5 class="modal-title mb-0 font-weight-bold">
-                            <i class="fas fa-edit mr-2"></i> Editar: {{ $producto->nombre }}
+                            <i class="fas fa-edit mr-2"></i> Editar Producto: {{ $producto->nombre }}
                         </h5>
-                        <small class="d-block mt-1">
-                            <i class="fas fa-barcode"></i> {{ $producto->codigo }}
-                            | Stock Actual: <span class="badge badge-light text-dark">{{ $producto->cantidad ?? 0 }}</span>
-                        </small>
                     </div>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -84,6 +80,10 @@
                                 <div class="col-md-4">
                                     <div class="card bg-light border-0">
                                         <div class="card-body">
+                                            <label>Stock Actual</label>
+                                            <h3 class="font-weight-bold text-info">{{ $producto->cantidad ?? 0 }}</h3>
+                                            <small class="text-muted">Para ajustar stock, use el módulo de inventario.</small>
+                                            <hr>
                                             <div class="form-group">
                                                 <label>Estado</label>
                                                 <div class="custom-control custom-switch">
