@@ -87,7 +87,18 @@ class CajaController extends Controller{
                 ->make(true);
         }
 
-        return view('modulos.cajas.index');
+        $cajaAbierta = Caja::where('user_id', Auth::id())
+            ->where('estado', 'abierta')
+            ->first();
+
+        // Calcular el total esperado aquí para enviarlo listo a la vista
+        $totalEsperado = 0;
+
+        if ($cajaAbierta) {
+            $totalEsperado = $cajaAbierta->monto_inicial + $cajaAbierta->total_ventas + $cajaAbierta->total_ingresos - $cajaAbierta->total_egresos;
+        }
+
+        return view('modulos.cajas.index', compact('cajaAbierta', 'totalEsperado'));
     }
 
     public function abrir(Request $request){

@@ -3,131 +3,225 @@
 @section('title', 'Módulo de Caja')
 
 @section('content_header')
-    <section class="content-header">
-        <div class="container-fluid">
-           <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1><i class="fas fa-cash-register"></i> Gestión de Caja</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('home')}}">Home</a></li>
-                        <li class="breadcrumb-item active">Caja</li>
-                    </ol>
-                </div>
-          </div>
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1><i class="fas fa-cash-register"></i> Gestión de Caja</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('home')}}">Home</a></li>
+                    <li class="breadcrumb-item active">Caja</li>
+                </ol>
+            </div>
         </div>
-    </section>
+    </div>
 @stop
 
 @section('content')
-    @php
-        $cajaAbierta = \App\Models\Caja::where('user_id', Auth::id())->where('estado', 'abierta')->first();
-    @endphp
 
-    {{-- Caja abierta o abrir --}}
+    {{-- ESTADO 1: CAJA CERRADA (ABRIR) --}}
     @if(!$cajaAbierta)
-        <div class="card">
-            <div class="card-header bg-gradient-primary text-white">
-                <h3 class="card-title mb-0"><i class="fas fa-lock-open"></i> Abrir Caja</h3>
-            </div>
-            <div class="card-body">
-                <form id="formAbrirCaja" action="{{ route('cajas.abrir') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label for="monto_inicial">Monto inicial</label>
-                        <input type="number" step="0.01" name="monto_inicial" id="monto_inicial" class="form-control" placeholder="0.00" required>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card card-outline card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title"><i class="fas fa-lock-open"></i> Apertura de Caja</h3>
                     </div>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-check"></i> Abrir Caja
-                    </button>
-                </form>
+                    <form action="{{ route('cajas.abrir') }}" method="POST">
+                        @csrf
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <img src="https://cdn-icons-png.flaticon.com/512/2454/2454269.png" alt="Caja" style="width: 100px; opacity: 0.8">
+                                <p class="text-muted mt-2">Inicia las operaciones del día</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="monto_inicial">Monto inicial en efectivo</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" step="0.01" name="monto_inicial" class="form-control form-control-lg @error('monto_inicial') is-invalid @enderror" placeholder="0.00" required autofocus>
+                                    @error('monto_inicial') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-block btn-lg">
+                                <i class="fas fa-check-circle"></i> Abrir Turno
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+
     @else
-        {{-- Caja Abierta --}}
-        <div class="card">
-            <div class="card-header bg-gradient-info">
-                <h3 class="card-title mb-0"><i class="fas fa-cash-register"></i> Caja Abierta (ID: {{ $cajaAbierta->id }})</h3>
+    {{-- ESTADO 2: CAJA ABIERTA --}}
+
+        {{-- Widgets de Resumen (Small Boxes) --}}
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info elevation-1"><i class="fas fa-money-bill-wave"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Monto Inicial</span>
+                        <span class="info-box-number">${{ number_format($cajaAbierta->monto_inicial, 2) }}</span>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <p><strong><i class="fas fa-user"></i> Usuario:</strong> {{ $cajaAbierta->usuario->name }}</p>
-                        <p><strong><i class="fas fa-clock"></i> Apertura:</strong> {{ \Carbon\Carbon::parse($cajaAbierta->apertura)->format('d/m/Y H:i') }}</p>
-                        <p><strong><i class="fas fa-dollar-sign"></i> Monto Inicial:</strong> ${{ number_format($cajaAbierta->monto_inicial, 2) }}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong><i class="fas fa-shopping-cart"></i> Total Ventas:</strong> ${{ number_format($cajaAbierta->total_ventas, 2) }}</p>
-                        <p><strong><i class="fas fa-arrow-down text-success"></i> Total Ingresos:</strong> ${{ number_format($cajaAbierta->total_ingresos, 2) }}</p>
-                        <p><strong><i class="fas fa-arrow-up text-danger"></i> Total Egresos:</strong> ${{ number_format($cajaAbierta->total_egresos, 2) }}</p>
+
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Ventas Totales</span>
+                        <span class="info-box-number">${{ number_format($cajaAbierta->total_ventas, 2) }}</span>
                     </div>
                 </div>
+            </div>
 
-                @php
-                    $totalEsperado = $cajaAbierta->monto_inicial + $cajaAbierta->total_ventas + $cajaAbierta->total_ingresos - $cajaAbierta->total_egresos;
-                @endphp
-
-                <div class="alert alert-light">
-                    <strong><i class="fas fa-calculator"></i> Total Esperado en Caja:</strong>
-                    ${{ number_format($totalEsperado, 2) }}
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-exchange-alt"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Ingresos - Egresos</span>
+                        <span class="info-box-number">${{ number_format($cajaAbierta->total_ingresos - $cajaAbierta->total_egresos, 2) }}</span>
+                    </div>
                 </div>
+            </div>
 
-                <hr>
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box">
+                    <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-cash-register"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total Esperado (Teórico)</span>
+                        <span class="info-box-number">${{ number_format($totalEsperado, 2) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                {{-- Movimiento --}}
-                <h5><i class="fas fa-exchange-alt"></i> Registrar Movimiento</h5>
-                <form id="formMovimiento" action="{{ route('cajas.movimiento', $cajaAbierta) }}" method="POST" class="mb-3">
-                    @csrf
-                    <div class="form-row">
-                        <div class="col-md-3">
-                            <select name="tipo" class="form-control" required>
-                                <option value="">-- Tipo --</option>
-                                <option value="ingreso">💰 Ingreso</option>
-                                <option value="egreso">💸 Egreso</option>
-                            </select>
+        <div class="row">
+            {{-- Columna Izquierda: Detalles --}}
+            <div class="col-md-4">
+                <div class="card card-widget widget-user-2">
+                    <div class="widget-user-header bg-info">
+                        <div class="widget-user-image">
+                            <img class="img-circle elevation-2" src="https://ui-avatars.com/api/?name={{ urlencode($cajaAbierta->usuario->name) }}&background=random" alt="User Avatar">
                         </div>
-                        <div class="col-md-3">
-                            <input type="number" step="0.01" name="monto" class="form-control" placeholder="Monto" required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="descripcion" class="form-control" placeholder="Descripción">
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary btn-block">
-                                <i class="fas fa-save"></i> Registrar
-                            </button>
+                        <h3 class="widget-user-username">{{ $cajaAbierta->usuario->name }}</h3>
+                        <h5 class="widget-user-desc">Cajero Activo</h5>
+                    </div>
+                    <div class="card-footer p-0">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <span class="nav-link">
+                                    Apertura <span class="float-right badge bg-primary">{{ \Carbon\Carbon::parse($cajaAbierta->apertura)->format('d/m/Y H:i A') }}</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span class="nav-link">
+                                    Ingresos <span class="float-right text-success">+ ${{ number_format($cajaAbierta->total_ingresos, 2) }}</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span class="nav-link">
+                                    Egresos <span class="float-right text-danger">- ${{ number_format($cajaAbierta->total_egresos, 2) }}</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Columna Derecha: Acciones --}}
+            <div class="col-md-8">
+                <div class="card card-outline card-info">
+                    <div class="card-header p-2">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item"><a class="nav-link active" href="#movimiento" data-toggle="tab"><i class="fas fa-exchange-alt"></i> Nuevo Movimiento</a></li>
+                            <li class="nav-item"><a class="nav-link text-danger" href="#cierre" data-toggle="tab"><i class="fas fa-lock"></i> Arqueo y Cierre</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content">
+
+                            {{-- TAB MOVIMIENTO --}}
+                            <div class="active tab-pane" id="movimiento">
+                                <form id="formMovimiento" action="{{ route('cajas.movimiento', $cajaAbierta) }}" method="POST">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Tipo</label>
+                                                <select name="tipo" class="form-control custom-select">
+                                                    <option value="ingreso">💰 Entrada de dinero</option>
+                                                    <option value="egreso">💸 Salida (Gasto/Retiro)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <div class="form-group">
+                                                <label>Monto</label>
+                                                <input type="number" step="0.01" name="monto" class="form-control" placeholder="0.00" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="form-group">
+                                                <label>Descripción</label>
+                                                <textarea name="descripcion" class="form-control" rows="2" placeholder="Motivo del movimiento..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary float-right"><i class="fas fa-save"></i> Guardar Movimiento</button>
+                                </form>
+                            </div>
+
+                            {{-- TAB CIERRE --}}
+                            <div class="tab-pane" id="cierre">
+                                <form id="formCerrarCaja" action="{{ route('cajas.cerrar', $cajaAbierta) }}" method="POST">
+                                    @csrf
+                                    <div class="alert alert-light">
+                                        <i class="icon fas fa-exclamation-triangle"></i> ¡Atención! Al cerrar la caja no podrás registrar más ventas.
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="monto_final" class="col-sm-4 col-form-label text-right">Dinero en Efectivo (Real):</label>
+                                        <div class="col-sm-6">
+                                            <input type="number" step="0.01" name="monto_final" id="monto_final" class="form-control form-control-lg" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row" id="bloqueDiferencia" style="display:none;">
+                                        <label class="col-sm-4 col-form-label text-right">Diferencia:</label>
+                                        <div class="col-sm-6">
+                                            <input type="text" id="calc_diferencia" class="form-control-plaintext font-weight-bold" readonly>
+                                            <small id="mensaje_diferencia"></small>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+                                    <button type="submit" class="btn btn-danger btn-lg">
+                                        <i class="fas fa-lock"></i> Finalizar Turno y Cerrar
+                                    </button>
+                                </form>
+                            </div>
+
                         </div>
                     </div>
-                </form>
-
-                <hr>
-
-                {{-- Cerrar caja --}}
-                <h5><i class="fas fa-lock"></i> Cerrar Caja</h5>
-                <form id="formCerrarCaja" action="{{ route('cajas.cerrar', $cajaAbierta) }}" method="POST">
-                    @csrf
-                    <div class="form-row align-items-center">
-                        <div class="col-md-6">
-                            <label for="monto_final">Monto contado (al cierre)</label>
-                            <input type="number" step="0.01" name="monto_final" id="monto_final" class="form-control" placeholder="0.00" required>
-                            <small class="form-text text-muted">Esperado: ${{ number_format($totalEsperado, 2) }}</small>
-                        </div>
-                        <div class="col-md-6">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-lock"></i> Cerrar Caja
-                            </button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     @endif
 
-    {{-- Historial con DataTable Yajra --}}
-    <div class="card mt-4">
-        <div class="card-header bg-gradient-primary">
-            <h3 class="card-title mb-0"><i class="fas fa-history"></i> Historial de Cajas</h3>
+    {{-- Sección de Historial (Plegable para no ocupar espacio visual si no se necesita) --}}
+    <div class="card collapsed-card mt-4">
+        <div class="card-header bg-primary">
+            <h3 class="card-title"><i class="fas fa-history"></i> Historial de Cierres</h3>
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+            </div>
         </div>
         <div class="card-body">
             <!-- Filtros -->
@@ -161,6 +255,8 @@
                 </div>
             </div>
 
+            {{-- Tu tabla DataTable existente iría aquí... --}}
+            {{--@include('cajas.partials.history_table')--}} {{-- Sugerencia: Extraer la tabla a un partial --}}
             <div class="table-responsive">
                 <table id="tablaCajas" class="table table-bordered table-striped">
                     <thead class="text-center align-middle bg-gradient-info">
@@ -182,6 +278,7 @@
             </div>
         </div>
     </div>
+
 @stop
 
 @section('css')
@@ -236,7 +333,36 @@
     </script>
 
     <script>
+
+        // Variables pasadas desde PHP (pasar $totalEsperado desde el controlador)
+        const totalEsperado = {{ isset($totalEsperado) ? $totalEsperado : 0 }};
+
         $(document).ready(function() {
+
+            // Lógica de cálculo en tiempo real al cerrar
+            $('#monto_final').on('input', function() {
+                let montoReal = parseFloat($(this).val()) || 0;
+                let diferencia = montoReal - totalEsperado;
+
+                $('#bloqueDiferencia').fadeIn();
+
+                let inputDiff = $('#calc_diferencia');
+                let msgDiff = $('#mensaje_diferencia');
+
+                inputDiff.val(diferencia.toFixed(2));
+
+                if(diferencia < 0) {
+                    inputDiff.removeClass('text-success').addClass('text-danger');
+                    msgDiff.html('<i class="fas fa-times-circle text-danger"></i> Faltante de dinero');
+                } else if(diferencia > 0) {
+                    inputDiff.removeClass('text-danger').addClass('text-success');
+                    msgDiff.html('<i class="fas fa-exclamation-circle text-warning"></i> Sobrante de dinero');
+                } else {
+                    inputDiff.removeClass('text-danger text-success').addClass('text-dark');
+                    msgDiff.html('<i class="fas fa-check-circle text-success"></i> Caja cuadrada perfecta');
+                }
+            });
+
             // Inicializar DataTable con Yajra
             var table = $('#tablaCajas').DataTable({
                 processing: true,
