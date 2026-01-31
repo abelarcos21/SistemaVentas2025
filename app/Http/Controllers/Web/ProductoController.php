@@ -13,6 +13,7 @@ use App\Models\Imagen;
 use App\Models\Categoria;
 use App\Models\Proveedor;
 use App\Models\Marca;
+use App\Models\Unidad;
 use Exception;
 use Storage;
 use Illuminate\Http\JsonResponse;
@@ -68,6 +69,7 @@ class ProductoController extends Controller
             'productos.codigo',
             'productos.barcode_path',
             'productos.categoria_id',
+            'productos.unidad_id',
             'productos.proveedor_id',
             'productos.marca_id',
             'productos.created_at',
@@ -80,12 +82,14 @@ class ProductoController extends Controller
             'productos.fecha_inicio_oferta',
             'productos.fecha_fin_oferta',
             'categorias.nombre as nombre_categoria',
+            'unidades.nombre as nombre_unidad',
             'proveedores.nombre as nombre_proveedor',
             'marcas.nombre as nombre_marca',
             'imagens.ruta as imagen_producto',
             'imagens.id as imagen_id'
         )
         ->join('categorias', 'productos.categoria_id', '=', 'categorias.id')
+        ->join('unidades', 'productos.unidad_id', '=', 'unidades.id')
         ->join('proveedores', 'productos.proveedor_id', '=', 'proveedores.id')
         ->join('marcas', 'productos.marca_id', '=', 'marcas.id')
         ->leftJoin('imagens', 'productos.id', '=', 'imagens.producto_id')
@@ -293,6 +297,7 @@ class ProductoController extends Controller
                     data-nombre="'.htmlspecialchars($producto->nombre).'"
                     data-codigo="'.$producto->codigo.'"
                     data-categoria="'.$producto->nombre_categoria.'"
+                    data-unidad="'.$producto->nombre_unidad.'"
                     data-marca="'.$producto->nombre_marca.'"
                     data-proveedor="'.$producto->nombre_proveedor.'"
                     data-descripcion="'.htmlspecialchars($producto->descripcion).'"
@@ -379,8 +384,9 @@ class ProductoController extends Controller
         $categorias = Categoria::where('activo', 1)->orderBy('nombre')->get();
         $proveedores = Proveedor::where('activo', 1)->orderBy('nombre')->get();
         $marcas = Marca::where('activo', 1)->orderBy('nombre')->get();
+        $unidades = Unidad::where('activo', 1)->orderBy('nombre')->get();
 
-        return view('modulos.productos.partials.create-modal', compact('categorias', 'proveedores', 'marcas'));
+        return view('modulos.productos.partials.create-modal', compact('categorias', 'proveedores', 'marcas', 'unidades'));
     }
 
     public function show(Producto $producto){
@@ -422,8 +428,9 @@ class ProductoController extends Controller
         $categorias = Categoria::where('activo', true)->orderBy('nombre')->get();
         $proveedores = Proveedor::where('activo', true)->orderBy('nombre')->get();
         $marcas = Marca::where('activo', true)->orderBy('nombre')->get();
+        $unidades = Unidad::where('activo', 1)->orderBy('nombre')->get();
 
-        return view('modulos.productos.partials.edit-modal', compact('producto', 'categorias', 'proveedores', 'marcas'));
+        return view('modulos.productos.partials.edit-modal', compact('producto', 'categorias', 'proveedores', 'marcas', 'unidades'));
     }
 
     //BUSCAR PRODUCTO POR CODIGO PARA VERIFICAR SI EXISTE CUANDO SE ESCANEA UN PRODUCTO EN LA VISTA INDEX DE PRODUCTOS
@@ -576,6 +583,7 @@ class ProductoController extends Controller
 
         $validated = $request->validate([
             'categoria_id' => 'required|exists:categorias,id',
+            'unidad_id'    => 'required|exists:unidades,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id' => 'required|exists:marcas,id',
             'codigo' => 'nullable|string|max:255|unique:productos,codigo',
@@ -650,6 +658,7 @@ class ProductoController extends Controller
             $producto = Producto::create([
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
+                'unidad_id'    => $validated['unidad_id'],
                 'proveedor_id' => $validated['proveedor_id'],
                 'marca_id'     => $validated['marca_id'],
                 'codigo'       => $codigo,
@@ -816,6 +825,7 @@ class ProductoController extends Controller
         $rules = [
 
             'categoria_id' => 'required|exists:categorias,id',
+            'unidad_id' => 'required|exists:unidades,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id'     => 'required|exists:marcas,id',
             'precio_venta' => 'required|numeric|min:0',
@@ -907,6 +917,7 @@ class ProductoController extends Controller
 
                 'user_id' => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
+                'unidad_id' => $validated['unidad_id'],
                 'proveedor_id' => $validated['proveedor_id'],
                 'marca_id'     => $validated['marca_id'],
                 'nombre'       => $validated['nombre'],

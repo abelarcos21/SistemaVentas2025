@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias');//LLAVES FORANEA
             $table->foreignId('proveedor_id')->constrained('proveedores');//LLAVES FORANEA
             $table->foreignId('marca_id')->constrained('marcas');//LLAVES FORANEA
+            $table->foreignId('unidad_id')->nullable()->constrained('unidades');//LLAVES FORANEA
 
             // CLAVE FORÁNEA A MONEDAS
             $table->foreignId('moneda_id')->default(1)->constrained('monedas');

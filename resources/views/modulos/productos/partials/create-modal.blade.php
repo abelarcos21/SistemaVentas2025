@@ -66,10 +66,10 @@
                     {{-- 3. CONTENIDO DE LAS PESTAÑAS --}}
                     <div class="tab-content p-4" id="productTabsContent">
 
-                        {{-- TAB 1: GENERAL (Categorías y Proveedores) --}}
+                        {{-- TAB 1: GENERAL (Categorías) --}}
                         <div class="tab-pane fade show active" id="tab_general" role="tabpanel">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label>Categoría <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="categoria_id" class="form-control select2-modal" required>
@@ -80,7 +80,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- TAB 2: UNIDADES --}}
+                                <div class="col-md-3">
+                                    <label>Unidad <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <select name="unidad_id" class="form-control select2-modal" required>
+                                            @foreach($unidades as $u)<option value="{{$u->id}}">{{$u->nombre}} ({{$u->abreviatura}})</option>@endforeach
+                                        </select>
+                                        {{-- Botón opcional si quieres crear unidades al vuelo --}}
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-primary btn-quick-add" data-type="unidad" title="Nueva Unidad"><i class="fas fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- TAB 3: MARCAS --}}
+                                <div class="col-md-3">
                                     <label>Marca <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="marca_id" class="form-control select2-modal" required>
@@ -91,7 +105,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- TAB 4: PROVEEDORES --}}
+                                <div class="col-md-3">
                                     <label>Proveedor <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <select name="proveedor_id" class="form-control select2-modal" required>

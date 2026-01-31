@@ -79,28 +79,6 @@
                                     </div>
 
                                     <div class="form-group row">
-                                        <label for="medida" class="col-sm-2 col-form-label">Medida</label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text bg-gradient-info">
-                                                         <i class="fas fa-balance-scale"></i>
-                                                    </span>
-                                                </div>
-                                                <input type="text"
-                                                name="medida"
-                                                class="form-control @error('medida') is-invalid @enderror"
-                                                value="{{ old('medida', $categoria->medida) }}"
-                                                id="medida"
-                                                required>
-                                                @error('medida')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group row">
 
                                         <div class="custom-control custom-switch toggle-estado">
                                             <input type="hidden" name="activo" value="0">

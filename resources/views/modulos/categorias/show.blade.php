@@ -48,7 +48,6 @@
                                             <th>Nro.</th>
                                             <th>Nombre</th>
                                             <th>Descripcion</th>
-                                            <th>Medida</th>
                                             <th>Activo</th>
                                             <th>Fecha Registro</th>
                                         </tr>
@@ -59,7 +58,6 @@
                                             <td>{{ $categoria->id }}</td>
                                             <td>{{ $categoria->nombre }}</td>
                                             <td>{{ $categoria->descripcion }}</td>
-                                            <td>{{ $categoria->medida }}</td>
                                             <td>
                                                 <div class="custom-control custom-switch toggle-estado">
                                                     <input

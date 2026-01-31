@@ -40,6 +40,7 @@ class DatabaseSeeder extends Seeder
             ProveedorSeeder::class,
             MarcaSeeder::class,
             MonedaSeeder::class,//primero el de moneda para no dar error en productoseeder
+            UnidadSeeder::class,
             ProductoSeeder::class,
             UsuarioSeeder::class,
             ImagenSeeder::class,

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();//FK
             $table->string('nombre');
             $table->text('descripcion')->nullable();
-            $table->string('medida');
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });

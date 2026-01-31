@@ -18,7 +18,6 @@ class Categoria extends Model
         'user_id',
         'nombre',
         'descripcion',
-        'medida',
         'activo',
     ];
 

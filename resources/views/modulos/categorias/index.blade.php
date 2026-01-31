@@ -44,7 +44,6 @@
                                             <th>Nro</th>
                                             <th>Nombre</th>
                                             <th>Descripción</th>
-                                            <th>Medida</th>
                                             <th>Fecha Registro</th>
                                             <th>Activo</th>
                                              <th class="no-exportar">Acciones</th>
@@ -207,7 +206,6 @@
                     {data: 'DT_RowIndex',name: 'DT_RowIndex',orderable: false,searchable: false,className: 'text-center align-middle'},
                     {data: 'nombre',name: 'nombre',className: 'text-start align-middle'},
                     {data: 'descripcion',name: 'descripcion',className: 'text-start align-middle'},
-                    {data: 'medida',name: 'medida',className: 'text-center align-middle'},
                     {data: 'created_at',name: 'created_at',className: 'text-center align-middle'},
                     {data: 'activo',name: 'activo',orderable: false,searchable: false,className: 'text-center align-middle'},
                     {data: 'acciones', name: 'acciones',orderable: false,searchable: false,className: 'text-center align-middle'}
@@ -574,7 +572,7 @@
                 stateSave: true,
                 columnDefs: [
                     {
-                        targets: [5, 6], // Columnas Activo y Acciones
+                        targets: [4, 5], // Columnas Activo y Acciones
                         className: 'text-center align-middle'
                     }
                 ]

@@ -91,6 +91,7 @@
                                             <th>Nombre</th>
                                             <th>Caducidad</th>
                                             <th>Categoria</th>
+                                            <th>Unidad</th>
                                             <th>Marca</th>
                                            {{--  <th>Descripción</th> --}}
                                            {{--  <th>Proveedor</th> --}}
@@ -181,11 +182,14 @@
                                         <strong class="text-dark h5" id="modal_pcompra"></strong>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-2">
+                                <div class="col-md-4 mt-2">
                                     <small class="text-muted">Mayoreo:</small> <span id="modal_pmayoreo" class="font-weight-bold"></span>
                                 </div>
-                                <div class="col-md-6 mt-2">
+                                <div class="col-md-4 mt-2">
                                     <small class="text-muted">Oferta:</small> <span id="modal_poferta" class="font-weight-bold text-success"></span>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <small class="text-muted">Unidad:</small> <span id="modal_unidad" class="font-weight-bold text-info"></span>
                                 </div>
                             </div>
 
@@ -564,6 +568,7 @@
                 var nombre = btn.data('nombre');
                 var codigo = btn.data('codigo');
                 var categoria = btn.data('categoria');
+                var unidad = btn.data('unidad');
                 var marca = btn.data('marca');
                 var proveedor = btn.data('proveedor');
                 var descripcion = btn.data('descripcion');
@@ -580,6 +585,7 @@
                 $('#modal_nombre').text(nombre);
                 $('#modal_codigo').text(codigo);
                 $('#modal_categoria').text(categoria);
+                $('#modal_unidad').text(unidad);
                 $('#modal_marca').text(marca);
                 $('#modal_proveedor').text(proveedor);
                 $('#modal_descripcion').text(descripcion ? descripcion : 'Sin descripción detallada.');
@@ -1050,6 +1056,7 @@
                     {data: 'nombre', name: 'productos.nombre'},
                     {data: 'caducidad', name: 'caducidad', orderable: true, searchable: false,className: 'text-center'},
                     {data: 'nombre_categoria', name: 'categorias.nombre'},
+                    {data: 'nombre_unidad', name: 'unidades.nombre'},
                     {data: 'nombre_marca', name: 'marcas.nombre'},
                    /*  {data: 'descripcion', name: 'productos.descripcion'}, */
                    /*  {data: 'nombre_proveedor', name: 'proveedores.nombre'}, */

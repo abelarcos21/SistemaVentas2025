@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;//USO ACEDER ALA RELACION
+use App\Models\Unidad;
 
 class Producto extends Model
 {
@@ -17,6 +18,7 @@ class Producto extends Model
     protected $fillable = [
         'user_id',
         'categoria_id',
+        'unidad_id',
         'proveedor_id',
         'marca_id',
         'impuesto_id',
@@ -91,7 +93,9 @@ class Producto extends Model
         return $this->precio_venta;
     }
 
-
+    public function unidad(): BelongsTo{
+        return $this->belongsTo(Unidad::class);
+    }
 
     //RELACION PARA ACCEDER ALA IMAGEN
     public function imagen(){

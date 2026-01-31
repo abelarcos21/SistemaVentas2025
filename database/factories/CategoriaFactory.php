@@ -52,9 +52,7 @@ class CategoriaFactory extends Factory
             'user_id' => User::factory(),
             'nombre' => $this->faker->randomElement($categorias),
             'descripcion' => $this->faker->sentence(2),
-            'medida' => $this->faker->randomElement(['kg', 'litros', 'metros', 'unidades']),
             'activo' => $this->faker->boolean(90), // 90% probabilidad de estar activo
-
         ];
     }
 }
