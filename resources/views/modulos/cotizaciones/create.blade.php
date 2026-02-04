@@ -22,6 +22,25 @@
 @stop
 
 @section('content')
+
+    <div style="display: none;">
+        <select id="template-options-productos">
+            <option value="">Seleccione un producto</option>
+            @foreach ($productos as $producto)
+                <option value="{{ $producto->id }}"
+                    data-precio="{{ $producto->precio_venta }}"
+                    data-stock="{{ $producto->cantidad ?? 0 }}"
+                    data-precio-mayoreo="{{ $producto->precio_mayoreo ?? 0 }}"
+                    data-cantidad-min-mayoreo="{{ $producto->cantidad_minima_mayoreo ?? 0 }}"
+                    data-en-oferta="{{ $producto->en_oferta ? '1' : '0' }}"
+                    data-precio-oferta="{{ $producto->precio_oferta ?? 0 }}"
+                    data-fecha-fin-oferta="{{ $producto->fecha_fin_oferta ? $producto->fecha_fin_oferta->format('Y-m-d') : '' }}">
+                    {{ $producto->nombre }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
     <div class="card shadow-sm">
         <div class="card-header bg-gradient-primary">
             <h3 class="card-title"><i class="fas fa-file-invoice"></i> Datos de la Cotización</h3>
@@ -104,6 +123,10 @@
                                     <strong>IVA (16%):</strong>
                                     <span>$<span id="iva">0.00</span></span>
                                 </div>
+                                <div class="d-flex justify-content-between mb-2 text-success">
+                                    <strong>Descuento Aplicado:</strong>
+                                    <span>-$<span id="descuento_total">0.00</span></span>
+                                </div>
                                 <hr>
                                 <div class="d-flex justify-content-between">
                                     <h4><strong>Total:</strong></h4>
@@ -115,7 +138,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="observaciones">Observaciones</label>
+                    <label for="observaciones">Observaciones / Notas:</label>
                     <textarea class="form-control" id="observaciones" name="nota" rows="3" placeholder="Comentarios adicionales..."></textarea>
                 </div>
             </div>
@@ -269,50 +292,59 @@
 
 @section('js')
     <script>
+
+        // Configuración de Moneda
+        const formatter = new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+
+        // 1. FUNCIÓN PARA DAR FORMATO VISUAL AL SELECT2 (Badges dentro de la lista)
+        function formatState (opt) {
+            if (!opt.id) {
+                return opt.text;
+            }
+
+            var $opt = $(opt.element);
+            var enOferta = $opt.data('en-oferta');
+            var esMayoreo = $opt.data('precio-mayoreo') > 0;
+
+            var $badge = $('<span>' + opt.text + '</span>');
+
+            // Agregar badge visual en el desplegable
+            if (enOferta == 1) {
+                $badge.append(' <span class="badge badge-danger ml-1">OFERTA</span>');
+            } else if (esMayoreo) {
+                $badge.append(' <span class="badge badge-info ml-1">MAYOREO DISP.</span>');
+            }
+
+            return $badge;
+        };
+
         // Configuración de Select2
         function inicializarSelect2(elemento) {
             $(elemento).select2({
                 theme: 'bootstrap4',
                 width: '100%',
-                dropdownAutoWidth: false,
                 placeholder: 'Seleccione una opción',
                 allowClear: true,
-                dropdownParent: $('#formCotizacion'),
-                language: {
-                    noResults: function() {
-                        return "No se encontraron resultados";
-                    },
-                    searching: function() {
-                        return "Buscando...";
-                    }
-                }
+                templateResult: formatState, // Aplicar diseño visual en la lista
+                templateSelection: formatState // Aplicar diseño visual en la selección
             });
         }
 
         $(document).ready(function () {
             inicializarSelect2('.select2');
-
-            // DEBUG: Ver datos de productos
-           /*  console.log('=== PRODUCTOS CARGADOS ===');
-            @foreach ($productos as $producto)
-                console.log({
-                    id: {{ $producto->id }},
-                    nombre: '{{ $producto->nombre }}',
-                    stock: {{ $producto->cantidad ?? 0 }},
-                    precio: {{ $producto->precio_venta }},
-                    en_oferta: {{ $producto->en_oferta ? 1 : 0 }},
-                    precio_mayoreo: {{ $producto->precio_mayoreo ?? 0 }}
-                });
-            @endforeach
-            console.log('========================='); */
-
-            $('#btnAgregarProducto').click(); // Agregar primera fila automáticamente
+            // Agregar primera fila al cargar
+            if($('#cuerpoTabla tr').length === 0 || $('#cuerpoTabla tr:has(td[colspan])').length > 0) {
+                agregarFila();
+            }
         });
 
         let contadorFilas = 0;
 
-        // Agregar producto dinámico
-        document.getElementById('btnAgregarProducto').addEventListener('click', function() {
+        // --- FUNCIÓN AGREGAR FILA OPTIMIZADA ---
+        /* document.getElementById('btnAgregarProducto').addEventListener('click', function() {
             $('#cuerpoTabla tr:has(td[colspan])').remove();
 
             let productosOptions = '';
@@ -369,10 +401,101 @@
 
             contadorFilas++;
             recalcular();
+        }); */
+        // --- FUNCIÓN AGREGAR FILA ---
+        function agregarFila() {
+            $('#cuerpoTabla tr:has(td[colspan])').remove();
+
+            // Obtenemos opciones (Asegúrate de tener el div #template-options-productos en el HTML)
+            let opcionesProductos = $('#template-options-productos').html();
+
+            let fila = `
+            <tr class="nueva-fila">
+                <td style="width: 35%">
+                    <select name="productos[]" class="form-control producto-select" required>
+                        ${opcionesProductos}
+                    </select>
+                </td>
+                <td style="width: 18%">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                        <input type="number" name="precios[]" class="form-control precio text-right" step="0.01" readonly>
+                    </div>
+                    <input type="hidden" name="tipos_precio[]" class="tipo-precio-hidden" value="base">
+                    <input type="hidden" class="precio-base-hidden">
+                    <small class="text-muted tipo-precio-badge mt-1 d-block font-weight-bold"></small>
+                </td>
+                <td style="width: 15%">
+                    <input type="number" name="cantidades[]" class="form-control cantidad text-center" value="1" min="1" required>
+                    <small class="stock-info-container"></small>
+                </td>
+                <td class="text-right" style="width: 17%">
+                    <strong>$<span class="subtotal">0.00</span></strong>
+                </td>
+                <td class="text-center" style="width: 15%">
+                    <button type="button" class="btn btn-outline-danger btn-sm btnEliminar" title="Eliminar">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>`;
+
+            $('#cuerpoTabla').append(fila);
+
+            let nuevoSelect = $('#cuerpoTabla tr:last .producto-select');
+            inicializarSelect2(nuevoSelect);
+
+            contadorFilas++;
+        }
+
+        $('#btnAgregarProducto').click(function() {
+            agregarFila();
+        });
+
+        // --- DETECTAR CAMBIO DE PRODUCTO ---
+        $(document).on('change', '.producto-select', function () {
+            let $fila = $(this).closest('tr');
+            let $option = $(this).find(':selected');
+            let $inputCantidad = $fila.find('.cantidad');
+
+            // 1. Mostrar Stock Visual
+            $fila.find('.stock-info-container').empty();
+            let stock = parseInt($option.data('stock')) || 0;
+
+            if($(this).val() !== "") {
+                // Establecer el MAX en el input para validación HTML5 nativa también
+                $inputCantidad.attr('max', stock);
+
+                let colorStock = stock > 10 ? 'text-success' : (stock > 0 ? 'text-warning' : 'text-danger');
+                let stockHtml = `<div class="${colorStock} small mt-1">
+                                    Stock disponible: <b>${stock}</b>
+                                </div>`;
+                $fila.find('.stock-info-container').html(stockHtml);
+            }
+
+            // 2. Resetear cantidad a 1 al cambiar de producto
+            $inputCantidad.val(1);
+
+            // 3. Validar si el nuevo producto tiene stock 0
+            if (stock === 0 && $(this).val() !== "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sin Stock',
+                    text: 'Este producto no tiene existencias.',
+                    timer: 2000
+                });
+                $inputCantidad.val(0);
+                $inputCantidad.attr('disabled', true);
+            } else {
+                $inputCantidad.attr('disabled', false);
+            }
+
+            aplicarPrecioCorrecto($fila);
         });
 
         // Detectar cambios en producto
-        $(document).on('change', '.producto-select', function () {
+        /* $(document).on('change', '.producto-select', function () {
             let $fila = $(this).closest('tr');
             let $option = $(this).find(':selected');
             let stock = $option.data('stock') || 0;
@@ -390,10 +513,10 @@
             $fila.find('.cantidad').after(stockText);
 
             aplicarPrecioCorrecto($fila);
-        });
+        }); */
 
         // Detectar cambios en cantidad
-        $(document).on('input change', '.cantidad', function () {
+       /*  $(document).on('input change', '.cantidad', function () {
             let $fila = $(this).closest('tr');
             let valor = parseInt($(this).val());
             let $option = $fila.find('.producto-select option:selected');
@@ -417,10 +540,109 @@
             }
 
             aplicarPrecioCorrecto($fila);
+        }); */
+
+
+        // --- DETECTAR CAMBIO EN CANTIDAD (VALIDACIÓN ESTRICTA) ---
+        $(document).on('input change keyup', '.cantidad', function () {
+            let $fila = $(this).closest('tr');
+            let $input = $(this);
+            let valor = parseInt($input.val()) || 0;
+
+            let $option = $fila.find('.producto-select option:selected');
+            let stock = parseInt($option.data('stock')) || 0;
+
+            // 1. Validación de Negativos
+            if (valor < 1 && stock > 0) {
+                // Si es evento change (perdió foco), forzar a 1
+                if(event.type === 'change') $input.val(1);
+            }
+
+            // 2. Validación estricta de Stock Máximo
+            if (valor > stock) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Stock Insuficiente',
+                    text: `Solo tienes ${stock} unidades disponibles de este producto.`,
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                $input.val(stock); // Regresa el valor al máximo disponible
+            }
+
+            aplicarPrecioCorrecto($fila);
         });
 
-        // Aplicar precio correcto según oferta/mayoreo
+        // --- LÓGICA DE PRECIOS (Oferta vs Mayoreo vs Base) ---
         function aplicarPrecioCorrecto($fila) {
+            let $option = $fila.find('.producto-select option:selected');
+            if(!$option.val()) return;
+
+            let cantidad = parseInt($fila.find('.cantidad').val()) || 0;
+
+            // Obtener datos (Asegúrate que el HTML del option tenga estos data-attributes)
+            let precioBase = parseFloat($option.data('precio'));
+            let precioMayoreo = parseFloat($option.data('precio-mayoreo'));
+            let minMayoreo = parseInt($option.data('cantidad-min-mayoreo'));
+
+            // Datos de oferta
+            let enOferta = $option.data('en-oferta') == 1; // Conversión flexible (string "1" o int 1)
+            let precioOferta = parseFloat($option.data('precio-oferta'));
+            let fechaFinOferta = $option.data('fecha-fin-oferta');
+
+            // Validar vigencia de oferta
+            let ofertaVigente = false;
+            if (enOferta && fechaFinOferta) {
+                // Comparación simple de cadenas YYYY-MM-DD funciona correctamente
+                let hoy = new Date().toISOString().split('T')[0];
+                if (fechaFinOferta >= hoy) {
+                    ofertaVigente = true;
+                }
+            }
+
+            // --- DETERMINAR PRECIO ---
+            let precioFinal = precioBase;
+            let tipoPrecio = 'base';
+            let badgeHtml = '<span class="badge badge-secondary">PRECIO BASE</span>';
+
+            // REGLA 1: La Oferta tiene prioridad absoluta (si está vigente)
+            if (ofertaVigente && precioOferta > 0) {
+                precioFinal = precioOferta;
+                tipoPrecio = 'oferta';
+                badgeHtml = '<span class="badge badge-danger">OFERTA</span>';
+            }
+            // REGLA 2: Mayoreo (Solo si NO hay oferta vigente y cumple cantidad mínima)
+            else if (precioMayoreo > 0 && cantidad >= minMayoreo) {
+                precioFinal = precioMayoreo;
+                tipoPrecio = 'mayoreo';
+                badgeHtml = `<span class="badge badge-info">MAYOREO (> ${minMayoreo} pzas)</span>`;
+            }
+            // REGLA 3: Base (Default)
+            else {
+                precioFinal = precioBase;
+                tipoPrecio = 'base';
+
+                // Si tiene precio mayoreo pero no llega a la cantidad, avisar
+                if (precioMayoreo > 0) {
+                    badgeHtml = `<span class="badge badge-light border">Faltan ${minMayoreo - cantidad} para Mayoreo</span>`;
+                } else {
+                    badgeHtml = '<span class="badge badge-secondary">PRECIO NORMAL</span>';
+                }
+            }
+
+            // Actualizar DOM
+            $fila.find('.precio').val(precioFinal.toFixed(2));
+            $fila.find('.precio-base-hidden').val(precioBase);
+            $fila.find('.tipo-precio-hidden').val(tipoPrecio);
+            $fila.find('.tipo-precio-badge').html(badgeHtml); // Actualizar el texto debajo del precio
+
+            recalcular();
+        }
+
+        // Aplicar precio correcto según oferta/mayoreo
+       /*  function aplicarPrecioCorrecto($fila) {
             let $option = $fila.find('.producto-select option:selected');
             let cantidad = parseInt($fila.find('.cantidad').val()) || 1;
 
@@ -473,10 +695,29 @@
 
             $fila.find('.precio').val(precioAplicar.toFixed(2));
             recalcular();
-        }
+        } */
+
+        // --- ELIMINAR FILA ---
+        $(document).on('click', '.btnEliminar', function () {
+            let fila = $(this).closest('tr');
+            if($('#cuerpoTabla tr').length > 1) {
+                fila.remove();
+                contadorFilas--;
+                recalcular();
+            } else {
+                // Limpiar ultima fila en lugar de borrar
+                fila.find('select').val(null).trigger('change');
+                fila.find('.cantidad').val(1);
+                fila.find('.precio').val('');
+                fila.find('.subtotal').text('0.00');
+                fila.find('.stock-info-container').empty();
+                fila.find('.tipo-precio-badge').empty();
+                recalcular();
+            }
+        });
 
         // Eliminar fila
-        $(document).on('click', '.btnEliminar', function () {
+        /* $(document).on('click', '.btnEliminar', function () {
             let fila = $(this).closest('tr');
 
             Swal.fire({
@@ -517,10 +758,50 @@
                     });
                 }
             });
-        });
+        }); */
+
+        // --- CÁLCULO TOTALES (CORREGIDO CON IVA) ---
+        function recalcular() {
+            let subtotalTotal = 0;
+            let ahorroTotal = 0;
+
+            $('#cuerpoTabla tr').each(function () {
+                if ($(this).find('td[colspan]').length) return;
+
+                let precio = parseFloat($(this).find('.precio').val()) || 0;
+                let precioBase = parseFloat($(this).find('.precio-base-hidden').val()) || precio; // Fallback a precio actual si no hay base
+                let cantidad = parseInt($(this).find('.cantidad').val()) || 0;
+
+                let subtotalFila = precio * cantidad;
+                let subtotalBase = precioBase * cantidad;
+
+                $(this).find('.subtotal').text(formatter.format(subtotalFila));
+
+                subtotalTotal += subtotalFila;
+                if(precio < precioBase) {
+                    ahorroTotal += (subtotalBase - subtotalFila);
+                }
+            });
+
+            // Impuestos
+            let tasaIVA = 0.16;
+            let iva = subtotalTotal * tasaIVA;
+            let total = subtotalTotal + iva;
+
+            $('#subtotal').text(formatter.format(subtotalTotal));
+            $('#iva').text(formatter.format(iva));
+            $('#total').text(formatter.format(total));
+
+            if(ahorroTotal > 0) {
+                $('#descuento_total').text(formatter.format(ahorroTotal));
+                $('#descuento_total').parent().fadeIn();
+            } else {
+                $('#descuento_total').parent().hide();
+            }
+        }
 
         // Recalcular totales
-        function recalcular() {
+        /* function recalcular() {
             let subtotal = 0;
 
             $('#cuerpoTabla tr').each(function () {
@@ -538,10 +819,10 @@
 
             $('#subtotal').text(subtotal.toFixed(2));
             $('#total').text(total.toFixed(2));
-        }
+        } */
 
         // Validación antes de enviar
-        $('#formCotizacion').on('submit', function(e) {
+       /*  $('#formCotizacion').on('submit', function(e) {
             // Validar que haya productos
             if (contadorFilas === 0) {
                 e.preventDefault();
@@ -583,6 +864,23 @@
                 });
                 return false;
             }
+        }); */
+
+        // Validación  Submit al enviar
+        $('#formCotizacion').on('submit', function(e) {
+            let valido = true;
+            // Revisar stock una ultima vez
+            $('.cantidad').each(function() {
+                let cant = parseInt($(this).val());
+                let stock = parseInt($(this).closest('tr').find('.producto-select option:selected').data('stock'));
+                if(cant > stock) valido = false;
+            });
+
+            if(!valido) {
+                e.preventDefault();
+                Swal.fire('Error', 'Hay productos con cantidad superior al stock permitido.', 'error');
+            }
         });
+
     </script>
 @stop

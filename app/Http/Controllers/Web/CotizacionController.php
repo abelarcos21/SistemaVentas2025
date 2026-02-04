@@ -242,7 +242,6 @@ class CotizacionController extends Controller
             'productos.*.producto_id' => 'required|exists:productos,id',
             'productos.*.cantidad' => 'required|integer|min:1',
             'productos.*.precio_unitario_aplicado' => 'required|numeric|min:0.01',
-            //'metodo_pago' => 'required|in:efectivo,tarjeta,transferencia,mixto',
         ]);
 
         // Buscar caja abierta
@@ -282,10 +281,7 @@ class CotizacionController extends Controller
             foreach ($request->productos as $prod) {
                 $producto = Producto::findOrFail($prod['producto_id']);
 
-                // Buscar si el producto estaba en la cotización original
-                $detalleOriginal = $cotizacion->detalles->firstWhere('producto_id', $prod['producto_id']);
-
-                // Validar stock disponible ANTES de crear el detalle
+                // Validar stock
                 if ($producto->cantidad < $prod['cantidad']) {
                     throw new \Exception("Stock insuficiente para {$producto->nombre}. Disponible: {$producto->cantidad}");
                 }
@@ -294,44 +290,43 @@ class CotizacionController extends Controller
                 $cantidad = (int) ($prod['cantidad'] ?? 1);
                 $precioAplicado = (float) ($prod['precio_unitario_aplicado'] ?? 0);
 
-                // Si existe en la cotización original, usar su tipo
+                //Inicializar la variable en cada vuelta por defecto
+                $tipoPrecio = 'base';
 
-                if ($detalleOriginal && $detalleOriginal->tipo_precio) {
-                    $tipoPrecio = $detalleOriginal->tipo_precio;
-                } else {
-                    // Si no existe o es producto nuevo,
-                    // Determinar el tipo de precio aplicado con PRIORIDAD CORRECTA
+                //al convertir a venta, las condiciones (fecha, cantidad) pueden haber cambiado.
+                // Es mejor recalcular qué precio se está aplicando realmente.
 
-                    // 1. PRIMERA PRIORIDAD: Verificar si hay OFERTA VIGENTE
-                    if ($producto->en_oferta && $producto->fecha_fin_oferta >= now()) {
-                        // Comparar con tolerancia de 0.01 por decimales
-                        if (abs($precioAplicado - $producto->precio_oferta) < 0.01) {
-                            $tipoPrecio = 'oferta';
-                        }
+                // --- LÓGICA DE DETECCIÓN AUTOMÁTICA ---
+                // Comparamos el precio que llega del JS contra los precios reales de la BD
+
+                //Verificar si coincide con precio OFERTA
+                $coincideOferta = false;
+                if ($producto->en_oferta && $producto->fecha_fin_oferta >= now()) {
+                    if (abs($precioAplicado - $producto->precio_oferta) < 0.01) {
+                        $coincideOferta = true;
                     }
-
-                    // 2. SEGUNDA PRIORIDAD: Si NO es oferta, verificar MAYOREO
-                    if ($tipoPrecio === 'base' &&
-                        $producto->precio_mayoreo &&
-                        $cantidad >= $producto->cantidad_minima_mayoreo) {
-                        // Comparar con tolerancia
-                        if (abs($precioAplicado - $producto->precio_mayoreo) < 0.01) {
-                            $tipoPrecio = 'mayoreo';
-                        }
-                    }
-
-                    // 3. TERCERA PRIORIDAD: Verificar si es precio base normal
-                    if ($tipoPrecio === 'base') {
-                        // Si no es oferta ni mayoreo, pero coincide con precio_venta
-                        if (abs($precioAplicado - $producto->precio_venta) < 0.01) {
-                            $tipoPrecio = 'base';
-                        } else {
-                            // Si no coincide con ninguno, es un precio personalizado de cotización
-                            $tipoPrecio = 'cotizacion';
-                        }
-                    }
-
                 }
+
+                // Verificar si coincide con precio MAYOREO
+                $coincideMayoreo = false;
+                if ($producto->precio_mayoreo > 0 && $cantidad >= $producto->cantidad_minima_mayoreo) {
+                    if (abs($precioAplicado - $producto->precio_mayoreo) < 0.01) {
+                        $coincideMayoreo = true;
+                    }
+                }
+
+                //Asignación Final (Jerarquía)
+                if ($coincideMayoreo) {
+                    // Si coincide con mayoreo, TIENE PRIORIDAD (o la lógica que prefieras)
+                    $tipoPrecio = 'mayoreo';
+                } elseif ($coincideOferta) {
+                    $tipoPrecio = 'oferta';
+                } elseif (abs($precioAplicado - $producto->precio_venta) < 0.01) {
+                    $tipoPrecio = 'base';
+                } else {
+                    $tipoPrecio = 'personalizado'; // El precio no coincide con ninguno (editado manual)
+                }
+
                 /* \Log::info('Detección de precio:', [
                     'producto' => $producto->nombre,
                     'precio_aplicado' => $precioAplicado,
@@ -344,6 +339,7 @@ class CotizacionController extends Controller
                     'tipo_detectado' => $tipoPrecio
                 ]); */
 
+                // Calcular subtotal
                 $subtotal = $cantidad * $precioAplicado;
 
                 // Crear detalle de venta
@@ -374,7 +370,7 @@ class CotizacionController extends Controller
 
             return redirect()
                 ->route('cotizaciones.index')
-                ->with('success', 'Venta realizada correctamente. Nro de Venta: ' . $venta->folio);
+                ->with('success', 'Venta realizada correctamente. Folio: ' . $venta->folio);
 
         } catch (\Exception $e) {
             DB::rollBack();
