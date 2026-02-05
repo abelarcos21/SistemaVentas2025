@@ -581,117 +581,209 @@ class ProductoController extends Controller
 
     public function store(Request $request){
 
+        // ==========================================
+        // VALIDACIÓN COMPLETA
+        // ==========================================
         $validated = $request->validate([
+            // Relaciones requeridas
             'categoria_id' => 'required|exists:categorias,id',
             'unidad_id'    => 'required|exists:unidades,id',
             'proveedor_id' => 'required|exists:proveedores,id',
-            'marca_id' => 'required|exists:marcas,id',
+            'marca_id'     => 'required|exists:marcas,id',
+
+            // Código de barras
             'codigo' => 'nullable|string|max:255|unique:productos,codigo',
 
-            // Campos de precios y promociones
-            'precio_compra' => 'nullable|numeric|min:0',
-            'cantidad' => 'nullable|integer|min:0',
+            // Información básica
+            'nombre'      => 'required|string|max:255',
+            'descripcion' => 'nullable|string|max:500',
 
-            'permite_mayoreo' => 'boolean',
-            'en_oferta' => 'boolean',
-            'precio_mayoreo' => 'nullable|numeric|min:0',
-            'precio_oferta' => 'nullable|numeric|min:0',
-            'cantidad_minima_mayoreo' => 'nullable|integer|min:1',
-            'fecha_inicio_oferta' => 'nullable|date',
-            'fecha_fin_oferta' => 'nullable|date|after_or_equal:fecha_inicio_oferta',
-
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'required|string|max:255',
+            // Estado del producto (boolean)
             'activo' => 'required|boolean',
+
+            // ========== CADUCIDAD ==========
+            'requiere_fecha_caducidad' => 'boolean',
+            'fecha_caducidad' => [
+                'nullable',
+                'date',
+                'after:today',
+                // Solo requerido si requiere_fecha_caducidad es true
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('requiere_fecha_caducidad') && empty($value)) {
+                        $fail('La fecha de caducidad es obligatoria cuando el producto requiere control de vencimiento.');
+                    }
+                },
+            ],
+
+            // ========== MAYOREO ==========
+            'permite_mayoreo' => 'boolean',
+            'precio_mayoreo' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                // Solo requerido si permite_mayoreo es true
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('permite_mayoreo') && (empty($value) || $value <= 0)) {
+                        $fail('El precio de mayoreo debe ser mayor a 0 cuando está habilitado.');
+                    }
+                },
+            ],
+            'cantidad_minima_mayoreo' => [
+                'nullable',
+                'integer',
+                'min:1',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('permite_mayoreo') && (empty($value) || $value < 1)) {
+                        $fail('La cantidad mínima de mayoreo debe ser al menos 1.');
+                    }
+                },
+            ],
+
+            // ========== OFERTAS ==========
+            'en_oferta' => 'boolean',
+            'precio_oferta' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('en_oferta') && (empty($value) || $value <= 0)) {
+                        $fail('El precio de oferta debe ser mayor a 0 cuando está habilitada.');
+                    }
+                },
+            ],
+            'fecha_inicio_oferta' => [
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('en_oferta') && empty($value)) {
+                        $fail('La fecha de inicio de oferta es obligatoria.');
+                    }
+                },
+            ],
+            'fecha_fin_oferta' => [
+                'nullable',
+                'date',
+                'after_or_equal:fecha_inicio_oferta',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('en_oferta') && empty($value)) {
+                        $fail('La fecha de fin de oferta es obligatoria.');
+                    }
+                },
+            ],
+
+            // Imagen
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
 
-            // CAMPOS DE CADUCIDAD
-            'requiere_fecha_caducidad' => 'boolean',
-            'fecha_caducidad' => 'nullable|required_if:requiere_fecha_caducidad,1|date|after:today',
+            // Precios (configurados en compras)
+            'precio_compra' => 'nullable|numeric|min:0',
+            'cantidad'      => 'nullable|integer|min:0',
         ], [
-            'fecha_caducidad.required_if' => 'La fecha de caducidad es obligatoria cuando se activa el control de caducidad.',
-            'fecha_caducidad.after' => 'La fecha de caducidad debe ser posterior a hoy.',
-        ]);
+            // Mensajes personalizados
+            'categoria_id.required' => 'La categoría es obligatoria.',
+            'categoria_id.exists'   => 'La categoría seleccionada no es válida.',
 
+            'unidad_id.required' => 'La unidad es obligatoria.',
+            'unidad_id.exists'   => 'La unidad seleccionada no es válida.',
+
+            'proveedor_id.required' => 'El proveedor es obligatorio.',
+            'proveedor_id.exists'   => 'El proveedor seleccionado no es válido.',
+
+            'marca_id.required' => 'La marca es obligatoria.',
+            'marca_id.exists'   => 'La marca seleccionada no es válida.',
+
+            'codigo.unique' => 'Este código de barras ya está registrado.',
+            'codigo.max'    => 'El código no debe exceder 255 caracteres.',
+
+            'nombre.required' => 'El nombre del producto es obligatorio.',
+            'nombre.max'      => 'El nombre no debe exceder 255 caracteres.',
+
+            'descripcion.max' => 'La descripción no debe exceder 500 caracteres.',
+
+            'activo.required' => 'Debe especificar el estado del producto.',
+            'activo.boolean'  => 'El estado debe ser verdadero o falso.',
+
+            'fecha_caducidad.after' => 'La fecha de caducidad debe ser posterior a hoy.',
+
+            'precio_mayoreo.numeric' => 'El precio de mayoreo debe ser numérico.',
+            'precio_mayoreo.min'     => 'El precio de mayoreo no puede ser negativo.',
+
+            'cantidad_minima_mayoreo.integer' => 'La cantidad debe ser un número entero.',
+            'cantidad_minima_mayoreo.min'     => 'La cantidad mínima debe ser al menos 1.',
+
+            'precio_oferta.numeric' => 'El precio de oferta debe ser numérico.',
+            'precio_oferta.min'     => 'El precio de oferta no puede ser negativo.',
+
+            'fecha_fin_oferta.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+
+            'imagen.image' => 'El archivo debe ser una imagen.',
+            'imagen.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
+            'imagen.max'   => 'La imagen no debe superar los 2MB.',
+        ]);
 
         DB::beginTransaction();
 
         try{
 
-            $codigo = null;
-
-            // CASO A: SI TIENES EL PRODUCTO EN MANO (Escáner)
-            if(!empty($validated['codigo'])){
-                $codigo = $validated['codigo'];
-
-            // Validación estricta solo si es numérico (para evitar errores de dedo)
-            if (!preg_match('/^\d{13}$/', $codigo)) {
-                 // Opcional: Si tus productos tienen códigos cortos (UPC de 12 o EAN-8), ajusta el regex
-                throw ValidationException::withMessages(['codigo' => 'El código debe ser numérico de 13 dígitos.']);
-            }
-
-            // Validar checksum solo si es un código estándar EAN
-            if (!$this->validateEAN13($codigo)) {
-                throw ValidationException::withMessages(['codigo' => 'Dígito verificador incorrecto.']);
-            }
-
-            }else{
-
-                // CASO B: PRODUCTO A GRANEL O SIN CÓDIGO (Generación Interna)
-                // CAMBIO IMPORTANTE: Usamos prefijo '200' para uso interno, NO '750'.
-                do{
-
-                    // Generamos 12 dígitos: prefijo 200 + 9 aleatorios
-                    $base12 = '200' . str_pad(mt_rand(0, 999999999), 9, '0', STR_PAD_LEFT);
-
-                    // Calculamos el dígito verificador para que el escáner lo lea bien
-                    $codigo = $base12 . $this->calcularDigitoVerificador($base12);
-
-                } while (Producto::where('codigo', $codigo)->exists());
-            }
-
-            // Generar ruta de imagen de barras (Solo si la necesitas guardar como archivo)
-            // Si usas una fuente de código de barras en el frontend, esto no es necesario guardarlo en BD.
-            $barcodePath = $this->generarCodigoBarras($codigo);
+            // generacion o validacion de codigo
+            $codigo = $this->procesarCodigoBarras($validated['codigo'] ?? null);
 
             //Crear producto con todos los campos
-            $producto = Producto::create([
-                'user_id' => Auth::id(),
+            $datosProducto = [
+                'user_id'      => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
                 'unidad_id'    => $validated['unidad_id'],
                 'proveedor_id' => $validated['proveedor_id'],
                 'marca_id'     => $validated['marca_id'],
                 'codigo'       => $codigo,
-                'barcode_path' => $barcodePath,
                 'nombre'       => $validated['nombre'],
-                'descripcion'  => $validated['descripcion'],
-                'activo'       => $validated['activo'],
+                'descripcion'  => $validated['descripcion'] ?? null,
 
-                // 🔹 Campos de precios y stock los creo en la compra y en el editar del producto
-            /*  'precio_venta' => $validated['precio_venta'], */
-                /* 'precio_compra' => $validated['precio_compra'] ?? 0, */
-            /*  'cantidad' => $validated['cantidad'] ?? 0, */
+                // Estado del producto (convertir a boolean)
+                'activo' => $request->boolean('activo'),
 
-                // 🔹 Mayoreo
-                'permite_mayoreo' => $request->boolean('permite_mayoreo'),
-                'precio_mayoreo' => $validated['precio_mayoreo'] ?? 0,
-                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? 0,
-
-                // 🔹 Oferta
-                'en_oferta' => $request->boolean('en_oferta'),
-                'precio_oferta' => $validated['precio_oferta'] ?? 0,
-                'fecha_inicio_oferta' => $validated['fecha_inicio_oferta'] ?? null,
-                'fecha_fin_oferta' => $validated['fecha_fin_oferta'] ?? null,
-
-                // 🔹 CADUCIDAD
+                // Caducidad
                 'requiere_fecha_caducidad' => $request->boolean('requiere_fecha_caducidad'),
-                'fecha_caducidad' => $validated['fecha_caducidad'] ?? null,
-            ]);
+                'fecha_caducidad' => $request->boolean('requiere_fecha_caducidad')
+                    ? ($validated['fecha_caducidad'] ?? null)
+                    : null,
 
+                // Mayoreo
+                'permite_mayoreo' => $request->boolean('permite_mayoreo'),
+                'precio_mayoreo' => $request->boolean('permite_mayoreo')
+                    ? ($validated['precio_mayoreo'] ?? 0)
+                    : 0,
+                'cantidad_minima_mayoreo' => $request->boolean('permite_mayoreo')
+                    ? ($validated['cantidad_minima_mayoreo'] ?? 0)
+                    : 0,
+
+                // Ofertas
+                'en_oferta' => $request->boolean('en_oferta'),
+                'precio_oferta' => $request->boolean('en_oferta')
+                    ? ($validated['precio_oferta'] ?? 0)
+                    : 0,
+                'fecha_inicio_oferta' => $request->boolean('en_oferta')
+                    ? ($validated['fecha_inicio_oferta'] ?? null)
+                    : null,
+                'fecha_fin_oferta' => $request->boolean('en_oferta')
+                    ? ($validated['fecha_fin_oferta'] ?? null)
+                    : null,
+
+                // Precios y stock (se configuran después en compras)
+                'precio_compra' => $validated['precio_compra'] ?? 0,
+                'cantidad'      => $validated['cantidad'] ?? 0,
+            ];
+
+            // Generar código de barras (imagen)
+            if ($codigo) {
+                $datosProducto['barcode_path'] = $this->generarCodigoBarras($codigo);
+            }
+
+            // crear producto
+            $producto = Producto::create($datosProducto);
 
             // Verificar que el producto se creó correctamente
             if (!$producto) {
-                throw new Exception('No se pudo crear el producto');
+                throw new Exception('No se pudo crear el producto en la base de datos.');
             }
 
             // Si hay imagen o contiene, subirla
@@ -699,54 +791,84 @@ class ProductoController extends Controller
                 try {
                     $this->subir_imagen($request, $producto->id);
                 } catch (Exception $imageError) {
-                    Log::error('Error al subir imagen: ' . $imageError->getMessage());
-                    // Continuar aunque falle la imagen
+                    Log::error('Error al subir imagen del producto: ' . $imageError->getMessage());
+                    // Continuar aunque falle la imagen (no crítico)
                 }
             }
 
             DB::commit();
 
-            // Devolver los datos del producto creado para cuando se crea un producto con modal con ajax
-            //Respuesta AJAX
+            // Devolver los datos del producto creado para cuando se crea un producto con modal Respuesta AJAX
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Producto creado exitosamente',
-                    'producto' => $producto
-                ]);
-            }
-
-            // Respuesta para AJAX
-            if($request->ajax()){
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Producto creado exitosamente',
+                    'message' => 'Producto creado exitosamente.',
                     'producto' => [
-                        'id' => $producto->id,
-                        'nombre' => $producto->nombre,
-                        'codigo' => $producto->codigo,
+                        'id'          => $producto->id,
+                        'codigo'      => $producto->codigo,
+                        'nombre'      => $producto->nombre,
                         'descripcion' => $producto->descripcion,
-                        'categoria' => $producto->categoria->nombre ?? '',
-                        'marca' => $producto->marca->nombre ?? '',
-                        'proveedor' => $producto->proveedor->nombre ?? '',
-                        'activo' => $producto->activo,
+                        'activo'      => $producto->activo,
+
+                        // Relaciones
+                        'categoria'   => $producto->categoria->nombre ?? '',
+                        'unidad'      => $producto->unidad->nombre ?? '',
+                        'marca'       => $producto->marca->nombre ?? '',
+                        'proveedor'   => $producto->proveedor->nombre ?? '',
+
+                        // Caducidad
                         'requiere_fecha_caducidad' => $producto->requiere_fecha_caducidad,
-                        'fecha_caducidad' => $producto->fecha_caducidad ? $producto->fecha_caducidad->format('d/m/Y') : null,
-                        'imagen' => $producto->imagen ? asset('storage/' . $producto->imagen->ruta) : null,
-                        'created_at' => $producto->created_at->format('d/m/Y H:i')
+                        'fecha_caducidad' => $producto->fecha_caducidad
+                            ? $producto->fecha_caducidad->format('d/m/Y')
+                            : null,
+
+                        // Mayoreo
+                        'permite_mayoreo' => $producto->permite_mayoreo,
+                        'precio_mayoreo'  => $producto->precio_mayoreo,
+                        'cantidad_minima_mayoreo' => $producto->cantidad_minima_mayoreo,
+
+                        // Ofertas
+                        'en_oferta'     => $producto->en_oferta,
+                        'precio_oferta' => $producto->precio_oferta,
+                        'fecha_inicio_oferta' => $producto->fecha_inicio_oferta
+                            ? $producto->fecha_inicio_oferta->format('d/m/Y')
+                            : null,
+                        'fecha_fin_oferta' => $producto->fecha_fin_oferta
+                            ? $producto->fecha_fin_oferta->format('d/m/Y')
+                            : null,
+
+                        // Imagen
+                        'imagen' => $producto->imagen
+                            ? asset('storage/' . $producto->imagen->ruta)
+                            : null,
+
+                        'created_at' => $producto->created_at->format('d/m/Y H:i'),
                     ]
                 ]);
             }
 
-            return redirect()->route('producto.index')->with('success', 'Producto creado exitosamente. Puedes realizar la compra más tarde usando el botón Comprar.!');
+            return redirect()
+                ->route('producto.index')
+                ->with('success', 'Producto creado exitosamente. Puedes realizar la compra más tarde usando el botón Comprar.!');
+
+        }catch (ValidationException $e){
+            DB::rollBack();
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Errores de validación.',
+                    'errors'  => $e->errors()
+                ], 422);
+            }
+
+            return back()->withErrors($e->errors())->withInput();
 
         }catch (Exception $e){
             DB::rollBack();
-            Log::error('Error al guardar el producto: ' . $e->getMessage());
+            Log::error('Error al crear producto: ' . $e->getMessage());
             Log::error('Stack trace: ' . $e->getTraceAsString());
 
-            // Respuesta para AJAX
-            if($request->ajax()) {
+            if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Error al crear el producto: ' . $e->getMessage(),
@@ -754,24 +876,102 @@ class ProductoController extends Controller
                 ], 500);
             }
 
-            //return back()->with('error', 'Error: ' . $e->getMessage());//mostrar error completo
-            //return redirect()->route('producto.index')->with('error', 'Error al guardar el producto.');
-
-            // Respuesta para formulario tradicional
-            return back()->withErrors(['error' => 'Error al guardar el producto: ' . $e->getMessage()])
-                    ->withInput();
+            return back()
+                ->withErrors(['error' => 'Error al crear el producto. Por favor, intenta nuevamente.'])
+                ->withInput();
 
         }
     }
 
-    // Función auxiliar para calcular dígito (necesaria para el generador interno)
-    private function calcularDigitoVerificador($digits){
-        $sum = 0;
-        for ($i = 0; $i < strlen($digits); $i++) {
-            $sum += ($digits[$i] * (($i % 2 === 0) ? 1 : 3)); // Lógica EAN para posiciones (impar*1, par*3)
-            // Nota: Verifica tu lógica de par/impar según si el string empieza en index 0
+    //Procesar y validar código de barras
+    private function procesarCodigoBarras(?string $codigoInput): string {
+        // Si se proporciona un código
+        if (!empty($codigoInput)) {
+            $codigo = trim($codigoInput);
+
+            // Validar formato numérico de 13 dígitos para EAN-13
+            if (!preg_match('/^\d{13}$/', $codigo)) {
+                throw ValidationException::withMessages([
+                    'codigo' => 'El código debe ser numérico de 13 dígitos (EAN-13).'
+                ]);
+            }
+
+            // Validar dígito verificador
+            if (!$this->validateEAN13($codigo)) {
+                throw ValidationException::withMessages([
+                    'codigo' => 'El dígito verificador del código EAN-13 es incorrecto.'
+                ]);
+            }
+
+            return $codigo;
         }
-        return (10 - ($sum % 10)) % 10;
+
+        // Generar código automáticamente
+        return $this->generarCodigoEAN13();
+    }
+
+    //Generar código EAN-13 único
+    private function generarCodigoEAN13(): string {
+        $maxIntentos = 10;
+        $intento = 0;
+
+        do {
+            // Prefijo 200 para uso interno + 9 dígitos aleatorios
+            $base12 = '200' . str_pad((string)mt_rand(0, 999999999), 9, '0', STR_PAD_LEFT);
+
+            // Calcular dígito verificador
+            $digitoVerificador = $this->calcularDigitoVerificador($base12);
+
+            // Código completo
+            $codigo = $base12 . $digitoVerificador;
+
+            $intento++;
+
+            // Verificar que no exista en la BD
+            if (!Producto::where('codigo', $codigo)->exists()) {
+                return $codigo;
+            }
+
+        } while ($intento < $maxIntentos);
+
+        throw new Exception('No se pudo generar un código de barras único. Intenta nuevamente.');
+    }
+
+    // Función auxiliar para calcular dígito (necesaria para el generador interno)
+    private function calcularDigitoVerificador(string $digits): int {
+        // Validar longitud
+        $length = strlen($digits);
+        if ($length !== 12) {
+            throw new Exception("Se requieren exactamente 12 dígitos, se recibieron {$length}");
+        }
+
+        //Validar que sean dígitos
+        if (!ctype_digit($digits)) {
+            throw new Exception("El código base debe contener solo dígitos numéricos");
+        }
+
+        // Calcular suma
+        $sum = 0;
+        for ($i = 0; $i < 12; $i++) {
+            $digit = (int)$digits[$i];
+
+            //Código más legible
+            $multiplier = ($i % 2 === 0) ? 1 : 3;
+            $sum += $digit * $multiplier;
+        }
+
+        // Calcular dígito verificador
+        $remainder = $sum % 10;
+        $checkDigit = ($remainder === 0) ? 0 : (10 - $remainder);
+
+        //Log de debug
+        Log::debug("Dígito verificador calculado", [
+            'codigo_base' => $digits,
+            'suma' => $sum,
+            'digito_verificador' => $checkDigit
+        ]);
+
+        return $checkDigit;
     }
 
     public function productCodeExists($number){
@@ -780,42 +980,152 @@ class ProductoController extends Controller
 
 
     //Validar código EAN-13
-    private function validateEAN13($ean13) {
+    private function validateEAN13(string $ean13): bool {
+        // Type hints
         if (strlen($ean13) !== 13 || !ctype_digit($ean13)) {
+            // Log de debug
+            Log::debug("EAN-13 inválido (formato incorrecto)", ['codigo' => $ean13]);
             return false;
         }
 
         $sum = 0;
         for ($i = 0; $i < 12; $i++) {
             $digit = (int)$ean13[$i];
-            $sum += ($i % 2 === 0) ? $digit : $digit * 3;
+
+            //Comentarios más claros
+            $multiplier = ($i % 2 === 0) ? 1 : 3;
+            $sum += $digit * $multiplier;
         }
 
-        $checkDigit = (10 - ($sum % 10)) % 10;
-        return $checkDigit == (int)$ean13[12];
+        //Variables explícitas
+        $remainder = $sum % 10;
+        $checkDigitExpected = ($remainder === 0) ? 0 : (10 - $remainder);
+        $checkDigitProvided = (int)$ean13[12];
+
+        // Comparación estricta
+        $isValid = ($checkDigitExpected === $checkDigitProvided);
+
+        //Log cuando falla
+        if (!$isValid) {
+            Log::debug("EAN-13 inválido (dígito verificador incorrecto)", [
+                'codigo' => $ean13,
+                'esperado' => $checkDigitExpected,
+                'recibido' => $checkDigitProvided
+            ]);
+        }
+
+        return $isValid;
     }
 
-    public function subir_imagen(Request $request, int $productoId):bool {
-        if(!$request->hasFile('imagen')){
-
+    public function subir_imagen(Request $request, int $productoId): bool {
+        if (!$request->hasFile('imagen')) {
+            Log::info("No se proporcionó imagen para el producto ID: {$productoId}");
             return false;
         }
 
-        // Opcional: borrar imagen anterior si existe
-        $imagenExistente = Imagen::where('producto_id', $productoId)->first();
-        if ($imagenExistente) {
-            Storage::disk('public')->delete($imagenExistente->ruta);
-            $imagenExistente->delete();
+        $file = $request->file('imagen');
+
+        // Validar que el archivo sea válido
+        if (!$file->isValid()) {
+            Log::error("Archivo de imagen inválido para producto ID: {$productoId}");
+            throw new Exception('El archivo de imagen no es válido o está corrupto.');
         }
 
-        $rutaImagen = $request->file('imagen')->store('imagenes', 'public');
+        try {
+            // Usar transacciones
+            DB::beginTransaction();
 
-        return Imagen::create([
-            'producto_id' => $productoId,
-            'nombre' => basename($rutaImagen),
-            'ruta' => $rutaImagen,
+            // Eliminar imagen anterior
+            $imagenExistente = Imagen::where('producto_id', $productoId)->first();
 
-        ]) ? true : false;
+            if ($imagenExistente) {
+                //Verificar existencia antes de eliminar
+                if (Storage::disk('public')->exists($imagenExistente->ruta)) {
+                    $eliminado = Storage::disk('public')->delete($imagenExistente->ruta);
+
+                    if (!$eliminado) {
+                        Log::warning("No se pudo eliminar la imagen anterior", [
+                            'ruta' => $imagenExistente->ruta,
+                            'producto_id' => $productoId
+                        ]);
+                    }
+                }
+
+                $imagenExistente->delete();
+
+                Log::info("Imagen anterior eliminada", [
+                    'producto_id' => $productoId,
+                    'ruta_eliminada' => $imagenExistente->ruta
+                ]);
+            }
+
+            //Generar nombre único con timestamp
+            $extension = $file->getClientOriginalExtension();
+            $nombreOriginal = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
+            // Sanitizar nombre (remover caracteres especiales)
+            $nombreSanitizado = preg_replace('/[^A-Za-z0-9\-_]/', '', $nombreOriginal);
+            $nombreSanitizado = substr($nombreSanitizado, 0, 50);
+
+            $nombreUnico = 'producto_' . $productoId . '_' . time() . '_' . $nombreSanitizado . '.' . $extension;
+
+            //Usar storeAs para control total
+            $rutaRelativa = $file->storeAs(
+                'imagenes/productos',
+                $nombreUnico,
+                'public'
+            );
+
+            if (!$rutaRelativa) {
+                throw new Exception('No se pudo guardar el archivo de imagen en el storage.');
+            }
+
+            // Verificar que el archivo se guardó
+            if (!Storage::disk('public')->exists($rutaRelativa)) {
+                throw new Exception('El archivo de imagen no existe después de guardarlo.');
+            }
+
+            $tamañoArchivo = Storage::disk('public')->size($rutaRelativa);
+
+            //Guardar metadatos adicionales
+            $imagen = Imagen::create([
+                'producto_id' => $productoId,
+                'nombre' => $nombreUnico,
+                'ruta' => $rutaRelativa,
+                /* 'tamaño' => $tamañoArchivo,
+                'mime_type' => $file->getMimeType(), */
+            ]);
+
+            if (!$imagen) {
+                throw new Exception('No se pudo crear el registro de imagen en la base de datos.');
+            }
+
+            //Commit de la transacción
+            DB::commit();
+
+            //Logs detallados
+            Log::info("Imagen subida exitosamente", [
+                'producto_id' => $productoId,
+                'imagen_id' => $imagen->id,
+                'ruta' => $rutaRelativa,
+                'tamaño' => $this->formatBytes($tamañoArchivo)
+            ]);
+
+            return true;
+
+        } catch (Exception $e) {
+            // Rollback en caso de error
+            DB::rollBack();
+
+            Log::error("Error al subir imagen", [
+                'producto_id' => $productoId,
+                'error' => $e->getMessage(),
+                'linea' => $e->getLine(),
+                'archivo' => $e->getFile()
+            ]);
+
+            throw $e;
+        }
 
     }
 
@@ -1003,6 +1313,17 @@ class ProductoController extends Controller
         }
     }
 
+    //Formatear tamaño de archivos
+    private function formatBytes(int $bytes, int $precision = 2): string {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+
+        return round($bytes, $precision) . ' ' . $units[$i];
+    }
+
     //Desactivar Productos Vencidos
     public function desactivar($id){
         try {
@@ -1031,39 +1352,82 @@ class ProductoController extends Controller
         }
     }
 
-
     /* Genera un código de barras para un código dado
     @param string $codigo - El código para generar el barcode
     @return string|null - Retorna la ruta del barcode o null si falla */
-    private function generarCodigoBarras($codigo){
+    private function generarCodigoBarras(string $codigo): ?string {
         try {
-            // Generar código de barras usando DNS1D
-            $barcode = DNS1D::getBarcodePNG($codigo, 'EAN13');
-            $barcodePath = 'barcodes/' . $codigo . '.png';
-            $fullBarcodePath = public_path($barcodePath);
+            // Validación inicial del código
+            if (strlen($codigo) !== 13 || !ctype_digit($codigo)) {
+                Log::warning("Código inválido para generar barcode: {$codigo}");
+                return null;
+            }
 
-            // Crear directorio si no existe
+            // Configuración de tamaño y altura
+            $barcodeBase64 = DNS1D::getBarcodePNG($codigo, 'EAN13', 2, 60);
+
+            // Validar que DNS1D generó algo
+            if (empty($barcodeBase64)) {
+                throw new Exception('DNS1D no pudo generar el código de barras');
+            }
+
+            // Definir rutas
+            $barcodeFilename = $codigo . '.png';
+            $barcodeRelativePath = 'barcodes/' . $barcodeFilename;
+            $barcodeFullPath = public_path($barcodeRelativePath);
+
+            //Usar is_dir() en lugar de file_exists()
             $barcodeDir = public_path('barcodes');
-            if (!file_exists($barcodeDir)) {
-                mkdir($barcodeDir, 0755, true);
+            if (!is_dir($barcodeDir)) {
+                if (!mkdir($barcodeDir, 0755, true)) {
+                    throw new Exception('No se pudo crear el directorio de barcodes');
+                }
             }
 
-            // Guardar el archivo
-            if (!file_put_contents($fullBarcodePath, base64_decode($barcode))) {
-                throw new Exception('No se pudo generar el código de barras');
+            // Decodificar y guardar
+            $barcodeDecoded = base64_decode($barcodeBase64);
+
+            // Validar decodificación
+            if ($barcodeDecoded === false) {
+                throw new Exception('No se pudo decodificar el código de barras base64');
             }
 
-            Log::info("Código de barras generado para código: {$codigo}");
-            return $barcodePath;
+            $bytesWritten = file_put_contents($barcodeFullPath, $barcodeDecoded);
+
+            //Validar escritura
+            if ($bytesWritten === false || $bytesWritten === 0) {
+                throw new Exception('No se pudo escribir el archivo del código de barras');
+            }
+
+            // Verificar existencia del archivo
+            if (!file_exists($barcodeFullPath) || filesize($barcodeFullPath) === 0) {
+                throw new Exception('El archivo del código de barras está vacío o no existe');
+            }
+
+            //Logs estructurados con contexto
+            Log::info("Código de barras generado exitosamente", [
+                'codigo' => $codigo,
+                'ruta' => $barcodeRelativePath,
+                'tamaño' => $bytesWritten . ' bytes'
+            ]);
+
+            return $barcodeRelativePath;
 
         } catch (Exception $e) {
-            Log::error("Error al generar código de barras para código {$codigo}: " . $e->getMessage());
+            //Logs detallados de error
+            Log::error("Error al generar código de barras", [
+                'codigo' => $codigo,
+                'error' => $e->getMessage(),
+                'linea' => $e->getLine(),
+                'archivo' => $e->getFile()
+            ]);
+
             return null;
         }
     }
 
 
-    //Regenera el código de barras para un producto
+    //Regenera el código de barras para un producto si se cambia y no tiene ventas asociada
     private function regenerarCodigoBarras(Producto $producto){
         try {
             // Eliminar el código de barras anterior si existe
