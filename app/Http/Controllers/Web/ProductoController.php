@@ -1129,176 +1129,390 @@ class ProductoController extends Controller
 
     }
 
+    /**
+     * metodo opcional Elimina una imagen del producto
+     * @param int $productoId - ID del producto
+     * @return bool - true si se eliminó, false si no había imagen
+     */
+    public function eliminarImagen(int $productoId): bool {
+        try {
+            $imagen = Imagen::where('producto_id', $productoId)->first();
+
+            if (!$imagen) {
+                Log::info("No hay imagen para eliminar del producto ID: {$productoId}");
+                return false;
+            }
+
+            DB::beginTransaction();
+
+            // Eliminar archivo físico
+            if (Storage::disk('public')->exists($imagen->ruta)) {
+                Storage::disk('public')->delete($imagen->ruta);
+            }
+
+            // Eliminar registro
+            $imagen->delete();
+
+            DB::commit();
+
+            Log::info("Imagen eliminada exitosamente", [
+                'producto_id' => $productoId,
+                'ruta' => $imagen->ruta
+            ]);
+
+            return true;
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            Log::error("Error al eliminar imagen", [
+                'producto_id' => $productoId,
+                'error' => $e->getMessage()
+            ]);
+
+            return false;
+        }
+    }
+
     public function update(Request $request, Producto $producto){
 
-        // Validaciones
-        $rules = [
+        //Determinar si el codigo es editable
+        $codigoEsEditable = $producto->codigoEsEditable();
+        $codigoCambio = false;
 
+        // validacion dinamica segun editabilidad
+        $rules = [
+            // Relaciones requeridas
             'categoria_id' => 'required|exists:categorias,id',
-            'unidad_id' => 'required|exists:unidades,id',
+            'unidad_id'    => 'required|exists:unidades,id',
             'proveedor_id' => 'required|exists:proveedores,id',
             'marca_id'     => 'required|exists:marcas,id',
+
+            // Información básica
+            'nombre'       => 'required|string|max:255',
+            'descripcion'  => 'nullable|string|max:500',
+
+            // Precios
             'precio_venta' => 'required|numeric|min:0',
 
-            'permite_mayoreo'         => 'boolean',
-            'en_oferta'               => 'boolean',
-            'precio_mayoreo'          => 'nullable|numeric|min:0',
-            'precio_oferta'           => 'nullable|numeric|min:0',
-            'cantidad_minima_mayoreo' => 'nullable|integer|min:1',
-            'fecha_inicio_oferta'     => 'nullable|date',
-            'fecha_fin_oferta'        => 'nullable|date|after_or_equal:fecha_inicio_oferta',
+            // Estado (boolean)
+            'activo' => 'required|boolean',
 
-            'nombre'       => 'required|string|max:255',
-            'descripcion'  => 'required|string|max:255',
-            'activo'       => 'required|boolean',
-            'imagen'       => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-
-            // 🔹 CAMPOS DE CADUCIDAD
+            // ========== CADUCIDAD ==========
             'requiere_fecha_caducidad' => 'boolean',
-            'fecha_caducidad' => 'nullable|required_if:requiere_fecha_caducidad,1|date|after:today',
+            'fecha_caducidad' => [
+                'nullable',
+                'date',
+                'after:today',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('requiere_fecha_caducidad') && empty($value)) {
+                        $fail('La fecha de caducidad es obligatoria cuando está habilitada.');
+                    }
+                },
+            ],
+
+            // ========== MAYOREO ==========
+            'permite_mayoreo' => 'boolean',
+            'precio_mayoreo' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('permite_mayoreo') && (empty($value) || $value <= 0)) {
+                        $fail('El precio de mayoreo debe ser mayor a 0 cuando está habilitado.');
+                    }
+                },
+            ],
+            'cantidad_minima_mayoreo' => [
+                'nullable',
+                'integer',
+                'min:0',// Permite 0 cuando mayoreo está desactivado
+                function ($attribute, $value, $fail) use ($request) {
+                    // Solo valida >= 1 si mayoreo está ACTIVO
+                    if ($request->boolean('permite_mayoreo') && (empty($value) || $value < 1)) {
+                        $fail('La cantidad mínima debe ser al menos 1 cuando el mayoreo está habilitado.');
+                    }
+                },
+            ],
+
+            // ========== OFERTAS ==========
+            'en_oferta' => 'boolean',
+            'precio_oferta' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('en_oferta') && (empty($value) || $value <= 0)) {
+                        $fail('El precio de oferta debe ser mayor a 0 cuando está habilitada.');
+                    }
+                },
+            ],
+            'fecha_inicio_oferta' => [
+                'nullable',
+                'date',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('en_oferta') && empty($value)) {
+                        $fail('La fecha de inicio es obligatoria cuando la oferta está habilitada.');
+                    }
+                },
+            ],
+            'fecha_fin_oferta' => [
+                'nullable',
+                'date',
+                'after_or_equal:fecha_inicio_oferta',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->boolean('en_oferta') && empty($value)) {
+                        $fail('La fecha de fin es obligatoria cuando la oferta está habilitada.');
+                    }
+                },
+            ],
+
+            // Imagen
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ];
+
+        // Agregar validación del código solo si es editable
+        if ($codigoEsEditable) {
+            $rules['codigo'] = [
+                'required',
+                'string',
+                'max:255',
+                'unique:productos,codigo,' . $producto->id,
+                function ($attribute, $value, $fail) {
+                    // Validar formato EAN-13
+                    if (strlen($value) !== 13 || !ctype_digit($value)) {
+                        $fail('El código debe ser numérico de 13 dígitos.');
+                    }
+
+                    // Validar dígito verificador
+                    if (!$this->validateEAN13($value)) {
+                        $fail('El dígito verificador del código es incorrecto.');
+                    }
+                },
+            ];
+        }
 
         // Mensajes personalizados
         $messages = [
-            'fecha_caducidad.required_if' => 'La fecha de caducidad es obligatoria cuando se activa el control de caducidad.',
-            'fecha_caducidad.after' => 'La fecha de caducidad debe ser posterior a hoy.',
+            'categoria_id.required' => 'La categoría es obligatoria.',
+            'categoria_id.exists'   => 'La categoría seleccionada no es válida.',
+
+            'unidad_id.required' => 'La unidad es obligatoria.',
+            'unidad_id.exists'   => 'La unidad seleccionada no es válida.',
+
+            'proveedor_id.required' => 'El proveedor es obligatorio.',
+            'proveedor_id.exists'   => 'El proveedor seleccionado no es válido.',
+
+            'marca_id.required' => 'La marca es obligatoria.',
+            'marca_id.exists'   => 'La marca seleccionada no es válida.',
+
+            'nombre.required' => 'El nombre del producto es obligatorio.',
+            'nombre.max'      => 'El nombre no debe exceder 255 caracteres.',
+
+            'descripcion.max' => 'La descripción no debe exceder 500 caracteres.',
+
+            'precio_venta.required' => 'El precio de venta es obligatorio.',
+            'precio_venta.numeric'  => 'El precio de venta debe ser numérico.',
+            'precio_venta.min'      => 'El precio de venta no puede ser negativo.',
+
+            'activo.required' => 'Debe especificar el estado del producto.',
+            'activo.boolean'  => 'El estado debe ser verdadero o falso.',
+
+            'fecha_fin_oferta.after_or_equal' => 'La fecha de fin debe ser igual o posterior a la fecha de inicio.',
+
+            'imagen.image' => 'El archivo debe ser una imagen.',
+            'imagen.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
+            'imagen.max'   => 'La imagen no debe superar los 2MB.',
         ];
 
-        // Verificar si el producto puede ser editado
-        $codigoEsEditable = $producto->codigoEsEditable();
-        $codigoCambio = false; // Flag para saber si cambió el código
-
-        if ($codigoEsEditable) {
-            $rules['codigo'] = 'required|string|max:255|unique:productos,codigo,' . $producto->id;
-        } else {
-            // Si no es editable, verificar que no hayan intentado cambiarlo
-            if ($request->has('codigo') && $request->codigo !== $producto->codigo) {
-                return redirect()->back()
-                    ->withErrors(['codigo' => 'No puedes cambiar el código de barras de un producto con ventas registradas.'])
-                    ->withInput();
-            }
-        }
-
-
+        //validar request
         try {
             $validated = $request->validate($rules, $messages);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Errores de validación',
-                    'errors' => $e->errors()
+                    'message' => 'Errores de validación.',
+                    'errors'  => $e->errors()
                 ], 422);
             }
             throw $e;
+        }
+
+        // verificar intento de cambio de codigo no permitido
+        if (!$codigoEsEditable && $request->has('codigo') && $request->codigo !== $producto->codigo) {
+            $error = 'No puedes cambiar el código de barras de un producto con ventas registradas.';
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $error,
+                    'errors' => ['codigo' => [$error]]
+                ], 422);
+            }
+
+            return back()
+                ->withErrors(['codigo' => $error])
+                ->withInput();
         }
 
         DB::beginTransaction();
 
         try{
 
-            // Verificar si el código cambió
+            // detectar si el codigo cambio
             if ($codigoEsEditable && isset($validated['codigo']) && $validated['codigo'] !== $producto->codigo) {
                 $codigoCambio = true;
+
+                Log::info('Cambio de código de barras detectado', [
+                    'producto_id' => $producto->id,
+                    'codigo_anterior' => $producto->codigo,
+                    'codigo_nuevo' => $validated['codigo']
+                ]);
             }
 
-            //Verificamos si la oferta sigue vigente
+            // verificar vigencia de oferta
             $enOferta = $request->boolean('en_oferta');
             $fechaFin = $validated['fecha_fin_oferta'] ?? null;
 
             if ($enOferta && $fechaFin) {
-                if (\Carbon\Carbon::parse($fechaFin)->isPast()) {
-                    // Si la fecha fin ya pasó, desactivar oferta
+                if (\Carbon\Carbon::parse($fechaFin)->isPast()) {// Si la fecha fin ya pasó, desactivar oferta
                     $enOferta = false;
+                    Log::info('Oferta desactivada automáticamente (fecha vencida)', [
+                        'producto_id' => $producto->id,
+                        'fecha_fin' => $fechaFin
+                    ]);
                 }
             }
 
-            // 🔹 Manejar fecha de caducidad
+            // procesar fecha de caducidad
             $requiereCaducidad = $request->boolean('requiere_fecha_caducidad');
             $fechaCaducidad = $validated['fecha_caducidad'] ?? null;
 
-            // Si se desactiva el control de caducidad, limpiar la fecha
+            // Si se desactiva el switch checkbox de caducidad, limpiar la fecha
             if (!$requiereCaducidad) {
                 $fechaCaducidad = null;
             }
 
             // Preparar datos para actualizar
             $updateData = [
-
-                'user_id' => Auth::id(),
+                'user_id'      => Auth::id(),
                 'categoria_id' => $validated['categoria_id'],
-                'unidad_id' => $validated['unidad_id'],
+                'unidad_id'    => $validated['unidad_id'],
                 'proveedor_id' => $validated['proveedor_id'],
                 'marca_id'     => $validated['marca_id'],
                 'nombre'       => $validated['nombre'],
-                'descripcion'  => $validated['descripcion'],
-                'activo'       => $validated['activo'],
+                'descripcion'  => $validated['descripcion'] ?? null,
 
-                //Campos de precios
-                'precio_venta' => $validated['precio_venta'] ?? 0,
+                // Estado
+                'activo' => $request->boolean('activo'),
 
-                // 🔹 Mayoreo
-                'permite_mayoreo'         => $request->boolean('permite_mayoreo'),
-                'precio_mayoreo'          => $validated['precio_mayoreo'] ?? null,
-                'cantidad_minima_mayoreo' => $validated['cantidad_minima_mayoreo'] ?? null,
+                // Precios
+                'precio_venta' => $validated['precio_venta'],
 
-                // 🔹 Oferta (con validación de vencimiento)
-                'en_oferta'          => $enOferta,
-                'precio_oferta'      => $validated['precio_oferta'] ?? null,
-                'fecha_inicio_oferta'=> $validated['fecha_inicio_oferta'] ?? null,
-                'fecha_fin_oferta'   => $fechaFin,
+                // Mayoreo (limpiar si no está habilitado)
+                'permite_mayoreo' => $request->boolean('permite_mayoreo'),
+                'precio_mayoreo' => $request->boolean('permite_mayoreo')
+                    ? ($validated['precio_mayoreo'] ?? 0)
+                    : 0,
+                'cantidad_minima_mayoreo' => $request->boolean('permite_mayoreo')
+                    ? ($validated['cantidad_minima_mayoreo'] ?? 0)
+                    : 0,
 
-                // 🔹 Caducidad
+                // Ofertas (limpiar si no está habilitado)
+                'en_oferta' => $enOferta,
+                'precio_oferta' => $enOferta
+                    ? ($validated['precio_oferta'] ?? 0)
+                    : 0,
+                'fecha_inicio_oferta' => $enOferta
+                    ? ($validated['fecha_inicio_oferta'] ?? null)
+                    : null,
+                'fecha_fin_oferta' => $enOferta
+                    ? $fechaFin
+                    : null,
+
+                // Caducidad
                 'requiere_fecha_caducidad' => $requiereCaducidad,
-                'fecha_caducidad'          => $fechaCaducidad,
+                'fecha_caducidad' => $fechaCaducidad,
             ];
 
-            // Solo incluir código si es editable
+            // Incluir código solo si es editable
             if ($codigoEsEditable && isset($validated['codigo'])) {
                 $updateData['codigo'] = $validated['codigo'];
             }
 
-            // Actualizar el producto
+            // Actualizar producto
             $producto->update($updateData);
 
-
-            // Si cambió el código, regenerar el código de barras
+            // regenerar codigo de barras si cambio
             if ($codigoCambio) {
-                $this->regenerarCodigoBarras($producto);
+                try {
+                    $this->regenerarCodigoBarras($producto);
+                } catch (Exception $barcodeError) {
+                    Log::error('Error al regenerar código de barras', [
+                        'producto_id' => $producto->id,
+                        'error' => $barcodeError->getMessage()
+                    ]);
+                    // No detener el proceso, solo log
+                }
             }
 
-            // Si se sube una nueva imagen, puedes opcionalmente eliminar la anterior
+            // manejar eliminacion de imagen
+            if ($request->has('eliminar_imagen') && $request->eliminar_imagen == '1') {
+                try {
+                    $this->eliminarImagen($producto->id);
+                } catch (Exception $deleteError) {
+                    Log::warning('No se pudo eliminar imagen', [
+                        'producto_id' => $producto->id,
+                        'error' => $deleteError->getMessage()
+                    ]);
+                }
+            }
+
+            // subir nueva imagen si existe
             if ($request->hasFile('imagen')) {
-                $this->subir_imagen($request, $producto->id);
+                try {
+                    $this->subir_imagen($request, $producto->id);
+                } catch (Exception $imageError) {
+                    Log::warning('Error al subir nueva imagen', [
+                        'producto_id' => $producto->id,
+                        'error' => $imageError->getMessage()
+                    ]);
+                    // Continuar aunque falle la imagen
+                }
             }
 
             DB::commit();
 
-            $mensaje = $codigoCambio ?
-                'Producto actualizado exitosamente! Se ha generado un nuevo código de barras.' :
-                'Producto actualizado exitosamente!';
+            // preparar mensaje de exito
+            $mensaje = $codigoCambio
+                ? 'Producto actualizado exitosamente. Se ha generado un nuevo código de barras.'
+                : 'Producto actualizado exitosamente.';
 
-            // Respuesta para AJAX
+
+            //respuesta segun tipo de request AJAX
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
                     'message' => $mensaje,
                     'data' => [
-                        'producto' => $producto->load(['categoria', 'proveedor', 'marca', 'imagen']),
+                        'producto' => $producto->load(['categoria', 'unidad', 'proveedor', 'marca', 'imagen']),
                         'codigo_cambio' => $codigoCambio
                     ]
-                ], 200);
+                ]);
             }
 
-            // Respuesta para formulario tradicional
             return redirect()->route('producto.index')->with('success', $mensaje);
 
         }catch(Exception $e){
-
             DB::rollBack();
-            Log::error('Error al Actualizar el producto: ' . $e->getMessage());
 
-            // Respuesta para AJAX
+            Log::error('Error al actualizar producto', [
+                'producto_id' => $producto->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
@@ -1307,8 +1521,10 @@ class ProductoController extends Controller
                 ], 500);
             }
 
-            // Respuesta para formulario tradicional
-            return redirect()->route('producto.index')->with('error', 'Error al Actualizar el producto!.' . $e->getMessage());
+
+            return back()
+                ->withErrors(['error' => 'Error al actualizar el producto.'])
+                ->withInput();
 
         }
     }
@@ -1428,30 +1644,71 @@ class ProductoController extends Controller
 
 
     //Regenera el código de barras para un producto si se cambia y no tiene ventas asociada
-    private function regenerarCodigoBarras(Producto $producto){
+    private function regenerarCodigoBarras(Producto $producto): void {
         try {
-            // Eliminar el código de barras anterior si existe
-            if ($producto->barcode_path && file_exists(public_path($producto->barcode_path))) {
-                unlink(public_path($producto->barcode_path));
-                Log::info("Código de barras anterior eliminado: {$producto->barcode_path}");
+            // eliminar codigo de barras anterior
+            if ($producto->barcode_path) {
+                $rutaAnterior = public_path($producto->barcode_path);
+
+                if (file_exists($rutaAnterior)) {
+                    $eliminado = unlink($rutaAnterior);
+
+                    if ($eliminado) {
+                        Log::info('Código de barras anterior eliminado', [
+                            'producto_id' => $producto->id,
+                            'ruta' => $producto->barcode_path
+                        ]);
+                    } else {
+                        Log::warning('No se pudo eliminar código de barras anterior', [
+                            'producto_id' => $producto->id,
+                            'ruta' => $producto->barcode_path
+                        ]);
+                    }
+                }
             }
 
-            // Generar nuevo código de barras
+            // generar nuevo codigo de barras
             $nuevaRuta = $this->generarCodigoBarras($producto->codigo);
 
-            // Actualizar la ruta en la base de datos
-            $producto->update(['barcode_path' => $nuevaRuta]);
-
+            // actualizar ruta en la bd
             if ($nuevaRuta) {
-                Log::info("Código de barras regenerado exitosamente para producto ID: {$producto->id}");
+                $producto->update(['barcode_path' => $nuevaRuta]);
+
+                Log::info('Código de barras regenerado exitosamente', [
+                    'producto_id' => $producto->id,
+                    'codigo' => $producto->codigo,
+                    'nueva_ruta' => $nuevaRuta
+                ]);
             } else {
-                Log::warning("No se pudo regenerar el código de barras para producto ID: {$producto->id}");
+                // Si falla, establecer como null
+                $producto->update(['barcode_path' => null]);
+
+                Log::warning('No se pudo generar nuevo código de barras', [
+                    'producto_id' => $producto->id,
+                    'codigo' => $producto->codigo
+                ]);
             }
 
         } catch (Exception $e) {
-            Log::error("Error al regenerar código de barras para producto ID {$producto->id}: " . $e->getMessage());
-            // Establecer ruta como null si falla
-            $producto->update(['barcode_path' => null]);
+            Log::error('Error al regenerar código de barras', [
+                'producto_id' => $producto->id,
+                'codigo' => $producto->codigo,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Establecer barcode_path como null en caso de error
+            try {
+                $producto->update(['barcode_path' => null]);
+            } catch (Exception $updateError) {
+                Log::error('Error al actualizar barcode_path a null', [
+                    'producto_id' => $producto->id,
+                    'error' => $updateError->getMessage()
+                ]);
+            }
+
+            // Re-lanzar excepción para que el llamador pueda manejarla
+            throw $e;
         }
     }
 
