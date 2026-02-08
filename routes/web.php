@@ -19,6 +19,7 @@ use App\Http\Controllers\Web\PagoController;
 use App\Http\Controllers\Web\POSController;
 use App\Http\Controllers\Web\CajaController;
 use App\Http\Controllers\Web\CotizacionController;
+use App\Http\Controllers\Web\UnidadController;
 
 Route::get('/test-caducidad/{id}', function($id) {
     $producto = \App\Models\Producto::find($id);
@@ -124,6 +125,28 @@ Route::middleware(['auth'])->group(function() {
         Route::put('{categoria}', [CategoriaController::class, 'update'])->name('categoria.update')->middleware('permission:categorias.update');
         Route::delete('{categoria}', [CategoriaController::class, 'destroy'])->name('categoria.destroy')->middleware('permission:categorias.destroy');
         Route::post('/categoria/toggle-activo', [CategoriaController::class, 'toggleActivo'])->name('categoria.toggle-activo')->middleware('permission:categorias.toggle-activo');
+    });
+
+    // ============================================
+    // UNIDADES
+    // ============================================
+    Route::middleware(['auth'])->group(function () {
+
+        // Rutas RESTful estándar
+        Route::resource('unidades', UnidadController::class)->names([
+            'index' => 'unidad.index',
+            'store' => 'unidad.store',
+            'show' => 'unidad.show',
+            'update' => 'unidad.update',
+            'destroy' => 'unidad.destroy',
+        ]);
+
+        // Rutas adicionales
+        Route::post('unidades/{unidad}/toggle-estado', [UnidadController::class, 'toggleEstado'])
+            ->name('unidad.toggle-estado');
+
+        Route::get('unidades-select', [UnidadController::class, 'obtenerParaSelect'])
+            ->name('unidad.select');
     });
 
     // ============================================

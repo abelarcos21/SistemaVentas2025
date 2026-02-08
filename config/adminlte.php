@@ -406,6 +406,12 @@ return [
                     'icon' => 'fas fa-copyright',
                     'can' => 'marcas.index',
                 ],
+                [
+                    'text' => 'Unidades',
+                    'url' => 'unidades',
+                    'icon' => 'fas fa-ruler-combined',
+                    //'can' => 'unidades.index',
+                ],
             ],
         ],
 
