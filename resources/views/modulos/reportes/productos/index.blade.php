@@ -3,9 +3,8 @@
 @section('title', 'Reporte De Productos')
 
 @section('content_header')
-<section class="content-header">
     <div class="container-fluid">
-        <div class="row mb-2 align-items-center">
+        <div class="row align-items-center">
             <div class="col-md-6 col-12">
                 <h1 class="mb-0 ">
                     <i class="fas fa-chart-line"></i> Reporte De Productos
@@ -19,7 +18,6 @@
             </div>
         </div>
     </div>
-</section>
 @stop
 
 @section('content')

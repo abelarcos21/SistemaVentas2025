@@ -3,9 +3,9 @@
 @section('title', 'Productos con Stock Bajo')
 
 @section('content_header')
-<section class="content-header">
+
     <div class="container-fluid">
-        <div class="row mb-2 align-items-center">
+        <div class="row align-items-center">
             <div class="col-12 col-md-6 text-center text-md-left mb-2 mb-md-0">
                 <h1 class="h4 mb-0">
                     <i class="fas fa-exclamation-triangle"></i> Falta Stock
@@ -20,7 +20,7 @@
             </div>
         </div>
     </div>
-</section>
+
 @stop
 
 @section('content')

@@ -4,22 +4,20 @@
 
 @section('content_header')
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1><i class="fas fa-receipt"></i> Ventas | Detalle De La Venta</h1>
-                </div>
-                <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="#" class="text-primary">Inicio</a></li>
-                        <li class="breadcrumb-item"><a href="{{ route('detalleventas.index') }}" class="text-primary">Ventas</a></li>
-                        <li class="breadcrumb-item active">Detalle</li>
-                    </ol>
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <h1><i class="fas fa-receipt"></i> Detalle De Venta</h1>
             </div>
-        </div><!-- /.container-fluid -->
-    </section>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#" class="text-primary">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('detalleventas.index') }}" class="text-primary">Ventas</a></li>
+                    <li class="breadcrumb-item active">Detalle</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
 @stop
 
 @section('content')
@@ -56,13 +54,17 @@
                                 </div>
                             </div>
                             <div class="row mt-3">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <strong>Fecha de Venta:</strong><br>
                                     {{ $venta->created_at->format('d/m/Y h:i a') }}
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <strong>Última Actualización:</strong><br>
                                     {{ $venta->updated_at->format('d/m/Y h:i a') }}
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Cliente:</strong><br>
+                                    {{ $venta->cliente->nombre }}
                                 </div>
                             </div>
                         </div>

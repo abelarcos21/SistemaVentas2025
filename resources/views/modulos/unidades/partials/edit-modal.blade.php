@@ -1,5 +1,5 @@
 {{-- resources/views/unidades/partials/edit-modal.blade.php --}}
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
@@ -11,7 +11,7 @@
                 </button>
             </div>
 
-            <form id="editUnidadForm">
+            <form id="editUnidadForm" action="{{ route('unidad.update', $unidad->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="unidad_id" id="edit_unidad_id">
@@ -28,6 +28,7 @@
                                        name="nombre"
                                        id="edit_nombre"
                                        class="form-control"
+                                       value="{{ old('nombre', $unidad->nombre) }}"
                                        required>
                                 <div class="invalid-feedback" id="error-edit-nombre"></div>
                             </div>
@@ -44,6 +45,7 @@
                                        id="edit_abreviatura"
                                        class="form-control text-uppercase"
                                        maxlength="10"
+                                       value="{{ old('nombre', $unidad->abreviatura) }}"
                                        required>
                                 <div class="invalid-feedback" id="error-edit-abreviatura"></div>
                             </div>
@@ -59,6 +61,7 @@
                                        name="codigo_sat"
                                        id="edit_codigo_sat"
                                        class="form-control text-uppercase"
+                                       value="{{ old('codigo_sat', $unidad->codigo_sat) }}"
                                        maxlength="10">
                                 <div class="invalid-feedback" id="error-edit-codigo_sat"></div>
                             </div>
@@ -126,6 +129,7 @@
                                                name="factor_conversion"
                                                id="edit_factor_conversion"
                                                class="form-control"
+                                               value="{{ old('factor_conversion', $unidad->factor_conversion) }}"
                                                step="0.000001">
                                     </div>
                                 </div>
@@ -135,6 +139,7 @@
                                         <input type="text"
                                                name="unidad_base"
                                                id="edit_unidad_base"
+                                               value="{{ old('unidad_base', $unidad->unidad_base) }}"
                                                class="form-control">
                                     </div>
                                 </div>
@@ -151,7 +156,7 @@
                                           id="edit_descripcion"
                                           class="form-control"
                                           rows="2"
-                                          maxlength="500"></textarea>
+                                          maxlength="500">{{ old('descripcion', $unidad->descripcion) }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -221,7 +226,8 @@ $(document).ready(function() {
             .html('<i class="fas fa-spinner fa-spin"></i> Actualizando...');
 
         $.ajax({
-            url: `/unidades/${unidadId}`,
+            //url: `/unidades/${unidadId}`,
+            url: $(this).attr('action'),
             method: 'POST',
             data: formData,
             success: function(response) {

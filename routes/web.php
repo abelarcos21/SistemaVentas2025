@@ -130,23 +130,23 @@ Route::middleware(['auth'])->group(function() {
     // ============================================
     // UNIDADES
     // ============================================
-    Route::middleware(['auth'])->group(function () {
-
-        // Rutas RESTful estándar
-        Route::resource('unidades', UnidadController::class)->names([
-            'index' => 'unidad.index',
-            'store' => 'unidad.store',
-            'show' => 'unidad.show',
-            'update' => 'unidad.update',
-            'destroy' => 'unidad.destroy',
-        ]);
+    Route::prefix('unidades')->group(function(){
+        Route::get('/', [UnidadController::class, 'index'])->name('unidad.index');
+        Route::post('store', [UnidadController::class, 'store'])->name('unidad.store');
+        Route::get('{unidad}/show', [UnidadController::class, 'show'])->name('unidad.show');
+        Route::put('{unidad}', [UnidadController::class, 'update'])->name('unidad.update');
+        Route::delete('{unidad}', [UnidadController::class, 'destroy'])->name('unidad.destroy');
 
         // Rutas adicionales
-        Route::post('unidades/{unidad}/toggle-estado', [UnidadController::class, 'toggleEstado'])
-            ->name('unidad.toggle-estado');
+        Route::post('unidades/{unidad}/toggle-estado', [UnidadController::class, 'toggleEstado'])->name('unidad.toggle-estado');
 
-        Route::get('unidades-select', [UnidadController::class, 'obtenerParaSelect'])
-            ->name('unidad.select');
+        Route::get('unidades-select', [UnidadController::class, 'obtenerParaSelect'])->name('unidad.select');
+
+        // Rutas para modales
+        Route::get('/{id}/edit-modal', [UnidadController::class, 'editModal'])->name('unidad.edit.modal');
+        Route::get('/create-modal', [UnidadController::class, 'createModal'])->name('unidad.create.modal');
+        Route::get('/{id}/delete-modal', [UnidadController::class, 'deleteModal'])->name('unidad.delete.modal');
+
     });
 
     // ============================================
