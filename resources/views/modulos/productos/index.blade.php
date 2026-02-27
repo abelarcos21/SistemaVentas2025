@@ -299,7 +299,7 @@
                 }
 
                 $.ajax({
-                    url: `{{ route('compra.create.modal', ':id') }}`.replace(':id', productId),
+                    url: `{{ route('compras.create.modal', ':id') }}`.replace(':id', productId),
                     method: 'GET',
                     beforeSend: function() {
                         // Mostrar loading (igual que tu modal de edición)
@@ -701,7 +701,7 @@
 
             // Enviar petición AJAX
             $.ajax({
-                url: '{{ route("compra.store") }}',
+                url: '{{ route("compras.store") }}',
                 method: 'POST',
                 data: formData,
                 dataType: 'json'

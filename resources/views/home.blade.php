@@ -40,7 +40,7 @@
                     <span class="info-box-icon d-none d-md-flex"><i class="fas fa-dollar-sign"></i></span>
 
                     <div class="info-box-content text-center text-md-left"> <span class="info-box-text">Ventas</span>
-                        <h3 class="info-box-number font-weight-bold">${{ number_format($totalVentas, 2) }}</h3>
+                        <h3 class="info-box-number font-weight-bold">{{ number_format($totalVentas, 2) }}</h3>
                     </div>
                 </div>
             </div>
@@ -156,9 +156,13 @@
             <div class="col-12 col-xl-6">
                 <div class="card card-outline card-primary shadow-sm">
                     <div class="card-header border-0">
-                        <h3 class="card-title font-weight-bold"><i class="fas fa-truck-loading mr-2"></i>Compras recientes</h3>
+                        <h3 class="card-title font-weight-bold">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>Compras Recientes
+                        </h3>
                         <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -166,22 +170,60 @@
                             <table class="table table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Producto</th>
-                                        <th class="d-none d-sm-table-cell text-center">Cant.</th>
-                                        <th>Inversión</th>
+                                        <th>Proveedor</th>
+                                        <th>Nro. Factura</th>
+                                        <th class="d-none d-sm-table-cell text-center">Estado</th>
+                                        <th>Total</th>
                                         <th class="d-none d-md-table-cell">Fecha</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($comprasRecientes as $item)
+                                    @forelse($comprasRecientes as $compra)
                                         <tr>
-                                            <td class="text-truncate" style="max-width: 150px;">{{ $item->producto->nombre }}</td>
-                                            <td class="d-none d-sm-table-cell text-center"><span class="badge bg-light border">{{ $item->cantidad }}</span></td>
-                                            <td class="font-weight-bold text-success">${{ number_format($item->precio_compra * $item->cantidad, 2) }}</td>
-                                            <td class="d-none d-md-table-cell small">{{ $item->created_at->format('d/m/y') }}</td>
+                                            <td class="text-truncate" style="max-width: 150px;">
+                                                {{-- Accedemos al proveedor con validación null --}}
+                                                <span class="font-weight-bold">
+                                                    {{ $compra->proveedor->nombre_empresa ?? $compra->proveedor->nombre ?? 'Proveedor General' }}
+                                                </span>
+                                            </td>
+
+                                            <td>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-hashtag"></i> {{ $compra->numero_factura ?? 'S/N' }}
+                                                </small>
+                                            </td>
+
+                                            <td class="d-none d-sm-table-cell text-center align-middle">
+                                                {{-- Lógica para colores del estado --}}
+                                                @php
+                                                    $badgeColor = match($compra->estado) {
+                                                        'completada' => 'success',
+                                                        'pendiente' => 'warning',
+                                                        'cancelada' => 'danger',
+                                                        default => 'secondary'
+                                                    };
+                                                @endphp
+                                                <span class="badge badge-{{ $badgeColor }}">
+                                                    {{ ucfirst($compra->estado) }}
+                                                </span>
+                                            </td>
+
+                                            <td class="align-middle font-weight-bold text-success">
+                                                {{-- Usamos el campo total directo de la tabla compras --}}
+                                                ${{ number_format($compra->total, 2) }}
+                                            </td>
+
+                                            <td class="d-none d-md-table-cell small align-middle">
+                                                {{-- Usamos fecha_compra o created_at --}}
+                                                {{ \Carbon\Carbon::parse($compra->fecha_compra)->format('d/m/y') }}
+                                            </td>
                                         </tr>
                                     @empty
-                                        <tr><td colspan="4" class="text-center py-4 text-muted">No hay compras registradas</td></tr>
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4 text-muted">
+                                                No hay compras registradas
+                                            </td>
+                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -189,6 +231,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         {{-- GRÁFICA SEMANAL - AJUSTADA A MÓVIL --}}

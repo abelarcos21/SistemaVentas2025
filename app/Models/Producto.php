@@ -28,6 +28,7 @@ class Producto extends Model
         'descripcion',
         'precio_compra',
         'cantidad',
+        'stock_minimo',
         'precio_venta',
         'activo',
 
@@ -63,6 +64,15 @@ class Producto extends Model
         'fecha_fin_oferta' => 'date',
         'fecha_caducidad' => 'date',
     ];
+
+    public function proveedorHabitual(){
+        return $this->belongsTo(Proveedor::class, 'proveedor_id');
+    }
+
+    public function ultimaCompra(){
+        return $this->hasOne(DetalleCompra::class)
+            ->latestOfMany('created_at');
+    }
 
     //Accesor para obtener el precio vigente
     public function getPrecioVigenteAttribute(){
@@ -123,7 +133,7 @@ class Producto extends Model
      * Verifica si el producto tiene Compras registradas
      */
     public function tieneCompras(){
-        return $this->compras()->exists();
+        return $this->detalleCompras()->exists();
     }
 
     /**
@@ -270,6 +280,13 @@ class Producto extends Model
     }
 
     /**
+     * Relación con detalle de compras
+     */
+    public function detalleCompras(){
+        return $this->hasMany(DetalleCompra::class, 'producto_id');
+    }
+
+    /**
      * Verifica si el código de barras se puede editar
      */
     public function codigoEsEditable(){
@@ -277,11 +294,6 @@ class Producto extends Model
     }
 
     // Relaciones
-
-    public function compras(){
-        return $this->hasMany(Compra::class, 'producto_id');
-    }
-
     public function usuario() {
         return $this->belongsTo(User::class, 'user_id');
     }

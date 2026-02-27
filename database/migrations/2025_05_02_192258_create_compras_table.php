@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('producto_id')->constrained('productos');
-            $table->integer('cantidad');
-            $table->float('precio_compra');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('proveedor_id')->nullable()->constrained('proveedores')->onDelete('set null');
+            $table->string('numero_factura')->unique()->nullable();
+            $table->date('fecha_compra');
+            $table->decimal('subtotal', 10, 2)->default(0);
+            $table->decimal('impuesto', 10, 2)->default(0);
+            $table->decimal('total', 10, 2)->default(0);
+            $table->enum('estado', ['pendiente', 'completada', 'cancelada'])->default('pendiente');
+            $table->text('observaciones')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

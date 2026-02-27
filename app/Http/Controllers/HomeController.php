@@ -40,22 +40,30 @@ class HomeController extends Controller
         $cantidadProductos = Producto::count();
         $cantidadProveedores = Proveedor::count();
         $cantidadCategorias = Categoria::count();
+        // Alerta de Stock
         $productosBajoStock = Producto::where('cantidad', '<', 5)->get();
+
+        // Listados recientes
         $ventasRecientes = Venta::orderBy('created_at','desc')->take(5)->get();
-        $comprasRecientes = Compra::orderBy('created_at', 'desc')->take(5)->get();
+        // Compras Recientes
+        // Usamos 'with' para traer el nombre del proveedor y ordenamos por fecha_compra
+        $comprasRecientes = Compra::with('proveedor')
+            ->orderBy('fecha_compra', 'desc')
+            ->take(5)
+            ->get();
 
         // Productos próximos a vencer (30 días)
         $productosProximosVencer = Producto::proximosAVencer(30)
             ->with(['categoria', 'marca'])
             ->orderBy('fecha_caducidad', 'asc')
             ->get();
-        
+
         // Productos vencidos
         $productosVencidos = Producto::vencidos()
             ->with(['categoria', 'marca'])
             ->orderBy('fecha_caducidad', 'asc')
             ->get();
-        
+
         // Estadísticas de caducidad
         $estadisticasCaducidad = [
             'proximos_7_dias' => Producto::proximosAVencer(7)->count(),
@@ -64,30 +72,29 @@ class HomeController extends Controller
             'vencidos' => Producto::vencidos()->count(),
         ];
 
-        // DATOS PARA LA GRÁFICA
+        // DATOS PARA LA GRÁFICA (Últimos 7 días)
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
 
         // Ventas por día
         $ventas = DB::table('ventas')
-            ->join('detalle_venta', 'ventas.id', '=', 'detalle_venta.venta_id')
             ->select(
-                DB::raw('DATE(ventas.created_at) as fecha'),
-                DB::raw('SUM(detalle_venta.sub_total) as total')
+                DB::raw('DATE(created_at) as fecha'),
+                DB::raw('SUM(total_venta) as total') // Asumiendo que existe esta columna
             )
-            ->where('ventas.estado', 'completada')
-            ->whereBetween('ventas.created_at', [$startDate, $endDate])
+            ->where('estado', 'completada')
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('fecha')
             ->pluck('total', 'fecha')
             ->toArray();
 
         // Compras por día
-        $compras = DB::table('compras')
-            ->select(
-                DB::raw('DATE(compras.created_at) as fecha'),
-                DB::raw('SUM(compras.cantidad * compras.precio_compra) as total')
+        $compras = Compra::select(
+                DB::raw('DATE(fecha_compra) as fecha'),
+                DB::raw('SUM(total) as total')
             )
-            ->whereBetween('compras.created_at', [$startDate, $endDate])
+            ->where('estado', '!=', 'cancelada') //ignorar las canceladas
+            ->whereBetween('fecha_compra', [$startDate, $endDate])
             ->groupBy('fecha')
             ->pluck('total', 'fecha')
             ->toArray();
@@ -97,8 +104,10 @@ class HomeController extends Controller
         $dataVentas = [];
         $dataCompras = [];
 
+        // Formato de fechas para coincidir con SQL (Y-m-d)
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i);
+            // Etiqueta visual para el eje X (Ej: "Lun 12")
             $diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
             $dias[] = $diasSemana[$date->dayOfWeek] . ' ' . $date->day;
             $key = $date->format('Y-m-d');

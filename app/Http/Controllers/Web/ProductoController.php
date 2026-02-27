@@ -133,7 +133,7 @@ class ProductoController extends Controller
         return DataTables::of($productos)
             /* ->addIndexColumn() */
             ->addColumn('boton_compra', function ($producto) {
-                if ($producto->cantidad == 0) {
+               /*  if ($producto->cantidad == 0) {
                     return '<button type="button" class="btn btn-success btn-sm mr-1 btn-compra d-flex align-items-center"
                                 data-id="'.$producto->id.'">
                                 <i class="fas fa-shopping-cart mr-1"></i> 1.ª Compra
@@ -143,7 +143,14 @@ class ProductoController extends Controller
                                 data-id="'.$producto->id.'">
                                 <i class="fas fa-plus mr-1"></i> Reabastecer
                             </button>';
-                }
+                } */
+
+                $btn = '<button class="btn btn-primary btn-sm"
+                            onclick="window.location=\''.route('compras.create', ['producto' => $producto->id]).'\'">
+                            <i class="fas fa-plus"></i> Reabastecer
+                        </button>';
+                return $btn;
+
             })
             ->addColumn('imagen', function($producto){
                 $ruta = $producto->imagen && $producto->imagen->ruta

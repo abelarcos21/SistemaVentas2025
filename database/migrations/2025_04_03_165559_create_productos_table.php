@@ -58,6 +58,7 @@ return new class extends Migration
             $table->string('nombre', 255)->comment('Nombre comercial del producto');;
             $table->text('descripcion')->nullable()->comment('Descripción detallada, ingredientes, características');
             $table->integer('cantidad')->default(0)->unsigned()->comment('Stock actual en inventario');
+            $table->integer('stock_minimo')->default(0);
             $table->decimal('precio_compra', 10, 2)->default(0.00)->unsigned()->comment('Precio de compra/costo unitario');
             $table->decimal('precio_venta', 10, 2)->default(0.00)->unsigned()->comment('Precio de venta al público');
             $table->boolean('activo')->default(true) ->comment('Producto activo para venta');
@@ -118,7 +119,7 @@ return new class extends Migration
 
             //Índice para productos con stock bajo
             // (útil para alertas de inventario)
-            $table->index(['cantidad', 'activo'], 'idx_productos_stock_bajo');
+            $table->index(['cantidad', 'stock_minimo', 'activo'], 'idx_productos_stock_bajo');
 
         });
 

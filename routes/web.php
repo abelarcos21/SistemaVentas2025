@@ -292,14 +292,21 @@ Route::middleware(['auth'])->group(function() {
     // COMPRAS
     // ============================================
     Route::prefix('compras')->middleware(['permission:compras.index'])->group(function(){
-        Route::get('/', [ComprasController::class, 'index'])->name('compra.index');
-        Route::get('create/{producto}', [ComprasController::class, 'create'])->name('compra.create')->middleware('permission:compras.create');
-        Route::post('store', [ComprasController::class, 'store'])->name('compra.store')->middleware('permission:compras.store');
-        Route::get('{compra}/edit', [ComprasController::class, 'edit'])->name('compra.edit')->middleware('permission:compras.edit');
-        Route::get('{compra}/show', [ComprasController::class, 'show'])->name('compra.show')->middleware('permission:compras.show');
-        Route::put('{compra}', [ComprasController::class, 'update'])->name('compra.update')->middleware('permission:compras.update');
-        Route::delete('{compra}', [ComprasController::class, 'destroy'])->name('compra.destroy')->middleware('permission:compras.destroy');
-        Route::get('/compra/modal/{id}', [ComprasController::class, 'createModal'])->name('compra.create.modal')->middleware('permission:compras.create');
+        Route::get('/', [ComprasController::class, 'index'])->name('compras.index');
+        Route::get('/create', [ComprasController::class, 'create'])->name('compras.create')->middleware('permission:compras.create');
+        Route::post('store', [ComprasController::class, 'store'])->name('compras.store')->middleware('permission:compras.store');
+
+        Route::get('{compra}/edit', [ComprasController::class, 'edit'])->name('compras.edit')->middleware('permission:compras.edit');
+        Route::get('{compra}/show', [ComprasController::class, 'show'])->name('compras.show')->middleware('permission:compras.show');
+        Route::put('{compra}', [ComprasController::class, 'update'])->name('compras.update')->middleware('permission:compras.update');
+
+        Route::delete('{compra}/cancelar', [ComprasController::class, 'cancelar'])->name('compras.cancelar')->middleware('permission:compras.destroy');
+        Route::get('/compra/modal/{id}', [ComprasController::class, 'createModal'])->name('compras.create.modal')->middleware('permission:compras.create');
+
+        Route::post('/{compra}/completar', [ComprasController::class, 'completar'])->name('compras.completar');
+        Route::get('/{compra}/pdf', [ComprasController::class, 'generarPDF'])->name('compras.pdf');
+        Route::get('/{compra}/pdf/preview', [ComprasController::class, 'previewPDF'])->name('compras.pdf.preview');
+
     });
 
 });

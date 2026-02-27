@@ -1,150 +1,290 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Detalle de Compra')
 
 @section('content_header')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <div class="container-fluid">
-          <div class="row mb-2">
-            <div class="col-sm-6">
-              <h1> <i class="fas fa-store"></i> Compras | Datos De La Compra</h1>
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-right">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">DataTables</li>
-              </ol>
-            </div>
-          </div>
-        </div><!-- /.container-fluid -->
-    </section>
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1 class="mb-0">
+            <i class="fas fa-file-invoice"></i>
+            Compra #{{ $compra->id }}
+        </h1>
+        <small class="text-muted">
+            Registrada el {{ $compra->created_at->format('d/m/Y h:i A') }}
+        </small>
+    </div>
+
+    <div>
+        <span class="badge rounded-pill px-4 py-2 fs-6
+            bg-{{ $compra->estado === 'completada' ? 'success' :
+                  ($compra->estado === 'cancelada' ? 'danger' : 'warning') }}">
+            {{ strtoupper($compra->estado) }}
+        </span>
+    </div>
+</div>
 @stop
 
 @section('content')
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-gradient-primary text-right">
-                    <h3 class="card-title"><i class="fas fa-shopping-cart"></i> Detalle de la Compra #{{ $compra->id }}</h3>
-                    <a href="{{ route('compra.index') }}" class="btn btn-light text-primary btn-sm">
-                        <i class="fas fa-arrow-left"></i>
-                        Volver
-                    </a>
-                </div>
-              <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead class="bg-gradient-info">
-                            <tr>
-                            <th>Registrado por</th>
-                            <th>Producto</th>
-                            <th>Stock Actual</th>
-                            <th>Cantidad Comprada</th>
-                            <th>Precio Unitario</th>
-                            <th>Total de la Operación</th>
-                            <th>Fecha y Hora</th>
 
-                            </tr>
+<div class="container-fluid">
+
+    {{-- ALERTAS --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
+    {{-- ALERTA ESTADO --}}
+    @if($compra->estado === 'pendiente')
+        <div class="alert alert-light" role="alert">
+            <i class="fas fa-clock"></i>
+            Esta compra aún no ha sido completada y no impacta inventario.
+        </div>
+    @endif
+
+    <div class="row">
+
+        {{-- COLUMNA PRINCIPAL --}}
+        <div class="col-lg-8">
+
+            {{-- INFORMACIÓN GENERAL --}}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <strong>Información General</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row gy-3">
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Proveedor</small>
+                            <div class="fw-bold">
+                                {{ $compra->proveedor->nombre ?? 'No especificado' }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Factura</small>
+                            <div class="fw-bold">
+                                {{ $compra->numero_factura ?? 'N/A' }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Fecha de Compra</small>
+                            <div class="fw-bold">
+                                {{ $compra->fecha_compra->format('d/m/Y') }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <small class="text-muted">Registrado por</small>
+                            <div class="fw-bold">
+                                {{ $compra->user->name }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    @if($compra->observaciones)
+                        <hr>
+                        <small class="text-muted">Observaciones</small>
+                        <div>
+                            {{ $compra->observaciones }}
+                        </div>
+                    @endif
+
+                </div>
+            </div>
+
+            {{-- PRODUCTOS --}}
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <strong>Productos</strong>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th width="50">#</th>
+                                    <th>Producto</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-end">Precio Unit.</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
                             </thead>
                             <tbody>
-
+                                @foreach($compra->detalles as $detalle)
                                 <tr>
-                                    <td><span class="badge badge-secondary">{{ $compra->user->name }}</span></td>
-                                    <td style="width: 20%">{{$compra->producto->nombre}}</td>
-                                    <td><span class="badge bg-primary">{{ $compra->producto->cantidad }}</span></td>
-                                    <td><span class="badge bg-success">{{ $compra->cantidad }} unidades</span></td>
-                                    <td class="text-success font-weight-bold">${{ number_format($compra->precio_compra, 2) }}</td>
-                                    <td class="text-blue font-weight-bold" style="font-size: 1.2rem;">${{ number_format($total, 2) }}</td>
-                                    <td>{{$compra->created_at->format('d/m/Y h:i a')}}</td>
-                                </tr>
+                                    <td>{{ $loop->iteration }}</td>
 
-                            </tfoot>
+                                    <td>
+                                        <div class="fw-semibold">
+                                            {{ $detalle->producto->nombre }}
+                                        </div>
+                                        @if($detalle->producto->codigo)
+                                            <small class="text-muted">
+                                                Código: {{ $detalle->producto->codigo }}
+                                            </small>
+                                        @endif
+                                    </td>
+
+                                    <td class="text-center fw-bold">
+                                        {{ $detalle->cantidad }}
+                                    </td>
+
+                                    <td class="text-end">
+                                        ${{ number_format($detalle->precio_unitario, 2) }}
+                                    </td>
+
+                                    <td class="text-end fw-bold">
+                                        ${{ number_format($detalle->subtotal, 2) }}
+                                    </td>
+                                </tr>
+                                @endforeach
+                            </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- COLUMNA LATERAL --}}
+        <div class="col-lg-4">
+
+            {{-- RESUMEN --}}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <strong>Resumen Financiero</strong>
+                </div>
+                <div class="card-body bg-light">
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Subtotal</span>
+                        <strong>${{ number_format($compra->subtotal, 2) }}</strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Impuesto</span>
+                        <strong>${{ number_format($compra->impuesto, 2) }}</strong>
+                    </div>
+
                     <hr>
-                    <a href="{{ route('compra.edit', $compra->id) }}" class="btn btn-primary btn-sm">
-                        <i class="fas fa-edit"></i> Editar Compra
+
+                    <div class="d-flex justify-content-between">
+                        <h5>Total</h5>
+                        <h4 class="text-success">
+                            ${{ number_format($compra->total, 2) }}
+                        </h4>
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- ESTADÍSTICAS --}}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <strong>Estadísticas</strong>
+                </div>
+                <div class="card-body">
+
+                    <div class="mb-3">
+                        <small class="text-muted">Productos diferentes</small>
+                        <h5 class="mb-0">{{ $compra->detalles->count() }}</h5>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted">Total de unidades</small>
+                        <h5 class="mb-0">{{ $compra->detalles->sum('cantidad') }}</h5>
+                    </div>
+
+                    <div>
+                        <small class="text-muted">Precio promedio</small>
+                        <h5 class="mb-0">
+                            ${{ number_format($compra->detalles->avg('precio_unitario'), 2) }}
+                        </h5>
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- ACCIONES --}}
+            <div class="card shadow-sm no-print">
+                <div class="card-header bg-light">
+                    <strong>Acciones</strong>
+                </div>
+                <div class="card-body d-grid gap-2">
+
+                    @if($compra->isPendiente())
+                        <a href="{{ route('compras.edit', $compra) }}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+
+                        <form action="{{ route('compras.completar', $compra) }}" method="POST" class="d-inline"
+                            onsubmit="return confirm('¿Está seguro de completar esta compra?')">
+                            @csrf
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check"></i> Completar
+                            </button>
+                        </form>
+                        {{-- <form action="{{ route('compras.destroy', $compra) }}" method="POST" class="d-inline"
+                            onsubmit="return confirm('¿Está seguro de eliminar esta compra?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </form> --}}
+
+                    @endif
+
+                    <a href="{{ route('compras.pdf', $compra) }}" class="btn btn-outline-danger">
+                        <i class="fas fa-file-pdf"></i> Exportar PDF
                     </a>
-                    <a href="{{ route('compra.index') }}" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-times"></i> Cancelar
+
+                    <a href="{{ route('compras.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
                     </a>
 
                 </div>
-              <!-- /.card-body -->
             </div>
-            <!-- /.card -->
-          </div>
-          <!-- /.col -->
+
         </div>
-        <!-- /.row -->
-      </div>
-      <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
+    </div>
+</div>
+
+{{-- ESTILOS IMPRESIÓN --}}
+<style>
+@media print {
+
+    body {
+        font-size: 12px;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    table {
+        font-size: 11px;
+    }
+}
+</style>
 
 @stop
-
-@section('css')
-    {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-
-@stop
-
-@section('js')
-
-
-    <script>
-        @if(session('success'))
-            Swal.fire({
-                title: "Exito!",
-                text: "{{ session('success')}}",
-                icon: "success",
-                confirmButtonText: 'Aceptar'
-            });
-        @endif
-
-        @if(session('error'))
-            Swal.fire({
-                title: "Error!",
-                text: "{{ session('error')}}",
-                icon: "error",
-                confirmButtonText: 'Aceptar'
-            });
-        @endif
-    </script>
-
-    <script>
-
-       $(document).ready(function() {
-            $(document).on('submit', '.formulario-eliminar', function(e) {
-                e.preventDefault(); // Detenemos el submit normal
-                var form = this;
-
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: "¡Esta acción no se puede deshacer!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form.submit(); // Aquí vuelve a enviar
-                    }
-                });
-            });
-        });
-    </script>
-
-@stop
-
