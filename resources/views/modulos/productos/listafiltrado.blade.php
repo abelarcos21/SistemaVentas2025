@@ -31,8 +31,22 @@
                 <span class="badge-flotante bg-warning text-dark">Mayoreo</span>
             @endif
 
-            <a href="#" onclick="agregarProductoAlCarrito(this)" data-id="{{ $producto->id }}">
-                <img src="{{ $ruta }}" class="img-thumbnail rounded mx-auto d-block" style="object-fit: cover; width: 140px; height: 140px;">
+            <a href="javascript:void(0)" 
+                onclick="agregarProductoDesdeImagen(this)" 
+                class="d-block mb-2"
+                data-id="{{ $producto->id }}"
+                data-precio-base="{{ $producto->precio_venta }}"
+                data-en-oferta="{{ $producto->en_oferta ? 1 : 0 }}"
+                data-precio-oferta="{{ $producto->precio_oferta ?? 0 }}"
+                data-fecha-inicio="{{ $producto->fecha_inicio_oferta }}"
+                data-fecha-fin="{{ $producto->fecha_fin_oferta }}"
+                data-permite-mayoreo="{{ $producto->permite_mayoreo ? 1 : 0 }}"
+                data-precio-mayoreo="{{ $producto->precio_mayoreo ?? 0 }}"
+                data-cantidad-minima="{{ $producto->cantidad_minima_mayoreo ?? 0 }}"
+                data-stock="{{ $producto->cantidad }}">
+                
+                <img src="{{ $ruta }}" class="img-thumbnail rounded mx-auto d-block" 
+                    style="object-fit: cover; width: 140px; height: 140px;">
             </a>
 
             <div class="card-body p-2">
@@ -61,13 +75,13 @@
                         <button onclick="agregarProductoAlCarrito(this)"
                             data-id="{{ $producto->id }}"
                             data-precio-base="{{ $producto->precio_venta }}"
-                            data-en-oferta="{{ $producto->en_oferta }}"
-                            data-precio-oferta="{{ $producto->precio_oferta }}"
+                            data-en-oferta="{{ $producto->en_oferta ? 1 : 0 }}"
+                            data-precio-oferta="{{ $producto->precio_oferta ?? 0 }}"
                             data-fecha-inicio="{{ $producto->fecha_inicio_oferta }}"
                             data-fecha-fin="{{ $producto->fecha_fin_oferta }}"
-                            data-permite-mayoreo="{{ $producto->permite_mayoreo }}"
-                            data-precio-mayoreo="{{ $producto->precio_mayoreo }}"
-                            data-cantidad-minima="{{ $producto->cantidad_minima_mayoreo }}"
+                            data-permite-mayoreo="{{ $producto->permite_mayoreo ? 1 : 0 }}"
+                            data-precio-mayoreo="{{ $producto->precio_mayoreo ?? 0 }}"
+                            data-cantidad-minima="{{ $producto->cantidad_minima_mayoreo ?? 0 }}"
                             data-stock="{{ $producto->cantidad }}"
                             class="btn btn-primary btn-sm bg-gradient-primary rounded-pill px-3 py-1">
                             <i class="fas fa-cart-plus me-1"></i> Añadir

@@ -144,23 +144,6 @@
 
                     {{-- 1. CABECERA: Cliente y Datos Básicos --}}
                     <div class="p-2 border-bottom bg-light">
-                        {{-- <div class="form-group mb-1">
-                            <div class="input-group input-group-sm">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                </div>
-                                <select name="cliente_id" id="cliente_id" class="form-control" required>
-                                    <option value="1">Cliente General</option> {{-- Default común en POS --}}
-                                   {{--  @foreach($clientes as $cliente)
-                                        <option value="{{ $cliente->id }}">{{ $cliente->nombre }}</option>
-                                    @endforeach
-                                </select>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" title="Nuevo Cliente"><i class="fa fa-plus"></i></button>
-                                </div>
-                            </div>
-                        </div>  --}}
-
                         <div class="form-group">
                             <label>Cliente</label>
                             <div class="input-group">
@@ -986,14 +969,17 @@
 
     <script>
 
-        function agregarProductoDesdeImagen(button) {
+        function agregarProductoDesdeImagen(elemento) {
+            // Si el clic cayó en la <img>, buscamos el padre <a> que tiene los datos
+            let target = $(elemento).closest('[data-id]');
+
             // Reproducir sonido
             let audio = document.getElementById('sonidoCarrito');
             audio.currentTime = 0;
-            audio.play();
+            audio.play().catch(e => console.log("Error audio"));
 
-            // Reusar la lógica de agregar al carrito
-            agregarProductoAlCarrito(button);
+            // Reusar la lógica de agregar al carrito, Pasamos el "target" que estamos seguros que tiene los atributos
+            agregarProductoAlCarrito(target[0]);
         }
 
         /**
@@ -1107,6 +1093,15 @@
             // 2. Verificar mayoreo
             if (producto.permiteMayoreo && producto.precioMayoreo > 0 && cantidad >= producto.cantidadMinima) {
                 precioAplicado = producto.precioMayoreo;
+            }
+
+            // --- PUNTO DE CONTROL Y DEBUG ---
+            /* console.log("Datos capturados del HTML:", producto);
+            console.log("Precio final calculado en JS:", precioAplicado); */
+
+            if (isNaN(precioAplicado) || precioAplicado <= 0) {
+                Swal.fire('Error de Precio', 'No se detectó un precio válido. Revisa los datos del producto.', 'error');
+                return; // Detiene el AJAX si el precio es basura
             }
 
             // 3. Enviar al Backend

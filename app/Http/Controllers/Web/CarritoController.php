@@ -3,16 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller; // 👈 IMPORTANTE: esta línea importa la clase base
+use App\Http\Controllers\Controller; // IMPORTANTE: esta línea importa la clase base
 
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redirect;
-use App\Models\Venta;
 use App\Models\Producto;
-use App\Models\DetalleVenta;
-use App\Models\Pago;
-use Illuminate\Support\Facades\Auth;
 
 class CarritoController extends Controller
 {
@@ -49,7 +44,7 @@ class CarritoController extends Controller
             'carrito' => $carritoConInfo,
             'total' => $total,
         ]);
-    }
+    } 
 
     //metodo agregar actual
     public function agregar(Request $request, $id){
@@ -140,36 +135,24 @@ class CarritoController extends Controller
      */
     private function getPrecioAplicado($producto, $cantidad){
 
-        //Verificar si hay oferta vigente
-        if ($producto->en_oferta
-            && $producto->precio_oferta !== null
-            && $producto->fecha_fin_oferta
-            && $producto->fecha_fin_oferta >= now()->toDateString()
-        ) {
-            return [
-                'precio' => (float) $producto->precio_oferta,
-                'tipo'   => 'oferta'
-            ];
+        $hoy = now();
+    
+        // Caso 1: Oferta activa
+        if ($producto->en_oferta && $producto->precio_oferta > 0 && 
+            $hoy->between($producto->fecha_inicio_oferta, $producto->fecha_fin_oferta)) {
+            return ['precio' => $producto->precio_oferta, 'tipo' => 'oferta'];
         }
 
-        //Verificar mayoreo (si no aplica oferta)
-        if ($producto->precio_mayoreo !== null
-            && $producto->cantidad_minima_mayoreo !== null
-            && $cantidad >= $producto->cantidad_minima_mayoreo
-        ) {
-            return [
-                'precio' => (float) $producto->precio_mayoreo,
-                'tipo'   => 'mayoreo'
-            ];
+        // Caso 2: Mayoreo (si cumple la cantidad mínima)
+        if ($producto->permite_mayoreo && $producto->precio_mayoreo > 0 && 
+            $cantidad >= $producto->cantidad_minima_mayoreo) {
+            return ['precio' => $producto->precio_mayoreo, 'tipo' => 'mayoreo'];
         }
 
-        //Precio base (por defecto)
-        return [
-            'precio' => (float) $producto->precio_venta,
-            'tipo'   => 'base'
-        ];
+        // Caso 3: Precio base (validamos que no sea null o 0)
+        $precioBase = $producto->precio_venta ?? 0;
+        return ['precio' => $precioBase, 'tipo' => 'base'];
     }
-
 
     //Metodo Vaciar el Carrito
     public function borrar_carrito()
