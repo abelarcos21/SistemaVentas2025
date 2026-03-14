@@ -90,7 +90,7 @@
     <div id="modal-container"></div>{{-- mostar loading spinne --}}
 
     {{-- modal mostar detalles del producto --}}
-    <div class="modal fade" id="modalVerDetalles" tabindex="-1" role="dialog" aria-hidden="true">
+    {{-- <div class="modal fade" id="modalVerDetalles" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-gradient-info text-white">
@@ -162,7 +162,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Incluir modales --}}
    {{--  @include('modulos.unidades.partials.create-modal')
@@ -295,11 +295,11 @@
 
                 // Validar que el ID no sea undefined o null
                 if (!unidadId || unidadId === 'undefined') {
-                    console.error('ID del producto no válido:', unidadId);
+                    console.error('ID de la unidad no válida:', unidadId);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'ID del producto no válido.'
+                        text: 'ID de la unidad no válida.'
                     });
                     return;
                 }
@@ -328,7 +328,7 @@
 
                         let errorMessage = 'Error al cargar el formulario de edición.';
                         if (xhr.status === 404) {
-                            errorMessage = 'Producto no encontrado.';
+                            errorMessage = 'Unidad no encontrado.';
                         } else if (xhr.responseJSON && xhr.responseJSON.message) {
                             errorMessage = xhr.responseJSON.message;
                         }
@@ -342,83 +342,61 @@
                 });
             };
 
-            // Manejar click en botones de editar
+            // Manejar click en boton de editar
             $(document).on('click', '.btn-edit', function(e) {
                 e.preventDefault();
                 const unidadId = $(this).data('id');
-
-                // Debug: mostrar el ID que se está enviando
-                //console.log('ID del producto a editar:', productId);
-
+                
                 // Validar ID antes de enviar
                 if (!unidadId || unidadId === 'undefined') {
-                    console.error('ID del producto no válido en el botón:', unidadId);
+                    console.error('ID de la unidad no válido en el botón:', unidadId);
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'No se pudo obtener el ID del producto.'
+                        text: 'No se pudo obtener el ID de la unidad.'
                     });
                     return;
                 }
-
+                // Llamamos a la función
                 editUnidad(unidadId);
             });
 
+
+            // ========== MODAL DE DETALLES ==========
+            window.showUnidad = function(unidadId) {
+                if (!unidadId) return;
+
+                const url = `/unidades/${unidadId}/show`;
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    beforeSend: function() {
+                        $('#modal-container').html(`
+                            <div class="text-center p-5">
+                                <div class="spinner-border text-secondary"></div>
+                                <p class="mt-2">Cargando detalles...</p>
+                            </div>
+                        `);
+                    },
+                    success: function(html) {
+                        $('#modal-container').html(html);
+                        setTimeout(function() {
+                            $('#showModal').modal('show');
+                        }, 100);
+                    },
+                    error: function(xhr) {
+                        console.error('Status:', xhr.status);
+                        Swal.fire('Error', 'No se pudieron cargar los detalles.', 'error');
+                    }
+                });
+            };
+
+        $(document).off('click', '.btn-show').on('click', '.btn-show', function(e) {
+            e.preventDefault();
+            const unidadId = $(this).data('id');
+            showUnidad(unidadId);
         });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-
-            // Evento al hacer clic en el botón "Ver Detalles de producto"
-            $(document).on('click', '.btn-ver-detalles', function() {
-
-                // 1. Obtener los datos del botón
-                var btn = $(this);
-                var nombre = btn.data('nombre');
-                var codigo = btn.data('codigo');
-                var categoria = btn.data('categoria');
-                var unidad = btn.data('unidad');
-                var marca = btn.data('marca');
-                var proveedor = btn.data('proveedor');
-                var descripcion = btn.data('descripcion');
-                var stock = btn.data('stock');
-                var pventa = btn.data('pventa');
-                var pcompra = btn.data('pcompra');
-                var pmayoreo = btn.data('pmayoreo');
-                var poferta = btn.data('poferta');
-                var moneda = btn.data('moneda');
-                var fecha = btn.data('fechareg');
-
-
-                // 2. Asignar datos al Modal
-                $('#modal_nombre').text(nombre);
-                $('#modal_codigo').text(codigo);
-                $('#modal_categoria').text(categoria);
-                $('#modal_unidad').text(unidad);
-                $('#modal_marca').text(marca);
-                $('#modal_proveedor').text(proveedor);
-                $('#modal_descripcion').text(descripcion ? descripcion : 'Sin descripción detallada.');
-                $('#modal_fecha').text(fecha);
-
-
-                // Formato de precios
-                $('#modal_pventa').text(moneda + ' ' + pventa);
-                $('#modal_pcompra').text(moneda + ' ' + pcompra);
-                $('#modal_pmayoreo').text(pmayoreo !== 'N/A' ? moneda + ' ' + pmayoreo : 'No aplica');
-                $('#modal_poferta').text(poferta !== 'N/A' ? moneda + ' ' + poferta : 'No aplica');
-
-                // Lógica visual para el Stock
-                var stockClass = stock > 10 ? 'badge-success' : (stock > 0 ? 'badge-warning' : 'badge-danger');
-                var stockText = stock > 10 ? 'En Stock' : (stock > 0 ? 'Poco Stock' : 'Agotado');
-                $('#modal_stock_badge')
-                    .removeClass('badge-success badge-warning badge-danger badge-dark')
-                    .addClass(stockClass)
-                    .text(stockText + ' (' + stock + ')');
-
-                // 3. Mostrar el Modal
-                $('#modalVerDetalles').modal('show');
-            });
 
         });
     </script>
@@ -892,51 +870,6 @@
             // ==========================================
             $('#btnNuevaUnidad').click(function() {
                 $('#createModal').modal('show');
-            });
-
-            // ==========================================
-            // EDITAR
-            // ==========================================
-            $(document).on('click', '.btn-edit', function() {
-                const id = $(this).data('id');
-
-                // Cargar datos de la unidad
-                $.ajax({
-                    url: `/unidades/${id}`,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response.success) {
-                            const unidad = response.unidad;
-
-                            console.log(unidad);
-
-                            // Llenar formulario de edición
-                            $('#edit_unidad_id').val(unidad.id);
-                            $('#edit_nombre').val(unidad.nombre);
-                            $('#edit_abreviatura').val(unidad.abreviatura);
-                            $('#edit_codigo_sat').val(unidad.codigo_sat);
-                            $('#edit_tipo').val(unidad.tipo);
-                            $('#edit_factor_conversion').val(unidad.factor_conversion);
-                            $('#edit_unidad_base').val(unidad.unidad_base);
-                            $('#edit_permite_decimales').prop('checked', unidad.permite_decimales);
-                            $('#edit_activo').prop('checked', unidad.activo);
-                            $('#edit_descripcion').val(unidad.descripcion);
-
-                            // Actualizar título del modal
-                            $('#editModalLabel').text('Editar Unidad: ' + unidad.nombre);
-
-                            // Mostrar modal
-                            $('#editModal').modal('show');
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'No se pudo cargar la información de la unidad.'
-                        });
-                    }
-                });
             });
 
             // ==========================================

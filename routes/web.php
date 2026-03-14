@@ -131,22 +131,23 @@ Route::middleware(['auth'])->group(function() {
     // UNIDADES
     // ============================================
     Route::prefix('unidades')->group(function(){
+        // Rutas base
         Route::get('/', [UnidadController::class, 'index'])->name('unidad.index');
         Route::post('store', [UnidadController::class, 'store'])->name('unidad.store');
-        Route::get('{unidad}/show', [UnidadController::class, 'show'])->name('unidad.show');
+        
+        // Rutas con parámetro (ORDEN IMPORTANTE: las rutas fijas van antes que las variables)
+        Route::get('unidades-select', [UnidadController::class, 'obtenerParaSelect'])->name('unidad.select');
+        Route::get('create-modal', [UnidadController::class, 'createModal'])->name('unidad.create.modal');
+
+        // Rutas con ID
+        Route::get('/{id}/edit-modal', [UnidadController::class, 'editModal'])->name('unidad.edit.modal');
+        Route::get('/{unidad}/show', [UnidadController::class, 'showModal'])->name('unidad.show');
+        Route::get('/{unidad}/delete-modal', [UnidadController::class, 'deleteModal'])->name('unidad.delete.modal');
+        
+        // Acciones
         Route::put('{unidad}', [UnidadController::class, 'update'])->name('unidad.update');
         Route::delete('{unidad}', [UnidadController::class, 'destroy'])->name('unidad.destroy');
-
-        // Rutas adicionales
-        Route::post('unidades/{unidad}/toggle-estado', [UnidadController::class, 'toggleEstado'])->name('unidad.toggle-estado');
-
-        Route::get('unidades-select', [UnidadController::class, 'obtenerParaSelect'])->name('unidad.select');
-
-        // Rutas para modales
-        Route::get('/{id}/edit-modal', [UnidadController::class, 'editModal'])->name('unidad.edit.modal');
-        Route::get('/create-modal', [UnidadController::class, 'createModal'])->name('unidad.create.modal');
-        Route::get('/{id}/delete-modal', [UnidadController::class, 'deleteModal'])->name('unidad.delete.modal');
-
+        Route::post('{unidad}/toggle-estado', [UnidadController::class, 'toggleEstado'])->name('unidad.toggle-estado');
     });
 
     // ============================================

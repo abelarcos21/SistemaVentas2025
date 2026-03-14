@@ -1,5 +1,5 @@
 {{-- resources/views/unidades/partials/edit-modal.blade.php --}}
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="editModal"  role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
@@ -14,8 +14,6 @@
             <form id="editUnidadForm" action="{{ route('unidad.update', $unidad->id) }}" method="POST">
                 @csrf
                 @method('PUT')
-                <input type="hidden" name="unidad_id" id="edit_unidad_id">
-
                 <div class="modal-body">
                     <div class="row">
                         {{-- Nombre --}}
@@ -75,17 +73,13 @@
                                 <label class="font-weight-bold">
                                     Tipo de Unidad <span class="text-danger">*</span>
                                 </label>
-                                <select name="tipo"
-                                        id="edit_tipo"
-                                        class="form-control"
-                                        required>
+                                <select name="tipo" id="edit_tipo" class="form-control" required>
                                     <option value="">Seleccionar...</option>
-                                    <option value="peso">Peso</option>
-                                    <option value="volumen">Volumen</option>
-                                    <option value="longitud">Longitud</option>
-                                    <option value="pieza">Pieza</option>
-                                    <option value="tiempo">Tiempo</option>
-                                    <option value="otro">Otro</option>
+                                    @foreach(['peso', 'volumen', 'longitud', 'pieza', 'tiempo', 'otro'] as $tipo)
+                                        <option value="{{ $tipo }}" @selected(old('tipo', $unidad->tipo) == $tipo)>
+                                            {{ ucfirst($tipo) }}
+                                        </option>
+                                    @endforeach
                                 </select>
                                 <div class="invalid-feedback" id="error-edit-tipo"></div>
                             </div>
@@ -100,11 +94,12 @@
                                 <input type="hidden" name="permite_decimales" value="0">
 
                                 <div class="custom-control custom-switch mt-2">
-                                    <input type="checkbox"
-                                           class="custom-control-input"
-                                           id="edit_permite_decimales"
-                                           name="permite_decimales"
-                                           value="1">
+                                    <input type="checkbox" 
+                                           class="custom-control-input" 
+                                           id="edit_permite_decimales" 
+                                           name="permite_decimales" 
+                                           value="1" 
+                                           @checked($unidad->permite_decimales)>
                                     <label class="custom-control-label" for="edit_permite_decimales">
                                         Permite cantidades decimales
                                     </label>
@@ -136,11 +131,12 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>Unidad Base</label>
-                                        <input type="text"
-                                               name="unidad_base"
-                                               id="edit_unidad_base"
-                                               value="{{ old('unidad_base', $unidad->unidad_base) }}"
-                                               class="form-control">
+                                            <input type="text" 
+                                                   name="unidad_base" 
+                                                   id="edit_unidad_base" 
+                                                   class="form-control" 
+                                                   list="unidades_base_sugeridas" 
+                                                   value="{{ old('unidad_base', $unidad->unidad_base) }}">
                                     </div>
                                 </div>
                             </div>
@@ -170,11 +166,12 @@
                                     <input type="hidden" name="activo" value="0">
 
                                     <div class="custom-control custom-switch">
-                                        <input type="checkbox"
-                                               class="custom-control-input"
-                                               id="edit_activo"
-                                               name="activo"
-                                               value="1">
+                                        <input type="checkbox" 
+                                               class="custom-control-input" 
+                                               id="edit_activo" 
+                                               name="activo" 
+                                               value="1" 
+                                               @checked($unidad->activo)>
                                         <label class="custom-control-label font-weight-bold" for="edit_activo">
                                             Unidad Activa
                                         </label>
@@ -207,10 +204,15 @@ $(document).ready(function() {
         this.value = this.value.toUpperCase();
     });
 
+    // Auto-focus al abrir
+    $('#editModal').on('shown.bs.modal', function () {
+        $('#edit_nombre').trigger('focus');
+    });
+
     // ==========================================
     // ENVÍO DEL FORMULARIO
     // ==========================================
-    $('#editUnidadForm').submit(function(e) {
+    $('#editUnidadForm').off('submit').on('submit', function(e) {
         e.preventDefault();
 
         const unidadId = $('#edit_unidad_id').val();
@@ -283,6 +285,7 @@ $(document).ready(function() {
     // ==========================================
     $('#editModal').on('hidden.bs.modal', function() {
         $('#editUnidadForm')[0].reset();
+        $('#edit_unidad_id').val(''); // Limpiar el ID oculto
         $('.form-control').removeClass('is-invalid');
         $('.invalid-feedback').text('').hide();
     });

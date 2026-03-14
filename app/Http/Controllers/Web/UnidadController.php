@@ -49,27 +49,11 @@ class UnidadController extends Controller
                 ->addColumn('actions', function ($unidad) {
                     $canDelete = !$unidad->tieneProductos();
 
-                    // Pasamos todos los datos ocultos como atributos data-*
-                    $showBtn = '<button type="button" class="btn btn-secondary btn-sm mr-1 btn-ver-detalles"
-                        title="Ver Detalles"
-                        data-nombre="'.htmlspecialchars($unidad->nombre).'"
-                        data-codigo="'.$unidad->factor_conversion.'"
-                        data-categoria="'.$unidad->nombre_categoria.'"
-                        data-unidad="'.$unidad->nombre_unidad.'"
-                        data-marca="'.$unidad->nombre_marca.'"
-                        data-proveedor="'.$unidad->nombre_proveedor.'"
-                        data-descripcion="'.htmlspecialchars($unidad->descripcion).'"
-                        data-stock="'.$unidad->cantidad.'"
-                        data-pventa="'.number_format($unidad->precio_venta, 2).'"
-                        data-pcompra="'.number_format($unidad->precio_compra, 2).'"
-                        data-pmayoreo="'.($unidad->permite_mayoreo ? number_format($unidad->precio_mayoreo, 2) : 'N/A').'"
-                        data-poferta="'.($unidad->en_oferta ? number_format($unidad->precio_oferta, 2) : 'N/A').'"
-                        data-moneda="'.($unidad->moneda->codigo ?? '$').'"
-                        data-fechareg="'.$unidad->created_at->format('d/m/Y').'"
-
-                    >
-                        <i class="fas fa-eye"></i>
-                    </button>';
+                    $showBtn = '<button type="button" class="btn btn-secondary btn-sm mr-1 btn-show" 
+                                    title="Ver Detalles"
+                                    data-id="' . $unidad->id . '">
+                                    <i class="fas fa-eye"></i>
+                                </button>';
 
                     $editBtn = '<button type="button" class="btn btn-info btn-sm mr-1 btn-edit d-flex align-items-center" title="Editar Unidad"
                                     data-id="'.$unidad->id.'">
@@ -90,7 +74,7 @@ class UnidadController extends Controller
                                <i class="fas fa-lock"></i>
                            </button>';
 
-                    return '<div class="btn-group" role="group">'. $showBtn . ' ' . $editBtn . ' ' . $deleteBtn . '</div>';
+                    return '<div class="btn-group" role="group">' . $showBtn .  $editBtn . ' ' . $deleteBtn . '</div>';
                 })
                 ->rawColumns(['tipo_badge', 'productos_count', 'permite_decimales_badge', 'estado', 'actions'])
                 ->make(true);
@@ -167,14 +151,10 @@ class UnidadController extends Controller
         }
     }
 
-    /* public function show(Unidad $unidad){
-        $unidad->load('productos');
-
-        return response()->json([
-            'success' => true,
-            'unidad' => $unidad
-        ]);
-    } */
+    public function showModal($id){
+        $unidad = Unidad::withCount('productos')->findOrFail($id);
+        return view('modulos.unidades.partials.show-modal', compact('unidad'));
+    }
 
     public function createModal(){
 
@@ -182,12 +162,7 @@ class UnidadController extends Controller
     }
 
     public function editModal($id){
-
-        // Debug temporal
-        //\Log::info('ID recibido en editModal: ' . $id);
         $unidad = Unidad::findOrFail($id);
-        //\Log::info('unidad recibido en editModal: ' . $unidad);
-
         return view('modulos.unidades.partials.edit-modal', compact('unidad'));
 
     }

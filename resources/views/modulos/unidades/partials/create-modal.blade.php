@@ -1,9 +1,9 @@
 {{-- resources/views/unidades/partials/create-modal.blade.php --}}
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog">
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">
+                <h5 class="modal-title" id="createModalLabel">
                     <i class="fas fa-plus-circle"></i> Nueva Unidad de Medida
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal">
@@ -18,7 +18,7 @@
                         {{-- Nombre --}}
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="font-weight-bold">
+                                <label class="font-weight-bold" for="create_nombre">
                                     Nombre <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
@@ -37,7 +37,7 @@
                         {{-- Abreviatura --}}
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="font-weight-bold">
+                                <label class="font-weight-bold" for="create_abreviatura">
                                     Abreviatura <span class="text-danger">*</span>
                                 </label>
                                 <input type="text"
@@ -57,7 +57,7 @@
                         {{-- Código SAT --}}
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label class="font-weight-bold">
+                                <label class="font-weight-bold" for="create_codigo_sat">
                                     Código SAT
                                     <i class="fas fa-info-circle text-info"
                                        title="Código oficial para facturación electrónica"
@@ -81,7 +81,7 @@
                         {{-- Tipo --}}
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="font-weight-bold">
+                                <label class="font-weight-bold" for="create_tipo">
                                     Tipo de Unidad <span class="text-danger">*</span>
                                 </label>
                                 <select name="tipo"
@@ -103,7 +103,7 @@
                         {{-- Permite Decimales --}}
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="font-weight-bold">Configuración</label>
+                                <label class="font-weight-bold" for="create_permite_decimales">Configuración</label>
 
                                 {{-- Hidden input para checkbox --}}
                                 <input type="hidden" name="permite_decimales" value="0">
@@ -137,7 +137,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Factor de Conversión</label>
+                                        <label for="create_factor_conversion">Factor de Conversión</label>
                                         <input type="number"
                                                name="factor_conversion"
                                                id="create_factor_conversion"
@@ -151,12 +151,21 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Unidad Base</label>
+                                        <label for="create_unidad_base">Unidad Base</label>
                                         <input type="text"
                                                name="unidad_base"
                                                id="create_unidad_base"
                                                class="form-control"
+                                               list="unidades_base_sugeridas"
                                                placeholder="Ej: gramo">
+                                        <datalist id="unidades_base_sugeridas">
+                                            <option value="gramo">
+                                            <option value="kilogramo">
+                                            <option value="litro">
+                                            <option value="mililitro">
+                                            <option value="pieza">
+                                            <option value="metro">
+                                        </datalist>
                                         <small class="form-text text-muted">
                                             Unidad de referencia
                                         </small>
@@ -179,7 +188,7 @@
                     <div class="row mt-3">
                         <div class="col-12">
                             <div class="form-group">
-                                <label class="font-weight-bold">Descripción / Notas</label>
+                                <label class="font-weight-bold" for="create_descripcion">Descripción / Notas</label>
                                 <textarea name="descripcion"
                                           id="create_descripcion"
                                           class="form-control"
@@ -244,6 +253,13 @@ $(document).ready(function() {
     });
 
     // ==========================================
+    // evento para el autofocus
+    // ==========================================
+    $('#createModal').on('shown.bs.modal', function () {
+        $('#create_nombre').trigger('focus');
+    });
+
+    // ==========================================
     // TOOLTIPS
     // ==========================================
     $('[data-toggle="tooltip"]').tooltip();
@@ -251,7 +267,7 @@ $(document).ready(function() {
     // ==========================================
     // ENVÍO DEL FORMULARIO
     // ==========================================
-    $('#createUnidadForm').submit(function(e) {
+    $('#createUnidadForm').off('submit').on('submit', function(e) {
         e.preventDefault();
 
         const formData = $(this).serialize();
@@ -325,6 +341,9 @@ $(document).ready(function() {
         $('#createUnidadForm')[0].reset();
         $('.form-control').removeClass('is-invalid');
         $('.invalid-feedback').text('').hide();
+
+        // Forzar el estado visual de los switches a su valor por defecto
+        $('#create_permite_decimales, #create_activo').prop('checked', true);
     });
 });
 </script>
