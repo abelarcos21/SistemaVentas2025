@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('compra_id')->constrained('compras')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('productos')->onDelete('restrict');
-            $table->integer('cantidad');
-            $table->decimal('precio_unitario', 10, 2);
-            $table->decimal('subtotal', 10, 2);
+            $table->integer('cantidad');// cambia este integer por un: $table->decimal('cantidad', 10, 3);
+            $table->decimal('precio_unitario', 12, 2);
+            $table->decimal('subtotal', 12, 2);
             $table->timestamps();
 
-            // Índice para mejorar consultas
-            $table->index(['compra_id', 'producto_id']);
+            // Evita que por error de código/usuario se inserte el mismo producto en dos filas distintas de la misma compra.
+            $table->unique(['compra_id', 'producto_id']);
         });
     }
 

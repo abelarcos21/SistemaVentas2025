@@ -51,8 +51,11 @@
                         <div class="col-md-3 mb-3">
                             <label>Fecha *</label>
                             <input type="date" name="fecha_compra"
-                                value="{{ date('Y-m-d') }}"
-                                class="form-control" required>
+                                value="{{ old('fecha_compra', date('Y-m-d')) }}"
+                                class="form-control @error('fecha_compra') is-invalid @enderror" required>
+                            @error('fecha_compra')
+                                <span class="text-danger text-sm">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="col-md-3 mb-3">
@@ -66,10 +69,10 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>Método de Pago *</label>
-                            <select name="metodo_pago" class="form-control" required>
-                                <option value="efectivo">Efectivo</option>
-                                <option value="transferencia">Transferencia</option>
-                                <option value="credito">Crédito</option>
+                            <select name="metodo_pago" class="form-control @error('metodo_pago') is-invalid @enderror" required>
+                                <option value="efectivo" {{ old('metodo_pago') == 'efectivo' ? 'selected' : '' }}>Efectivo</option>
+                                <option value="transferencia" {{ old('metodo_pago') == 'transferencia' ? 'selected' : '' }}>Transferencia</option>
+                                <option value="credito" {{ old('metodo_pago') == 'credito' ? 'selected' : '' }}>Crédito</option>
                             </select>
                         </div>
 
@@ -165,21 +168,19 @@
 @stop
 
 @section('js')
+
     <script>
+
         const productos = @json($productos);
         const productoPrecargado = @json($productoPrecargado ?? null);
         const precioSugerido = @json($precioSugerido ?? null);
-    </script>
-
-    <script>
-
         let contador = 0;
 
         $(document).ready(function() {
-            $('.select2').select2({ width: '100%' });
 
+            // Carga inicial
             if (productoPrecargado) {
-                agregarFilaPrecargada(productoPrecargado.id, precioSugerido);
+                agregarFila(productoPrecargado.id, precioSugerido);
             } else {
                 agregarFila();
             }
@@ -190,57 +191,59 @@
 
             $('#impuesto, #descuento').on('input', calcularTotal);
 
-            $('#formCompra').submit(function(e){
+            // Prevenir doble submit y validar que haya productos
+            $('#formCompra').submit(function(e) {
                 if($('#detalles tr').length === 0){
                     e.preventDefault();
                     alert('Debe agregar al menos un producto');
+                    return false;
                 }
+                // Deshabilitar el botón para evitar múltiples envíos
+                $(this).find('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Guardando...');
             });
         });
 
-        function agregarFila() {
-
+        function agregarFila(productoId = '', precioInicial = '') {
             let fila = `
                 <tr data-index="${contador}">
                     <td>
-                        <select name="detalles[${contador}][producto_id]"
-                                class="form-control producto-select" required>
+                        <select name="detalles[${contador}][producto_id]" class="form-control producto-select" required>
                             <option value="">Seleccionar</option>
-                            ${productos.map(p =>
-                                `<option value="${p.id}"
-                                data-precio="${p.precio_compra || 0}">
-                                ${p.nombre}
-                                </option>`
-                            ).join('')}
+                            ${productos.map(p => `
+                                <option value="${p.id}"
+                                    data-precio="${p.precio_compra || 0}"
+                                    ${p.id == productoId ? 'selected' : ''}>
+                                    ${p.nombre}
+                                </option>
+                            `).join('')}
                         </select>
                     </td>
                     <td>
-                        <input type="number"
-                            name="detalles[${contador}][cantidad]"
-                            class="form-control cantidad"
-                            value="1" min="1">
+                        <input type="number" name="detalles[${contador}][cantidad]" class="form-control cantidad" value="1" min="1" required>
                     </td>
                     <td>
-                        <input type="number"
-                            name="detalles[${contador}][precio_unitario]"
-                            class="form-control precio"
-                            step="0.01">
+                        <input type="number" name="detalles[${contador}][precio_unitario]" class="form-control precio" step="0.01" value="${precioInicial || ''}" required>
                     </td>
                     <td>
-                        <input type="text"
-                            class="form-control subtotal-item"
-                            readonly value="0.00">
+                        <input type="text" class="form-control subtotal-item" readonly value="0.00">
                     </td>
                     <td>
-                        <button type="button"
-                                class="btn btn-danger btn-sm btnEliminar">
-                                <i class="fas fa-trash"></i>
+                        <button type="button" class="btn btn-danger btn-sm btnEliminar">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
             `;
 
             $('#detalles').append(fila);
+
+            // ¡IMPORTANTE! Inicializar Select2 en el elemento recién creado
+            $('#detalles tr').last().find('.producto-select').select2({ width: '100%' });
+
+            if(productoId) {
+                calcularFila($('#detalles tr').last());
+            }
+
             contador++;
         }
 

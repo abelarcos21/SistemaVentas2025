@@ -151,52 +151,77 @@ class ComprasController extends Controller
     public function store(Request $request){
 
         $validated = $request->validate([
-            'proveedor_id' => 'nullable|exists:proveedores,id',
-            'numero_factura' => 'nullable|unique:compras',
+            'proveedor_id' => 'required|exists:proveedores,id',
+            'numero_factura' => 'nullable|string|unique:compras',
             'fecha_compra' => 'required|date',
+            'metodo_pago' => 'required|in:efectivo,transferencia,credito', // Validamos las opciones exactas
             'impuesto' => 'nullable|numeric|min:0',
+            'descuento' => 'nullable|numeric|min:0',
             'observaciones' => 'nullable|string',
             'detalles' => 'required|array|min:1',
-            'detalles.*.producto_id' => 'required|exists:productos,id',
+
+            // ¡IMPORTANTE! 'distinct' evita que el usuario envíe el mismo producto en dos filas diferentes,
+            // lo cual respeta tu nueva regla $table->unique(['compra_id', 'producto_id']);
+            'detalles.*.producto_id' => 'required|exists:productos,id|distinct',
             'detalles.*.cantidad' => 'required|integer|min:1',
             'detalles.*.precio_unitario' => 'required|numeric|min:0',
+        ], [
+            // Mensaje personalizado amigable para la regla distinct
+            'detalles.*.producto_id.distinct' => 'Has agregado el mismo producto más de una vez. Por favor, suma las cantidades en una sola fila.',
         ]);
 
         DB::beginTransaction();
 
         try {
 
+            // Uso de Colecciones para calcular el total de forma segura
+            $detalles = collect($request->detalles);
+
+            $subtotalCompra = $detalles->sum(function ($item) {
+                return $item['cantidad'] * $item['precio_unitario'];
+            });
+
+            $impuesto = $request->impuesto ?? 0;
+            $descuento = $request->descuento ?? 0;
+
+            // Si el impuesto en el sistema es un porcentaje (ej. 16%), el cálculo sería diferente.
+            // Aquí asumo que es un monto directo en dinero, según la vista create
+            $totalFinal = $subtotalCompra + $impuesto - $descuento;
+
+            //Crear la compra guardando los totales reales
             $compra = Compra::create([
                 'user_id' => auth()->id(),
                 'proveedor_id' => $request->proveedor_id,
                 'numero_factura' => $request->numero_factura,
                 'fecha_compra' => $request->fecha_compra,
-                'impuesto' => $request->impuesto ?? 0,
+                'metodo_pago' => $request->metodo_pago,
+                'subtotal' => $subtotalCompra,
+                'descuento' => $descuento,
+                'impuesto' => $impuesto,
+                'total' => $totalFinal,
+                'estado' => 'pendiente', //dependiendo el flujo de negocio
                 'observaciones' => $request->observaciones,
             ]);
 
-            foreach ($request->detalles as $detalle) {
+            //Guardar detalles y actualizar stock de forma segura
+            foreach ($detalles as $detalle) {
 
-                $subtotal = $detalle['cantidad'] * $detalle['precio_unitario'];
+                $subtotalDetalle = $detalle['cantidad'] * $detalle['precio_unitario'];
 
-                //Guardar detalle
                 $compra->detalles()->create([
                     'producto_id'     => $detalle['producto_id'],
                     'cantidad'        => $detalle['cantidad'],
                     'precio_unitario' => $detalle['precio_unitario'],
-                    'subtotal'        => $subtotal,
+                    'subtotal'        => $subtotalDetalle,
                 ]);
 
-                //Actualizar producto
-                $producto = Producto::find($detalle['producto_id']);
-
-                // Aumentar stock
-                $producto->cantidad += $detalle['cantidad'];
-
-                // Actualizar último precio de compra
-                $producto->precio_compra = $detalle['precio_unitario'];
-
-                $producto->save();
+                // ¡Optimización Clave! Actualizar stock a nivel de SQL directamente
+                // increment() previene Race Conditions.
+                // El tercer parámetro actualiza el ultimo costo de columnas adicionales en la misma consulta.
+                Producto::where('id', $detalle['producto_id'])
+                    ->increment('cantidad', $detalle['cantidad'], [
+                        'precio_compra' => $detalle['precio_unitario']
+                    ]);
             }
 
             DB::commit();
